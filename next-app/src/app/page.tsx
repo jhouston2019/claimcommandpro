@@ -1,24 +1,31 @@
-import Link from 'next/link'
 import HeroSection from '@/components/landing/HeroSection'
-import ReportPreview from '@/components/landing/ReportPreview'
-import ThreeStepProcess from '@/components/landing/ThreeStepProcess'
-import CommandCenterWalkthrough from '@/components/landing/CommandCenterWalkthrough'
-import CarrierTacticsCards from '@/components/landing/CarrierTacticsCards'
-import DeadlineTimeline from '@/components/landing/DeadlineTimeline'
-import CaseStudyOutcome from '@/components/landing/CaseStudyOutcome'
-import FinalCTASection from '@/components/landing/FinalCTASection'
+import ClaimUnderpaymentEstimator from '@/components/landing/ClaimUnderpaymentEstimator'
+import SocialProofSection from '@/components/landing/SocialProofSection'
+import ToolsSection from '@/components/landing/ToolsSection'
+import FreePolicyAnalysis from '@/components/landing/FreePolicyAnalysis'
+import DashboardVisualSection from '@/components/landing/DashboardVisualSection'
+import EstimateReviewVisual from '@/components/landing/EstimateReviewVisual'
+import StepByStepProcess from '@/components/landing/StepByStepProcess'
+import FourRequirements from '@/components/landing/FourRequirements'
+import StructureVsChaos from '@/components/landing/StructureVsChaos'
+import TypicalClaimGap from '@/components/landing/TypicalClaimGap'
+import FinalCTAProof from '@/components/landing/FinalCTAProof'
 
 export default function HomePage() {
   return (
     <main className="min-h-screen">
       <HeroSection />
-      <ReportPreview />
-      <ThreeStepProcess />
-      <CommandCenterWalkthrough />
-      <CarrierTacticsCards />
-      <DeadlineTimeline />
-      <CaseStudyOutcome />
-      <FinalCTASection />
+      <ClaimUnderpaymentEstimator />
+      <SocialProofSection />
+      <ToolsSection />
+      <FreePolicyAnalysis />
+      <DashboardVisualSection />
+      <EstimateReviewVisual />
+      <StepByStepProcess />
+      <FourRequirements />
+      <StructureVsChaos />
+      <TypicalClaimGap />
+      <FinalCTAProof />
     </main>
   )
 }
