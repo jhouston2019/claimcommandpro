@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
-import { FileText, TrendingUp, AlertCircle, Calendar, LogOut, Lightbulb, Search } from 'lucide-react'
+import { FileText, TrendingUp, AlertCircle, Calendar, LogOut, Lightbulb, Search, Activity } from 'lucide-react'
 
 interface Claim {
   id: string
@@ -170,25 +170,61 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Intelligence Network */}
+          {/* Claim Operating System - Featured */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Industry Intelligence</h2>
-            <Link href="/dashboard/intelligence" className="card hover:shadow-xl transition-shadow bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200">
+            <h2 className="text-2xl font-bold mb-4">Claim Operating System</h2>
+            <Link href="/claim-os/create" className="card hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-600 to-blue-700 text-white border-2 border-blue-500 mb-4">
               <div className="flex items-center gap-4">
-                <div className="bg-blue-600 rounded-lg p-3">
-                  <TrendingUp className="w-8 h-8 text-white" />
+                <div className="bg-white/20 backdrop-blur rounded-lg p-3">
+                  <FileText className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">Claim Intelligence Network</h3>
-                  <p className="text-gray-700">
-                    View industry insights, carrier behavior patterns, and regional pricing data
+                  <h3 className="text-xl font-bold mb-1">Create New Claim Workspace</h3>
+                  <p className="text-blue-100 text-sm">
+                    Full claim management system with documents, intelligence, strategy, and tracking
                   </p>
                 </div>
-                <div className="text-blue-600 font-semibold">
-                  View Dashboard →
+                <div className="text-white font-semibold">
+                  Create →
                 </div>
               </div>
             </Link>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <Link href="/dashboard/command-center" className="card hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-500 to-blue-600 text-white border-2 border-blue-400">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white/20 backdrop-blur rounded-lg p-3">
+                    <Activity className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-1">Claim Intelligence Dashboard</h3>
+                    <p className="text-blue-100 text-sm">
+                      AI-powered claim analysis with gap detection and carrier intelligence
+                    </p>
+                  </div>
+                  <div className="text-white font-semibold">
+                    Open →
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/dashboard/intelligence" className="card hover:shadow-xl transition-shadow bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200">
+                <div className="flex items-center gap-4">
+                  <div className="bg-blue-600 rounded-lg p-3">
+                    <TrendingUp className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">Industry Intelligence Network</h3>
+                    <p className="text-gray-700 text-sm">
+                      View industry insights, carrier behavior patterns, and regional pricing data
+                    </p>
+                  </div>
+                  <div className="text-blue-600 font-semibold">
+                    View →
+                  </div>
+                </div>
+              </Link>
+            </div>
           </div>
 
           {/* Upcoming Deadlines */}

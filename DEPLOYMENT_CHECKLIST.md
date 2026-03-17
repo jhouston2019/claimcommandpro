@@ -1,528 +1,390 @@
-# Claim Command Center - Deployment Checklist
+# Claim Intelligence Dashboard - Deployment Checklist
 
-## 📋 Pre-Deployment Checklist
+## Pre-Deployment Checklist
 
-### 1. Database Setup ✅
+### 1. Database Setup
+- [ ] Review migration file: `supabase/migrations/20260316_claim_intelligence_dashboard.sql`
+- [ ] Backup production database
+- [ ] Run migration on staging environment first
+- [ ] Verify all 6 tables created successfully
+- [ ] Confirm RLS policies are active
+- [ ] Check that carrier pattern seed data loaded (8 carriers)
+- [ ] Test database functions work correctly
+- [ ] Verify indexes are created
 
-- [ ] **Run Migration**
-  ```bash
-  # In Supabase SQL Editor, run:
-  supabase/migrations/20260212_claim_command_center_schema.sql
-  ```
-
-- [ ] **Verify Tables Created**
-  - [ ] `claim_steps`
-  - [ ] `claim_documents`
-  - [ ] `claim_outputs`
-  - [ ] `claim_financial_summary`
-  - [ ] `claim_estimate_discrepancies`
-  - [ ] `claim_policy_coverage`
-  - [ ] `claim_generated_documents`
-
-- [ ] **Verify RLS Policies**
-  - [ ] All tables have RLS enabled
-  - [ ] SELECT policies in place
-  - [ ] INSERT policies in place
-  - [ ] UPDATE policies in place
-  - [ ] DELETE policies in place (where applicable)
-
-- [ ] **Test Database Access**
-  - [ ] Can create claim record
-  - [ ] Can initialize claim steps
-  - [ ] Can initialize financial summary
-  - [ ] RLS prevents cross-user access
-
-### 2. Storage Setup ✅
-
-- [ ] **Create Storage Bucket**
-  - [ ] Bucket name: `claim-documents`
-  - [ ] Public: `false`
-  - [ ] File size limit: `15MB`
-
-- [ ] **Configure MIME Types**
-  - [ ] `application/pdf`
-  - [ ] `image/jpeg`
-  - [ ] `image/png`
-  - [ ] `image/gif`
-  - [ ] `image/webp`
-  - [ ] `application/vnd.openxmlformats-officedocument.wordprocessingml.document`
-
-- [ ] **Apply Storage Policies**
-  - [ ] Users can upload to their folder
-  - [ ] Users can view their own documents
-  - [ ] Users can update their own documents
-  - [ ] Users can delete their own documents
-
-- [ ] **Test Storage**
-  - [ ] Can upload file
-  - [ ] Can generate signed URL
-  - [ ] Can download file
-  - [ ] Cannot access other user's files
-
-### 3. Environment Variables ✅
-
-- [ ] **Supabase Variables**
-  ```env
-  SUPABASE_URL=https://your-project.supabase.co
-  SUPABASE_ANON_KEY=your-anon-key
-  SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-  ```
-
-- [ ] **OpenAI Variables**
-  ```env
-  OPENAI_API_KEY=sk-your-api-key
-  ```
-
-- [ ] **Application Variables**
-  ```env
-  NODE_ENV=production
-  ```
-
-- [ ] **Verify in Netlify Dashboard**
-  - [ ] All variables added
-  - [ ] No typos in variable names
-  - [ ] Values are correct
-  - [ ] Sensitive variables are masked
-
-### 4. Dependencies ✅
-
-- [ ] **Install Dependencies**
-  ```bash
-  npm install
-  ```
-
-- [ ] **Verify Package Versions**
-  - [ ] `@supabase/supabase-js`: ^2.39.0
-  - [ ] `openai`: ^4.24.1
-  - [ ] `pdf-parse`: ^1.1.1
-  - [ ] All other dependencies up to date
-
-- [ ] **No Security Vulnerabilities**
-  ```bash
-  npm audit
-  ```
-
-### 5. Code Review ✅
-
-- [ ] **API Routes**
-  - [ ] All 6 endpoints implemented
-  - [ ] Authentication checks in place
-  - [ ] Claim ownership verification
-  - [ ] Error handling complete
-  - [ ] Logging implemented
-
-- [ ] **Frontend Components**
-  - [ ] StepToolModal functional
-  - [ ] StructuredOutputPanel renders correctly
-  - [ ] FinancialSummaryPanel loads data
-  - [ ] All tool buttons wired up
-
-- [ ] **Security**
-  - [ ] Input validation on all endpoints
-  - [ ] File upload restrictions enforced
-  - [ ] Rate limiting configured
-  - [ ] No sensitive data in logs
-  - [ ] No API keys in client code
-
----
-
-## 🚀 Deployment Steps
-
-### Step 1: Database Migration
-
-```bash
-# 1. Open Supabase Dashboard
-# 2. Navigate to SQL Editor
-# 3. Copy contents of: supabase/migrations/20260212_claim_command_center_schema.sql
-# 4. Paste and run
-# 5. Verify "Success" message
-```
-
-**Verification:**
+**Verification Commands:**
 ```sql
 -- Check tables exist
-SELECT table_name 
-FROM information_schema.tables 
+SELECT table_name FROM information_schema.tables 
 WHERE table_schema = 'public' 
-AND table_name LIKE 'claim_%';
+AND table_name IN (
+  'carrier_patterns',
+  'claim_analysis', 
+  'coverage_flags',
+  'claim_timeline',
+  'claim_alerts',
+  'recommended_actions'
+);
 
--- Should return 7 tables
+-- Check RLS is enabled
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE schemaname = 'public' 
+AND tablename LIKE 'claim_%' OR tablename = 'carrier_patterns';
+
+-- Check carrier patterns seeded
+SELECT carrier_name, COUNT(*) 
+FROM carrier_patterns 
+GROUP BY carrier_name;
 ```
 
-### Step 2: Storage Configuration
+### 2. Code Review
+- [ ] Review dashboard component: `next-app/src/app/dashboard/command-center/page.tsx`
+- [ ] Review intelligence generator: `next-app/src/lib/generateClaimIntelligence.ts`
+- [ ] Review demo seeder: `next-app/src/app/api/demo/seed-intelligence/route.ts`
+- [ ] Check all imports are correct
+- [ ] Verify TypeScript types are accurate
+- [ ] Ensure no hardcoded values (except demo data)
+- [ ] Check error handling is in place
 
+### 3. Environment Variables
+- [ ] `NEXT_PUBLIC_SUPABASE_URL` is set
+- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` is set
+- [ ] `SUPABASE_SERVICE_ROLE_KEY` is set (for demo seeder)
+- [ ] All environment variables are in production `.env`
+
+### 4. Testing on Staging
+
+#### Test Database Migration
+- [ ] Run migration on staging database
+- [ ] Verify no errors in migration logs
+- [ ] Check all tables and indexes created
+- [ ] Confirm RLS policies work
+
+#### Test Demo Data Seeder
 ```bash
-# 1. Open Supabase Dashboard
-# 2. Navigate to Storage
-# 3. Create new bucket: "claim-documents"
-# 4. Set public: false
-# 5. Set file size limit: 15728640 (15MB)
-# 6. Navigate to Policies
-# 7. Run SQL from: supabase/STORAGE_SETUP.md
+curl -X POST https://staging.yourapp.com/api/demo/seed-intelligence \
+  -H "Content-Type: application/json" \
+  -d '{"claimId": "test-uuid", "userId": "test-uuid"}'
 ```
+- [ ] API returns success response
+- [ ] Data appears in database tables
+- [ ] No errors in server logs
 
-**Verification:**
-```sql
--- Check bucket exists
-SELECT * FROM storage.buckets WHERE id = 'claim-documents';
+#### Test Dashboard Loading
+- [ ] Navigate to `/dashboard/command-center`
+- [ ] Dashboard loads without errors
+- [ ] All sections display correctly
+- [ ] No console errors
+- [ ] Loading states work properly
+- [ ] Error states display correctly (no data scenario)
 
--- Check policies exist
-SELECT * FROM pg_policies WHERE tablename = 'objects';
-```
+#### Test User Flows
+- [ ] Create a test claim
+- [ ] Seed intelligence data for test claim
+- [ ] View dashboard with test data
+- [ ] Click action buttons (verify links work)
+- [ ] Dismiss alerts (verify state updates)
+- [ ] Test on mobile device
+- [ ] Test on tablet
+- [ ] Test on desktop
 
-### Step 3: Environment Variables
+### 5. Performance Testing
+- [ ] Dashboard loads in < 2 seconds
+- [ ] Database queries are optimized
+- [ ] No N+1 query problems
+- [ ] Parallel data loading works
+- [ ] Images/assets are optimized
+- [ ] No memory leaks
 
-```bash
-# 1. Open Netlify Dashboard
-# 2. Navigate to: Site Settings > Environment Variables
-# 3. Add each variable:
-#    - SUPABASE_URL
-#    - SUPABASE_ANON_KEY
-#    - SUPABASE_SERVICE_ROLE_KEY
-#    - OPENAI_API_KEY
-#    - NODE_ENV
-# 4. Save changes
-```
+### 6. Security Review
+- [ ] RLS policies tested with different users
+- [ ] Users can only see their own data
+- [ ] Carrier patterns are publicly readable
+- [ ] No sensitive data exposed in client
+- [ ] API endpoints require authentication
+- [ ] Service role key not exposed
 
-**Verification:**
-```bash
-# In Netlify CLI
-netlify env:list
-```
-
-### Step 4: Deploy to Netlify
-
-```bash
-# Option A: Git Push (Recommended)
-git add .
-git commit -m "Deploy Claim Command Center"
-git push origin main
-
-# Option B: Manual Deploy
-netlify deploy --prod
-
-# Option C: Netlify CLI
-netlify deploy --prod --dir=.
-```
-
-**Verification:**
-```bash
-# Check deployment status
-netlify status
-
-# View site
-netlify open:site
-```
-
-### Step 5: Post-Deployment Testing
-
-```bash
-# 1. Open deployed site
-# 2. Login with test user
-# 3. Navigate to Claim Command Center
-# 4. Test each tool:
-#    - Policy Analysis
-#    - Estimate Comparison
-#    - Supplement Generation
-#    - Settlement Analysis
-#    - Release Analysis
-#    - Demand Letter Generation
-```
+### 7. Documentation Review
+- [ ] `CLAIM_INTELLIGENCE_DASHBOARD.md` is accurate
+- [ ] `QUICK_START_GUIDE.md` is complete
+- [ ] `IMPLEMENTATION_SUMMARY.md` reflects reality
+- [ ] `DASHBOARD_LAYOUT.md` matches implementation
+- [ ] `BEFORE_AFTER_COMPARISON.md` is helpful
+- [ ] Code comments are clear
 
 ---
 
-## 🧪 Testing Checklist
+## Deployment Steps
 
-### Functional Testing
+### Step 1: Database Migration (Production)
+```bash
+# Backup first!
+pg_dump -U postgres -d production_db > backup_$(date +%Y%m%d).sql
 
-- [ ] **Authentication**
-  - [ ] Can login
-  - [ ] Can logout
-  - [ ] Session persists
-  - [ ] Unauthorized access blocked
+# Run migration
+psql -U postgres -d production_db -f supabase/migrations/20260316_claim_intelligence_dashboard.sql
 
-- [ ] **Step 2: Policy Analysis**
-  - [ ] Modal opens
-  - [ ] Can upload PDF
-  - [ ] Analysis runs successfully
-  - [ ] Results display correctly
-  - [ ] Data saved to database
-  - [ ] Step marked complete
+# Verify
+psql -U postgres -d production_db -c "SELECT COUNT(*) FROM carrier_patterns;"
+```
 
-- [ ] **Step 8: Estimate Comparison**
-  - [ ] Modal opens
-  - [ ] Can upload 2 PDFs
-  - [ ] Analysis runs successfully
-  - [ ] Discrepancies displayed
-  - [ ] Financial summary updates
-  - [ ] Underpayment calculated
+- [ ] Migration completed successfully
+- [ ] All tables created
+- [ ] Seed data loaded
+- [ ] No errors in logs
 
-- [ ] **Step 10: Supplement Generation**
-  - [ ] Modal opens
-  - [ ] Generation runs successfully
-  - [ ] Letter displays correctly
-  - [ ] Can view HTML/Markdown
-  - [ ] Data saved to database
+### Step 2: Deploy Application Code
+```bash
+# Build application
+npm run build
 
-- [ ] **Step 13: Settlement Analysis**
-  - [ ] Modal opens
-  - [ ] Can upload PDF
-  - [ ] Analysis runs successfully
-  - [ ] Financial breakdown displayed
-  - [ ] Recovery opportunities shown
+# Run tests
+npm run test
 
-- [ ] **Step 14: Demand Letter**
-  - [ ] Modal opens
-  - [ ] Generation runs successfully
-  - [ ] Letter displays correctly
-  - [ ] Policy citations included
-  - [ ] Timeline accurate
+# Deploy to production
+# (Your deployment method: Vercel, AWS, etc.)
+```
 
-- [ ] **Step 17: Release Analysis**
-  - [ ] Modal opens
-  - [ ] Can upload PDF
-  - [ ] Analysis runs successfully
-  - [ ] Risk assessment displayed
-  - [ ] Flagged clauses shown
+- [ ] Build completed successfully
+- [ ] No TypeScript errors
+- [ ] No linting errors
+- [ ] Tests pass
+- [ ] Deployment successful
 
-- [ ] **Financial Summary Panel**
-  - [ ] Loads on page load
-  - [ ] Updates after analysis
-  - [ ] All metrics display
-  - [ ] Formatting correct
+### Step 3: Verify Production Deployment
+- [ ] Visit production URL
+- [ ] Navigate to `/dashboard`
+- [ ] See "Claim Intelligence Dashboard" card
+- [ ] Click to open dashboard
+- [ ] Dashboard loads (may show "No Claim Data" - this is correct)
 
-### Security Testing
+### Step 4: Create Test Claim in Production
+- [ ] Create a real test claim
+- [ ] Note the claim ID and user ID
+- [ ] Seed intelligence data via API
+- [ ] Verify data appears in dashboard
 
-- [ ] **Authentication**
-  - [ ] Cannot access without login
-  - [ ] Cannot access other user's claims
-  - [ ] Token expires properly
-  - [ ] Refresh token works
-
-- [ ] **File Upload**
-  - [ ] Rejects files > 15MB
-  - [ ] Rejects invalid MIME types
-  - [ ] Sanitizes filenames
-  - [ ] Stores in correct folder
-
-- [ ] **API Endpoints**
-  - [ ] Require authentication
-  - [ ] Verify claim ownership
-  - [ ] Validate input
-  - [ ] Handle errors gracefully
-  - [ ] No stack traces to client
-
-- [ ] **Rate Limiting**
-  - [ ] Enforces 120 req/min per user
-  - [ ] Enforces 300 req/min per IP
-  - [ ] Enforces burst limit
-  - [ ] Blocks violators temporarily
-
-### Performance Testing
-
-- [ ] **Page Load**
-  - [ ] Initial load < 2s
-  - [ ] Financial summary loads < 1s
-  - [ ] No console errors
-
-- [ ] **File Upload**
-  - [ ] 5MB file uploads in < 5s
-  - [ ] Progress indicator works
-  - [ ] Error handling works
-
-- [ ] **AI Analysis**
-  - [ ] Policy analysis < 20s
-  - [ ] Estimate comparison < 25s
-  - [ ] Letter generation < 15s
-  - [ ] Loading states display
-
-### Responsive Testing
-
-- [ ] **Desktop (1920x1080)**
-  - [ ] Layout correct
-  - [ ] Modals centered
-  - [ ] Tables readable
-  - [ ] Buttons accessible
-
-- [ ] **Tablet (768x1024)**
-  - [ ] Layout adapts
-  - [ ] Modals fit screen
-  - [ ] Tables scroll
-  - [ ] Touch targets adequate
-
-- [ ] **Mobile (375x667)**
-  - [ ] Single column layout
-  - [ ] Full-width modals
-  - [ ] Readable text
-  - [ ] Easy navigation
-
-### Browser Testing
-
-- [ ] **Chrome (Latest)**
-- [ ] **Firefox (Latest)**
-- [ ] **Safari (Latest)**
-- [ ] **Edge (Latest)**
-- [ ] **Mobile Safari (iOS)**
-- [ ] **Chrome Mobile (Android)**
+### Step 5: Monitor Initial Usage
+- [ ] Check server logs for errors
+- [ ] Monitor database performance
+- [ ] Watch for slow queries
+- [ ] Check error tracking (Sentry, etc.)
+- [ ] Monitor user feedback
 
 ---
 
-## 🔍 Monitoring Setup
+## Post-Deployment Checklist
 
-### Netlify Analytics
-
-- [ ] **Enable Analytics**
-  - [ ] Navigate to: Analytics tab
-  - [ ] Enable if not already active
-  - [ ] Review baseline metrics
-
-### Supabase Monitoring
-
-- [ ] **Database Monitoring**
-  - [ ] Navigate to: Database > Monitoring
-  - [ ] Review query performance
-  - [ ] Check connection pool
-
-- [ ] **Storage Monitoring**
-  - [ ] Navigate to: Storage > Usage
-  - [ ] Review storage usage
-  - [ ] Check bandwidth
-
-### OpenAI Monitoring
-
-- [ ] **API Usage**
-  - [ ] Navigate to: OpenAI Dashboard > Usage
-  - [ ] Review token usage
-  - [ ] Set up usage alerts
-  - [ ] Monitor costs
-
-### Error Tracking
-
-- [ ] **Netlify Function Logs**
-  - [ ] Navigate to: Functions tab
-  - [ ] Review recent invocations
-  - [ ] Check for errors
-  - [ ] Set up alerts
-
-- [ ] **Supabase Logs**
-  - [ ] Navigate to: Logs > API
-  - [ ] Review recent queries
-  - [ ] Check for errors
-  - [ ] Set up alerts
-
----
-
-## 📊 Success Criteria
-
-### Immediate (Day 1)
-
-- [ ] All 6 API endpoints responding
+### Immediate (First Hour)
+- [ ] Dashboard is accessible
 - [ ] No 500 errors
-- [ ] Authentication working
-- [ ] File uploads successful
-- [ ] AI analysis completing
+- [ ] No database connection issues
+- [ ] Authentication works
+- [ ] Links to tools work
+- [ ] Mobile view works
 
-### Short-term (Week 1)
+### First Day
+- [ ] Monitor error logs
+- [ ] Check database query performance
+- [ ] Verify RLS policies working
+- [ ] Test with multiple users
+- [ ] Collect initial user feedback
+- [ ] Check analytics tracking
 
-- [ ] 10+ successful policy analyses
-- [ ] 10+ successful estimate comparisons
-- [ ] 5+ supplement letters generated
-- [ ] No security incidents
-- [ ] < 1% error rate
-
-### Medium-term (Month 1)
-
-- [ ] 100+ claims processed
-- [ ] Average response time < 20s
-- [ ] 99.9% uptime
-- [ ] User satisfaction > 4.5/5
-- [ ] No data breaches
-
----
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Issue:** "Not authenticated" error
-- **Solution:** Check Supabase session, verify token
-
-**Issue:** File upload fails
-- **Solution:** Check file size, MIME type, storage policies
-
-**Issue:** AI analysis times out
-- **Solution:** Check OpenAI API key, increase timeout
-
-**Issue:** Financial summary not loading
-- **Solution:** Initialize financial summary record
-
-**Issue:** Modal not opening
-- **Solution:** Check console for JavaScript errors
-
-### Emergency Contacts
-
-- **Supabase Support:** https://supabase.com/support
-- **Netlify Support:** https://www.netlify.com/support/
-- **OpenAI Support:** https://help.openai.com/
-
----
-
-## 🎉 Go Live!
-
-### Final Steps
-
-1. [ ] Complete all checklist items above
-2. [ ] Run full test suite
-3. [ ] Review monitoring dashboards
-4. [ ] Notify team of deployment
-5. [ ] Monitor for first 24 hours
-6. [ ] Celebrate! 🎊
-
-### Post-Launch
-
-- [ ] Monitor error rates daily
-- [ ] Review user feedback
-- [ ] Track performance metrics
+### First Week
+- [ ] Analyze user engagement
+- [ ] Review database performance metrics
+- [ ] Check for any edge cases
+- [ ] Gather user feedback
+- [ ] Identify improvement opportunities
 - [ ] Plan next iteration
-- [ ] Document lessons learned
 
 ---
 
-## 📝 Deployment Log
+## Rollback Plan
 
+### If Critical Issues Arise
+
+#### Database Rollback
+```sql
+-- Drop new tables (if needed)
+DROP TABLE IF EXISTS recommended_actions CASCADE;
+DROP TABLE IF EXISTS claim_alerts CASCADE;
+DROP TABLE IF EXISTS claim_timeline CASCADE;
+DROP TABLE IF EXISTS coverage_flags CASCADE;
+DROP TABLE IF EXISTS claim_analysis CASCADE;
+DROP TABLE IF EXISTS carrier_patterns CASCADE;
+
+-- Restore from backup
+psql -U postgres -d production_db < backup_YYYYMMDD.sql
 ```
-Date: _______________
-Deployed By: _______________
-Version: 1.0.0
-Status: _______________
 
-Pre-Deployment Checks:
-- Database: ☐ Pass ☐ Fail
-- Storage: ☐ Pass ☐ Fail
-- Environment: ☐ Pass ☐ Fail
-- Dependencies: ☐ Pass ☐ Fail
-- Code Review: ☐ Pass ☐ Fail
+#### Application Rollback
+```bash
+# Revert to previous deployment
+# (Method depends on your deployment platform)
 
-Deployment:
-- Start Time: _______________
-- End Time: _______________
-- Duration: _______________
-- Issues: _______________
+# Vercel example:
+vercel rollback
 
-Post-Deployment:
-- Functional Tests: ☐ Pass ☐ Fail
-- Security Tests: ☐ Pass ☐ Fail
-- Performance Tests: ☐ Pass ☐ Fail
-- Responsive Tests: ☐ Pass ☐ Fail
-
-Notes:
-_________________________________
-_________________________________
-_________________________________
-
-Sign-off: _______________
+# Or redeploy previous version
+git revert HEAD
+git push origin main
 ```
+
+#### Quick Fix Without Rollback
+- [ ] Disable dashboard link in main dashboard
+- [ ] Add maintenance message
+- [ ] Fix issue in staging
+- [ ] Test thoroughly
+- [ ] Redeploy fix
 
 ---
 
-**Ready to deploy? Let's go! 🚀**
+## Success Criteria
+
+### Technical Success
+- ✅ Dashboard loads in < 2 seconds
+- ✅ No errors in production logs
+- ✅ All database queries < 100ms
+- ✅ RLS policies working correctly
+- ✅ Mobile responsive working
+- ✅ All links functional
+
+### User Success
+- ✅ Users can access dashboard
+- ✅ Intelligence data displays correctly
+- ✅ Actions are clickable
+- ✅ Alerts are useful
+- ✅ Positive user feedback
+- ✅ Increased tool engagement
+
+### Business Success
+- ✅ Increased user engagement (time on site)
+- ✅ Higher conversion rates
+- ✅ More claims analyzed
+- ✅ More tools used
+- ✅ Positive ROI
+
+---
+
+## Monitoring Setup
+
+### Application Monitoring
+- [ ] Error tracking enabled (Sentry, Rollbar, etc.)
+- [ ] Performance monitoring (Vercel Analytics, etc.)
+- [ ] User analytics (Google Analytics, Mixpanel, etc.)
+- [ ] Custom events tracked:
+  - Dashboard viewed
+  - Action clicked
+  - Alert dismissed
+  - Tool accessed from dashboard
+
+### Database Monitoring
+- [ ] Query performance monitoring
+- [ ] Slow query alerts
+- [ ] Connection pool monitoring
+- [ ] Table size monitoring
+- [ ] Index usage tracking
+
+### Alerts Setup
+- [ ] Error rate alerts (> 1% errors)
+- [ ] Performance alerts (> 3s load time)
+- [ ] Database alerts (slow queries)
+- [ ] Uptime monitoring
+- [ ] SSL certificate expiry
+
+---
+
+## Communication Plan
+
+### Internal Team
+- [ ] Notify engineering team of deployment
+- [ ] Share documentation links
+- [ ] Schedule demo/walkthrough
+- [ ] Create support documentation
+- [ ] Train customer support team
+
+### Users
+- [ ] Announce new feature (email/in-app)
+- [ ] Create help documentation
+- [ ] Record demo video
+- [ ] Update FAQ
+- [ ] Prepare support responses
+
+### Stakeholders
+- [ ] Demo new dashboard
+- [ ] Share success metrics
+- [ ] Present user feedback
+- [ ] Discuss next iterations
+- [ ] Report on business impact
+
+---
+
+## Known Issues / Limitations
+
+### Current Limitations
+- [ ] Intelligence data must be seeded (not auto-generated yet)
+- [ ] Carrier patterns are static (not updated in real-time)
+- [ ] Mobile view may need refinement
+- [ ] No PDF export yet
+- [ ] No email alerts yet
+
+### Future Enhancements Planned
+- [ ] Auto-generate intelligence from claim analysis
+- [ ] Real-time carrier pattern updates
+- [ ] PDF report generation
+- [ ] Email alert notifications
+- [ ] Historical trend analysis
+- [ ] Predictive analytics
+
+---
+
+## Support Resources
+
+### Documentation
+- Technical: `CLAIM_INTELLIGENCE_DASHBOARD.md`
+- Quick Start: `QUICK_START_GUIDE.md`
+- Layout: `DASHBOARD_LAYOUT.md`
+- Comparison: `BEFORE_AFTER_COMPARISON.md`
+
+### Code References
+- Dashboard: `next-app/src/app/dashboard/command-center/page.tsx`
+- Generator: `next-app/src/lib/generateClaimIntelligence.ts`
+- Migration: `supabase/migrations/20260316_claim_intelligence_dashboard.sql`
+
+### Troubleshooting
+- Check database logs
+- Review application logs
+- Test with demo data seeder
+- Verify RLS policies
+- Check environment variables
+
+---
+
+## Sign-Off
+
+### Pre-Deployment Approval
+- [ ] Engineering Lead: _________________ Date: _______
+- [ ] Product Manager: _________________ Date: _______
+- [ ] QA Lead: ________________________ Date: _______
+
+### Post-Deployment Verification
+- [ ] Deployment Engineer: _____________ Date: _______
+- [ ] QA Verification: _________________ Date: _______
+- [ ] Product Verification: ____________ Date: _______
+
+### Production Release
+- [ ] Release Manager: _________________ Date: _______
+- [ ] Monitoring Confirmed: ____________ Date: _______
+- [ ] Documentation Updated: ___________ Date: _______
+
+---
+
+**Deployment Status:** ⬜ Ready | ⬜ In Progress | ⬜ Complete | ⬜ Rolled Back
+
+**Notes:**
+_______________________________________________________________________
+_______________________________________________________________________
+_______________________________________________________________________
