@@ -1,0 +1,4114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insurance Claim Help for Homeowners — Claim Command Pro</title>
+
+  <!-- PRESERVE ALL EXISTING CSS AND FONTS -->
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #0f172a;
+      --primary-header: #0f172a;
+      --accent: #3b82f6;
+      --middle-blue: #2563eb;
+      --success: #10b981;
+      --text-primary: #f1f5f9;
+      --text-secondary: #d5dee9;
+      --bg-white: #0f172a;
+      --bg-light: #1e293b;
+      --bg-gray: #1a202c;
+      --border: #475569;
+      --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2937;
+      background: #ffffff;
+      letter-spacing: 0.2px;
+    }
+    
+    /* FORCE TEXT COLORS - OVERRIDE ALL OTHER RULES */
+    .hero-section h1,
+    .hero-section li,
+    .hero-section span,
+    .hero-section p {
+      color: #ffffff !important;
+    }
+    
+    section[style*="background:linear-gradient(135deg, #1e3a8a"] h2,
+    section[style*="background:linear-gradient(135deg, #1e3a8a"] p {
+      color: #ffffff !important;
+    }
+    
+    section[style*="background:linear-gradient(135deg, #2563eb"] h2,
+    section[style*="background:linear-gradient(135deg, #2563eb"] p,
+    section[style*="background:linear-gradient(135deg, #2563eb"] span {
+      color: #ffffff !important;
+    }
+    
+    section[style*="background:#0a1e3d"] p {
+      color: #ffffff !important;
+    }
+    
+    /* GLOBAL TYPOGRAPHY + READABILITY */
+    p {
+      line-height: 1.55;
+    }
+    
+    @media (max-width: 768px) {
+      p {
+        font-size: 1rem !important;
+      }
+    }
+    
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 700 !important;
+      margin-bottom: 1.25rem !important;
+      max-width: 750px;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 1.62rem !important;
+      }
+    }
+
+    h3 {
+      font-weight: 600 !important;
+    }
+    
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    @media (min-width: 1400px) {
+      .container {
+        max-width: 1100px !important;
+      }
+    }
+    
+    /* Header */
+    header {
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      gap: 1rem;
+      flex-wrap: nowrap;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0B2545;
+      white-space: nowrap;
+      display: inline-block;
+      flex-shrink: 0;
+      min-width: max-content;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      color: #4b5563;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    
+    .nav-links .btn-primary,
+    .nav-links .btn-secondary,
+    .nav-links button {
+      padding: 0.5rem 1rem !important;
+      font-size: 0.85rem !important;
+      white-space: nowrap;
+      min-width: 110px !important;
+      text-align: center !important;
+    }
+
+    .nav-links a:hover {
+      color: #17BEBB !important;
+    }
+    
+    /* Footer link hover states */
+    footer a:hover {
+      color: #17BEBB !important;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 24px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background: #4b5563;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: translateY(7.5px) rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: translateY(-7.5px) rotate(-45deg);
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: #ffffff;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: 230px;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      z-index: 1000;
+      border: 1px solid #e5e7eb;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    .mobile-menu a,
+    .mobile-menu button {
+      padding: 1rem;
+      text-align: left;
+      color: #4b5563;
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      text-decoration: none;
+    }
+
+    .mobile-menu a:hover,
+    .mobile-menu button:hover {
+      background: #F7F9FC;
+      color: #17BEBB;
+    }
+    
+    .btn-primary {
+      background: #17BEBB !important;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s ease;
+      border: none;
+      display: inline-block;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .btn-primary:hover {
+      background: #13a09d !important;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-secondary {
+      background: transparent !important;
+      color: #4b5563 !important;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1px solid #d1d5db;
+      transition: all 0.2s;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    .btn-secondary:hover {
+      background: #F7F9FC !important;
+      color: #1f2937 !important;
+      border-color: #9ca3af;
+    }
+    
+    .checkout-btn,
+    .primary-btn {
+      font-size: 1.05rem !important;
+      padding: 0.9rem 1.4rem !important;
+      border-radius: 5px !important;
+      background: #17BEBB !important;
+      color: #ffffff !important;
+      font-weight: 600 !important;
+      box-shadow: none !important;
+      border: none !important;
+      transition: background 0.2s ease;
+    }
+    
+    .checkout-btn:hover,
+    .primary-btn:hover {
+      background: #13a09d !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    
+    @media (max-width: 768px) {
+      .checkout-btn,
+      .primary-btn {
+        width: 100% !important;
+      }
+    }
+    
+    /* GLOBAL SECTION SPACING */
+    @media (max-width: 768px) {
+      section {
+        padding: 2rem 0 !important;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      section {
+        padding: 4rem 0 !important;
+      }
+    }
+    
+    /* REDUCE BLUE FATIGUE - ALTERNATING SECTION BACKGROUNDS */
+    
+    .why-section,
+    .tools-section {
+      padding: 4rem 0;
+      background: #ffffff;
+    }
+    
+    @media (max-width: 768px) {
+      .why-section,
+      .tools-section {
+        padding: 3rem 0 !important;
+      }
+    }
+    
+    @media (min-width: 769px) {
+      .why-section,
+      .tools-section {
+        padding: 3rem 0 !important;
+      }
+    }
+    
+    .why-section h2,
+    .tools-section h2,
+    .tools-section h3 {
+      color: #1f2937;
+    }
+    
+    .tools-section h2 {
+      text-align: center;
+    }
+    
+    /* SECTION HEADER VISUAL ANCHOR */
+    section h2 {
+      border-bottom: none;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem !important;
+      text-align: center !important;
+      font-weight: 600 !important;
+    }
+    
+    .why-section h2 {
+      color: #1f2937;
+      text-align: center;
+    }
+    
+    .why-intro {
+      color: #000000;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      max-width: 900px;
+      margin: 1rem auto 2rem;
+      text-align: center;
+    }
+    
+    .hero-subtitle {
+      line-height: 1.35 !important;
+    }
+    
+    .why-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 0;
+      margin: 2rem 0 0;
+    }
+    
+    .why-list li {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-align: center;
+      color: #1f2937;
+      box-shadow: none;
+    }
+    
+    .tools-section {
+      background: #ffffff;
+      border: none;
+    }
+    
+    .tools-intro {
+      color: #4b5563;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      max-width: 900px;
+      margin: 1rem auto 2rem;
+      text-align: center;
+    }
+    
+    .value-highlight-banner {
+      background: #F7F9FC;
+      color: #1f2937;
+      text-align: center;
+      padding: 1.25rem 1.5rem;
+      border-radius: 0.5rem;
+      margin: 2rem auto 2.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+      text-shadow: none;
+      max-width: 600px;
+    }
+    
+    .tool-grid {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      margin-top: 2.5rem;
+    }
+    
+    /* TOOL CARD VISUAL REDUCTION */
+    .tool-card {
+      padding: 1.75rem !important;
+      border-radius: 0.5rem !important;
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      box-shadow: none;
+      text-align: center !important;
+    }
+
+    .tool-card p {
+      line-height: 1.45 !important;
+    }
+
+    @media (max-width: 768px) {
+      .tool-card {
+        padding: 1.15rem !important;
+      }
+    }
+      position: relative;
+      transition: border-color 0.3s ease;
+    }
+    
+    .tool-card:hover {
+      box-shadow: none !important;
+      border-color: #d1d5db !important;
+    }
+    
+    .tool-card h3 {
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+      font-size: 1.15rem !important;
+      text-align: center;
+      font-weight: 600 !important;
+    }
+    
+    .tool-card p {
+      color: #4b5563;
+      margin: 0;
+      line-height: 1.5 !important;
+      font-size: 1rem !important;
+      text-align: center !important;
+    }
+    
+    .value-badge {
+      display: block;
+      background: #F7F9FC;
+      border: 1px solid #e5e7eb;
+      color: #4b5563;
+      border-radius: 999px;
+      padding: 0.25rem 0.8rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin: 0 auto 1rem;
+      white-space: nowrap;
+      text-align: center;
+      width: fit-content;
+    }
+    
+    .testimonials-section {
+      text-align: center;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+      background: #F7F9FC;
+      padding: 4rem 0;
+      border: none;
+    }
+    
+    .testimonials-section h2 {
+      color: #1f2937;
+      margin-bottom: 2rem;
+    }
+    
+    .testimonial-slider {
+      text-align: center;
+      margin-top: 2rem;
+      position: relative;
+      min-height: 120px;
+    }
+    
+    .t-slide {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      position: absolute;
+      width: 100%;
+    }
+    
+    .t-slide.active {
+      opacity: 1;
+      position: relative;
+    }
+    
+    .t-slide .quote {
+      font-size: 1.5rem;
+      color: #1f2937;
+      font-style: italic;
+      margin-bottom: 1rem;
+      text-shadow: none;
+    }
+    
+    .t-slide .author {
+      font-size: 1rem;
+      color: #4b5563;
+      font-style: normal;
+      font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+      
+      nav {
+        position: relative;
+      }
+    }
+    
+    /* Final full-screen-with-breathing-room hero layout */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      min-height: auto !important;
+      padding-top: 5rem !important;
+      padding-bottom: 5rem !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: left;
+      background: linear-gradient(to right, rgba(11, 37, 69, 0.95), rgba(18, 58, 99, 0.95)), url('assets/images/backgrounds/Damage1.jpg') !important;
+      background-size: cover !important;
+      background-position: center !important;
+    }
+    
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      z-index: 1;
+      display: none;
+    }
+    
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      padding: 0 40px;
+    }
+    
+    /* HERO SECTION VISUAL POLISH */
+    .hero-section h1,
+    .hero-title {
+      text-align: center !important;
+      margin: 0 auto !important;
+      font-size: clamp(1.9rem, 4vw, 2.8rem) !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      display: block !important;
+      align-self: center !important;
+      line-height: 1.3 !important;
+      margin-bottom: 1.5rem !important;
+    }
+    
+    .hero-section p,
+    .hero-subtitle,
+    .hero-description {
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      display: block;
+      color: #e8eef5 !important;
+      font-size: 1.1rem !important;
+      max-width: 100% !important;
+      line-height: 1.6 !important;
+      margin-bottom: 1rem !important;
+    }
+    .hero-subtitle span {
+      display: block;
+    }
+    .hero-subtitle span:not(:first-child) {
+      margin-top: -4px;
+    }
+    
+    .hero-callout {
+      margin-top: 1.4rem !important;
+    }
+    
+    .hero-buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .hero-testimonial {
+      margin-top: 1.75rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-testimonial blockquote {
+      font-size: 1.76rem !important;
+    }
+    .hero-testimonial-author {
+      font-size: 1.76rem !important;
+    }
+    
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
+    
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+    }
+    
+    /* Mobile centering */
+    @media (max-width: 768px) {
+      .hero-section {
+        min-height: auto !important;
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+        display:flex !important;
+        justify-content:center !important;
+        align-items:center !important;
+        text-align:center !important;
+      }
+      .hero-inner {
+        padding: 0 20px !important;
+      }
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.625rem !important;
+      }
+      .hero-buttons a {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .hero-title {
+        font-size: 1.6rem !important;
+        white-space: normal !important;
+        text-align:center !important;
+      }
+      .hero-section p,
+      .hero-subtitle,
+      .hero-description {
+        text-align: center !important;
+      }
+      .hero-testimonial blockquote {
+        font-size: 1.148rem !important;
+      }
+      .hero-testimonial-author {
+        font-size: 1.148rem !important;
+      }
+      .hero-testimonial {
+        margin-top: 1.6rem !important;
+        text-align: center !important;
+      }
+      .advanced-tools-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .hero-section {
+        padding-top: 7.65rem !important;
+        padding-bottom: 7.65rem !important;
+      }
+    }
+
+    /* GLOBAL SPACING FIX */
+    /* Desktop spacing */
+    @media (min-width: 769px) {
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding: 3.75rem 0 !important;
+      }
+    }
+
+    /* Tablet spacing */
+    @media (min-width: 481px) and (max-width: 768px) {
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding: 2.75rem 0 !important;
+      }
+    }
+
+    /* Mobile spacing */
+    @media (max-width: 480px) {
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding: 1.656rem 0 !important;
+      }
+    }
+
+    /* SECTION CONTRAST OPTIMIZATION */
+    section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta):not(.trust-bar):nth-of-type(even) {
+      background: #F7F9FC !important;
+    }
+
+    section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta):not(.trust-bar):nth-of-type(odd) {
+      background: #ffffff !important;
+    }
+
+    /* GLOBAL MOBILE TIGHTENING */
+    @media (max-width: 768px) {
+      
+      /* Reduce section padding to 1.8rem on mobile (~10% reduction) */
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding: 1.8rem 0 !important;
+      }
+
+      /* Reduce FAQ card padding by 0.5rem on mobile */
+      #faq .tool-card {
+        padding: 1rem !important;
+      }
+
+      /* Add bottom margin to Client Results section on mobile */
+      .client-results-section {
+        margin-bottom: 1rem !important;
+      }
+
+      /* Reduce testimonials margin */
+      .testimonials-section {
+        margin-top: 1rem !important;
+      }
+
+      /* Make all buttons full-width on mobile */
+      .checkout-btn,
+      .primary-btn,
+      .btn-primary {
+        width: 100% !important;
+      }
+      
+      /* Reduce why-section and tools-section padding by 25% */
+      .why-section,
+      .tools-section {
+        padding: 3rem 0 !important;
+      }
+      
+      /* Tighten grid spacing - one column */
+      .tool-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.9rem !important;
+      }
+      h2 {
+        margin-bottom: 0.9rem !important;
+      }
+      p {
+        max-width: 95% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+      
+      /* Reduce h2 sizes by ~10% */
+      h2 {
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+      }
+      
+      /* Reduce tool-card h3 font-size slightly */
+      .tool-card h3 {
+        font-size: 1.2rem !important;
+      }
+      
+      /* Reduce paragraph size in cards */
+      .tool-card p {
+        font-size: 1rem !important;
+      }
+      
+      /* Limit max-width on long text */
+      .why-intro,
+      .hero-subtitle,
+      .hero-description {
+        max-width: 95% !important;
+      }
+    }
+
+    /* PRICING BLOCK DOMINANCE (HIGH IMPACT) */
+    #pricing .tool-card {
+      border-radius: 0.5rem !important;
+      padding: 2.5rem !important;
+      background: #ffffff !important;
+      border: 1px solid #e5e7eb !important;
+      box-shadow: none !important;
+    }
+
+    /* Make the pricing number bigger + centered */
+    #pricing .tool-card p strong {
+      font-size: 2.6rem !important;
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+
+    /* Improve the feature list readability */
+    #pricing ul li {
+      margin: 0.5rem 0 !important;
+      font-size: 1rem !important;
+      line-height: 1.4 !important;
+    }
+
+    /* Make the CTA button full-width on mobile */
+    @media (max-width: 768px) {
+      #pricing .checkout-btn {
+        width: 100% !important;
+        font-size: 1.1rem !important;
+        padding: 1rem !important;
+      }
+    }
+
+    /* ============================
+       STICKY MOBILE CTA (BOTTOM)
+       ============================ */
+
+    .sticky-mobile-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #17BEBB;
+      padding: 0.775rem 1rem;
+      text-align: center;
+      z-index: 9999;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1) !important;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sticky-mobile-cta .sticky-cta-btn {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #ffffff !important;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .sticky-mobile-cta {
+        display: flex;
+      }
+    }
+
+    /* ============================
+       FLOATING DESKTOP CTA (RIGHT)
+       ============================ */
+
+    .floating-desktop-cta {
+      position: fixed;
+      right: 25px;
+      bottom: 50px;
+      z-index: 9998;
+      display: none;
+    }
+
+    .floating-desktop-cta .floating-cta-btn {
+      background: #17BEBB;
+      color: #ffffff !important;
+      padding: 0.9rem 1.2rem;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    @media (min-width: 769px) {
+      .floating-desktop-cta {
+        display: block;
+      }
+    }
+
+    /* 9. COMPARISON TABLE POLISH */
+    .comparison-table {
+      border-spacing: 0;
+    }
+    .comparison-table td,
+    .comparison-table th {
+      padding: 0.9rem !important;
+      line-height: 1.4 !important;
+    }
+
+    .comparison-table tbody tr:nth-child(odd) {
+      background: #F7F9FC !important;
+    }
+
+    .comparison-table tbody tr:nth-child(even) {
+      background: #ffffff !important;
+    }
+
+    @media (min-width: 769px) {
+      .comparison-table tbody tr:hover {
+        background: #F7F9FC !important;
+      }
+      .comparison-table td,
+      .comparison-table th {
+        padding-left: 1.15rem !important;
+        padding-right: 1.15rem !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .comparison-table td,
+      .comparison-table th {
+        font-size: 0.95rem !important;
+        padding: 0.8rem 0.6rem !important;
+      }
+      .comparison-table {
+        font-size: 0.9rem !important;
+      }
+    }
+
+    /* ============================
+       UX/UI ENHANCEMENTS
+       ============================ */
+
+    /* 1. HERO SECTION IMPROVEMENTS */
+    @media (max-width: 768px) {
+      .hero-section {
+        padding-top: 2.5rem !important;
+        padding-bottom: 2.5rem !important;
+      }
+      .hero-testimonial {
+        margin-top: 1.5rem !important;
+        padding: 0 1rem;
+      }
+    }
+    .hero-subtitle {
+      opacity: 0.95 !important;
+      font-weight: 500 !important;
+    }
+
+
+    /* 3. GLOBAL MOBILE TIGHTENING */
+    @media (max-width: 768px) {
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding: 1.6rem 0 !important;
+      }
+      .tool-grid {
+        gap: 0.8rem !important;
+      }
+      .tool-card {
+        padding: 1rem !important;
+      }
+    }
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.45rem !important;
+      }
+    }
+
+    /* 4. REAL CLAIM RESULTS VISUALS */
+    section.container:nth-of-type(3) .tool-card {
+      border: 1px solid #e5e7eb !important;
+      box-shadow: none !important;
+    }
+    @media (min-width: 769px) {
+      section.container:nth-of-type(3) .tool-grid {
+        gap: 2.5rem !important;
+      }
+    }
+    @media (max-width: 768px) {
+      section.container:nth-of-type(3) .tool-card p {
+        line-height: 1.5 !important;
+      }
+    }
+
+    /* 5. CLAIM JOURNEY SECTION */
+    .claim-journey {
+      padding: 3rem 0 !important;
+    }
+    .claim-journey h3 {
+      font-size: 1.15rem !important;
+    }
+    .claim-journey p {
+      font-size: 1.05rem !important;
+    }
+    @media (max-width: 768px) {
+      .claim-journey > div {
+        flex-direction: column !important;
+        align-items: center !important;
+      }
+    }
+
+    /* 6. WHAT Claim Command Pro AI DOES SECTION */
+    section.container:nth-of-type(5) .tool-card {
+      min-height: 150px !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: none !important;
+    }
+    section.container:nth-of-type(5) .tool-card p {
+      margin: 0.3rem 0 !important;
+    }
+
+    /* 8. BEFORE & AFTER SECTION */
+    section.container .tool-card[style*="background: #93c5fd"] {
+      background: #e0f2fe !important;
+      border: 1px solid #bae6fd !important;
+    }
+    section.container .tool-card[style*="background: #374151"] {
+      background: #f3f4f6 !important;
+      border: 1px solid #d1d5db !important;
+    }
+    @media (max-width: 768px) {
+      section.container[style*="background: #1a202c"] .tool-grid {
+        gap: 1.8rem !important;
+      }
+    }
+
+    /* 8. COMPARISON TABLE IMPROVEMENTS */
+    @media (max-width: 768px) {
+      .comparison-table td,
+      .comparison-table th {
+        padding: 0.8rem !important;
+        font-size: 0.95rem !important;
+      }
+      .comparison-table tbody tr {
+        margin: 0.2rem 0 !important;
+      }
+    }
+    .comparison-table tbody tr:nth-child(odd) {
+      background: #F7F9FC !important;
+    }
+
+    /* 9. WHY INSURERS RESPOND / WHY IT WORKS */
+    .insurers-respond ul li,
+    .why-list li {
+      margin: 0.8rem 0 !important;
+      padding-left: 1.5rem !important;
+    }
+    @media (max-width: 768px) {
+      .insurers-respond .tool-grid,
+      .why-list {
+        gap: 0.8rem !important;
+      }
+    }
+
+    /* 10. THE Claim Command Pro SYSTEM SECTION */
+    section.container:nth-of-type(10) {
+      padding: 3rem 0 !important;
+    }
+    section.container:nth-of-type(10) ul li {
+      margin: 0.6rem 0 !important;
+    }
+    section.container:nth-of-type(10) p {
+      margin-top: 1rem !important;
+    }
+
+    /* 11. ROI CALCULATOR SECTION */
+    .roi-box input {
+      padding: 0.75rem !important;
+    }
+    .roi-box label {
+      font-size: 1.05rem !important;
+    }
+    .roi-box {
+      border: 1px solid #e5e7eb !important;
+      background: #ffffff !important;
+    }
+
+    /* 12. CLIENT RESULTS MINI-STRIP */
+    .client-results-section .tool-grid {
+      gap: 1.5rem !important;
+    }
+    .client-results-section .tool-card p {
+      font-weight: 700 !important;
+    }
+    @media (max-width: 768px) {
+      .client-results-section .tool-card {
+        padding: 0.9rem !important;
+      }
+    }
+
+    /* 13. FAQ + BELIEF LAYER */
+    #faq .tool-card {
+      padding: 1.35rem !important;
+      margin-bottom: 1rem !important;
+    }
+    @media (max-width: 768px) {
+      #faq {
+        padding: 1.5rem 0 !important;
+      }
+      #faq .tool-card {
+        padding: 1rem !important;
+        margin-bottom: 0.8rem !important;
+      }
+    }
+
+    /* 14. STICKY MOBILE CTA + FLOATING DESKTOP CTA */
+    .sticky-mobile-cta {
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3) !important;
+    }
+    .sticky-mobile-cta .sticky-cta-btn {
+      font-weight: 700 !important;
+    }
+    .floating-desktop-cta .floating-cta-btn {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      font-weight: 700 !important;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding-bottom: 75px !important;
+      }
+    }
+    @media (min-width: 769px) {
+      .floating-desktop-cta {
+        bottom: 50px !important;
+      }
+      .hero-buttons {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* 13. FOOTER TIGHTENING */
+    @media (max-width: 768px) {
+      footer {
+        padding: 1.6rem 0 !important;
+      }
+      footer .footer-section {
+        margin-bottom: 1.5rem !important;
+      }
+    }
+    @media (min-width: 769px) {
+      footer a {
+        margin: 0 1rem !important;
+      }
+    }
+    footer a:hover {
+      color: #7dd3fc !important;
+      text-decoration: underline;
+    }
+
+    /* ============================
+       ADDITIONAL UI/UX ENHANCEMENTS
+       ============================ */
+
+    /* FINAL 8% POLISH */
+    
+    /* 1. GLOBAL SPACING HARMONIZATION - Already applied above */
+    
+    /* 2. HEADER HIERARCHY FIX - Already applied above */
+    
+    /* 3. CARD ALIGNMENT FIXES - Already applied above */
+    
+    /* 4. MOBILE TIGHTENING */
+    @media (max-width: 768px) {
+      section:not(.hero-section):not(header):not(footer):not(.sticky-mobile-cta):not(.floating-desktop-cta) {
+        padding-top: 1.7rem !important;
+        padding-bottom: 1.7rem !important;
+      }
+      .tool-grid {
+        gap: 1.1rem !important;
+      }
+      ul li, ol li {
+        margin: 0.45rem 0 !important;
+      }
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    }
+
+    /* 3. TRUST BAR */
+    .trust-bar p {
+      font-size: 0.95rem;
+      font-weight: 700 !important;
+    }
+    @media (max-width: 768px) {
+      .trust-bar {
+        padding: 0.125rem 0 !important;
+      }
+      .trust-bar .container {
+        gap: 1rem !important;
+      }
+    }
+
+    /* 4. BEFORE & AFTER SECTION */
+    @media (max-width: 768px) {
+      section[style*="background: #1a202c"] .tool-grid {
+        gap: 1.8rem !important;
+      }
+    }
+    section[style*="background: #1a202c"] .tool-card {
+      background: inherit !important;
+    }
+
+    /* 5. CLAIM JOURNEY SECTION POLISH */
+    .claim-journey > div > div {
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      text-align: center !important;
+    }
+    .claim-journey h3 {
+      margin-bottom: 1.25rem !important;
+    }
+    @media (max-width: 768px) {
+      .claim-journey > div {
+        gap: 1.2rem !important;
+      }
+    }
+
+    /* 6. WHAT YOU GET IMMEDIATELY SECTION */
+    .immediate-access ul {
+      max-width: 700px;
+      margin: 0 auto !important;
+    }
+    .immediate-access ul li {
+      margin-bottom: 0.75rem !important;
+    }
+    @media (max-width: 768px) {
+      .immediate-access ul {
+        font-size: 1.15rem !important;
+      }
+    }
+
+    /* 7. WHAT Claim Command Pro AI DOES (5 cards) */
+    section.container:nth-of-type(5) .tool-card {
+      min-height: 150px !important;
+    }
+    section.container:nth-of-type(5) .tool-card:hover {
+      box-shadow: none !important;
+    }
+    @media (max-width: 768px) {
+      section.container:nth-of-type(5) .tool-grid {
+        gap: 0.9rem !important;
+      }
+    }
+
+    /* 8. REAL CLAIM RESULTS (TOP SECTION) */
+    @media (min-width: 769px) {
+      section.container:nth-of-type(3) .tool-card {
+        margin: 0.5rem !important;
+      }
+    }
+    @media (max-width: 768px) {
+      section.container:nth-of-type(3) .tool-card p {
+        line-height: 1.45 !important;
+      }
+    }
+
+    /* 10. INSURERS RESPOND + WHY IT WORKS */
+    .insurers-respond ul li,
+    .why-list li {
+      margin: 0.75rem 0 !important;
+      padding-left: 1.5rem !important;
+      line-height: 1.65 !important;
+    }
+
+    /* 11. BELIEF LAYER + FAQ FINAL POLISH */
+    #faq .tool-card,
+    section[style*="background: #1a202c"] .tool-card:not([style*="background: #93c5fd"]):not([style*="background: #374151"]) {
+      padding: 1.26rem !important;
+      padding-top: 1.1rem !important;
+      padding-bottom: 1.1rem !important;
+      border: 1px solid #e5e7eb !important;
+      box-shadow: none !important;
+    }
+    #faq h2,
+    section[style*="background: #1a202c"] h2 {
+      font-weight: 700 !important;
+    }
+    @media (max-width: 768px) {
+      #faq .tool-card,
+      section[style*="background: #1a202c"] .tool-card {
+        padding: 1.1rem 0.9rem !important;
+        margin-bottom: 0.9rem !important;
+      }
+    }
+
+    /* 11. STICKY CTA & FLOATING CTA */
+    @media (max-width: 768px) {
+      .hero-buttons {
+        margin-bottom: 70px !important;
+      }
+      body {
+        padding-bottom: 70px !important;
+      }
+    }
+    .floating-desktop-cta {
+      z-index: 9997 !important;
+    }
+
+    /* 12. HERO SECTION MICRO-CLEANUP */
+    .hero-title {
+      max-width: 100% !important;
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .hero-description {
+      max-width: 620px !important;
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .hero-subtitle {
+      max-width: 620px !important;
+      text-align: center !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    /* 13. GLOBAL VISUAL POLISH */
+    .tool-card {
+      box-shadow: none !important;
+    }
+    .tool-card:hover {
+      box-shadow: none !important;
+    }
+    .tool-card {
+      border: 1px solid #e5e7eb !important;
+    }
+
+    /* SUCCESS STORIES 2x2 GRID */
+    @media (max-width: 768px) {
+      .success-stories-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+
+  </style>
+
+  <meta name="description" content="Insurance claim help for homeowners. Get policy analysis, evidence checklists, professional templates, and step-by-step guidance to prove your claim. $149.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": "Claim Command Pro",
+    "description": "Insurance claim help for homeowners. Policy analysis, evidence checklists, and professional templates to prove your claim.",
+    "brand": { "@type": "Brand", "name": "Claim Command Pro" },
+    "offers": { "@type": "Offer", "price": "149", "priceCurrency": "USD" },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "156" }
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">Claim Command Pro</div>
+
+        <div class="nav-links">
+          <a href="#pricing" data-en="Pricing" data-es="Precios">Pricing</a>
+          <a href="#faq" data-en="FAQ" data-es="Preguntas Frecuentes">FAQ</a>
+          <a href="#contact" data-en="Contact" data-es="Contacto">Contact</a>
+          <a href="/marketing/pricing.html" class="btn-primary checkout-btn" style="min-width:110px; text-align:center;" data-en="Start Review" data-es="Iniciar Revisión">Start Review</a>
+          <a href="app/login.html" class="btn-primary" style="min-width:110px; text-align:center;" data-en="Login" data-es="Iniciar Sesión">Login</a>
+          <!-- <a href="professional-login.html" class="btn-secondary" data-en="Professional Dashboard" data-es="Panel Profesional">Professional Dashboard</a> -->
+          <button onclick="toggleLanguage()" class="btn-primary" id="lang-toggle-btn" style="min-width:110px; text-align:center;" data-en="For Spanish" data-es="For English">For Spanish</button>
+        </div>
+
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="mobile-menu" id="mobileMenu">
+          <a href="#pricing" data-en="Pricing" data-es="Precios">Pricing</a>
+          <a href="#faq" data-en="FAQ" data-es="Preguntas Frecuentes">FAQ</a>
+          <a href="#contact" data-en="Contact" data-es="Contacto">Contact</a>
+          <a href="/marketing/pricing.html" data-en="Start Review" data-es="Iniciar Revisión">Start Review</a>
+          <a href="app/login.html" data-en="Login" data-es="Iniciar Sesión">Login</a>
+          <!-- <a href="professional-login.html" data-en="Professional Dashboard" data-es="Panel Profesional">Professional Dashboard</a> -->
+          <button onclick="toggleLanguage()" data-en="For Spanish" data-es="For English">For Spanish</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section" style="padding:5rem 0 !important;">
+    <div class="hero-overlay"></div>
+    <div class="container" style="position:relative; z-index:2;">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; max-width:1200px; margin:0 auto;">
+        
+        <!-- Left Side: Headline and Bullets -->
+        <div>
+      <h1 style="font-size:clamp(2rem, 4vw, 3rem); font-weight:700; color:#ffffff !important; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7); line-height:1.3; margin-bottom:2rem;">
+        Why You Need<br>Claim Command Pro
+      </h1>
+
+          <ul style="list-style:none; padding:0; margin:0;">
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:1.25rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;"><strong style="color:#fde047 !important;">Insurance claims are frequently underpaid</strong> — Claim Command Pro helps detect where money may be missing from your claim.</span>
+            </li>
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:1.25rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;">Without proper documentation and analysis, policyholders often accept estimates that do not reflect the true cost of repair.</span>
+            </li>
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:1.25rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;">Insurance companies expect policyholders to understand estimates, policy language, and repair scope — even though most people have never handled a claim before.</span>
+            </li>
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:1.25rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;">Claim Command Pro organizes your documents, estimates, and policy information so you can manage the claim correctly.</span>
+            </li>
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:1.25rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;">If missing damage, coverage triggers, or documentation are not identified early, they often never get paid.</span>
+            </li>
+            <li style="display:flex; align-items:start; gap:0.75rem; margin-bottom:2rem; color:#ffffff !important; font-size:1.125rem; line-height:1.6;">
+              <span style="color:#fbbf24 !important; font-weight:700; flex-shrink:0; font-size:1.5rem;">•</span>
+              <span style="color:#ffffff !important;"><strong style="color:#fde047 !important;">Claim Command Pro helps ensure you do not unknowingly leave money with the insurance company.</strong></span>
+            </li>
+          </ul>
+
+          <a href="/app/analyze-claim.html" class="btn-primary checkout-btn" style="font-size:1.25rem; padding:1.25rem 2.5rem; display:inline-block;">
+            Analyze My Claim
+          </a>
+        </div>
+
+        <!-- Right Side: Dashboard Visual -->
+        <div>
+          <div style="background:#ffffff; border:4px solid #d1d5db; border-radius:12px; box-shadow:0 20px 40px rgba(0,0,0,0.3); overflow:hidden;">
+            
+            <!-- Browser Chrome -->
+            <div style="background:#e5e7eb; padding:0.75rem 1rem; border-bottom:2px solid #d1d5db; display:flex; align-items:center; gap:0.75rem;">
+              <div style="display:flex; gap:0.5rem;">
+                <div style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:12px; height:12px; border-radius:50%; background:#f59e0b;"></div>
+                <div style="width:12px; height:12px; border-radius:50%; background:#10b981;"></div>
+              </div>
+              <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.5rem 1rem; font-size:0.875rem; color:#6b7280;">
+                claimcommandpro.com/dashboard
+              </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div style="padding:2rem; background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+              <h3 style="font-size:1.75rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+                Claim Command Center
+              </h3>
+
+              <!-- Financial Cards -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+                <div style="background:#ffffff; border:2px solid #d1d5db; border-radius:8px; padding:1.5rem; text-align:center;">
+                  <p style="font-size:0.75rem; color:#6b7280; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">Insurance Estimate</p>
+                  <p style="font-size:2rem; font-weight:700; color:#1f2937; margin:0;">$18,400</p>
+                </div>
+                <div style="background:#ffffff; border:2px solid #10b981; border-radius:8px; padding:1.5rem; text-align:center;">
+                  <p style="font-size:0.75rem; color:#6b7280; font-weight:700; text-transform:uppercase; margin-bottom:0.5rem;">Verified Scope</p>
+                  <p style="font-size:2rem; font-weight:700; color:#10b981; margin:0;">$36,750</p>
+                </div>
+              </div>
+
+              <!-- Gap Alert -->
+              <div style="background:#fef2f2; border:3px solid #dc2626; border-radius:8px; padding:1.5rem; margin-bottom:1.5rem;">
+                <div style="display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem;">
+                  <span style="font-size:2rem;">⚠️</span>
+                  <h4 style="font-size:1.25rem; font-weight:700; color:#991b1b; margin:0;">CLAIM GAP DETECTED</h4>
+                </div>
+                <p style="font-size:2.5rem; font-weight:700; color:#dc2626; margin:0;">$18,350</p>
+              </div>
+
+              <!-- Issues -->
+              <div style="background:#ffffff; border:2px solid #d1d5db; border-radius:8px; padding:1.25rem;">
+                <p style="font-size:0.875rem; font-weight:700; color:#1f2937; text-transform:uppercase; margin-bottom:1rem;">Issues Identified:</p>
+                <div style="display:flex; flex-direction:column; gap:0.5rem; font-size:0.875rem;">
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="width:8px; height:8px; background:#f59e0b; border-radius:50%;"></span>
+                    <span style="color:#4b5563;">10 Missing Scope Items</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="width:8px; height:8px; background:#fb923c; border-radius:50%;"></span>
+                    <span style="color:#4b5563;">3 Pricing Discrepancies</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <span style="width:8px; height:8px; background:#dc2626; border-radius:50%;"></span>
+                    <span style="color:#4b5563;">2 Coverage Issues</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile Responsive Hero -->
+  <style>
+    @media (max-width: 768px) {
+      .hero-section > .container > div {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+    }
+  </style>
+
+  <!-- TRUST BAR -->
+  <section style="background:#0a1e3d; padding:1.5rem 0;">
+    <div class="container">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:3rem; max-width:1200px; margin:0 auto;">
+        
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:1.25rem;">🔒</span>
+          </div>
+          <p style="font-weight:600; color:#ffffff; margin:0; font-size:0.95rem; white-space:nowrap;">
+            Secure Checkout
+          </p>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:1.25rem;">👥</span>
+          </div>
+          <p style="font-weight:600; color:#ffffff; margin:0; font-size:0.95rem; white-space:nowrap;">
+            Used by 2,400+ Policyholders
+          </p>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:1.25rem;">✅</span>
+          </div>
+          <p style="font-weight:600; color:#ffffff; margin:0; font-size:0.95rem; white-space:nowrap;">
+            Structured to Insurer Standards
+          </p>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+          <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:1.25rem;">📊</span>
+          </div>
+          <p style="font-weight:600; color:#ffffff; margin:0; font-size:0.95rem; white-space:nowrap;">
+            Industry Claim Methodology
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CLAIM UNDERPAYMENT VISUAL -->
+  <section class="container" style="padding:5rem 0; background:#ffffff;">
+    <div style="max-width:900px; margin:0 auto; text-align:center;">
+      <h2 style="font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:2rem;">
+        Insurance Claims Are Frequently Underpaid
+      </h2>
+      
+      <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:1.5rem; max-width:750px; margin-left:auto; margin-right:auto;">
+        Most policyholders assume the insurance estimate represents the full cost of repair.
+      </p>
+      
+      <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:1.5rem; max-width:750px; margin-left:auto; margin-right:auto;">
+        In reality, important damage, scope items, or policy coverage triggers are often missing from the estimate.
+      </p>
+      
+      <p style="font-size:1.25rem; color:#1f2937; font-weight:600; line-height:1.7; margin-bottom:3rem; max-width:750px; margin-left:auto; margin-right:auto;">
+        Claim Command Pro helps identify and document these gaps before a claim closes.
+      </p>
+
+      <!-- Financial Comparison Visual -->
+      <div style="background:linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border:4px solid #d1d5db; border-radius:12px; padding:3rem; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem; align-items:end; margin-bottom:2rem;">
+          
+          <!-- Insurance Estimate -->
+          <div style="text-align:center;">
+            <div style="background:#f3f4f6; border:3px solid #9ca3af; border-radius:8px; padding:2rem;">
+              <p style="font-size:1rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+                Insurance Estimate
+              </p>
+              <p style="font-size:3.5rem; font-weight:700; color:#1f2937; margin:0; line-height:1;">
+                $18,200
+              </p>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div style="text-align:center;">
+            <span style="font-size:3rem; color:#dc2626;">→</span>
+          </div>
+
+          <!-- Actual Repair Cost -->
+          <div style="text-align:center;">
+            <div style="background:#f0fdf4; border:3px solid #10b981; border-radius:8px; padding:2rem;">
+              <p style="font-size:1rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+                Actual Repair Cost
+              </p>
+              <p style="font-size:3.5rem; font-weight:700; color:#10b981; margin:0; line-height:1;">
+                $36,750
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Unpaid Damage -->
+        <div style="background:#fef2f2; border:4px solid #dc2626; border-radius:12px; padding:2.5rem;">
+          <div style="display:flex; align-items:center; justify-content:center; gap:1rem; margin-bottom:1rem;">
+            <span style="font-size:3rem;">⚠️</span>
+            <h3 style="font-size:2rem; font-weight:700; color:#991b1b; text-transform:uppercase; letter-spacing:0.05em; margin:0;">
+              Unpaid Damage
+            </h3>
+          </div>
+          <p style="font-size:5rem; font-weight:700; color:#dc2626; text-align:center; margin:0; line-height:1;">
+            $18,550
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF SECTION -->
+  <section class="container" style="padding:5rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      Policyholders Use Claim Command Pro To Take Control of Their Claims
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="font-size:3rem; margin-bottom:1.5rem;">💡</div>
+        <p style="font-size:1.25rem; color:#1f2937; font-style:italic; line-height:1.6; margin:0;">
+          "Helped me identify thousands missing from my estimate."
+        </p>
+      </div>
+
+      <div style="background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border:3px solid #86efac; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="font-size:3rem; margin-bottom:1.5rem;">🔍</div>
+        <p style="font-size:1.25rem; color:#1f2937; font-style:italic; line-height:1.6; margin:0;">
+          "I finally understood what my insurance company was doing."
+        </p>
+      </div>
+
+      <div style="background:linear-gradient(135deg, #fef3c7 0%, #ffffff 100%); border:3px solid #fde047; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="font-size:3rem; margin-bottom:1.5rem;">📋</div>
+        <p style="font-size:1.25rem; color:#1f2937; font-style:italic; line-height:1.6; margin:0;">
+          "Claim Command Pro showed me exactly what needed to be documented."
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TOOLS IN CLAIM COMMAND PRO -->
+  <section class="container" style="padding:5rem 0; background:#f9fafb;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+      Tools Inside Claim Command Pro
+    </h2>
+    
+    <p style="text-align:center; font-size:1.25rem; color:#4b5563; margin-bottom:3rem; max-width:800px; margin-left:auto; margin-right:auto;">
+      A complete system for analyzing, documenting, and managing your insurance claim.
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <!-- Estimate Review Engine -->
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
+          <span style="font-size:2rem;">📊</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Estimate Review Engine
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Analyzes insurance estimates to identify missing scope and suppressed pricing.
+        </p>
+      </div>
+
+      <!-- Policy Coverage Analyzer -->
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#10b981; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
+          <span style="font-size:2rem;">🛡️</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Policy Coverage Analyzer
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Identifies coverage triggers and applicable policy provisions.
+        </p>
+      </div>
+
+      <!-- Claim Command Center Dashboard -->
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#f59e0b; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
+          <span style="font-size:2rem;">📱</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Claim Command Center Dashboard
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Organizes documents, claim activity, and analysis in one place.
+        </p>
+      </div>
+
+      <!-- Claim Documentation System -->
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#8b5cf6; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;">
+          <span style="font-size:2rem;">📁</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Claim Documentation System
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Helps structure the information needed to support claim corrections.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FREE POLICY ANALYSIS SECTION -->
+  <section class="container" style="padding:5rem 0; background:linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div style="width:96px; height:96px; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:50%; border:4px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 2rem; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        <span style="font-size:3rem;">🛡️</span>
+      </div>
+
+      <h2 style="font-size:3rem; font-weight:700; color:#ffffff !important; margin-bottom:2rem;">
+        Start With a Free Policy Analysis
+      </h2>
+      
+      <p style="font-size:1.5rem; color:#dbeafe !important; margin-bottom:2rem; font-weight:500; line-height:1.6;">
+        Upload your policy and Claim Command Pro identifies relevant coverage sections that may apply to the claim.
+      </p>
+
+      <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; margin-bottom:2.5rem;">
+        <p style="font-size:1.25rem; color:#ffffff !important; line-height:1.7; margin:0;">
+          Users upload their policy and Claim Command Pro identifies relevant coverage sections that may apply to the claim.
+        </p>
+      </div>
+
+      <a href="/app/free-policy-analysis.html" class="btn-primary" style="background:#ffffff !important; color:#1e3a8a !important; font-size:1.5rem; padding:1.5rem 3rem; display:inline-block; font-weight:700; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        Start Free Policy Analysis
+      </a>
+    </div>
+  </section>
+
+  <!-- OLD SECTIONS HIDDEN -->
+  <div style="display:none;">
+  <section class="container" style="padding:4rem 0; background:#f9fafb;">
+    <h2 style="text-align:center; font-size:2.5rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      Real Claim Recoveries
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+          Water Damage Claim
+        </h3>
+        <div style="display:grid; gap:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#6b7280;">Insurance Offer:</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#1f2937;">$18,200</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#6b7280;">Actual Repair Cost:</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#1f2937;">$36,750</span>
+          </div>
+          <div style="border-top:3px solid #10b981; padding-top:1rem; background:#f0fdf4; border-radius:8px; padding:1.5rem; margin-top:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.05em;">Recovered:</span>
+              <span style="font-size:2.5rem; font-weight:700; color:#10b981;">+$18,550</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+          Roof Damage Claim
+        </h3>
+        <div style="display:grid; gap:1rem;">
+          <div style="background:#fef2f2; border:2px solid #fecaca; border-radius:8px; padding:1.5rem;">
+            <p style="font-size:0.875rem; font-weight:700; color:#991b1b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">
+              Initial Status
+            </p>
+            <p style="font-size:1.75rem; font-weight:700; color:#dc2626; margin:0;">
+              Claim Denied
+            </p>
+          </div>
+          <div style="background:#f0fdf4; border:2px solid #86efac; border-radius:8px; padding:1.5rem;">
+            <p style="font-size:0.875rem; font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">
+              Final Payment
+            </p>
+            <p style="font-size:2.5rem; font-weight:700; color:#10b981; margin:0;">
+              $42,300
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+          Fire Damage Claim
+        </h3>
+        <div style="display:grid; gap:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#6b7280;">Insurance Offer:</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#1f2937;">$15,000</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#6b7280;">Actual Repair Cost:</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#1f2937;">$67,000</span>
+          </div>
+          <div style="border-top:3px solid #10b981; padding-top:1rem; background:#f0fdf4; border-radius:8px; padding:1.5rem; margin-top:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.05em;">Recovered:</span>
+              <span style="font-size:2.5rem; font-weight:700; color:#10b981;">+$52,000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+          Wind Damage Claim
+        </h3>
+        <div style="display:grid; gap:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="color:#6b7280;">Insurance Offer:</span>
+            <span style="font-size:1.5rem; font-weight:700; color:#1f2937;">$9,800</span>
+          </div>
+          <div style="background:#f0fdf4; border:2px solid #86efac; border-radius:8px; padding:1.5rem; margin-top:0.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; color:#065f46; text-transform:uppercase; letter-spacing:0.05em;">Revised Payment:</span>
+              <span style="font-size:2.5rem; font-weight:700; color:#10b981;">$24,750</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: TOOLS IN CLAIM COMMAND PRO -->
+  <section class="container" style="padding:4rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.5rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      Tools in Claim Command Pro
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="display:flex; align-items:start; gap:1.5rem;">
+          <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:2rem;">🧠</span>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Policy Intelligence Engine
+            </h3>
+            <p style="color:#4b5563; margin:0; line-height:1.6;">
+              Extracts coverage triggers, endorsements, limits and exclusions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="display:flex; align-items:start; gap:1.5rem;">
+          <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:2rem;">⚖️</span>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Estimate Comparison Engine
+            </h3>
+            <p style="color:#4b5563; margin:0; line-height:1.6;">
+              Line-by-line estimate comparison detecting missing scope and pricing gaps.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="display:flex; align-items:start; gap:1.5rem;">
+          <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:2rem;">📄</span>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Claim Documentation Engine
+            </h3>
+            <p style="color:#4b5563; margin:0; line-height:1.6;">
+              Generates Proof of Loss forms, supplement letters, appeal templates and evidence checklists.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="display:flex; align-items:start; gap:1.5rem;">
+          <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-size:2rem;">📍</span>
+          </div>
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Claim Process Guidance
+            </h3>
+            <p style="color:#4b5563; margin:0; line-height:1.6;">
+              Step-by-step guidance for inspections, supplements and escalation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+  </div>
+  <!-- END HIDDEN OLD SECTIONS -->
+
+  <!-- OLD DUPLICATE SECTION 5 - HIDDEN -->
+  <div style="display:none;">
+  <section class="container" style="padding:4rem 0; background:linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div style="width:80px; height:80px; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:50%; border:4px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 2rem;">
+        <span style="font-size:2.5rem;">🛡️</span>
+      </div>
+
+      <h2 style="font-size:3rem; font-weight:700; color:#ffffff; margin-bottom:1.5rem;">
+        Free Policy Analysis
+      </h2>
+      
+      <p style="font-size:1.25rem; color:#dbeafe; margin-bottom:2.5rem;">
+        Upload your insurance policy and instantly identify:
+      </p>
+
+      <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; margin-bottom:2.5rem;">
+        <ul style="list-style:none; padding:0; margin:0; text-align:left;">
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; color:#ffffff; font-size:1.25rem;">
+            <span style="color:#34d399; font-size:1.75rem; font-weight:700;">•</span>
+            <span>coverage triggers</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; color:#ffffff; font-size:1.25rem;">
+            <span style="color:#34d399; font-size:1.75rem; font-weight:700;">•</span>
+            <span>endorsements</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; color:#ffffff; font-size:1.25rem;">
+            <span style="color:#34d399; font-size:1.75rem; font-weight:700;">•</span>
+            <span>coverage limits</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem; color:#ffffff; font-size:1.25rem;">
+            <span style="color:#34d399; font-size:1.75rem; font-weight:700;">•</span>
+            <span>exclusions</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0; color:#ffffff; font-size:1.25rem;">
+            <span style="color:#34d399; font-size:1.75rem; font-weight:700;">•</span>
+            <span>documentation requirements</span>
+          </li>
+        </ul>
+      </div>
+
+      <a href="/app/free-policy-analysis.html" class="btn-primary" style="background:#ffffff !important; color:#1e3a8a !important; font-size:1.25rem; padding:1.25rem 2.5rem; display:inline-block; margin-bottom:1rem; font-weight:700;">
+        Analyze My Policy (Free)
+      </a>
+      <p style="font-size:0.875rem; color:#dbeafe;">
+        No credit card required • Results in 60 seconds
+      </p>
+    </div>
+  </section>
+
+  <!-- Immediate Recognition Section -->
+  <section class="container" style="padding:3rem 0; background:#ffffff;">
+    <h2 style="text-align:center; color:#1f2937; margin-bottom:2rem;">Does This Sound Familiar?</h2>
+    <p style="text-align:center; color:#4b5563; font-size:1.1rem; max-width:700px; margin:0 auto 2rem;">
+      These are the phrases insurers use when disputing claims:
+    </p>
+    <div class="tool-grid" style="grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; max-width:900px; margin:0 auto;">
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#FEF3C7; border:1px solid #FDE68A;">
+        <p style="margin:0; font-weight:600; color:#92400E;">"Wear and tear"</p>
+      </div>
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#FEE2E2; border:1px solid #FECACA;">
+        <p style="margin:0; font-weight:600; color:#991B1B;">"Long-term deterioration"</p>
+      </div>
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#E0F2FE; border:1px solid #BAE6FD;">
+        <p style="margin:0; font-weight:600; color:#075985;">"Not storm related"</p>
+      </div>
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#F3E8FF; border:1px solid #E9D5FF;">
+        <p style="margin:0; font-weight:600; color:#6B21A8;">"Under investigation"</p>
+      </div>
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#D1FAE5; border:1px solid #A7F3D0;">
+        <p style="margin:0; font-weight:600; color:#065F46;">"Estimate is correct"</p>
+      </div>
+      <div class="tool-card" style="padding:1.25rem; text-align:center; background:#FED7AA; border:1px solid #FDBA74;">
+        <p style="margin:0; font-weight:600; color:#9A3412;">"Maintenance related"</p>
+      </div>
+    </div>
+    <p style="text-align:center; color:#1f2937; font-size:1.15rem; font-weight:600; margin-top:2rem;">
+      If you've heard any of these, Claim Command can help you respond.
+    </p>
+  </section>
+
+  <!-- Why Claims Get Stuck -->
+  <section class="container" style="padding:3.5rem 0; background:#F7F9FC;">
+    <h2 style="text-align:center; color:#1f2937;">Why Claims Get Stuck</h2>
+    <p style="text-align:center; color:#4b5563; font-size:1.1rem; max-width:750px; margin:1rem auto 2.5rem;">
+      Insurance claims are disputed because of disagreements, not because coverage doesn't exist.
+    </p>
+    <div class="tool-grid" style="grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem; max-width:900px; margin:0 auto;">
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Damage Causation</h3>
+        <p style="color:#4b5563; margin:0;">Insurer argues damage existed before the covered event</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Scope of Loss</h3>
+        <p style="color:#4b5563; margin:0;">Disagreement over what damage is included in the claim</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Policy Coverage</h3>
+        <p style="color:#4b5563; margin:0;">Different interpretations of policy language and exclusions</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Documentation Gaps</h3>
+        <p style="color:#4b5563; margin:0;">Missing proof, incomplete evidence, or unstructured submission</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Claim Command Does -->
+  <section class="container" style="padding:3.5rem 0; background:#ffffff;">
+    <h2 style="text-align:center; color:#1f2937;">What Claim Command Does</h2>
+    <p style="text-align:center; color:#4b5563; font-size:1.1rem; max-width:750px; margin:1rem auto 2.5rem;">
+      We analyze your claim documents, identify the insurer's position, and structure your response.
+    </p>
+    <div class="tool-grid" style="grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem; max-width:900px; margin:0 auto;">
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Analyzes Claim Documents</h3>
+        <p style="color:#4b5563; margin:0;">Reads denial letters, estimates, engineer reports, and policy language</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Identifies Insurer Position</h3>
+        <p style="color:#4b5563; margin:0;">Extracts the actual argument the insurance company is making</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Structures Claim Information</h3>
+        <p style="color:#4b5563; margin:0;">Organizes evidence and documentation into insurer-ready format</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Highlights Documentation Gaps</h3>
+        <p style="color:#4b5563; margin:0;">Shows what's missing and what needs to be obtained or clarified</p>
+      </div>
+      <div class="tool-card">
+        <h3 style="color:#1f2937; font-size:1.1rem; margin-bottom:0.75rem;">Prepares for Discussions</h3>
+        <p style="color:#4b5563; margin:0;">Equips you for contractor, adjuster, or attorney conversations</p>
+      </div>
+    </div>
+  </section>
+  </div>
+  <!-- END HIDDEN OLD SECTION 5 -->
+
+  <!-- DASHBOARD VISUAL SECTION -->
+  <section id="example-report" class="container" style="padding:5rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+      The Claim Command Center
+    </h2>
+    
+    <p style="text-align:center; font-size:1.25rem; color:#4b5563; margin-bottom:3rem; max-width:800px; margin-left:auto; margin-right:auto;">
+      Claim Command Pro acts as a structured command center for your insurance claim.
+    </p>
+    
+    <!-- Dashboard UI Mockup -->
+    <div style="max-width:1000px; margin:0 auto;">
+      <div style="background:#ffffff; border:4px solid #d1d5db; border-radius:12px; box-shadow:0 20px 40px rgba(0,0,0,0.15); overflow:hidden;">
+        
+        <!-- Browser Chrome -->
+        <div style="background:#e5e7eb; padding:1rem 1.5rem; border-bottom:2px solid #d1d5db; display:flex; align-items:center; gap:0.75rem;">
+          <div style="display:flex; gap:0.5rem;">
+            <div style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></div>
+            <div style="width:12px; height:12px; border-radius:50%; background:#f59e0b;"></div>
+            <div style="width:12px; height:12px; border-radius:50%; background:#10b981;"></div>
+          </div>
+          <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.5rem 1rem; font-size:0.875rem; color:#6b7280;">
+            claimcommandpro.com/dashboard
+          </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div style="padding:3rem; background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
+          <div style="margin-bottom:2rem;">
+            <h3 style="font-size:2.5rem; font-weight:700; color:#1f2937; margin-bottom:0.5rem;">
+              Claim Command Center
+            </h3>
+            <p style="color:#6b7280; font-size:1.125rem; margin:0;">Claim #2024-RF-8847 • State Farm</p>
+          </div>
+
+          <!-- Financial Summary Cards -->
+          <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:1.5rem; margin-bottom:2rem;">
+            <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:8px; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+              <p style="font-size:0.875rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">
+                Carrier Estimate
+              </p>
+              <p style="font-size:3rem; font-weight:700; color:#1f2937; margin:0;">$18,400</p>
+            </div>
+            <div style="background:#ffffff; border:3px solid #10b981; border-radius:8px; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+              <p style="font-size:0.875rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">
+                Verified Scope
+              </p>
+              <p style="font-size:3rem; font-weight:700; color:#10b981; margin:0;">$36,750</p>
+            </div>
+          </div>
+
+          <!-- Gap Alert -->
+          <div style="background:#fef2f2; border:4px solid #dc2626; border-radius:8px; padding:2.5rem; margin-bottom:2rem;">
+            <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1rem;">
+              <span style="font-size:3rem;">⚠️</span>
+              <div>
+                <h4 style="font-size:1.75rem; font-weight:700; color:#991b1b; text-transform:uppercase; letter-spacing:0.05em; margin:0 0 0.5rem 0;">
+                  CLAIM GAP DETECTED
+                </h4>
+                <p style="font-size:4rem; font-weight:700; color:#dc2626; margin:0; line-height:1;">
+                  $18,350
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issues Identified -->
+          <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:8px; padding:2rem; margin-bottom:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+            <h5 style="font-size:1.25rem; font-weight:700; color:#1f2937; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1.5rem;">
+              Issues Identified:
+            </h5>
+            <ul style="list-style:none; padding:0; margin:0;">
+              <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; font-size:1.125rem;">
+                <span style="width:12px; height:12px; background:#f59e0b; border-radius:50%; flex-shrink:0;"></span>
+                <span style="color:#4b5563;"><strong style="color:#1f2937;">10</strong> Missing Scope Items</span>
+              </li>
+              <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; font-size:1.125rem;">
+                <span style="width:12px; height:12px; background:#fb923c; border-radius:50%; flex-shrink:0;"></span>
+                <span style="color:#4b5563;"><strong style="color:#1f2937;">3</strong> Pricing Discrepancies</span>
+              </li>
+              <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0; font-size:1.125rem;">
+                <span style="width:12px; height:12px; background:#dc2626; border-radius:50%; flex-shrink:0;"></span>
+                <span style="color:#4b5563;"><strong style="color:#1f2937;">2</strong> Coverage Issues</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Recommended Actions -->
+          <div style="background:#dbeafe; border:3px solid #60a5fa; border-radius:8px; padding:2rem;">
+            <h5 style="font-size:1.25rem; font-weight:700; color:#1e3a8a; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1.5rem;">
+              Recommended Actions:
+            </h5>
+            <ol style="list-style:none; padding:0; margin:0;">
+              <li style="display:flex; gap:1rem; margin-bottom:1rem; font-size:1.125rem; color:#1e3a8a;">
+                <span style="font-weight:700; flex-shrink:0;">1</span>
+                <span>Request supplemental inspection</span>
+              </li>
+              <li style="display:flex; gap:1rem; margin-bottom:1rem; font-size:1.125rem; color:#1e3a8a;">
+                <span style="font-weight:700; flex-shrink:0;">2</span>
+                <span>Challenge wear-and-tear exclusion</span>
+              </li>
+              <li style="display:flex; gap:1rem; margin-bottom:0; font-size:1.125rem; color:#1e3a8a;">
+                <span style="font-weight:700; flex-shrink:0;">3</span>
+                <span>Submit labor rate documentation</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Callouts -->
+    <div style="max-width:900px; margin:3rem auto 0;">
+      <div style="background:#f0f9ff; border:3px solid #3b82f6; border-radius:12px; padding:2rem; margin-bottom:1.5rem;">
+        <h4 style="font-size:1.25rem; font-weight:700; color:#1e3a8a; margin-bottom:1rem;">
+          Instead of guessing what to do next, policyholders can see:
+        </h4>
+        <ul style="list-style:none; padding:0; margin:0;">
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; font-size:1.125rem; color:#1f2937;">
+            <span style="color:#3b82f6; font-weight:700;">✓</span>
+            <span>where underpayment may exist</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0.75rem; font-size:1.125rem; color:#1f2937;">
+            <span style="color:#3b82f6; font-weight:700;">✓</span>
+            <span>what documentation is needed</span>
+          </li>
+          <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0; font-size:1.125rem; color:#1f2937;">
+            <span style="color:#3b82f6; font-weight:700;">✓</span>
+            <span>what steps to take next</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTIMATE REVIEW VISUAL SECTION -->
+  <section class="container" style="padding:5rem 0; background:#f9fafb;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:1.5rem;">
+      See Where Your Claim May Be Missing Money
+    </h2>
+    
+    <p style="text-align:center; font-size:1.25rem; color:#4b5563; margin-bottom:3rem; max-width:800px; margin-left:auto; margin-right:auto;">
+      Claim Command Pro analyzes the estimate to detect issues commonly associated with underpaid claims.
+    </p>
+
+    <div style="max-width:1000px; margin:0 auto;">
+      <div style="background:#ffffff; border:4px solid #d1d5db; border-radius:12px; padding:3rem; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+        
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem; align-items:end; margin-bottom:3rem;">
+          <!-- Insurance Estimate -->
+          <div style="text-align:center;">
+            <div style="background:#f3f4f6; border:3px solid #9ca3af; border-radius:8px; padding:2rem;">
+              <p style="font-size:0.875rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+                Insurance Estimate
+              </p>
+              <p style="font-size:4rem; font-weight:700; color:#1f2937; margin:0;">$18,200</p>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div style="text-align:center;">
+            <span style="font-size:4rem; color:#dc2626;">→</span>
+          </div>
+
+          <!-- Contractor Estimate -->
+          <div style="text-align:center;">
+            <div style="background:#f0fdf4; border:3px solid #10b981; border-radius:8px; padding:2rem;">
+              <p style="font-size:0.875rem; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+                Contractor Estimate
+              </p>
+              <p style="font-size:4rem; font-weight:700; color:#10b981; margin:0;">$36,750</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gap Alert -->
+        <div style="background:#fef2f2; border:4px solid #dc2626; border-radius:8px; padding:2.5rem; margin-bottom:2rem;">
+          <div style="display:flex; align-items:center; justify-center; gap:1rem; margin-bottom:1rem;">
+            <span style="font-size:3rem;">⚠️</span>
+            <h3 style="font-size:2.5rem; font-weight:700; color:#991b1b; text-transform:uppercase; letter-spacing:0.05em; margin:0;">
+              Gap Detected
+            </h3>
+          </div>
+          <p style="font-size:5rem; font-weight:700; color:#dc2626; text-align:center; margin:0;">
+            $18,550
+          </p>
+        </div>
+
+        <!-- Detected Issues -->
+        <div style="background:#fef3c7; border:3px solid #fbbf24; border-radius:8px; padding:2rem;">
+          <h4 style="font-size:1.25rem; font-weight:700; color:#1f2937; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1.5rem;">
+            Detected Issues
+          </h4>
+          <ul style="list-style:none; padding:0; margin:0;">
+            <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; font-size:1.125rem;">
+              <span style="width:12px; height:12px; background:#d97706; border-radius:50%; flex-shrink:0;"></span>
+              <span style="color:#4b5563;"><strong style="color:#1f2937;">10</strong> missing scope items</span>
+            </li>
+            <li style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; font-size:1.125rem;">
+              <span style="width:12px; height:12px; background:#ea580c; border-radius:50%; flex-shrink:0;"></span>
+              <span style="color:#4b5563;"><strong style="color:#1f2937;">3</strong> pricing discrepancies</span>
+            </li>
+            <li style="display:flex; align-items:center; gap:1rem; margin-bottom:0; font-size:1.125rem;">
+              <span style="width:12px; height:12px; background:#dc2626; border-radius:50%; flex-shrink:0;"></span>
+              <span style="color:#4b5563;"><strong style="color:#1f2937;">2</strong> quantity gaps</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual Mockup of Analysis -->
+    <div style="max-width:900px; margin:3rem auto 0;">
+      <div style="background:#ffffff; border:4px solid #d1d5db; border-radius:12px; padding:3rem; box-shadow:0 10px 25px rgba(0,0,0,0.1);">
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:2rem; margin-bottom:2rem;">
+          
+          <div style="background:#fef3c7; border:3px solid #fbbf24; border-radius:8px; padding:2rem; text-align:center;">
+            <h4 style="font-size:1rem; font-weight:700; color:#92400e; text-transform:uppercase; margin-bottom:1rem;">
+              Missing Scope Items
+            </h4>
+            <p style="font-size:3rem; font-weight:700; color:#d97706; margin:0;">
+              10
+            </p>
+          </div>
+
+          <div style="background:#fef2f2; border:3px solid #fca5a5; border-radius:8px; padding:2rem; text-align:center;">
+            <h4 style="font-size:1rem; font-weight:700; color:#991b1b; text-transform:uppercase; margin-bottom:1rem;">
+              Suppressed Pricing
+            </h4>
+            <p style="font-size:3rem; font-weight:700; color:#dc2626; margin:0;">
+              $4,280
+            </p>
+          </div>
+
+          <div style="background:#dbeafe; border:3px solid #93c5fd; border-radius:8px; padding:2rem; text-align:center;">
+            <h4 style="font-size:1rem; font-weight:700; color:#1e3a8a; text-transform:uppercase; margin-bottom:1rem;">
+              Code Upgrade Triggers
+            </h4>
+            <p style="font-size:3rem; font-weight:700; color:#3b82f6; margin:0;">
+              3
+            </p>
+          </div>
+
+          <div style="background:#fef2f2; border:3px solid #dc2626; border-radius:8px; padding:2rem; text-align:center;">
+            <h4 style="font-size:1rem; font-weight:700; color:#991b1b; text-transform:uppercase; margin-bottom:1rem;">
+              Potential Claim Gap
+            </h4>
+            <p style="font-size:3rem; font-weight:700; color:#dc2626; margin:0;">
+              $18,550
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP-BY-STEP CLAIM PROCESS -->
+  <section class="container" style="padding:5rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      How Claim Command Pro Helps You Navigate Your Claim
+    </h2>
+
+    <div style="max-width:1200px; margin:0 auto; overflow-x:auto;">
+      <div style="display:flex; gap:2rem; align-items:start; min-width:900px; padding:2rem 0;">
+        
+        <!-- Step 1 -->
+        <div style="flex:1; text-align:center;">
+          <div style="width:80px; height:80px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(59,130,246,0.3);">
+            <span style="font-size:2.5rem;">📤</span>
+          </div>
+          <div style="background:#eff6ff; border:3px solid #93c5fd; border-radius:12px; padding:2rem;">
+            <div style="display:inline-block; background:#3b82f6; color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:0.875rem; margin-bottom:1rem;">
+              1
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Upload Policy and Estimate
+            </h3>
+            <p style="color:#4b5563; font-size:1rem; line-height:1.6; margin:0;">
+              Upload your insurance policy, carrier estimate, and any claim documents.
+            </p>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex; align-items:center; padding-top:6rem;">
+          <span style="font-size:3rem; color:#3b82f6;">→</span>
+        </div>
+
+        <!-- Step 2 -->
+        <div style="flex:1; text-align:center;">
+          <div style="width:80px; height:80px; background:#10b981; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(16,185,129,0.3);">
+            <span style="font-size:2.5rem;">🔍</span>
+          </div>
+          <div style="background:#f0fdf4; border:3px solid #86efac; border-radius:12px; padding:2rem;">
+            <div style="display:inline-block; background:#10b981; color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:0.875rem; margin-bottom:1rem;">
+              2
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Claim Command Pro Analyzes Coverage and Estimate
+            </h3>
+            <p style="color:#4b5563; font-size:1rem; line-height:1.6; margin:0;">
+              AI analyzes policy coverage, estimate line items, and pricing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex; align-items:center; padding-top:6rem;">
+          <span style="font-size:3rem; color:#10b981;">→</span>
+        </div>
+
+        <!-- Step 3 -->
+        <div style="flex:1; text-align:center;">
+          <div style="width:80px; height:80px; background:#f59e0b; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(245,158,11,0.3);">
+            <span style="font-size:2.5rem;">⚠️</span>
+          </div>
+          <div style="background:#fef3c7; border:3px solid #fde047; border-radius:12px; padding:2rem;">
+            <div style="display:inline-block; background:#f59e0b; color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:0.875rem; margin-bottom:1rem;">
+              3
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Identify Missing Scope and Claim Gaps
+            </h3>
+            <p style="color:#4b5563; font-size:1rem; line-height:1.6; margin:0;">
+              See exactly where money may be missing from your claim.
+            </p>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex; align-items:center; padding-top:6rem;">
+          <span style="font-size:3rem; color:#f59e0b;">→</span>
+        </div>
+
+        <!-- Step 4 -->
+        <div style="flex:1; text-align:center;">
+          <div style="width:80px; height:80px; background:#8b5cf6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(139,92,246,0.3);">
+            <span style="font-size:2.5rem;">📋</span>
+          </div>
+          <div style="background:#f5f3ff; border:3px solid #c4b5fd; border-radius:12px; padding:2rem;">
+            <div style="display:inline-block; background:#8b5cf6; color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:0.875rem; margin-bottom:1rem;">
+              4
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Generate Documentation to Support Corrections
+            </h3>
+            <p style="color:#4b5563; font-size:1rem; line-height:1.6; margin:0;">
+              Create supplement requests and proof packets.
+            </p>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex; align-items:center; padding-top:6rem;">
+          <span style="font-size:3rem; color:#8b5cf6;">→</span>
+        </div>
+
+        <!-- Step 5 -->
+        <div style="flex:1; text-align:center;">
+          <div style="width:80px; height:80px; background:#10b981; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(16,185,129,0.3);">
+            <span style="font-size:2.5rem;">📨</span>
+          </div>
+          <div style="background:#dcfce7; border:3px solid #86efac; border-radius:12px; padding:2rem;">
+            <div style="display:inline-block; background:#10b981; color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:0.875rem; margin-bottom:1rem;">
+              5
+            </div>
+            <h3 style="font-size:1.25rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+              Submit Evidence to Support Your Claim
+            </h3>
+            <p style="color:#4b5563; font-size:1rem; line-height:1.6; margin:0;">
+              Follow structured submission strategy to correct underpayment.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HAPPENS IF YOU ACCEPT THE INSURANCE ESTIMATE -->
+  <section class="container" style="padding:5rem 0; background:#fef2f2;">
+    <div style="max-width:900px; margin:0 auto; text-align:center;">
+      <h2 style="font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:2rem;">
+        What Happens If You Accept the Insurance Estimate Without Analysis
+      </h2>
+      
+      <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:3rem; max-width:750px; margin-left:auto; margin-right:auto;">
+        Policyholders often accept estimates that do not reflect the full cost of repair.
+      </p>
+
+      <!-- Gap Visual -->
+      <div style="background:#ffffff; border:4px solid #d1d5db; border-radius:12px; padding:3rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); margin-bottom:3rem;">
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem; align-items:end; margin-bottom:2rem;">
+          
+          <div style="text-align:center;">
+            <div style="background:#f3f4f6; border:3px solid #9ca3af; border-radius:8px; padding:2rem;">
+              <p style="font-size:1rem; color:#6b7280; font-weight:700; text-transform:uppercase; margin-bottom:1rem;">
+                Insurance Estimate
+              </p>
+              <p style="font-size:3.5rem; font-weight:700; color:#1f2937; margin:0;">
+                $21,400
+              </p>
+            </div>
+          </div>
+
+          <div style="text-align:center;">
+            <span style="font-size:3rem; color:#dc2626;">→</span>
+          </div>
+
+          <div style="text-align:center;">
+            <div style="background:#f0fdf4; border:3px solid #10b981; border-radius:8px; padding:2rem;">
+              <p style="font-size:1rem; color:#6b7280; font-weight:700; text-transform:uppercase; margin-bottom:1rem;">
+                Actual Repair Cost
+              </p>
+              <p style="font-size:3.5rem; font-weight:700; color:#10b981; margin:0;">
+                $39,800
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="background:#fef2f2; border:4px solid #dc2626; border-radius:12px; padding:2.5rem;">
+          <div style="display:flex; align-items:center; justify-content:center; gap:1rem; margin-bottom:1rem;">
+            <span style="font-size:3rem;">⚠️</span>
+            <h3 style="font-size:2rem; font-weight:700; color:#991b1b; text-transform:uppercase; margin:0;">
+              Unpaid Damage
+            </h3>
+          </div>
+          <p style="font-size:5rem; font-weight:700; color:#dc2626; text-align:center; margin:0;">
+            $18,400
+          </p>
+        </div>
+      </div>
+
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:2.5rem; margin-bottom:2rem;">
+        <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:1.5rem;">
+          Without documentation and analysis these gaps may never be identified.
+        </p>
+        <p style="font-size:1.5rem; color:#1f2937; font-weight:700; line-height:1.7; margin:0;">
+          Insurance companies pay claims based on documented proof — not assumptions.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOME SECTION -->
+  <section class="container" style="padding:5rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      What Claim Command Pro Helps You Do
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <!-- Detect Underpayment -->
+      <div style="background:linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); border:3px solid #fca5a5; border-radius:12px; padding:2.5rem; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#dc2626; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+          <span style="font-size:2rem; color:#ffffff;">💰</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Detect Underpayment
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Identify where money may be missing from your claim.
+        </p>
+      </div>
+
+      <!-- Reduce Claim Stress -->
+      <div style="background:linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border:3px solid #93c5fd; border-radius:12px; padding:2.5rem; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#3b82f6; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+          <span style="font-size:2rem; color:#ffffff;">😌</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Reduce Claim Stress
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Follow a structured system instead of guessing what to do next.
+        </p>
+      </div>
+
+      <!-- Manage Your Claim Properly -->
+      <div style="background:linear-gradient(135deg, #fef3c7 0%, #ffffff 100%); border:3px solid #fde047; border-radius:12px; padding:2.5rem; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#f59e0b; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+          <span style="font-size:2rem; color:#ffffff;">📁</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Manage Your Claim Properly
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Keep estimates, policy language, and documentation organized.
+        </p>
+      </div>
+
+      <!-- Maximize Claim Value -->
+      <div style="background:linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border:3px solid #86efac; border-radius:12px; padding:2.5rem; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="width:64px; height:64px; background:#10b981; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem;">
+          <span style="font-size:2rem; color:#ffffff;">📈</span>
+        </div>
+        <h3 style="font-size:1.5rem; font-weight:700; color:#1f2937; margin-bottom:1rem;">
+          Maximize Claim Value
+        </h3>
+        <p style="color:#4b5563; font-size:1.125rem; line-height:1.6; margin:0;">
+          Ensure your claim reflects the full scope of covered damage.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- WHY THE PRICE MAKES SENSE -->
+  <section class="container" style="padding:5rem 0; background:#f9fafb;">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <h2 style="font-size:2.75rem; font-weight:700; color:#1f2937; margin-bottom:2rem;">
+        Why Policyholders Use Claim Command Pro
+      </h2>
+      
+      <div style="background:#ffffff; border:3px solid #d1d5db; border-radius:12px; padding:3rem; box-shadow:0 4px 12px rgba(0,0,0,0.08); margin-bottom:2rem;">
+        <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:2rem;">
+          The platform is designed to help policyholders avoid leaving money unclaimed.
+        </p>
+        
+        <div style="background:#fef3c7; border:3px solid #fbbf24; border-radius:8px; padding:2rem; margin-bottom:2rem;">
+          <p style="font-size:1.5rem; color:#1f2937; font-weight:600; line-height:1.6; margin:0;">
+            Average underpayment: <span style="font-size:2.5rem; font-weight:700; color:#d97706; display:block; margin-top:0.5rem;">$12,000–$47,000</span>
+          </p>
+        </div>
+
+        <p style="font-size:1.25rem; color:#4b5563; line-height:1.7; margin-bottom:1.5rem;">
+          Paying <strong style="color:#1f2937; font-size:1.5rem;">$149</strong> to understand your claim position before hiring help is rational risk management.
+        </p>
+
+        <p style="font-size:1.125rem; color:#6b7280; line-height:1.7; margin:0;">
+          The cost is small compared to potential underpayment.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OLD Value Framing HIDDEN -->
+  <div style="display:none;">
+  <section class="container" style="padding:3rem 0; background:#ffffff;">
+    <div style="max-width:750px; margin:0 auto; text-align:center;">
+      <h2 style="color:#1f2937; margin-bottom:1.5rem;">Why $297 Makes Sense</h2>
+      <p style="color:#4b5563; font-size:1.15rem; line-height:1.7; margin-bottom:1.25rem;">
+        Insurance disputes often involve <strong style="color:#1f2937;">$15,000 to $50,000</strong> in contested claim value.
+      </p>
+      <p style="color:#4b5563; font-size:1.15rem; line-height:1.7; margin-bottom:1.25rem;">
+        Public adjusters charge <strong style="color:#1f2937;">10-20% of the settlement</strong> (typically $3,000-$10,000).
+      </p>
+      <p style="color:#4b5563; font-size:1.15rem; line-height:1.7; margin-bottom:1.25rem;">
+        Attorneys charge <strong style="color:#1f2937;">25-40% contingency fees</strong> plus costs.
+      </p>
+      <p style="color:#17BEBB; font-size:1.3rem; line-height:1.7; font-weight:700; margin-top:2rem;">
+        Paying $297 to understand your claim position before hiring help is rational risk management.
+      </p>
+    </div>
+  </section>
+  </div>
+  <!-- END HIDDEN OLD VALUE FRAMING -->
+
+  <!-- FINAL CTA -->
+  <section class="container" style="padding:6rem 0; background:linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div style="width:96px; height:96px; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:50%; border:4px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 2rem; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        <span style="font-size:3rem;">✨</span>
+      </div>
+
+      <h2 style="font-size:3.5rem; font-weight:700; color:#ffffff !important; margin-bottom:2rem; line-height:1.2;">
+        Take Control of Your Claim
+      </h2>
+      
+      <p style="font-size:1.5rem; color:#dbeafe !important; margin-bottom:1rem; font-weight:500; line-height:1.5;">
+        Start with a free policy analysis.
+      </p>
+      
+      <a href="/app/analyze-claim.html" class="btn-primary checkout-btn" style="background:#ffffff !important; color:#2563eb !important; font-size:1.5rem; padding:1.5rem 3rem; display:inline-block; margin-top:2rem; margin-bottom:2rem; font-weight:700; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        Analyze My Claim
+      </a>
+
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:2rem; font-size:1.125rem; color:#dbeafe !important;">
+        <span style="display:flex; align-items:center; gap:0.5rem; color:#dbeafe !important;">
+          <span style="color:#34d399 !important; font-size:1.5rem;">✓</span>
+          Free preview in 60 seconds
+        </span>
+        <span style="display:flex; align-items:center; gap:0.5rem; color:#dbeafe !important;">
+          <span style="color:#34d399 !important; font-size:1.5rem;">✓</span>
+          No account required
+        </span>
+        <span style="display:flex; align-items:center; gap:0.5rem; color:#dbeafe !important;">
+          <span style="color:#34d399 !important; font-size:1.5rem;">✓</span>
+          Full analysis for $149
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OLD SECTIONS HIDDEN -->
+  <div style="display:none;">
+  <section class="container" style="padding: 4rem 0 !important; background: linear-gradient(135deg, #0B2545 0%, #123A63 100%) !important;">
+    <div style="max-width: 800px; margin: 0 auto; text-align: center; padding: 3rem 2.5rem; border: 2px solid rgba(23, 190, 187, 0.4); border-radius: 12px; background: rgba(255, 255, 255, 0.03);">
+      <h2 style="color: #ffffff !important; font-size: 2.25rem; margin-bottom: 1rem; font-weight: 700;">Get a Free Policy Analysis</h2>
+      <p style="color: #e8eef5 !important; font-size: 1.2rem; line-height: 1.7; margin-bottom: 2.5rem;">
+        Upload your insurance policy and get an instant AI-powered analysis. Identify coverage gaps, missing endorsements, and maximize your claim potential.
+      </p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+        <a href="/app/free-policy-analysis.html" class="btn-primary" style="background: #17BEBB !important; font-size: 1.15rem; padding: 1.1rem 2.5rem; font-weight: 700; box-shadow: 0 4px 12px rgba(23, 190, 187, 0.3);">
+          Analyze My Policy (Free) →
+        </a>
+        <a href="/app/pricing.html" class="btn-secondary" style="background: transparent !important; color: #ffffff !important; border: 2px solid rgba(255,255,255,0.4); font-size: 1rem; padding: 1.1rem 2rem; font-weight: 600;">
+          See Premium Features
+        </a>
+      </div>
+      <div style="color: #ffffff !important; font-size: 1rem; margin-top: 1.5rem; background: rgba(23, 190, 187, 0.15); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid #17BEBB; display: inline-block;">
+        <span style="font-size: 1.2rem; color: #17BEBB;">✓</span> No credit card required &nbsp;•&nbsp; 
+        <span style="font-size: 1.2rem; color: #17BEBB;">✓</span> Instant results &nbsp;•&nbsp; 
+        <span style="font-size: 1.2rem; color: #17BEBB;">✓</span> 1 free analysis per email
+      </div>
+      <div style="max-width: 700px; margin: 2rem auto 0; padding: 1.5rem; background: rgba(23, 190, 187, 0.1); border-radius: 8px; border: 2px solid rgba(23, 190, 187, 0.3);">
+        <p style="color: #ffffff !important; font-size: 1.05rem; margin: 0; line-height: 1.6;">
+          <strong style="color: #17BEBB; font-size: 1.15rem;">Premium users get:</strong> 
+          30+ field extraction, policy trigger engine, coinsurance validation, and integration with estimate comparison tools.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dollar Savings Block -->
+  <section style="background:#0B2545; color:#ffffff; padding:3rem 0; text-align:center;">
+    <div class="container">
+      <h2 style="color:#ffffff;">Average Underpayment</h2>
+      <p style="font-size:3rem; font-weight:800; margin:1rem 0; color:#17BEBB;">
+        $12,000 – $47,000
+      </p>
+      <p style="max-width:700px; margin:0 auto;">
+        Not because coverage didn't exist —
+        but because documentation wasn't structured correctly.
+      </p>
+    </div>
+  </section>
+
+  <!-- OLD SECTIONS HIDDEN -->
+  <div style="display:none;">
+  <!-- Real Claim Recoveries -->
+  <section class="container" style="padding:4rem 0;">
+    <h2 style="text-align:center;">Real Claim Recoveries</h2>
+
+    <div class="tool-grid" style="margin-top:3rem;">
+      <div class="tool-card">
+        <p style="font-size:1.8rem; font-weight:700; color:#17BEBB;">+$18,400</p>
+        <p>Water damage underpayment corrected</p>
+      </div>
+
+      <div class="tool-card">
+        <p style="font-size:1.8rem; font-weight:700; color:#17BEBB;">+$32,700</p>
+        <p>Roof scope omission reversed</p>
+      </div>
+
+      <div class="tool-card">
+        <p style="font-size:1.8rem; font-weight:700; color:#17BEBB;">+$14,950</p>
+        <p>Denied claim successfully appealed</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Steps to Prove and Win Your Claim -->
+  <section style="background:#F7F9FC; padding:4rem 0;">
+    <div class="container">
+      <h2 style="text-align:center;">The 4 Things Insurers Require to Pay</h2>
+
+      <div class="tool-grid" style="margin-top:3rem; grid-template-columns:repeat(2, 1fr); max-width:900px; margin-left:auto; margin-right:auto;">
+        <div class="tool-card">
+          <h3>1. Coverage Trigger Identification</h3>
+          <p>Confirm which policy provisions apply to your loss.</p>
+        </div>
+
+        <div class="tool-card">
+          <h3>2. Scope Validation</h3>
+          <p>Document every damaged component line-by-line.</p>
+        </div>
+
+        <div class="tool-card">
+          <h3>3. Cost Substantiation</h3>
+          <p>Validate pricing using contractor estimates and market rates.</p>
+        </div>
+
+        <div class="tool-card">
+          <h3>4. Structured Submission</h3>
+          <p>Submit proof in the format insurers evaluate and approve.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Command Center Step-by-Step Process -->
+  <section class="container" style="padding:4rem 0;">
+    <h2 style="text-align:center; margin-bottom:1rem;">How The Command Center Works</h2>
+    <p style="text-align:center; color:#4b5563; font-size:1.1rem; max-width:750px; margin:0 auto 3rem;">
+      Four steps from upload to recovery
+    </p>
+
+    <div style="max-width:1000px; margin:0 auto;">
+      <!-- Step 1 -->
+      <div style="display:flex; gap:2rem; margin-bottom:3rem; align-items:start; flex-wrap:wrap;">
+        <div style="flex-shrink:0; width:80px; height:80px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:2rem; font-weight:700; box-shadow:0 4px 12px rgba(59,130,246,0.3);">
+          1
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <h3 style="color:#1f2937; font-size:1.5rem; margin:0 0 0.5rem 0; font-weight:700;">Upload Your Documents</h3>
+          <p style="color:#4b5563; font-size:1.05rem; line-height:1.6; margin:0 0 1rem 0;">
+            Upload your insurance policy, denial letter, carrier estimate, contractor estimate, photos, or any claim correspondence you have.
+          </p>
+          <div style="background:#eff6ff; border-left:4px solid #3b82f6; padding:1rem; border-radius:4px;">
+            <p style="color:#1e40af; margin:0; font-size:0.95rem;">
+              <strong>What we analyze:</strong> Policy coverage, carrier arguments, estimate line items, pricing discrepancies, missing scope, documentation gaps
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div style="text-align:center; margin:-1.5rem 0 1.5rem 0;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Step 2 -->
+      <div style="display:flex; gap:2rem; margin-bottom:3rem; align-items:start; flex-wrap:wrap;">
+        <div style="flex-shrink:0; width:80px; height:80px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:2rem; font-weight:700; box-shadow:0 4px 12px rgba(59,130,246,0.3);">
+          2
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <h3 style="color:#1f2937; font-size:1.5rem; margin:0 0 0.5rem 0; font-weight:700;">Get Your Gap Analysis Report</h3>
+          <p style="color:#4b5563; font-size:1.05rem; line-height:1.6; margin:0 0 1rem 0;">
+            Within 48-72 hours, receive a complete analysis showing exactly where the carrier's estimate falls short and what evidence you need.
+          </p>
+          <div style="background:#fef3c7; border-left:4px solid #f59e0b; padding:1rem; border-radius:4px;">
+            <p style="color:#92400e; margin:0; font-size:0.95rem;">
+              <strong>Report includes:</strong> Line-by-line missing scope ($9,067), pricing gaps ($2,211), excluded coverage ($4,050), carrier tactics breakdown, action steps with deadlines
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div style="text-align:center; margin:-1.5rem 0 1.5rem 0;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Step 3 -->
+      <div style="display:flex; gap:2rem; margin-bottom:3rem; align-items:start; flex-wrap:wrap;">
+        <div style="flex-shrink:0; width:80px; height:80px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:2rem; font-weight:700; box-shadow:0 4px 12px rgba(59,130,246,0.3);">
+          3
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <h3 style="color:#1f2937; font-size:1.5rem; margin:0 0 0.5rem 0; font-weight:700;">Build Your Proof Packet</h3>
+          <p style="color:#4b5563; font-size:1.05rem; line-height:1.6; margin:0 0 1rem 0;">
+            Use our professional templates to structure your documentation: Proof of Loss, supplement request, appeal letter, evidence checklist.
+          </p>
+          <div style="background:#f0fdf4; border-left:4px solid #10b981; padding:1rem; border-radius:4px;">
+            <p style="color:#065f46; margin:0; font-size:0.95rem;">
+              <strong>Documentation packet:</strong> Scope gap report (8 pages), carrier argument analysis (4 pages), Proof of Loss statement (3 pages), supplement request letter (2 pages), evidence checklist (1 page)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div style="text-align:center; margin:-1.5rem 0 1.5rem 0;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+      </div>
+
+      <!-- Step 4 -->
+      <div style="display:flex; gap:2rem; margin-bottom:2rem; align-items:start; flex-wrap:wrap;">
+        <div style="flex-shrink:0; width:80px; height:80px; background:#10b981; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:2rem; font-weight:700; box-shadow:0 4px 12px rgba(16,185,129,0.3);">
+          4
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <h3 style="color:#1f2937; font-size:1.5rem; margin:0 0 0.5rem 0; font-weight:700;">Submit & Recover What You're Owed</h3>
+          <p style="color:#4b5563; font-size:1.05rem; line-height:1.6; margin:0 0 1rem 0;">
+            Follow the step-by-step submission strategy. Track deadlines. Escalate when needed. Most claims resolve in 2-8 weeks once proper proof is submitted.
+          </p>
+          <div style="background:#dcfce7; border-left:4px solid #10b981; padding:1rem; border-radius:4px;">
+            <p style="color:#065f46; margin:0; font-size:0.95rem;">
+              <strong>Average recovery:</strong> $12,000 - $47,000 in additional claim value. Most users recover 2-3x their investment within 60 days.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final CTA -->
+      <div style="text-align:center; margin-top:3rem; padding:2rem; background:#f0f9ff; border-radius:8px; border:2px solid #3b82f6;">
+        <h3 style="color:#1f2937; font-size:1.5rem; margin:0 0 1rem 0;">Start Your Claim Analysis Now</h3>
+        <a href="/app/analyze-claim.html" class="btn-primary checkout-btn" style="font-size:1.1rem;">
+          Upload Documents - Free Analysis
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Command Center Interface Walkthrough -->
+  <section style="background:#f9fafb; padding:4rem 0;">
+    <div class="container">
+      <h2 style="text-align:center; margin-bottom:1rem;">Inside The Claim Command Center</h2>
+      <p style="text-align:center; color:#4b5563; font-size:1.1rem; max-width:750px; margin:0 auto 1rem;">
+        18 guided steps with AI-powered analysis tools
+      </p>
+      <p style="text-align:center; color:#1f2937; font-size:1rem; max-width:850px; margin:0 auto 3rem; font-weight:600;">
+        This is the actual interface - not a mockup. See the real tools you'll use to analyze your policy, compare estimates, and build your proof packet.
+      </p>
+
+      <div style="max-width:1100px; margin:0 auto;">
+        
+        <!-- Screen 1: Command Center Navigation -->
+        <div style="margin-bottom:4rem;">
+          <div style="background:#ffffff; border:2px solid #9ca3af; border-radius:4px; box-shadow:0 10px 25px rgba(0,0,0,0.15); overflow:hidden;">
+            <!-- Browser Chrome -->
+            <div style="background:#e5e7eb; padding:0.5rem 1rem; border-bottom:1px solid #9ca3af; display:flex; align-items:center; gap:0.5rem;">
+              <div style="display:flex; gap:0.375rem;">
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#eab308;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#10b981;"></div>
+              </div>
+              <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.25rem 0.75rem; font-size:0.75rem; color:#6b7280;">
+                claimcommandpro.com/claim-command-center
+              </div>
+            </div>
+
+            <!-- Command Center Header -->
+            <div style="background:#1e3a5f; padding:1.5rem; text-align:center; border-bottom:3px solid #d4af37;">
+              <h3 style="font-size:1.75rem; font-weight:700; color:#ffffff; margin:0 0 0.5rem 0; text-transform:uppercase; letter-spacing:-0.02em;">CLAIM COMMAND CENTER</h3>
+              <p style="font-size:1.125rem; color:rgba(255,255,255,0.95); margin:0 0 0.5rem 0;">Your Complete Claim Management System</p>
+              <p style="font-size:0.9375rem; color:rgba(255,255,255,0.85); margin:0; font-style:italic;">Start at Step 1. Complete each step in order.</p>
+            </div>
+
+            <!-- Claim Info Bar -->
+            <div style="background:#0f1f3d; padding:0.5rem 1.5rem; display:flex; flex-wrap:wrap; align-items:center; gap:1.5rem; font-size:0.75rem; color:rgba(255,255,255,0.9); border-bottom:1px solid rgba(255,255,255,0.1);">
+              <div style="display:flex; align-items:center; gap:0.375rem;">
+                <span style="color:rgba(255,255,255,0.7); font-weight:500;">Claim Type:</span>
+                <span style="color:#ffffff; font-weight:600;">Roof Hail Damage</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.375rem;">
+                <span style="color:rgba(255,255,255,0.7); font-weight:500;">Carrier:</span>
+                <span style="color:#ffffff; font-weight:600;">State Farm</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.375rem;">
+                <span style="color:rgba(255,255,255,0.7); font-weight:500;">Loss Date:</span>
+                <span style="color:#ffffff; font-weight:600;">Feb 18, 2026</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.375rem;">
+                <span style="color:rgba(255,255,255,0.7); font-weight:500;">Days Since Loss:</span>
+                <span style="color:#fbbf24; font-weight:600;">22</span>
+              </div>
+            </div>
+
+            <!-- Steps List -->}
+            <div style="padding:1.5rem; background:#e3e5eb;">
+              <h4 style="font-weight:700; color:#1f2937; margin:0 0 1rem 0; font-size:1rem;">18-Step Guided Process</h4>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:0.5rem; font-size:0.8125rem;">
+                <div style="padding:0.5rem; background:#ffffff; border-left:3px solid #10b981; border-radius:2px;">
+                  <span style="color:#10b981; font-weight:700;">✓</span> Step 1: Claim Process Guide
+                </div>
+                <div style="padding:0.5rem; background:#ffffff; border-left:3px solid #10b981; border-radius:2px;">
+                  <span style="color:#10b981; font-weight:700;">✓</span> Step 2: AI Policy Analyzer
+                </div>
+                <div style="padding:0.5rem; background:#ffffff; border-left:3px solid #3b82f6; border-radius:2px;">
+                  <span style="color:#3b82f6; font-weight:700;">→</span> Step 3: Report the Loss
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 4: Recorded Statements
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 5: Document Damage
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 6: Manage Inspection
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 7: Contractor Estimate
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 8: AI Estimate Analyzer
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 9: Code & Coverage Issues
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 10: Supplement Generator
+                </div>
+                <div style="padding:0.5rem; background:#f9fafb; border-left:3px solid #d1d5db; border-radius:2px; color:#9ca3af;">
+                  Step 11-18: Track, Negotiate, Settle
+                </div>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center; font-size:0.875rem; color:#6b7280; margin-top:1rem;">
+            <strong>Command Center Home:</strong> 18 guided steps from policy review to final settlement
+          </p>
+        </div>
+
+        <!-- Screen 2: AI Policy Analyzer (Step 2) -->
+        <div style="margin-bottom:4rem;">
+          <div style="background:#ffffff; border:2px solid #9ca3af; border-radius:4px; box-shadow:0 10px 25px rgba(0,0,0,0.15); overflow:hidden;">
+            <div style="background:#e5e7eb; padding:0.5rem 1rem; border-bottom:1px solid #9ca3af; display:flex; align-items:center; gap:0.5rem;">
+              <div style="display:flex; gap:0.375rem;">
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#eab308;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#10b981;"></div>
+              </div>
+              <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.25rem 0.75rem; font-size:0.75rem; color:#6b7280;">
+                claimcommandpro.com/claim-command-center#step-1
+              </div>
+            </div>
+
+            <div style="padding:1.5rem; background:#f9fafb;">
+              <div style="background:#1e3a5f; color:#ffffff; padding:1rem 1.5rem; border-radius:4px 4px 0 0; border-bottom:3px solid #d4af37;">
+                <h3 style="font-size:1.25rem; font-weight:700; margin:0;">STEP 2: Review Your Policy with AI Expert Policy Analyzer</h3>
+              </div>
+              
+              <div style="background:#ffffff; border:1px solid #e5e7eb; border-top:none; border-radius:0 0 4px 4px; padding:1.5rem;">
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">Why this matters</h4>
+                  <p style="font-size:0.875rem; color:#4b5563; line-height:1.6; margin:0;">Your policy defines what's covered, how much you can claim, and what exclusions apply. Missing a covered item or misunderstanding a limit costs you thousands. Knowing your policy prevents the adjuster from denying valid claims.</p>
+                </div>
+
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">What you do</h4>
+                  <p style="font-size:0.875rem; color:#4b5563; line-height:1.6; margin:0;">Upload your full insurance policy (declarations page and all endorsements). Review coverage limits, deductibles, and exclusions. Note special provisions or riders.</p>
+                </div>
+
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">What Claim Commander provides</h4>
+                  <ul style="margin:0; padding-left:1.25rem; font-size:0.875rem; color:#4b5563; line-height:1.8;">
+                    <li>Structured coverage extraction</li>
+                    <li>Coverage limits and exclusions</li>
+                    <li>Policy triggers and endorsements</li>
+                  </ul>
+                </div>
+
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:4px; padding:1rem; margin-bottom:1rem;">
+                  <p style="font-size:0.8125rem; color:#0c4a6e; margin:0 0 0.75rem 0; font-weight:600;">📄 Upload Required: Insurance Policy PDF</p>
+                  <div style="border:2px dashed #3b82f6; border-radius:4px; padding:1.5rem; text-align:center; background:#ffffff;">
+                    <p style="font-size:0.875rem; color:#6b7280; margin:0;">Drag and drop your policy PDF here, or click to browse</p>
+                  </div>
+                </div>
+
+                <button style="background:#1e3a5f; color:#ffffff; border:none; padding:0.75rem 1.5rem; border-radius:4px; font-weight:700; font-size:0.875rem; cursor:pointer; width:100%;">
+                  Run Policy Analysis
+                </button>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center; font-size:0.875rem; color:#6b7280; margin-top:1rem;">
+            <strong>AI Policy Analyzer:</strong> Upload your policy and get structured coverage extraction
+          </p>
+        </div>
+
+        <!-- Screen 3: AI Estimate Analyzer (Step 8) -->
+        <div style="margin-bottom:4rem;">
+          <div style="background:#ffffff; border:2px solid #9ca3af; border-radius:4px; box-shadow:0 10px 25px rgba(0,0,0,0.15); overflow:hidden;">
+            <div style="background:#e5e7eb; padding:0.5rem 1rem; border-bottom:1px solid #9ca3af; display:flex; align-items:center; gap:0.5rem;">
+              <div style="display:flex; gap:0.375rem;">
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#eab308;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#10b981;"></div>
+              </div>
+              <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.25rem 0.75rem; font-size:0.75rem; color:#6b7280;">
+                claimcommandpro.com/claim-command-center#step-7
+              </div>
+            </div>
+
+            <div style="padding:1.5rem; background:#f9fafb;">
+              <div style="background:#1e3a5f; color:#ffffff; padding:1rem 1.5rem; border-radius:4px 4px 0 0; border-bottom:3px solid #d4af37;">
+                <h3 style="font-size:1.25rem; font-weight:700; margin:0;">STEP 8: Review Your Estimates with AI Expert Estimate Analyzer</h3>
+              </div>
+              
+              <div style="background:#ffffff; border:1px solid #e5e7eb; border-top:none; border-radius:0 0 4px 4px; padding:1.5rem;">
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">Why this matters</h4>
+                  <p style="font-size:0.875rem; color:#4b5563; line-height:1.6; margin:0;">This is where you prove underpayment. A line-by-line comparison identifies missing items, quantity discrepancies, and pricing gaps. Without this analysis, you're negotiating blind.</p>
+                </div>
+
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:4px; padding:1rem; margin-bottom:1rem;">
+                  <p style="font-size:0.8125rem; color:#0c4a6e; margin:0 0 0.75rem 0; font-weight:600;">📄 Upload Required: Two Estimate PDFs</p>
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                    <div style="border:2px dashed #3b82f6; border-radius:4px; padding:1rem; text-align:center; background:#ffffff;">
+                      <p style="font-size:0.75rem; color:#6b7280; margin:0 0 0.25rem 0; font-weight:600;">Contractor Estimate</p>
+                      <p style="font-size:0.7rem; color:#9ca3af; margin:0;">PDF uploaded ✓</p>
+                    </div>
+                    <div style="border:2px dashed #3b82f6; border-radius:4px; padding:1rem; text-align:center; background:#ffffff;">
+                      <p style="font-size:0.75rem; color:#6b7280; margin:0 0 0.25rem 0; font-weight:600;">Carrier Estimate</p>
+                      <p style="font-size:0.7rem; color:#9ca3af; margin:0;">PDF uploaded ✓</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background:#fef2f2; border:2px solid #fecaca; border-radius:4px; padding:1rem; margin-bottom:1rem;">
+                  <h4 style="font-weight:700; color:#991b1b; margin:0 0 0.5rem 0; font-size:0.875rem;">Analysis Results</h4>
+                  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; text-align:center; font-size:0.875rem; margin-bottom:0.75rem;">
+                    <div>
+                      <p style="font-size:0.75rem; color:#6b7280; margin:0 0 0.25rem 0;">Carrier</p>
+                      <p style="font-weight:700; color:#1f2937; margin:0;">$18,400</p>
+                    </div>
+                    <div>
+                      <p style="font-size:0.75rem; color:#6b7280; margin:0 0 0.25rem 0;">Contractor</p>
+                      <p style="font-weight:700; color:#1f2937; margin:0;">$36,750</p>
+                    </div>
+                    <div>
+                      <p style="font-size:0.75rem; color:#6b7280; margin:0 0 0.25rem 0;">Gap</p>
+                      <p style="font-weight:700; color:#dc2626; margin:0; font-size:1.125rem;">$18,350</p>
+                    </div>
+                  </div>
+                  <p style="font-size:0.75rem; color:#7f1d1d; margin:0; text-align:center;">10 missing scope items • 3 pricing discrepancies • 2 quantity gaps</p>
+                </div>
+
+                <button style="background:#1e3a5f; color:#ffffff; border:none; padding:0.75rem 1.5rem; border-radius:4px; font-weight:700; font-size:0.875rem; cursor:pointer; width:100%;">
+                  Run Estimate Comparison
+                </button>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center; font-size:0.875rem; color:#6b7280; margin-top:1rem;">
+            <strong>AI Estimate Analyzer:</strong> Line-by-line comparison showing every gap with dollar values
+          </p>
+        </div>
+
+        <!-- Screen 4: Supplement Generator (Step 10) -->
+        <div style="margin-bottom:2rem;">
+          <div style="background:#ffffff; border:2px solid #9ca3af; border-radius:4px; box-shadow:0 10px 25px rgba(0,0,0,0.15); overflow:hidden;">
+            <div style="background:#e5e7eb; padding:0.5rem 1rem; border-bottom:1px solid #9ca3af; display:flex; align-items:center; gap:0.5rem;">
+              <div style="display:flex; gap:0.375rem;">
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#eab308;"></div>
+                <div style="width:0.75rem; height:0.75rem; border-radius:50%; background:#10b981;"></div>
+              </div>
+              <div style="flex:1; background:#ffffff; border-radius:4px; padding:0.25rem 0.75rem; font-size:0.75rem; color:#6b7280;">
+                claimcommandpro.com/claim-command-center#step-9
+              </div>
+            </div>
+
+            <div style="padding:1.5rem; background:#f9fafb;">
+              <div style="background:#1e3a5f; color:#ffffff; padding:1rem 1.5rem; border-radius:4px 4px 0 0; border-bottom:3px solid #d4af37;">
+                <h3 style="font-size:1.25rem; font-weight:700; margin:0;">STEP 10: Structure and Submit Supplements</h3>
+              </div>
+              
+              <div style="background:#ffffff; border:1px solid #e5e7eb; border-top:none; border-radius:0 0 4px 4px; padding:1.5rem;">
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">Why this matters</h4>
+                  <p style="font-size:0.875rem; color:#4b5563; line-height:1.6; margin:0;">A supplement is your formal request for additional payment. It must be structured, documented, and tied to policy language. A poorly written supplement gets denied. A professional supplement gets paid.</p>
+                </div>
+
+                <div style="margin-bottom:1.5rem;">
+                  <h4 style="font-weight:700; color:#1f2937; margin:0 0 0.5rem 0; font-size:0.9375rem;">What Claim Commander provides</h4>
+                  <ul style="margin:0; padding-left:1.25rem; font-size:0.875rem; color:#4b5563; line-height:1.8;">
+                    <li>Professional supplement letter with policy citations</li>
+                    <li>Line-item breakdown of missing scope</li>
+                    <li>Required supporting documentation checklist</li>
+                    <li>Formal demand for specific dollar amounts</li>
+                  </ul>
+                </div>
+
+                <div style="background:#f0fdf4; border:2px solid #bbf7d0; border-radius:4px; padding:1rem; margin-bottom:1rem;">
+                  <h4 style="font-weight:700; color:#166534; margin:0 0 0.75rem 0; font-size:0.875rem;">✓ Ready to Generate</h4>
+                  <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:0.5rem; font-size:0.75rem; color:#14532d;">
+                    <div style="display:flex; align-items:center; gap:0.375rem;">
+                      <span style="color:#10b981;">✓</span> Policy analyzed
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.375rem;">
+                      <span style="color:#10b981;">✓</span> Estimates compared
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.375rem;">
+                      <span style="color:#10b981;">✓</span> Gap identified: $18,350
+                    </div>
+                    <div style="display:flex; align-items:center; gap:0.375rem;">
+                      <span style="color:#10b981;">✓</span> 10 missing items documented
+                    </div>
+                  </div>
+                </div>
+
+                <div style="background:#fef3c7; border:1px solid #fbbf24; border-radius:4px; padding:1rem; margin-bottom:1rem;">
+                  <p style="font-size:0.8125rem; color:#92400e; margin:0;">
+                    <strong>⚠️ Supplement Preview:</strong> "Based on our policy analysis and contractor estimate, we respectfully request supplemental payment of $18,350 for the following items omitted from your initial estimate..."
+                  </p>
+                </div>
+
+                <button style="background:#1e3a5f; color:#ffffff; border:none; padding:0.75rem 1.5rem; border-radius:4px; font-weight:700; font-size:0.875rem; cursor:pointer; width:100%;">
+                  Generate Supplement Letter
+                </button>
+              </div>
+            </div>
+          </div>
+          <p style="text-align:center; font-size:0.875rem; color:#6b7280; margin-top:1rem;">
+            <strong>Supplement Generator:</strong> Professional supplement letter with policy citations and line-item breakdown
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Estimate Review Preview -->
+  <section style="background:#F7F9FC; padding:4rem 0;">
+    <div class="container" style="text-align:center;">
+      <h2>Estimate Review Preview</h2>
+
+      <div style="max-width:900px; width:100%; margin:2rem auto; border:1px solid #e5e7eb; border-radius:8px; background:#ffffff; padding:3rem 2rem; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:2rem;">
+          <div style="text-align:left;">
+            <p style="font-size:0.9rem; color:#6b7280; margin-bottom:0.5rem;">Insurance Estimate</p>
+            <p style="font-size:1.8rem; font-weight:700; color:#1f2937;">$18,200</p>
+          </div>
+          <div style="text-align:right;">
+            <p style="font-size:0.9rem; color:#6b7280; margin-bottom:0.5rem;">Actual Repair Cost</p>
+            <p style="font-size:1.8rem; font-weight:700; color:#17BEBB;">$36,750</p>
+          </div>
+        </div>
+        
+        <div style="border-top:2px solid #e5e7eb; padding-top:2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:1rem; background:#FEF3C7; border-radius:6px; margin-bottom:1rem;">
+            <span style="color:#92400E; font-weight:600;">⚠️ Gap Detected</span>
+            <span style="color:#92400E; font-weight:700; font-size:1.2rem;">$18,550</span>
+          </div>
+          
+          <div style="text-align:left; color:#4b5563; font-size:0.95rem; line-height:1.8;">
+            <p style="margin:0.5rem 0;">✓ Line-by-line pricing comparison</p>
+            <p style="margin:0.5rem 0;">✓ Missing scope identification</p>
+            <p style="margin:0.5rem 0;">✓ Market rate validation</p>
+            <p style="margin:0.5rem 0;">✓ Documentation requirements</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:1.5rem; font-size:1.1rem; color:#1f2937;">
+        Line-by-line comparison showing pricing gaps and missing scope items.
+      </p>
+    </div>
+  </section>
+
+  <!-- Before/After Comparison Table -->
+  <section style="background:#ffffff; padding:4rem 0;">
+    <div class="container">
+      <h2 style="text-align:center; margin-bottom:3rem;">
+        The Difference Structure Makes
+      </h2>
+
+      <div style="overflow-x:auto;">
+        <table class="comparison-table" style="width:100%; border-collapse:collapse; text-align:left; color:#1f2937;">
+          <thead>
+            <tr>
+              <th style="padding:1rem; border-bottom:2px solid #e5e7eb; color:#1f2937;"></th>
+              <th style="padding:1rem; border-bottom:2px solid #e5e7eb; color:#1f2937;">
+                Without Structured Proof
+              </th>
+              <th style="padding:1rem; border-bottom:2px solid #e5e7eb; color:#17BEBB;">
+                With Claim Command Pro
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr>
+              <td style="padding:1rem; font-weight:600; color:#1f2937;">Documentation</td>
+              <td style="padding:1rem; color:#1f2937;">Scattered photos and emails</td>
+              <td style="padding:1rem; color:#1f2937;">Organized, insurer-ready proof packet</td>
+            </tr>
+
+            <tr>
+              <td style="padding:1rem; font-weight:600; color:#1f2937;">Estimate Review</td>
+              <td style="padding:1rem; color:#1f2937;">Accept carrier numbers at face value</td>
+              <td style="padding:1rem; color:#1f2937;">Line-by-line pricing gap detection</td>
+            </tr>
+
+            <tr>
+              <td style="padding:1rem; font-weight:600; color:#1f2937;">Missing Scope</td>
+              <td style="padding:1rem; color:#1f2937;">Undetected omissions</td>
+              <td style="padding:1rem; color:#1f2937;">Identified missing line items</td>
+            </tr>
+
+            <tr>
+              <td style="padding:1rem; font-weight:600; color:#1f2937;">Submission</td>
+              <td style="padding:1rem; color:#1f2937;">General emails</td>
+              <td style="padding:1rem; color:#1f2937;">Structured Proof of Loss & demand templates</td>
+            </tr>
+
+            <tr>
+              <td style="padding:1rem; font-weight:600; color:#1f2937;">Financial Outcome</td>
+              <td style="padding:1rem; color:#1f2937;">Accept first or low offer</td>
+              <td style="padding:1rem; font-weight:700; color:#17BEBB;">
+                Recover full documented value
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Typical Claim Gap -->
+  <section style="background:#F7F9FC; padding:3rem 0;">
+    <div class="container" style="text-align:center;">
+
+      <h3 style="margin-bottom:2rem;">Typical Claim Gap</h3>
+
+      <div style="display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;">
+
+        <div>
+          <p style="font-size:1rem; margin-bottom:0.5rem;">Initial Offer</p>
+          <p style="font-size:2.3rem; font-weight:700;">$18,200</p>
+        </div>
+
+        <div>
+          <p style="font-size:1rem; margin-bottom:0.5rem;">Documented Value</p>
+          <p style="font-size:2.3rem; font-weight:700; color:#17BEBB;">$36,750</p>
+        </div>
+
+      </div>
+
+      <p style="margin-top:1.5rem; font-size:1.1rem;">
+        Gap Identified: <strong style="font-size:1.4rem; color:#17BEBB;">$18,550</strong>
+      </p>
+
+    </div>
+  </section>
+
+  <!-- Why This Matters -->
+  <section class="container" style="padding: 4rem 0; background: #F7F9FC;">
+    <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+      <p style="color: #1f2937 !important; font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem;">
+        Insurance companies underpay by $12,000–$47,000 per claim on average.
+      </p>
+      <p style="color: #1f2937 !important; font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem;">
+        Not because they can't afford it—they posted record profits last year.
+      </p>
+      <p style="color: #1f2937 !important; font-size: 1.2rem; line-height: 1.7; font-weight: 600;">
+        They underpay because most people don't know how to prove what they're owed.
+      </p>
+      <p style="color: #17BEBB !important; font-size: 1.3rem; line-height: 1.7; font-weight: 700; margin-top: 2rem;">
+        The money exists. We'll show you how to prove you're entitled to it.
+      </p>
+    </div>
+  </section>
+
+  <!-- What We Do -->
+  <section class="container" style="padding: 4rem 0;">
+    <h2 style="text-align: center; color: #1f2937 !important;">What We Do</h2>
+    
+    <div class="tool-grid" style="margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+      <div class="tool-card">
+        <h3>We analyze your policy and damage</h3>
+        <p>Show you exactly what coverage you have and what the insurer must pay if properly proven.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>We show you what proof is required</h3>
+        <p>Clear breakdown of documentation standards: what evidence they need, how to format it, when to submit it.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>We give you professional tools to prove it</h3>
+        <p>Damage inventories, Proof of Loss forms, demand letters, estimate comparisons, appeal templates—all written to adjuster standards.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>We guide you through the process</h3>
+        <p>Step-by-step: what to submit, when to submit it, how to respond to delays, when to escalate if they ignore you.</p>
+      </div>
+    </div>
+
+    <p style="color: #17BEBB; font-size: 1.3rem; font-weight: 700; text-align: center; margin-top: 3rem;">
+      Most people recover $12,000–$47,000 on average.
+    </p>
+  </section>
+
+  <!-- What You Get -->
+  <section class="container" style="padding: 4rem 0; background: #F7F9FC;">
+    <h2 style="text-align: center; color: #1f2937 !important;">What You Get</h2>
+    
+    <div style="max-width:800px; margin:2rem auto;">
+      <ul style="list-style:none; padding-left:0; color:#1f2937; font-size:1.1rem; line-height:1.9;">
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Advanced Policy Intelligence Engine</strong> — 30+ field extraction, form-aware detection (HO, DP, CP, BOP), policy trigger analysis, and coinsurance validation
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Evidence requirements checklist</strong> — Exactly what must be documented
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Professional claim templates</strong> — Proof of Loss, demand letters, appeals
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Estimate comparison tools</strong> — Line-by-line analysis of carrier vs. contractor pricing
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Deadline tracking</strong> — When responses are due, when you can escalate
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          <strong>Step-by-step guidance</strong> — What to do at every stage of the claim
+        </li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/marketing/pricing.html" class="btn-primary checkout-btn">Start Your Claim</a>
+    </div>
+  </section>
+
+  <!-- This Helps When -->
+  <section class="container" style="padding: 4rem 0;">
+    <h2 style="text-align: center; color: #1f2937 !important;">This Helps When</h2>
+    
+    <div style="max-width:800px; margin:2rem auto;">
+      <ul style="list-style:none; padding-left:0; color:#1f2937; font-size:1.1rem; line-height:1.9;">
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          You filed a claim but aren't sure what happens next
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          The insurance company denied your claim or offered far less than repair costs
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          You don't know what your policy covers or what evidence they need
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          You have contractor estimates but don't know how to submit them properly
+        </li>
+        <li style="margin:1rem 0; padding-left:1.5rem; position:relative;">
+          <span style="position:absolute; left:0; color:#17BEBB; font-weight:700;">✓</span>
+          You're worried about missing deadlines or saying the wrong thing
+        </li>
+      </ul>
+    </div>
+
+    <p style="color: #1f2937; font-size: 1.3rem; font-weight: 700; text-align: center; margin-top: 2.5rem;">
+      If you're stressed about your claim, we can help.
+    </p>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works" class="container" style="padding: 4rem 0; background: #F7F9FC;">
+    <h2 style="text-align: center; color: #1f2937 !important;">How It Works</h2>
+    
+    <div class="tool-grid" style="margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto;">
+      <div class="tool-card">
+        <h3>1. Upload your documents</h3>
+        <p>Policy, damage photos, contractor estimates, insurer correspondence—whatever you have.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>2. Get your claim analysis</h3>
+        <p>Within 48-72 hours: coverage breakdown, evidence gaps, proof requirements, and exactly what needs to happen next.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>3. Use the tools to prove your claim</h3>
+        <p>Professional templates, documentation guides, submission checklists—everything you need to prove full value.</p>
+      </div>
+      
+      <div class="tool-card">
+        <h3>4. Submit and recover what you're owed</h3>
+        <p>Follow the step-by-step process. Most claims resolve in 2-8 weeks once proper proof is submitted.</p>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2.5rem;">
+      <a href="/marketing/pricing.html" class="btn-primary checkout-btn">Get Started</a>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section id="pricing" class="container" style="padding: 4rem 0; background:#ffffff;">
+
+    <div class="tool-card" style="max-width:600px; margin:0 auto; text-align:center;">
+
+      <h3 style="color:#1f2937; font-size:1.6rem;">Recover $15,000+ for $149</h3>
+
+      <p style="color:#17BEBB; font-size:2.6rem; margin:1.5rem 0;"><strong>$149</strong></p>
+
+      <p style="margin-top:1rem; font-size:1.1rem;">
+        If you recover even $5,000 more, that's a 33x return.
+      </p>
+
+      <ul style="color:#1f2937; list-style:none; padding-left:0; text-align:center; max-width:500px; margin:1.5rem auto; font-size:1.05rem; line-height:1.8;">
+        <li style="margin:0.5rem 0;">Policy coverage analysis</li>
+        <li style="margin:0.5rem 0;">Evidence requirements</li>
+        <li style="margin:0.5rem 0;">Professional templates</li>
+        <li style="margin:0.5rem 0;">Estimate comparison</li>
+        <li style="margin:0.5rem 0;">Deadline tracking</li>
+        <li style="margin:0.5rem 0;">Step-by-step guidance</li>
+      </ul>
+
+      <a href="/marketing/pricing.html"
+         class="btn-primary checkout-btn"
+         style="display:inline-block; margin-top:1.5rem;">
+         Get Help Now
+      </a>
+
+      <!-- Trust Badges -->
+      <div style="display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:2rem; padding-top:2rem; border-top:1px solid #e5e7eb;">
+        <div style="display:flex; align-items:center; gap:0.5rem; color:#4b5563;">
+          <span style="font-size:1.3rem;">🔒</span>
+          <span style="font-size:0.9rem; font-weight:600;">Secure Checkout</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; color:#4b5563;">
+          <span style="font-size:1.3rem;">👥</span>
+          <span style="font-size:0.9rem; font-weight:600;">2,400+ Policyholders</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; color:#4b5563;">
+          <span style="font-size:1.3rem;">✓</span>
+          <span style="font-size:0.9rem; font-weight:600;">Instant Access</span>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- Success Stories Section -->
+  <section class="container" style="padding: 4rem 0; background: #ffffff;">
+    <h2 style="text-align: center; color: #1f2937 !important;">Success Stories</h2>
+    <p style="text-align: center; color: #4b5563; font-size: 1.1rem; max-width: 700px; margin: 1rem auto 3rem;">
+      Real policyholders who used Claim Command Pro to recover what they were owed
+    </p>
+
+    <div class="tool-grid success-stories-grid" style="margin-top: 2rem; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+      
+      <!-- Case Study 1 -->
+      <div class="tool-card" style="text-align: left; padding: 2rem;">
+        <div style="background: #E0F2FE; color: #0369A1; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; display: inline-block;">
+          Water Damage
+        </div>
+        <h3 style="color: #1f2937; margin-bottom: 1rem;">From $18,200 to $36,750</h3>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>The Problem:</strong> Sarah's insurance company offered $18,200 for water damage repairs. Her contractor's estimate was $36,750.
+        </p>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>What We Did:</strong> Line-by-line estimate comparison revealed missing scope items and underpriced labor rates. We provided structured documentation and a demand letter template.
+        </p>
+        <p style="color: #17BEBB; font-weight: 700; font-size: 1.2rem; margin-top: 1.5rem;">
+          Result: +$18,550 recovered
+        </p>
+        <p style="color: #4b5563; font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">
+          "The estimate comparison tool showed exactly what was missing. I submitted the proof packet and they paid in full within 3 weeks." — Sarah M.
+        </p>
+      </div>
+
+      <!-- Case Study 2 -->
+      <div class="tool-card" style="text-align: left; padding: 2rem;">
+        <div style="background: #FEE2E2; color: #991B1B; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; display: inline-block;">
+          Roof Damage - Denied
+        </div>
+        <h3 style="color: #1f2937; margin-bottom: 1rem;">Denial Overturned: $42,300</h3>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>The Problem:</strong> Michael's hail damage claim was denied. The adjuster said damage was "pre-existing wear and tear."
+        </p>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>What We Did:</strong> Policy analysis confirmed coverage. We provided an appeal template with structured evidence requirements and documentation checklist.
+        </p>
+        <p style="color: #17BEBB; font-weight: 700; font-size: 1.2rem; margin-top: 1.5rem;">
+          Result: Denial overturned, $42,300 paid
+        </p>
+        <p style="color: #4b5563; font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">
+          "I thought it was over. The appeal template and proof requirements got them to reopen it. Full payment in 6 weeks." — Michael T.
+        </p>
+      </div>
+
+      <!-- Case Study 3 -->
+      <div class="tool-card" style="text-align: left; padding: 2rem;">
+        <div style="background: #FEF3C7; color: #92400E; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; display: inline-block;">
+          Fire Damage
+        </div>
+        <h3 style="color: #1f2937; margin-bottom: 1rem;">$67,000 vs $15,000 Offer</h3>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>The Problem:</strong> Jennifer received a $15,000 offer for fire damage. Actual repairs required $67,000. She didn't know how to prove the difference.
+        </p>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>What We Did:</strong> Policy trigger analysis confirmed full coverage. Evidence checklist identified missing documentation. Professional Proof of Loss template structured the submission.
+        </p>
+        <p style="color: #17BEBB; font-weight: 700; font-size: 1.2rem; margin-top: 1.5rem;">
+          Result: +$52,000 recovered
+        </p>
+        <p style="color: #4b5563; font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">
+          "I had no idea what to submit. The checklist and templates made it straightforward. They paid the full $67,000." — Jennifer L.
+        </p>
+      </div>
+
+      <!-- Case Study 4 -->
+      <div class="tool-card" style="text-align: left; padding: 2rem;">
+        <div style="background: #E0E7FF; color: #3730A3; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-bottom: 1rem; display: inline-block;">
+          Wind Damage
+        </div>
+        <h3 style="color: #1f2937; margin-bottom: 1rem;">Lowball Offer Corrected</h3>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>The Problem:</strong> David's adjuster offered $9,800 for wind damage. Two contractors estimated $24,500–$26,000. He didn't know how to challenge it.
+        </p>
+        <p style="color: #4b5563; line-height: 1.7; margin-bottom: 1rem;">
+          <strong>What We Did:</strong> Estimate comparison revealed 47 missing line items and underpriced materials. Demand letter template and deadline tracking guided the negotiation process.
+        </p>
+        <p style="color: #17BEBB; font-weight: 700; font-size: 1.2rem; margin-top: 1.5rem;">
+          Result: +$14,950 recovered
+        </p>
+        <p style="color: #4b5563; font-size: 0.9rem; font-style: italic; margin-top: 0.5rem;">
+          "The line-by-line comparison was eye-opening. I followed the process step-by-step and they revised the offer to $24,750." — David R.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="container" style="padding:4rem 0; background:#F7F9FC;" id="faq">
+    <h2 style="text-align:center;">Common Questions</h2>
+
+    <div style="max-width:900px; margin:2rem auto 0;">
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>What documents should I upload?</h3>
+        <p>
+          Upload any documents you have: denial letters, insurance estimates, engineer reports, 
+          contractor estimates, policy documents, or claim correspondence. The system will analyze 
+          whatever you provide and identify what's missing.
+        </p>
+      </div>
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>Can Claim Command explain denial letters?</h3>
+        <p>
+          Yes. The system extracts the insurer's stated reasoning from denial letters and 
+          correspondence, identifies the dispute category (causation, scope, coverage, or documentation), 
+          and explains what the insurer is actually arguing in plain English.
+        </p>
+      </div>
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>Can it analyze estimates and engineer reports?</h3>
+        <p>
+          Yes. When you upload insurance estimates and contractor estimates, the system performs 
+          line-by-line comparison to identify pricing gaps and missing scope items. When engineer 
+          reports are uploaded, it extracts the engineer's conclusions and identifies potential 
+          dispute points.
+        </p>
+      </div>
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>What do I see before I pay?</h3>
+        <p>
+          Before payment, you'll see an instant insight preview that includes: key insurer statements 
+          extracted from your documents, likely dispute category, potential documentation gaps, and 
+          estimate issues (if estimates were uploaded). This preview proves the system understands 
+          your specific claim before you commit to the full report.
+        </p>
+      </div>
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>What if my claim was already denied?</h3>
+        <p>
+          Many denials stem from documentation gaps, not true coverage issues. The system analyzes 
+          the denial reasoning, identifies what proof is missing, and provides structured appeal 
+          templates and documentation checklists to reopen the claim.
+        </p>
+      </div>
+
+      <div class="tool-card" style="margin-bottom:1.5rem;">
+        <h3>Can contractors or adjusters use this report?</h3>
+        <p>
+          Yes. The full report is structured for professional use. Contractors can use it to 
+          understand the dispute faster and prepare accurate estimates. Public adjusters and 
+          attorneys can use it as a foundation for their work. The report includes share and 
+          download options.
+        </p>
+      </div>
+
+      <div class="tool-card">
+        <h3>Is this legal representation?</h3>
+        <p>
+          No. Claim Command Pro provides claim analysis and documentation tools. It does not 
+          provide legal advice or act as a public adjuster. The system helps you understand 
+          your claim position and structure your documentation.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Closing CTA -->
+  <section class="container" style="padding: 4rem 0; background: #F7F9FC;">
+    <h2 style="text-align:center; color: #1f2937 !important;">Stop Guessing. Start Proving.</h2>
+    <p style="max-width:700px; margin:1.5rem auto; text-align:center; color:#1f2937; font-size:1.2rem; line-height:1.7;">
+      Your loss was stressful. The insurance process shouldn't make it worse.
+    </p>
+    <p style="max-width:700px; margin:1.5rem auto; text-align:center; color:#1f2937; font-size:1.2rem; line-height:1.7; font-weight:600;">
+      We'll show you exactly how to prove your claim and recover what you're owed.
+    </p>
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/marketing/pricing.html" class="btn-primary checkout-btn">Start My Claim Review</a>
+      </div>
+  </section>
+  </div>
+  <!-- END HIDDEN OLD SECTIONS -->
+
+  <!-- OLD SECTIONS 9-12 HIDDEN -->
+  <div style="display:none;">
+  <!-- SECTION 9: THE 4 THINGS INSURERS REQUIRE TO PAY -->
+  <section class="container" style="padding:4rem 0; background:linear-gradient(135deg, #1f2937 0%, #111827 100%);">
+    <div style="max-width:1100px; margin:0 auto;">
+      <h2 style="text-align:center; font-size:2.5rem; font-weight:700; color:#ffffff; margin-bottom:1rem;">
+        The 4 Things Insurers Require to Pay
+      </h2>
+      <p style="text-align:center; font-size:1.25rem; color:#d1d5db; margin-bottom:3rem; max-width:800px; margin-left:auto; margin-right:auto;">
+        Without these four elements, your claim will be delayed, reduced, or denied.
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:2rem;">
+        
+        <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:3px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; text-align:center;">
+          <div style="width:80px; height:80px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(59,130,246,0.4);">
+            <span style="font-size:2.5rem;">🛡️</span>
+          </div>
+          <div style="display:inline-block; background:rgba(255,255,255,0.2); color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:1.125rem; margin-bottom:1rem;">
+            1
+          </div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#ffffff; line-height:1.3; margin:0;">
+            Coverage Trigger Identification
+          </h3>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:3px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; text-align:center;">
+          <div style="width:80px; height:80px; background:#10b981; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(16,185,129,0.4);">
+            <span style="font-size:2.5rem;">☑️</span>
+          </div>
+          <div style="display:inline-block; background:rgba(255,255,255,0.2); color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:1.125rem; margin-bottom:1rem;">
+            2
+          </div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#ffffff; line-height:1.3; margin:0;">
+            Scope Validation
+          </h3>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:3px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; text-align:center;">
+          <div style="width:80px; height:80px; background:#f59e0b; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(245,158,11,0.4);">
+            <span style="font-size:2.5rem;">💰</span>
+          </div>
+          <div style="display:inline-block; background:rgba(255,255,255,0.2); color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:1.125rem; margin-bottom:1rem;">
+            3
+          </div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#ffffff; line-height:1.3; margin:0;">
+            Cost Substantiation
+          </h3>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:3px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; text-align:center;">
+          <div style="width:80px; height:80px; background:#8b5cf6; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem; box-shadow:0 8px 16px rgba(139,92,246,0.4);">
+            <span style="font-size:2.5rem;">✅</span>
+          </div>
+          <div style="display:inline-block; background:rgba(255,255,255,0.2); color:#ffffff; font-weight:700; padding:0.5rem 1rem; border-radius:999px; font-size:1.125rem; margin-bottom:1rem;">
+            4
+          </div>
+          <h3 style="font-size:1.25rem; font-weight:700; color:#ffffff; line-height:1.3; margin:0;">
+            Structured Submission
+          </h3>
+        </div>
+
+      </div>
+
+      <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,0.3); border-radius:12px; padding:2.5rem; margin-top:3rem; text-align:center;">
+        <p style="font-size:1.25rem; color:#ffffff; font-weight:500; margin:0;">
+          Claim Command Pro ensures your claim meets all four requirements before submission.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 10: STRUCTURE VS CHAOS -->
+  <section class="container" style="padding:4rem 0; background:#ffffff;">
+    <h2 style="text-align:center; font-size:2.5rem; font-weight:700; color:#1f2937; margin-bottom:3rem;">
+      Structure vs Chaos
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:2rem; max-width:1100px; margin:0 auto;">
+      
+      <!-- Without Structured Proof -->
+      <div style="background:linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border:4px solid #fca5a5; border-radius:12px; padding:2.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.08);">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+          <div style="width:48px; height:48px; background:#dc2626; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:2rem; color:#ffffff;">✕</span>
+          </div>
+          <h3 style="font-size:1.75rem; font-weight:700; color:#991b1b; margin:0;">
+            Without Structured Proof
+          </h3>
+        </div>
+
+        <ul style="list-style:none; padding:0; margin:0;">
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#dc2626; font-size:1.5rem; flex-shrink:0;">✕</span>
+            <span style="color:#4b5563;">Scattered emails and photos</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#dc2626; font-size:1.5rem; flex-shrink:0;">✕</span>
+            <span style="color:#4b5563;">Accept carrier estimate</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#dc2626; font-size:1.5rem; flex-shrink:0;">✕</span>
+            <span style="color:#4b5563;">Missing scope undetected</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#dc2626; font-size:1.5rem; flex-shrink:0;">✕</span>
+            <span style="color:#4b5563;">Unstructured submissions</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:0; font-size:1.125rem;">
+            <span style="color:#dc2626; font-size:1.5rem; flex-shrink:0;">✕</span>
+            <span style="color:#1f2937; font-weight:700;">Low settlement outcome</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- With Claim Command Pro -->
+      <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border:4px solid #86efac; border-radius:12px; padding:2.5rem; box-shadow:0 8px 20px rgba(0,0,0,0.12);">
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:2rem;">
+          <div style="width:48px; height:48px; background:#10b981; border-radius:50%; display:flex; align-items:center; justify-content:center;">
+            <span style="font-size:2rem; color:#ffffff;">✓</span>
+          </div>
+          <h3 style="font-size:1.75rem; font-weight:700; color:#065f46; margin:0;">
+            With Claim Command Pro
+          </h3>
+        </div>
+
+        <ul style="list-style:none; padding:0; margin:0;">
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#10b981; font-size:1.5rem; flex-shrink:0;">✓</span>
+            <span style="color:#4b5563;">Organized proof packet</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#10b981; font-size:1.5rem; flex-shrink:0;">✓</span>
+            <span style="color:#4b5563;">Line-by-line estimate review</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#10b981; font-size:1.5rem; flex-shrink:0;">✓</span>
+            <span style="color:#4b5563;">Missing scope identified</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:1.25rem; font-size:1.125rem;">
+            <span style="color:#10b981; font-size:1.5rem; flex-shrink:0;">✓</span>
+            <span style="color:#4b5563;">Structured supplement requests</span>
+          </li>
+          <li style="display:flex; align-items:start; gap:1rem; margin-bottom:0; font-size:1.125rem;">
+            <span style="color:#10b981; font-size:1.5rem; flex-shrink:0;">✓</span>
+            <span style="color:#065f46; font-weight:700;">Full documented claim value</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 11: TYPICAL CLAIM GAP -->
+  <section class="container" style="padding:4rem 0; background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+    <div style="max-width:1000px; margin:0 auto;">
+      <h2 style="text-align:center; font-size:2.5rem; font-weight:700; color:#ffffff; margin-bottom:3rem;">
+        Typical Claim Gap
+      </h2>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem; margin-bottom:3rem;">
+        
+        <!-- Initial Offer -->
+        <div style="text-align:center;">
+          <div style="background:rgba(220,38,38,0.2); border:3px solid #dc2626; border-radius:12px; padding:2.5rem;">
+            <p style="font-size:0.875rem; color:#fca5a5; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+              Initial Offer
+            </p>
+            <p style="font-size:4rem; font-weight:700; color:#f87171; margin:0;">
+              $18,200
+            </p>
+          </div>
+        </div>
+
+        <!-- Documented Value -->
+        <div style="text-align:center;">
+          <div style="background:rgba(16,185,129,0.2); border:3px solid #10b981; border-radius:12px; padding:2.5rem;">
+            <p style="font-size:0.875rem; color:#86efac; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+              Documented Value
+            </p>
+            <p style="font-size:4rem; font-weight:700; color:#34d399; margin:0;">
+              $36,750
+            </p>
+          </div>
+        </div>
+
+        <!-- Gap Identified -->
+        <div style="text-align:center;">
+          <div style="background:rgba(251,191,36,0.2); border:3px solid #fbbf24; border-radius:12px; padding:2.5rem;">
+            <p style="font-size:0.875rem; color:#fde047; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem;">
+              Gap Identified
+            </p>
+            <p style="font-size:4rem; font-weight:700; color:#fde047; margin:0; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
+              📈 $18,550
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Explanation -->
+      <div style="background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); border:2px solid rgba(255,255,255,0.3); border-radius:12px; padding:3rem; text-align:center;">
+        <p style="font-size:2rem; font-weight:700; color:#ffffff; margin-bottom:1.5rem; line-height:1.4;">
+          Insurance companies underpay <span style="color:#fde047;">$12,000–$47,000</span> per claim on average.
+        </p>
+        
+        <p style="font-size:1.5rem; color:#d1d5db; margin-bottom:1rem;">
+          Not because coverage doesn't exist.
+        </p>
+        
+        <p style="font-size:1.5rem; font-weight:600; color:#ffffff; margin:0;">
+          Because most policyholders do not know how to prove what they are owed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 12: FINAL CTA -->
+  <section class="container" style="padding:5rem 0; background:linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);">
+    <div style="max-width:800px; margin:0 auto; text-align:center;">
+      <div style="width:96px; height:96px; background:rgba(255,255,255,0.2); backdrop-filter:blur(10px); border-radius:50%; border:4px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; margin:0 auto 2rem; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        <span style="font-size:3rem;">✨</span>
+      </div>
+
+      <h2 style="font-size:3.5rem; font-weight:700; color:#ffffff; margin-bottom:2rem; line-height:1.2;">
+        Stop Guessing. Start Proving.
+      </h2>
+      
+      <p style="font-size:1.75rem; color:#dbeafe; margin-bottom:3rem; font-weight:500; line-height:1.5; max-width:700px; margin-left:auto; margin-right:auto;">
+        Upload your claim documents and see exactly where the insurance estimate may be wrong.
+      </p>
+      
+      <a href="/app/analyze-claim.html" class="btn-primary checkout-btn" style="background:#ffffff !important; color:#2563eb !important; font-size:1.5rem; padding:1.5rem 3rem; display:inline-block; margin-bottom:2.5rem; font-weight:700; box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+        Start My Claim
+      </a>
+
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-center; gap:2rem; font-size:1rem; color:#dbeafe;">
+        <span style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="color:#34d399; font-size:1.25rem;">✓</span>
+          Free preview in 60 seconds
+        </span>
+        <span style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="color:#34d399; font-size:1.25rem;">✓</span>
+          No account required
+        </span>
+        <span style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="color:#34d399; font-size:1.25rem;">✓</span>
+          Full report for $149
+        </span>
+      </div>
+    </div>
+  </section>
+  </div>
+  <!-- END HIDDEN OLD SECTIONS 9-12 -->
+
+  <!-- Sticky Mobile CTA -->
+  <div class="sticky-mobile-cta">
+    <a href="/marketing/pricing.html" class="sticky-cta-btn">
+      Get Help
+    </a>
+      </div>
+
+  <!-- Floating Desktop CTA -->
+  <div class="floating-desktop-cta">
+    <a href="/marketing/pricing.html" class="floating-cta-btn">
+      Get Help
+    </a>
+    </div>
+
+  <footer style="background: #F7F9FC; padding: 3rem 0; border-top: 1px solid #e5e7eb;">
+    <div class="container">
+      <div class="footer-content" style="text-align: center;">
+        <div class="footer-section" style="text-align: center;">
+          <h4 style="color: #1f2937; text-align: center;">Claim Command Pro</h4>
+          <p style="color: #4b5563; margin-top: 1rem; text-align: center;" 
+             data-en="Insurance claim help for homeowners. Policy analysis, evidence checklists, and professional templates to prove your claim." 
+             data-es="Ayuda con reclamos de seguros para propietarios. Análisis de pólizas, listas de evidencia y plantillas profesionales para probar su reclamo.">
+             Insurance claim help for homeowners. Policy analysis, evidence checklists, and professional templates to prove your claim.
+          </p>
+        </div>
+        <div class="footer-section" style="text-align: center;">
+          <h4 style="color: #1f2937; text-align: center;" data-en="Services" data-es="Servicios">Services</h4>
+          <a href="#services" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Documentation Services" data-es="Servicios de Documentación">Documentation Services</a>
+          <a href="#resources" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Recommended Tools" data-es="Herramientas Recomendadas">Recommended Tools</a>
+          <a href="#process" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Our Process" data-es="Nuestro Proceso">Our Process</a>
+          <a href="#pricing" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Pricing" data-es="Precios">Pricing</a>
+        </div>
+        <div class="footer-section" style="text-align: center;">
+          <h4 style="color: #1f2937; text-align: center;" data-en="Claim Help" data-es="Ayuda con Reclamos">Claim Help</h4>
+          <a href="/seo/insurance-claim-help.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;">Insurance Claim Help</a>
+          <a href="/seo/insurance-claim-denied.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;">Claim Denied?</a>
+          <a href="/seo/lowball-insurance-offer.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;">Lowball Offer?</a>
+          <a href="/seo/handle-insurance-claim-yourself.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;">DIY Claims</a>
+        </div>
+        <div class="footer-section" style="text-align: center;">
+          <h4 style="color: #1f2937; text-align: center;" data-en="Information" data-es="Información">Information</h4>
+          <a href="terms.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Terms of Service" data-es="Términos de Servicio">Terms of Service</a>
+          <a href="privacy.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Privacy Policy" data-es="Política de Privacidad">Privacy Policy</a>
+          <a href="disclaimer.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Legal Disclaimer" data-es="Aviso Legal">Legal Disclaimer</a>
+          <a href="#contact" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Contact" data-es="Contacto">Contact</a>
+          <a href="admin-login.html" style="color: #4b5563; text-align: center; display: inline-block; margin: 0 0.5rem;" data-en="Admin" data-es="Admin">Admin</a>
+        </div>
+      </div>
+      <div style="text-align: center; padding-top: 2rem; margin-top: 2rem; border-top: 1px solid #e5e7eb; color: #4b5563;">
+        <p data-en="© 2025 Claim Command Pro. All rights reserved. | Not legal advice or adjusting services." 
+           data-es="© 2025 Claim Command Pro. Todos los derechos reservados. | No es asesoría legal o servicios de ajuste.">
+           © 2025 Claim Command Pro. All rights reserved. | Not legal advice or adjusting services.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/app/assets/js/supabase-client.js"></script>
+  <script src="/app/assets/js/auth-session.js"></script>
+  <script src="/app/assets/js/stripe-checkout.js"></script>
+
+  <script>
+function calculateROI() {
+  const damageInput = document.getElementById("roi-damage").value;
+  const offerInput = document.getElementById("roi-offer").value;
+  const deductibleInput = document.getElementById("roi-deductible").value;
+
+  if (!damageInput || !offerInput || deductibleInput === "") {
+    document.getElementById("roi-result").innerText = "Complete all fields.";
+    return;
+  }
+
+  const damage = Number(damageInput);
+  const offer = Number(offerInput);
+  const deductible = Number(deductibleInput);
+
+  if (isNaN(damage) || isNaN(offer) || isNaN(deductible) || damage <= 0 || offer < 0 || deductible < 0) {
+    document.getElementById("roi-result").innerText = "Enter valid numbers.";
+    return;
+  }
+
+  const netDamage = damage - deductible;
+  const gap = netDamage - offer;
+
+  let resultText = "";
+
+  if (gap <= 0) {
+    resultText = "No gap detected.";
+  } else {
+    resultText = `Detected gap: $${gap.toLocaleString()}`;
+  }
+
+  document.getElementById("roi-result").innerText = resultText;
+}
+
+function calculateClaimGap() {
+  const insuranceInput = document.getElementById("calc-insurance").value;
+  const contractorInput = document.getElementById("calc-contractor").value;
+  const deductibleInput = document.getElementById("calc-deductible").value;
+
+  const parseAmount = (val) => {
+    return parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+  };
+
+  const formatCurrency = (val) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(val);
+  };
+
+  const insurance = parseAmount(insuranceInput);
+  const contractor = parseAmount(contractorInput);
+  const deductible = parseAmount(deductibleInput);
+
+  if (insurance > 0 && contractor > 0) {
+    const gap = Math.max(0, contractor - insurance - deductible);
+    
+    document.getElementById('gap-results').style.display = 'block';
+    document.getElementById('display-insurance').textContent = formatCurrency(insurance);
+    document.getElementById('display-contractor').textContent = formatCurrency(contractor);
+    document.getElementById('display-deductible').textContent = formatCurrency(deductible);
+    document.getElementById('gap-amount').textContent = formatCurrency(gap);
+  } else {
+    document.getElementById('gap-results').style.display = 'none';
+  }
+}
+</script>
+
+</body>
+</html>
