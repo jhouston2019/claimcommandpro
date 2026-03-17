@@ -3,19 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { Upload, Loader2, DollarSign, FileText, TrendingUp, ArrowRight, CheckCircle, Zap } from 'lucide-react'
-import { generateClaimIntelligence } from '@/lib/generateClaimIntelligence'
+import { Upload, Loader2, DollarSign, FileText, TrendingUp, ArrowRight, CheckCircle, Zap, BarChart3, Target } from 'lucide-react'
+import { analyzeClaim, generateSampleEstimate, parseEstimate, ClaimAnalysisResult } from '@/lib/claimAnalysisEngine'
+import { generateRecoveryLetter, formatLetterForDownload } from '@/lib/letterGenerationEngine'
 
 type FlowStage = 'upload' | 'analyzing' | 'money_found' | 'results'
 
-interface AnalysisResult {
+interface AnalysisResult extends ClaimAnalysisResult {
   claimId: string
-  claimGap: number
-  coverageIssues: number
-  estimateIssues: number
-  missingScope: any[]
-  coverageGaps: any[]
-  pricingIssues: any[]
   carrierName: string
 }
 
@@ -65,15 +60,17 @@ export default function ClaimFlowPage() {
         return
       }
 
+      // Get or create claim
       const { data: claims } = await supabase
         .from('claims')
-        .select('id, carrier_name')
+        .select('id, carrier_name, claim_type')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1)
 
       let claimId = claims?.[0]?.id
       let carrierName = claims?.[0]?.carrier_name || 'State Farm'
+      let claimType = claims?.[0]?.claim_type || 'Roof Hail Damage'
 
       if (!claimId) {
         const { data: newClaim } = await supabase
@@ -82,7 +79,7 @@ export default function ClaimFlowPage() {
             user_id: user.id,
             claim_name: 'Quick Analysis Claim',
             carrier_name: carrierName,
-            claim_type: 'Roof Hail Damage',
+            claim_type: claimType,
             claim_status: 'active'
           })
           .select()
@@ -91,28 +88,56 @@ export default function ClaimFlowPage() {
         claimId = newClaim.id
       }
 
-      await generateClaimIntelligence(claimId, user.id)
+      // Generate sample estimate for demo (in production, parse uploaded file)
+      const lineItems = generateSampleEstimate(claimType)
+      
+      // Run real analysis engine
+      const analysisResult = analyzeClaim(
+        lineItems,
+        carrierName,
+        claimType,
+        {
+          squareFootage: 2500,
+          stories: 2,
+          age: 25
+        }
+      )
 
-      const { data: analysis } = await supabase
+      // Store analysis in database
+      await supabase
         .from('claim_analysis')
-        .select('*')
-        .eq('claim_id', claimId)
-        .single()
+        .upsert({
+          claim_id: claimId,
+          insurance_estimate: analysisResult.totalPaid,
+          contractor_estimate: analysisResult.totalActual,
+          claim_gap: analysisResult.gapAmount,
+          claim_intelligence_score: analysisResult.confidence === 'high' ? 85 : analysisResult.confidence === 'medium' ? 65 : 45,
+          risk_level: analysisResult.confidence === 'high' ? 'high' : analysisResult.confidence === 'medium' ? 'medium' : 'low',
+          settlement_opportunity: analysisResult.confidence === 'high' ? 'high' : analysisResult.confidence === 'medium' ? 'medium' : 'low',
+          missing_scope_items: analysisResult.missingScope.map(item => ({ item, estimated_value: 800 })),
+          pricing_suppressions: analysisResult.estimateIssues.map(issue => ({
+            description: issue.description,
+            estimated_impact: issue.difference
+          }))
+        })
 
-      const { data: coverageFlags } = await supabase
-        .from('coverage_flags')
-        .select('*')
-        .eq('claim_id', claimId)
-        .eq('is_resolved', false)
+      // Store coverage flags
+      for (const issue of analysisResult.coverageIssues) {
+        await supabase
+          .from('coverage_flags')
+          .insert({
+            claim_id: claimId,
+            coverage_type: issue.type.toLowerCase().replace(/\s+/g, '_'),
+            coverage_alert: issue.description,
+            estimated_value: issue.estimatedValue,
+            is_resolved: false
+          })
+      }
 
+      // Set result with full analysis
       setResult({
+        ...analysisResult,
         claimId,
-        claimGap: analysis?.claim_gap || 18550,
-        coverageIssues: coverageFlags?.length || 3,
-        estimateIssues: (analysis?.missing_scope_items?.length || 0) + (analysis?.pricing_suppressions?.length || 0),
-        missingScope: analysis?.missing_scope_items || [],
-        coverageGaps: coverageFlags || [],
-        pricingIssues: analysis?.pricing_suppressions || [],
         carrierName
       })
 
@@ -153,6 +178,30 @@ export default function ClaimFlowPage() {
 
   const handleGenerateLetter = () => {
     if (!result) return
+    
+    // Generate letter directly from analysis
+    const letter = generateRecoveryLetter(result, {
+      carrierName: result.carrierName,
+      claimNumber: result.claimId.substring(0, 8).toUpperCase(),
+      policyholderName: '[YOUR NAME]',
+      propertyAddress: '[PROPERTY ADDRESS]',
+      dateOfLoss: new Date().toLocaleDateString()
+    })
+    
+    const formattedLetter = formatLetterForDownload(letter)
+    
+    // Create downloadable file
+    const blob = new Blob([formattedLetter], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `recovery-letter-${Date.now()}.txt`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    
+    // Also navigate to documentation builder for editing
     router.push(`/documentation-builder?claimId=${result.claimId}&autoFill=true`)
   }
 
@@ -301,15 +350,15 @@ export default function ClaimFlowPage() {
 
                 <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
                   <div className="bg-gray-900/50 rounded-lg p-4 border border-teal-500/30">
-                    <p className="text-4xl font-bold text-teal-400">{result.coverageIssues}</p>
+                    <p className="text-4xl font-bold text-teal-400">{result.coverageIssues.length}</p>
                     <p className="text-sm text-gray-400 mt-1">Coverage Issues</p>
                   </div>
                   <div className="bg-gray-900/50 rounded-lg p-4 border border-teal-500/30">
-                    <p className="text-4xl font-bold text-teal-400">{result.estimateIssues}</p>
+                    <p className="text-4xl font-bold text-teal-400">{result.estimateIssues.length}</p>
                     <p className="text-sm text-gray-400 mt-1">Estimate Issues</p>
                   </div>
                   <div className="bg-gray-900/50 rounded-lg p-4 border border-teal-500/30">
-                    <p className="text-4xl font-bold text-teal-400">High</p>
+                    <p className="text-4xl font-bold text-teal-400 capitalize">{result.confidence}</p>
                     <p className="text-sm text-gray-400 mt-1">Confidence</p>
                   </div>
                 </div>
@@ -383,125 +432,83 @@ export default function ClaimFlowPage() {
               
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border-2 border-red-500/50">
                 <h2 className="text-2xl font-bold text-white mb-6">Unclaimed Coverage Detected</h2>
-                {result.coverageGaps.length > 0 ? (
-                  <div className="space-y-3">
-                    {result.coverageGaps.map((gap: any, idx: number) => (
-                      <div key={idx} className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500">
-                        <div className="flex items-start justify-between">
-                          <p className="font-bold text-white">{gap.coverage_alert}</p>
-                          {gap.estimated_value > 0 && (
-                            <span className="text-lg font-black text-teal-400">
-                              +${gap.estimated_value.toLocaleString()}
-                            </span>
-                          )}
+                <div className="space-y-3">
+                  {result.coverageIssues.map((issue: any, idx: number) => (
+                    <div key={idx} className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-bold text-white">{issue.type}</p>
+                          <p className="text-sm text-gray-400 mt-1">{issue.description}</p>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500">
-                      <div className="flex items-start justify-between">
-                        <p className="font-bold text-white">Ordinance & Law not applied</p>
-                        <span className="text-lg font-black text-teal-400">+$4,200</span>
+                        <span className="text-lg font-black text-teal-400">
+                          +${issue.estimatedValue.toLocaleString()}
+                        </span>
                       </div>
                     </div>
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500">
-                      <div className="flex items-start justify-between">
-                        <p className="font-bold text-white">Overhead & Profit missing</p>
-                        <span className="text-lg font-black text-teal-400">+$3,100</span>
-                      </div>
-                    </div>
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500">
-                      <div className="flex items-start justify-between">
-                        <p className="font-bold text-white">Code upgrade not triggered</p>
-                        <span className="text-lg font-black text-teal-400">+$2,800</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
 
               <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border-2 border-orange-500/50">
                 <h2 className="text-2xl font-bold text-white mb-6">Estimate Issues Detected</h2>
-                {result.missingScope.length > 0 || result.pricingIssues.length > 0 ? (
-                  <div className="space-y-3">
-                    {result.pricingIssues.length > 0 && (
-                      <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-red-500">
-                        <p className="font-bold text-white">Material pricing below market</p>
-                        {result.pricingIssues[0]?.estimated_impact && (
-                          <p className="text-teal-400 font-bold mt-1">
-                            ${result.pricingIssues[0].estimated_impact.toLocaleString()} impact
-                          </p>
-                        )}
+                <div className="space-y-3">
+                  {result.estimateIssues.map((issue: any, idx: number) => (
+                    <div key={idx} className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-orange-500">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="font-bold text-white">{issue.type}</p>
+                          <p className="text-sm text-gray-400 mt-1">{issue.description}</p>
+                          {issue.lineItem && (
+                            <p className="text-xs text-gray-500 mt-1">Line item: {issue.lineItem}</p>
+                          )}
+                        </div>
+                        <span className="text-lg font-black text-teal-400">
+                          ${issue.difference.toLocaleString()}
+                        </span>
                       </div>
-                    )}
-                    {result.missingScope.length > 0 && (
-                      <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-orange-500">
-                        <p className="font-bold text-white mb-2">Missing line items</p>
-                        <ul className="space-y-1 text-sm text-gray-300">
-                          {result.missingScope.slice(0, 4).map((item: any, idx: number) => (
-                            <li key={idx} className="flex justify-between">
-                              <span>• {item.item || item}</span>
-                              {item.estimated_value && (
-                                <span className="text-teal-400 font-bold">
-                                  ${item.estimated_value.toLocaleString()}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-red-500">
-                      <p className="font-bold text-white">Material pricing below market</p>
-                      <p className="text-teal-400 font-bold mt-1">$3,200 impact</p>
                     </div>
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-orange-500">
-                      <p className="font-bold text-white">Missing line items</p>
-                      <ul className="space-y-1 text-sm text-gray-300 mt-2">
-                        <li className="flex justify-between">
-                          <span>• Flashing</span>
-                          <span className="text-teal-400 font-bold">$2,100</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>• Starter course</span>
-                          <span className="text-teal-400 font-bold">$1,800</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>• Drip edge</span>
-                          <span className="text-teal-400 font-bold">$1,200</span>
-                        </li>
+                  ))}
+                  {result.missingScope.length > 0 && (
+                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-red-500">
+                      <p className="font-bold text-white mb-2">Missing Scope Items</p>
+                      <ul className="space-y-1 text-sm text-gray-300">
+                        {result.missingScope.map((item: string, idx: number) => (
+                          <li key={idx}>• {item}</li>
+                        ))}
                       </ul>
                     </div>
-                    <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-yellow-500">
-                      <p className="font-bold text-white">Labor undercalculated</p>
-                      <p className="text-sm text-gray-300 mt-1">15% below regional average</p>
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
             <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-xl shadow-2xl p-6 mb-8 border-2 border-red-500/50">
               <h2 className="text-2xl font-bold text-white mb-4">Carrier Behavior Detected</h2>
-              <p className="text-red-200 mb-6">Carrier: <span className="font-bold">{result.carrierName}</span></p>
+              <p className="text-red-200 mb-6">Carrier: <span className="font-bold">{result.carrierPatterns.carrier}</span></p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-red-950/50 rounded-lg p-4 border border-red-500/30">
                   <p className="text-sm text-red-200 mb-2">Labor suppression:</p>
-                  <p className="text-4xl font-black text-teal-400">High</p>
+                  <p className="text-4xl font-black text-teal-400">{Math.round(result.carrierPatterns.laborSuppressionRate * 100)}%</p>
                 </div>
                 <div className="bg-red-950/50 rounded-lg p-4 border border-red-500/30">
                   <p className="text-sm text-red-200 mb-2">O&P omission:</p>
-                  <p className="text-4xl font-black text-teal-400">Likely</p>
+                  <p className="text-4xl font-black text-teal-400">{Math.round(result.carrierPatterns.opOmissionRate * 100)}%</p>
                 </div>
                 <div className="bg-red-950/50 rounded-lg p-4 border border-red-500/30">
                   <p className="text-sm text-red-200 mb-2">Avg underpayment:</p>
-                  <p className="text-4xl font-black text-teal-400">$11,200</p>
+                  <p className="text-4xl font-black text-teal-400">${result.carrierPatterns.avgUnderpayment.toLocaleString()}</p>
+                </div>
+              </div>
+              
+              <div className="mt-4 bg-red-950/30 rounded-lg p-3 border border-red-500/30">
+                <p className="text-sm text-red-200 mb-2">Common patterns:</p>
+                <div className="flex flex-wrap gap-2">
+                  {result.carrierPatterns.risks.map((risk: string, idx: number) => (
+                    <span key={idx} className="bg-red-900/50 text-red-200 px-3 py-1 rounded-full text-xs">
+                      {risk}
+                    </span>
+                  ))}
                 </div>
               </div>
               
