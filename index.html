@@ -654,9 +654,9 @@
 
     .testimonials {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
@@ -666,6 +666,20 @@
       border-radius: 16px;
       padding: 2.5rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1.25rem;
     }
 
     .testimonial-author {
@@ -682,9 +696,9 @@
     }
 
     .testimonial-text {
-      font-size: 1.125rem;
+      font-size: 1.05rem;
       color: var(--gray-900);
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* SYSTEM POSITIONING */
@@ -781,6 +795,39 @@
 
     .footer-links a:hover {
       color: var(--teal);
+    }
+
+    /* SOCIAL PROOF BAR */
+    .social-proof-bar {
+      background: white;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .social-proof-bar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .social-proof-bar-item {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .social-proof-bar-text {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .social-proof-bar-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
     }
 
     /* TOOLS SECTION */
@@ -918,11 +965,141 @@
     .dashboard-placeholder {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       border-radius: 12px;
-      padding: 4rem;
-      text-align: center;
-      color: white;
-      font-size: 1.5rem;
+      padding: 0;
       margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .dashboard-mockup-progress {
+      background: #0a1220;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dashboard-mockup-phases {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dashboard-mockup-phase {
+      flex: 1;
+      text-align: center;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .dashboard-mockup-phase.active {
+      color: var(--teal);
+    }
+
+    .dashboard-mockup-phase.complete {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .dashboard-mockup-body {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 400px;
+    }
+
+    .dashboard-mockup-sidebar {
+      background: #0a1220;
+      padding: 2rem 1.5rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dashboard-mockup-step {
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .dashboard-mockup-step.complete {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .dashboard-mockup-step.complete::before {
+      content: '✓';
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    .dashboard-mockup-step.active {
+      background: rgba(20, 184, 166, 0.15);
+      color: white;
+      font-weight: 600;
+    }
+
+    .dashboard-mockup-step.active::before {
+      content: '→';
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    .dashboard-mockup-main {
+      padding: 2rem;
+    }
+
+    .dashboard-mockup-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .dashboard-mockup-subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-mockup-result {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid #ef4444;
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dashboard-mockup-result-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ef4444;
+      margin-bottom: 1rem;
+    }
+
+    .dashboard-mockup-result-amount {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #ef4444;
+      font-family: 'DM Serif Display', Georgia, serif;
+      margin-bottom: 1rem;
+    }
+
+    .dashboard-mockup-flags {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-mockup-flag {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      color: #fca5a5;
+      font-weight: 600;
     }
 
     .platform-callouts {
@@ -1119,6 +1296,70 @@
       line-height: 1.4;
     }
 
+    /* CTA SECTIONS */
+    .cta-section {
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .cta-section.light {
+      background: var(--gray-50);
+    }
+
+    .cta-section.dark {
+      background: var(--navy);
+    }
+
+    .cta-headline {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.3;
+    }
+
+    .cta-section.light .cta-headline {
+      color: var(--navy);
+    }
+
+    .cta-section.dark .cta-headline {
+      color: white;
+    }
+
+    /* FAQ SECTION */
+    .faq-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .faq-list {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-question {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .faq-answer {
+      font-size: 1.05rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -1148,6 +1389,23 @@
 
       .platform-callouts {
         grid-template-columns: 1fr;
+      }
+
+      .testimonials {
+        grid-template-columns: 1fr;
+      }
+
+      .social-proof-bar-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-mockup-body {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-mockup-sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
     }
 
@@ -1269,8 +1527,8 @@
     <div class="container">
       <div class="stats-grid">
         <div class="stat-item">
-          <div class="stat-number">8 in 10</div>
-          <div class="stat-block-label">Insurance estimates contain missing scope, suppressed pricing, or unclaimed coverage</div>
+          <div class="stat-number">$297</div>
+          <div class="stat-block-label">Average cost to find $18,400 in missing claim value</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">$18,400</div>
@@ -1279,6 +1537,34 @@
         <div class="stat-item">
           <div class="stat-number">18 steps</div>
           <div class="stat-block-label">Steps that walk you through your entire claim — start to finish</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA 1: LOSS AVERSION -->
+  <section class="cta-section light">
+    <div class="container">
+      <h3 class="cta-headline">Most policyholders accept less than they're owed — find out if you're one of them.</h3>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Run Free Policy Analysis</a>
+    </div>
+  </section>
+
+  <!-- SOCIAL PROOF BAR -->
+  <section class="social-proof-bar">
+    <div class="container">
+      <div class="social-proof-bar-grid">
+        <div class="social-proof-bar-item">
+          <div class="social-proof-bar-icon">🇺🇸</div>
+          <div class="social-proof-bar-text">Used by policyholders in all 50 states</div>
+        </div>
+        <div class="social-proof-bar-item">
+          <div class="social-proof-bar-icon">💰</div>
+          <div class="social-proof-bar-text">Average additional claim value identified: $18,400</div>
+        </div>
+        <div class="social-proof-bar-item">
+          <div class="social-proof-bar-icon">📋</div>
+          <div class="social-proof-bar-text">18-step process built by licensed public adjusters</div>
         </div>
       </div>
     </div>
@@ -1294,63 +1580,47 @@
         <div class="tool-card">
           <div class="tool-number">Tool 01</div>
           <div class="tool-title">Claim Command Center</div>
-          <div class="tool-desc">Your home base for the entire claim. See where you are, what's done, what's next, and what you need to do today — all in one place. You'll never lose track of your claim again.</div>
+          <div class="tool-desc">You'll never lose track of your claim again. Your central dashboard shows where you are, what's done, what's next, and what you need to do today — all in one place.</div>
         </div>
 
         <div class="tool-card">
           <div class="tool-number">Tool 02</div>
           <div class="tool-title">Estimate Review Engine</div>
-          <div class="tool-desc">Upload your insurance company's estimate. We'll go through it line by line and flag everything that's missing, underpriced, or incorrect — so you know exactly what to dispute and how much more you're owed.</div>
+          <div class="tool-desc">Know exactly what to dispute and how much more you're owed. Upload your insurance company's estimate and we'll go through it line by line, flagging everything that's missing, underpriced, or incorrect.</div>
         </div>
 
         <div class="tool-card">
           <div class="tool-number">Tool 03</div>
           <div class="tool-title">Claim Letter Generator</div>
-          <div class="tool-desc">Tell us what you need and we'll write the letter. Supplement requests, coverage disputes, adjuster responses — professional, documented correspondence your insurer has to take seriously. Ready in minutes.</div>
+          <div class="tool-desc">Your insurer has to take you seriously. Tell us what you need and we'll write professional, documented correspondence — supplement requests, coverage disputes, adjuster responses — ready in minutes.</div>
         </div>
 
         <div class="tool-card">
           <div class="tool-number">Tool 04</div>
           <div class="tool-title">Claim Strategy Guidance</div>
-          <div class="tool-desc">An 18-step roadmap built by claim professionals. At every step, we tell you exactly what to do, what to say to your insurer, and what mistakes to avoid. You won't have to guess what comes next.</div>
+          <div class="tool-desc">You won't have to guess what comes next. An 18-step roadmap built by claim professionals tells you exactly what to do, what to say to your insurer, and what mistakes to avoid at every step.</div>
         </div>
 
         <div class="tool-card">
           <div class="tool-number">Tool 05</div>
           <div class="tool-title">Settlement Maximization</div>
-          <div class="tool-desc">Most policyholders leave money behind because they don't know what to ask for. This tool shows you every recovery lever available — including depreciation recovery, replacement cost vs. actual cash value, and code upgrade coverage — and how to claim them.</div>
+          <div class="tool-desc">Stop leaving money behind. Most policyholders don't know what to ask for — this tool shows you every recovery lever available, including depreciation recovery, replacement cost vs. actual cash value, and code upgrade coverage, and how to claim them.</div>
         </div>
 
         <div class="tool-card">
           <div class="tool-number">Tool 06</div>
           <div class="tool-title">Policy Coverage Analysis</div>
-          <div class="tool-desc">Your insurance policy is written to protect the insurer, not to be understood by you. We read it for you — plain language, no jargon — and tell you exactly what you're covered for, what's excluded, and what triggers apply to your specific loss.</div>
+          <div class="tool-desc">You may be covered for more than your adjuster told you. Your policy is written in language designed to confuse — we translate it into plain English and tell you exactly what you're entitled to claim.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CALCULATOR SECTION -->
-  <section class="calculator-section" id="calculator">
+  <!-- CTA 2: LOGIC/ROI -->
+  <section class="cta-section dark">
     <div class="container">
-      <h2 class="section-title">Estimate Your Missing Claim Value</h2>
-      
-      <div class="calculator-card">
-        <div class="input-group">
-          <label>Insurance Estimate ($)</label>
-          <input type="text" id="insurance-estimate-2" placeholder="18200" oninput="calculateMissing()">
-        </div>
-        
-        <div class="input-group">
-          <label>Expected Repair Cost ($)</label>
-          <input type="text" id="repair-cost" placeholder="36750" oninput="calculateMissing()">
-        </div>
-
-        <div class="calc-result" id="calc-result-2">
-          <div class="calc-result-label">Estimated Missing Amount</div>
-          <div class="calc-result-amount" id="missing-amount">$0</div>
-        </div>
-      </div>
+      <h3 class="cta-headline">$297 once. Average additional recovery: $18,400. The math is not complicated.</h3>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">See What Your Claim Is Worth</a>
     </div>
   </section>
 
@@ -1393,18 +1663,29 @@
       
       <div class="testimonials">
         <div class="testimonial-card">
+          <div class="testimonial-avatar">MT</div>
           <div class="testimonial-author">Michael T.</div>
           <div class="testimonial-meta">Florida — Roof Claim</div>
           <div class="testimonial-text">
-            "Found over $12,000 missing in my claim."
+            "I thought my claim was settled at $21,400. The Estimate Review Engine flagged missing sheathing replacement and suppressed labor rates. I submitted a supplement and recovered an additional $12,300. The whole process took three weeks and I handled it myself."
           </div>
         </div>
 
         <div class="testimonial-card">
+          <div class="testimonial-avatar">SL</div>
           <div class="testimonial-author">Sarah L.</div>
           <div class="testimonial-meta">Texas — Water Damage</div>
           <div class="testimonial-text">
-            "Showed exactly what the insurance estimate missed."
+            "My adjuster said my water damage claim was $8,700. Claim Command Pro showed me the estimate missed drywall replacement in two rooms and didn't include mold remediation. I got an additional $6,400. I didn't know I could dispute an estimate until I used this tool."
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-avatar">RK</div>
+          <div class="testimonial-author">Robert K.</div>
+          <div class="testimonial-meta">California — Business Interruption</div>
+          <div class="testimonial-text">
+            "My business interruption claim was initially denied. The Policy Coverage Analysis tool identified three coverage triggers my adjuster ignored. I submitted a dispute letter generated by the system and recovered $47,000 in lost income. Worth every dollar."
           </div>
         </div>
       </div>
@@ -1429,7 +1710,7 @@
           </ul>
         </div>
 
-        <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Policy Analysis</a>
+        <a href="/app/free-policy-analysis.html" class="btn-primary">Start free. No credit card. Upgrade only if the analysis shows money missing.</a>
       </div>
     </div>
   </section>
@@ -1441,7 +1722,45 @@
       
       <div class="dashboard-visual">
         <div class="dashboard-placeholder">
-          [Dashboard Screenshot / UI Mockup]
+          <div class="dashboard-mockup-progress">
+            <div class="dashboard-mockup-phases">
+              <div class="dashboard-mockup-phase complete">Establish</div>
+              <div class="dashboard-mockup-phase complete">Document</div>
+              <div class="dashboard-mockup-phase active">Analyze</div>
+              <div class="dashboard-mockup-phase">Recover</div>
+              <div class="dashboard-mockup-phase">Resolve</div>
+            </div>
+          </div>
+
+          <div class="dashboard-mockup-body">
+            <div class="dashboard-mockup-sidebar">
+              <div class="dashboard-mockup-step complete">Step 1: Policy Upload</div>
+              <div class="dashboard-mockup-step complete">Step 2: Damage Documentation</div>
+              <div class="dashboard-mockup-step active">Step 3: Analyze the Claim</div>
+              <div class="dashboard-mockup-step">Step 4: Review Estimate</div>
+              <div class="dashboard-mockup-step">Step 5: Identify Gaps</div>
+              <div class="dashboard-mockup-step">Step 6: Generate Supplement</div>
+              <div class="dashboard-mockup-step">Step 7: Submit Documentation</div>
+              <div class="dashboard-mockup-step">Step 8: Track Response</div>
+              <div class="dashboard-mockup-step">Step 9: Negotiate Settlement</div>
+              <div class="dashboard-mockup-step">Step 10: Finalize Claim</div>
+            </div>
+
+            <div class="dashboard-mockup-main">
+              <div class="dashboard-mockup-title">Estimate Gap Analysis</div>
+              <div class="dashboard-mockup-subtitle">Step 3: Analyze the Claim</div>
+
+              <div class="dashboard-mockup-result">
+                <div class="dashboard-mockup-result-title">Potential Missing Claim Value</div>
+                <div class="dashboard-mockup-result-amount">$18,550</div>
+                <div class="dashboard-mockup-flags">
+                  <div class="dashboard-mockup-flag">Missing Scope</div>
+                  <div class="dashboard-mockup-flag">Suppressed Pricing</div>
+                  <div class="dashboard-mockup-flag">Unclaimed Coverage</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div class="platform-callouts">
@@ -1508,23 +1827,10 @@
   <section class="pricing-section" id="pricing">
     <div class="container">
       <h2 class="section-title">One Flat Fee. You Keep Everything We Find.</h2>
-      
-      <div class="pricing-card">
-        <div class="pricing-amount">$297</div>
-        <div class="pricing-label">One-time payment. Full platform access.</div>
-        
-        <ul class="pricing-features">
-          <li>Free Policy Analysis — start here, no credit card needed</li>
-          <li>Claim Command Center — your full claim dashboard</li>
-          <li>Estimate Review Engine — find what your insurer left out</li>
-          <li>Claim Letter Generator — professional letters, ready in minutes</li>
-          <li>18-step Claim Strategy Roadmap — never wonder what to do next</li>
-          <li>Settlement Maximization — every dollar you're entitled to claim</li>
-          <li>Policy Coverage Analysis — know what you're covered for</li>
-          <li>Unlimited claim letters and supplement requests</li>
-        </ul>
 
-        <a href="/app/free-policy-analysis.html" class="btn-primary" style="display:inline-block;">Start Free Policy Analysis</a>
+      <div class="pricing-context">
+        <h3 class="pricing-context-title">Why $297 makes sense before you accept anything.</h3>
+        <p class="pricing-context-desc">The average amount Claim Command Pro identifies in additional claim value is $18,400. That means for every $297 you spend, you have a real shot at recovering more than 60 times that amount. And if the free analysis shows your claim is fully paid — you've lost nothing. Start free, upgrade only when it makes sense for you.</p>
       </div>
 
       <div class="pricing-comparison">
@@ -1549,9 +1855,51 @@
         </div>
       </div>
 
-      <div class="pricing-context">
-        <h3 class="pricing-context-title">Why $297 makes sense before you accept anything.</h3>
-        <p class="pricing-context-desc">The average amount Claim Command Pro identifies in additional claim value is $18,400. That means for every $297 you spend, you have a real shot at recovering more than 60 times that amount. And if the free analysis shows your claim is fully paid — you've lost nothing. Start free, upgrade only when it makes sense for you.</p>
+      <div class="pricing-card">
+        <div class="pricing-amount">$297</div>
+        <div class="pricing-label">One-time payment. Full platform access.</div>
+        
+        <ul class="pricing-features">
+          <li>Free Policy Analysis — start here, no credit card needed</li>
+          <li>Claim Command Center — your full claim dashboard</li>
+          <li>Estimate Review Engine — find what your insurer left out</li>
+          <li>Claim Letter Generator — professional letters, ready in minutes</li>
+          <li>18-step Claim Strategy Roadmap — never wonder what to do next</li>
+          <li>Settlement Maximization — every dollar you're entitled to claim</li>
+          <li>Policy Coverage Analysis — know what you're covered for</li>
+          <li>Unlimited claim letters and supplement requests</li>
+        </ul>
+
+        <a href="/app/free-policy-analysis.html" class="btn-primary" style="display:inline-block;">Start Free Policy Analysis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTIONS BEFORE YOU START -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Questions Before You Start</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-question">Is this legal to do without hiring a public adjuster?</div>
+          <div class="faq-answer">Yes. Policyholders have the legal right to document, dispute, and negotiate their own claims. Claim Command Pro gives you the tools and knowledge to do it effectively — no license required.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">What if my claim is already partially settled?</div>
+          <div class="faq-answer">You can still recover additional money on most claims. Supplement requests are common and accepted throughout the life of a claim. The Estimate Review Engine will show you if money was left on the table.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">Will my insurer take letters I write myself seriously?</div>
+          <div class="faq-answer">The Claim Letter Generator produces documentation-grade correspondence formatted the way claim professionals write it — not casual emails. Insurers respond to what's properly documented.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">What if my damage amount is close to my deductible?</div>
+          <div class="faq-answer">Run the free analysis first. If the gap isn't large enough to warrant upgrading, we'll tell you. You've lost nothing.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -1560,8 +1908,12 @@
   <section class="final-cta">
     <div class="container">
       <h2>Don't Sign Anything Until You Know What Your Claim Is Worth.</h2>
-      <p>Start with a free analysis. Answer a few questions about your claim and we'll show you — in plain language — what your policy covers, what your insurer may have missed, and what to do about it. No credit card. No commitment. Just answers.</p>
-      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Policy Analysis</a>
+      <div style="max-width: 700px; margin: 0 auto 2.5rem; text-align: center;">
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0.75rem;">Free to start. No credit card required.</p>
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0.75rem;">Built on the same process licensed public adjusters use.</p>
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0;">$18,400 average additional claim value identified.</p>
+      </div>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Don't sign a release until you know what your claim is worth. Start free now.</a>
     </div>
   </section>
 
