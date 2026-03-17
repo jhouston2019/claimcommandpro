@@ -6,41 +6,25 @@
   <title>Claim Command Center | Claim Command Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/app/assets/css/claim-command-center-tools.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --navy-primary: #1e3a5f;
-      --navy-dark: #0f1f3d;
-      --gold-accent: #d4af37;
-      --bg-page: #f0f2f5;
-      --bg-white: #ffffff;
-      --border-light: #e8edf2;
-      --border-medium: #d1dce6;
-      --text-primary: #1a202c;
-      --text-secondary: #4b5563;
-      --text-muted: #6b7280;
-      --text-hint: #9ca3af;
-      --green-success: #10b981;
-      --green-bg: #d1fae5;
-      --green-text: #065f46;
-      --blue-info: #3b82f6;
-      --blue-bg: #eff6ff;
-      --amber-warn: #f59e0b;
-      --amber-bg: #fef3c7;
-      --red-danger: #dc2626;
-      --red-bg: #fee2e2;
-
-      --phase-1-color: #185FA5;
-      --phase-1-light: #E6F1FB;
-      --phase-2-color: #854F0B;
-      --phase-2-light: #FAEEDA;
-      --phase-3-color: #085041;
-      --phase-3-light: #E1F5EE;
-      --phase-4-color: #3C3489;
-      --phase-4-light: #EEEDFE;
-      --phase-5-color: #791F1F;
-      --phase-5-light: #FCEBEB;
+      --navy: #0f172a;
+      --navy-light: #1e293b;
+      --navy-border: #2d3f55;
+      --teal: #14b8a6;
+      --teal-dark: #0d9488;
+      --teal-dim: rgba(20,184,166,0.15);
+      --emerald: #10b981;
+      --orange: #f97316;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
     }
 
     * {
@@ -50,848 +34,25 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-primary);
-      background: var(--bg-page);
-    }
-
-    .app-shell {
-      display: grid;
-      grid-template-rows: auto auto auto 1fr;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--navy);
+      color: white;
       height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Top Nav */
-    .topnav {
-      height: 48px;
-      background: var(--navy-primary);
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      gap: 24px;
-    }
-
-    .topnav-brand {
-      font-weight: 600;
-      font-size: 15px;
-      color: white;
-      text-decoration: none;
-    }
-
-    .topnav-claim-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .topnav-links {
-      display: flex;
-      gap: 4px;
-      margin-left: auto;
-    }
-
-    .topnav-link {
-      padding: 6px 12px;
-      color: rgba(255, 255, 255, 0.85);
-      text-decoration: none;
-      font-size: 13px;
-      border-radius: 5px;
-      transition: background 0.15s;
-    }
-
-    .topnav-link:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    /* Phase Bar */
-    .phase-bar {
-      background: var(--navy-dark);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .phase-segments {
-      display: flex;
-      flex: 1;
-      gap: 12px;
-    }
-
-    .phase-segment {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      cursor: pointer;
-    }
-
-    .phase-segment[data-steps="3"] { flex: 3; }
-    .phase-segment[data-steps="4"] { flex: 4; }
-    .phase-segment[data-steps="5"] { flex: 5; }
-
-    .phase-segment-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 500;
-    }
-
-    .phase-segment-track {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 2px;
       overflow: hidden;
-    }
-
-    .phase-segment-fill {
-      height: 100%;
-      transition: width 0.3s ease;
-    }
-
-    .progress-ring-container {
-      position: relative;
-      width: 38px;
-      height: 38px;
-    }
-
-    .progress-ring-label {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 11px;
-      font-weight: 600;
-      color: white;
-    }
-
-    .progress-ring-circle {
-      transform: rotate(-90deg);
-      transform-origin: 50% 50%;
-    }
-
-    .progress-ring-bg {
-      fill: none;
-      stroke: rgba(255, 255, 255, 0.15);
-      stroke-width: 3;
-    }
-
-    .progress-ring-progress {
-      fill: none;
-      stroke: var(--gold-accent);
-      stroke-width: 3;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.3s ease;
-    }
-
-    /* Deadline Alert */
-    .deadline-alert {
-      background: var(--amber-bg);
-      border-top: 1px solid #fbbf24;
-      border-bottom: 1px solid #fbbf24;
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: #92400e;
-      font-size: 13px;
-    }
-
-    .deadline-alert.hidden {
-      display: none;
-    }
-
-    .deadline-alert-icon {
-      font-size: 16px;
-    }
-
-    .deadline-alert-text {
-      flex: 1;
-    }
-
-    .deadline-alert-dismiss {
-      background: none;
-      border: none;
-      color: #92400e;
-      cursor: pointer;
-      font-size: 18px;
-      padding: 0;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    }
-
-    .deadline-alert-dismiss:hover {
-      background: rgba(146, 64, 14, 0.1);
-    }
-
-    /* Body Row */
-    .body-row {
-      display: grid;
-      grid-template-columns: 236px 1fr;
-      overflow: hidden;
-      height: 100%;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background: var(--bg-white);
-      border-right: 1px solid var(--border-light);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-claim-block {
-      background: #f8f9fb;
-      padding: 16px;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .sidebar-claim-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 500;
-      margin-bottom: 4px;
-    }
-
-    .sidebar-claim-number {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--navy-primary);
-      margin-bottom: 8px;
-    }
-
-    .sidebar-claim-badges {
-      display: flex;
-      gap: 6px;
-    }
-
-    .sidebar-badge {
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
-    }
-
-    .sidebar-badge.status-active {
-      background: var(--green-bg);
-      color: var(--green-text);
-    }
-
-    .sidebar-badge.status-day {
-      background: #e0e7ff;
-      color: #3730a3;
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 12px 0;
-    }
-
-    .sidebar-phase-group {
-      margin-bottom: 4px;
-    }
-
-    .sidebar-phase-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.15s;
-    }
-
-    .sidebar-phase-header:hover {
-      background: #f8f9fb;
-    }
-
-    .sidebar-phase-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .sidebar-phase-name {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      flex: 1;
-    }
-
-    .sidebar-phase-count {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .sidebar-phase-caret {
-      font-size: 12px;
-      color: var(--text-muted);
-      transition: transform 0.2s;
-    }
-
-    .sidebar-phase-group.expanded .sidebar-phase-caret {
-      transform: rotate(90deg);
-    }
-
-    .sidebar-phase-steps {
-      display: none;
-      padding: 4px 0;
-    }
-
-    .sidebar-phase-group.expanded .sidebar-phase-steps {
-      display: block;
-    }
-
-    .sidebar-step-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 16px 8px 34px;
-      cursor: pointer;
-      transition: background 0.15s;
-      border-left: 3px solid transparent;
-    }
-
-    .sidebar-step-item:hover {
-      background: #f8f9fb;
-    }
-
-    .sidebar-step-item.active {
-      background: var(--blue-bg);
-      border-left-color: var(--navy-primary);
-    }
-
-    .sidebar-step-number {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 500;
-      width: 20px;
-    }
-
-    .sidebar-step-title {
-      flex: 1;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .sidebar-step-item.active .sidebar-step-title {
-      color: var(--text-primary);
-      font-weight: 500;
-    }
-
-    .sidebar-step-check {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 2px solid var(--border-medium);
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: white;
-    }
-
-    .sidebar-step-item.completed .sidebar-step-check {
-      background: var(--green-success);
-      border-color: var(--green-success);
-    }
-
-    /* Main Content */
-    .main-content {
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    .financial-summary-panel {
-      margin-bottom: 20px;
-    }
-
-    .phase-band {
-      background: var(--bg-white);
-      border: 1px solid var(--border-light);
-      border-left: 4px solid;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .phase-band-header {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .phase-band-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    .phase-band-description {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    /* Step Cards */
-    .step-card {
-      background: var(--bg-white);
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      margin-bottom: 16px;
-      transition: all 0.2s;
-    }
-
-    .step-card.active {
-      border-color: var(--blue-info);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.07);
-    }
-
-    .step-card-header {
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .step-card:not(.active) .step-card-header:hover {
-      background: #f8f9fb;
-    }
-
-    .step-number-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
-      flex-shrink: 0;
-    }
-
-    .step-card-header-text {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .step-card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 2px;
-    }
-
-    .step-card-sub {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .step-status-pill {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .step-status-pill.pending {
-      background: #f3f4f6;
-      color: var(--text-muted);
-    }
-
-    .step-status-pill.completed {
-      background: var(--green-bg);
-      color: var(--green-text);
-    }
-
-    .step-card-body {
-      display: none;
-      padding: 0 20px 20px;
-    }
-
-    .step-card.active .step-card-body {
-      display: block;
-    }
-
-    .step-section {
-      margin-bottom: 20px;
-    }
-
-    .step-section-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .step-section-content {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .step-section-content ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .step-section-content li {
-      position: relative;
-      padding-left: 20px;
-      margin-bottom: 6px;
-    }
-
-    .step-section-content li::before {
-      content: '•';
-      position: absolute;
-      left: 6px;
-      color: var(--gold-accent);
-      font-weight: 700;
-    }
-
-    .step-tool-slot {
-      background: #f8f9fb;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .step-tool-info {
-      flex: 1;
-    }
-
-    .step-tool-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-
-    .step-tool-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .step-tool-button {
-      background: var(--navy-primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .step-tool-button:hover {
-      background: var(--navy-dark);
-    }
-
-    .step-briefing-toggle {
-      padding: 12px 16px;
-      background: #f8f9fb;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-      margin-bottom: 20px;
-      transition: background 0.15s;
-    }
-
-    .step-briefing-toggle:hover {
-      background: #f0f2f5;
-    }
-
-    .step-briefing-content {
-      display: none;
-      padding: 20px;
-      background: white;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      margin-top: 12px;
-    }
-
-    .step-briefing-toggle.expanded + .step-briefing-content {
-      display: block;
-    }
-
-    .step-briefing-content h4 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 10px;
-      margin-top: 20px;
-    }
-
-    .step-briefing-content h4:first-child {
-      margin-top: 0;
-    }
-
-    .step-briefing-content p {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .step-briefing-content ul {
-      list-style: none;
-      padding-left: 0;
-      margin-bottom: 12px;
-    }
-
-    .step-briefing-content li {
-      position: relative;
-      padding-left: 20px;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-    }
-
-    .step-briefing-content li::before {
-      content: '•';
-      position: absolute;
-      left: 6px;
-      color: var(--gold-accent);
-      font-weight: 700;
-    }
-
-    .step-action-row {
-      border-top: 1px solid var(--border-light);
-      padding-top: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .step-nav-button {
-      background: white;
-      border: 1px solid var(--border-medium);
-      padding: 8px 14px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .step-nav-button:hover:not(:disabled) {
-      border-color: var(--navy-primary);
-      color: var(--navy-primary);
-    }
-
-    .step-nav-button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .step-complete-button {
-      background: white;
-      border: 2px solid var(--green-success);
-      color: var(--green-success);
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-left: auto;
-      transition: all 0.15s;
-    }
-
-    .step-complete-button:hover {
-      background: var(--green-success);
-      color: white;
-    }
-
-    .step-complete-button.completed {
-      background: var(--green-success);
-      color: white;
-      border-color: var(--green-success);
-    }
-
-    /* Tool Output Areas */
-    .tool-output-area {
-      background: white;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 12px;
-    }
-
-    .proof-checklist-item {
-      padding: 12px;
-      background: #f8f9fb;
-      border: 1px solid var(--border-light);
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-
-    .proof-checklist-header {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
-
-    .proof-checklist-checkbox {
-      margin-top: 2px;
-      cursor: pointer;
-    }
-
-    .proof-checklist-title {
-      flex: 1;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .proof-checklist-docs {
-      padding-left: 30px;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .proof-checklist-docs ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .proof-checklist-docs li {
-      padding-left: 16px;
-      position: relative;
-      margin-bottom: 4px;
-    }
-
-    .proof-checklist-docs li::before {
-      content: '→';
-      position: absolute;
-      left: 0;
-      color: var(--text-muted);
-    }
-
-    .escalation-result {
-      margin-top: 12px;
-    }
-
-    .escalation-alert {
-      padding: 14px 16px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-    }
-
-    .escalation-alert.level-0 {
-      background: var(--green-bg);
-      border: 1px solid var(--green-success);
-      color: var(--green-text);
-    }
-
-    .escalation-alert.level-1 {
-      background: var(--amber-bg);
-      border: 1px solid var(--amber-warn);
-      color: #92400e;
-    }
-
-    .escalation-alert.level-2 {
-      background: #fef2f2;
-      border: 1px solid #fca5a5;
-      color: #991b1b;
-    }
-
-    .escalation-alert.level-3 {
-      background: var(--red-bg);
-      border: 1px solid var(--red-danger);
-      color: #7f1d1d;
-      font-weight: 600;
-    }
-
-    .escalation-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .escalation-details {
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-
-    .escalation-metrics {
-      display: flex;
-      gap: 16px;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-
-    .escalation-metric {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .escalation-metric-label {
-      color: var(--text-muted);
-      font-size: 11px;
-      margin-bottom: 2px;
-    }
-
-    .escalation-metric-value {
-      font-weight: 700;
-      color: var(--text-primary);
     }
 
     /* Modal */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      z-index: 9999;
       padding: 20px;
     }
 
@@ -899,1805 +60,1437 @@
       display: none;
     }
 
-    .modal-content {
+    .modal {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
+      max-width: 680px;
       width: 100%;
-      max-width: 500px;
       max-height: 90vh;
       overflow-y: auto;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
     }
 
     .modal-header {
+      background: var(--navy);
+      padding: 24px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .modal-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: white;
+    }
+
+    .modal-title .pro {
+      color: var(--teal);
+    }
+
+    .modal-claim-num {
+      color: var(--gray-400);
+      font-size: 14px;
+    }
+
+    .modal-body {
+      padding: 32px;
+      color: var(--gray-900);
+    }
+
+    .modal-eyebrow {
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .modal-heading {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--gray-900);
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+
+    .modal-instructions {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+
+    .modal-instruction {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: flex-start;
+    }
+
+    .instruction-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .instruction-text {
+      flex: 1;
+      line-height: 1.6;
+    }
+
+    .instruction-text strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--gray-900);
+    }
+
+    .modal-alert {
+      background: #fffbeb;
+      border: 2px solid var(--amber);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .alert-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--amber);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .alert-text {
+      flex: 1;
+      color: #78350f;
+      line-height: 1.5;
+    }
+
+    .modal-footer {
+      padding: 0 32px 32px;
+    }
+
+    .modal-button {
+      width: 100%;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 16px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .modal-button:hover {
+      background: var(--teal-dark);
+    }
+
+    /* Top Nav */
+    .top-nav {
+      height: 52px;
+      background: var(--navy);
+      border-bottom: 1px solid var(--navy-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: white;
+    }
+
+    .nav-brand .pro {
+      color: var(--teal);
+    }
+
+    .nav-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--navy-border);
+    }
+
+    .nav-claim-num {
+      color: var(--gray-400);
+      font-size: 14px;
+    }
+
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-400);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-pill:hover {
+      color: white;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .nav-pill.active {
+      background: var(--teal-dim);
+      color: var(--teal);
+    }
+
+    /* Phase Bar */
+    .phase-bar {
+      height: 48px;
+      background: var(--navy-light);
+      border-bottom: 1px solid var(--navy-border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .phase-items {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .phase-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray-400);
+      font-size: 13px;
+    }
+
+    .phase-item.active {
+      color: var(--teal);
+    }
+
+    .phase-item.done {
+      color: var(--emerald);
+    }
+
+    .phase-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .phase-arrow {
+      color: var(--navy-border);
+      font-size: 16px;
+    }
+
+    .phase-counter {
+      border-left: 1px solid var(--navy-border);
+      padding-left: 20px;
+      font-size: 13px;
+      color: var(--gray-400);
+    }
+
+    .phase-counter strong {
+      color: white;
+      font-weight: 600;
+    }
+
+    /* Main Layout */
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: var(--navy-light);
+      border-right: 1px solid var(--navy-border);
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .claim-info {
       padding: 20px;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .claim-info-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      margin-bottom: 6px;
+    }
+
+    .claim-info-number {
+      font-family: 'DM Serif Display', serif;
+      font-size: 16px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .claim-badges {
+      display: flex;
+      gap: 6px;
+    }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge.active {
+      background: rgba(16,185,129,0.15);
+      color: var(--emerald);
+    }
+
+    .badge.day {
+      background: rgba(255,255,255,0.05);
+      color: var(--gray-400);
+    }
+
+    .phase-group {
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .phase-header {
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .phase-header:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .phase-name {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      color: var(--gray-400);
+    }
+
+    .phase-group.active .phase-name {
+      color: var(--teal);
+    }
+
+    .phase-count {
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+
+    .phase-steps {
+      display: none;
+    }
+
+    .phase-group.expanded .phase-steps {
+      display: block;
+    }
+
+    .step-item {
+      padding: 10px 20px 10px 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .step-item:hover {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .step-item.active {
+      background: var(--teal-dim);
+    }
+
+    .step-number {
+      position: absolute;
+      left: 20px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .step-item.active .step-number {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .step-item.done .step-number {
+      border: none;
+      background: var(--emerald);
+      color: white;
+    }
+
+    .step-title {
+      font-size: 13px;
+      color: var(--gray-400);
+      line-height: 1.4;
+    }
+
+    .step-item.active .step-title {
+      color: var(--teal);
+    }
+
+    .step-item.done .step-title {
+      color: var(--gray-400);
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--gray-50);
+    }
+
+    /* Metric Strip */
+    .metric-strip {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .metric-block {
+      padding: 20px 24px;
+      border-right: 1px solid var(--gray-200);
+    }
+
+    .metric-block:last-child {
+      border-right: none;
+    }
+
+    .metric-block.highlight-emerald {
+      border-top: 2px solid var(--emerald);
+    }
+
+    .metric-block.highlight-red {
+      border-top: 2px solid var(--red);
+      background: #fef2f2;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .metric-block.highlight-emerald .metric-value {
+      color: var(--emerald);
+    }
+
+    .metric-block.highlight-red .metric-value {
+      color: var(--red);
+    }
+
+    .metric-block.teal-value .metric-value {
+      color: var(--teal);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+    }
+
+    .metric-sublabel {
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    /* Roadmap Strip */
+    .roadmap-strip {
+      background: var(--navy-light);
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .roadmap-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      margin-bottom: 12px;
+    }
+
+    .roadmap-tiles {
+      display: flex;
+      gap: 1px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .roadmap-tile {
+      min-width: 140px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .roadmap-tile:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    .roadmap-tile.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px var(--teal-dim);
+    }
+
+    .tile-number {
+      font-size: 11px;
+      color: var(--gray-400);
+      margin-bottom: 4px;
+    }
+
+    .tile-label {
+      font-size: 12px;
+      color: white;
+      line-height: 1.3;
+    }
+
+    .roadmap-tile.phase-establish {
+      border-left: 3px solid var(--teal);
+    }
+
+    .roadmap-tile.phase-document {
+      border-left: 3px solid var(--emerald);
+    }
+
+    .roadmap-tile.phase-analyze {
+      border-left: 3px solid var(--orange);
+    }
+
+    .roadmap-tile.phase-recover {
+      border-left: 3px solid var(--amber);
+    }
+
+    .roadmap-tile.phase-resolve {
+      border-left: 3px solid var(--red);
+    }
+
+    .phase-legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray-400);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* Content Header */
+    .content-header {
+      background: white;
+      padding: 32px 40px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .content-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+
+    .content-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+    }
+
+    .content-desc {
+      font-size: 15px;
+      color: var(--gray-600);
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    /* Step Cards */
+    .step-cards {
+      padding: 32px 40px;
+    }
+
+    .step-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 14px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .step-card.active-card {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-dim);
+    }
+
+    .step-card.collapsed .step-body,
+    .step-card.collapsed .step-footer {
+      display: none;
+    }
+
+    .step-card-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .step-card-header:hover {
+      background: var(--gray-50);
+    }
+
+    .card-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--navy);
+      flex-shrink: 0;
+    }
+
+    .step-card.active-card .card-number {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .card-text {
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .card-status {
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .card-status.in-progress {
+      background: var(--teal-dim);
+      color: var(--teal);
+    }
+
+    .card-status.pending {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    .step-body {
+      padding: 0 24px 24px;
+      color: var(--gray-900);
+    }
+
+    .section-label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      margin-top: 24px;
+    }
+
+    .section-label:first-child {
+      margin-top: 0;
+    }
+
+    .section-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--gray-600);
+    }
+
+    .provides-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+
+    .provides-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+
+    .provides-bullet {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+
+    .provides-text {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-600);
+    }
+
+    .ai-banner {
+      background: var(--teal-dim);
+      border: 1px solid var(--teal);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-chip {
+      background: var(--teal);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ai-text {
+      flex: 1;
+      font-size: 14px;
+      color: var(--gray-900);
+      line-height: 1.5;
+    }
+
+    .expand-button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-900);
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .expand-button:hover {
+      background: var(--gray-200);
+    }
+
+    .step-footer {
+      padding: 20px 24px;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .modal-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 0;
-      width: 32px;
-      height: 32px;
+    .footer-nav {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      transition: background 0.15s;
+      gap: 12px;
     }
 
-    .modal-close:hover {
-      background: #f3f4f6;
-    }
-
-    .modal-close.hidden {
-      display: none;
-    }
-
-    .modal-body {
-      padding: 20px;
-    }
-
-    .modal-step-title {
-      font-size: 15px;
+    .nav-button {
+      padding: 10px 16px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-button:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+    }
+
+    .complete-button {
+      padding: 12px 24px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .complete-button:hover {
+      background: var(--teal-dark);
+    }
+
+    /* Phase Preview */
+    .phase-preview {
+      background: white;
+      border: 2px dashed var(--gray-300);
+      border-radius: 14px;
+      padding: 32px;
+      text-align: center;
+      margin-top: 32px;
+    }
+
+    .preview-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+    }
+
+    .preview-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--gray-900);
       margin-bottom: 12px;
     }
 
-    .modal-escalation-block {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .modal-escalation-block.tier-1 {
-      background: var(--amber-bg);
-      border: 1px solid var(--amber-warn);
-      color: #92400e;
-    }
-
-    .modal-escalation-block.tier-2 {
-      background: #fef2f2;
-      border: 1px solid #fca5a5;
-      color: #991b1b;
-    }
-
-    .modal-escalation-block.tier-3 {
-      background: var(--red-bg);
-      border: 1px solid var(--red-danger);
-      color: #7f1d1d;
-      font-weight: 600;
-    }
-
-    .modal-body-text {
+    .preview-text {
       font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .modal-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .modal-cta-button {
-      background: var(--navy-primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .modal-cta-button:hover {
-      background: var(--navy-dark);
-    }
-
-    .modal-dismiss-link {
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 13px;
-      cursor: pointer;
-      padding: 8px;
-      transition: color 0.15s;
-    }
-
-    .modal-dismiss-link:hover {
-      color: var(--text-primary);
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      border: 1px solid var(--border-light);
-      border-radius: 8px;
-      padding: 14px 16px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      z-index: 2000;
-      min-width: 280px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      animation: slideIn 0.2s ease;
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(400px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    .toast.success {
-      border-left: 4px solid var(--green-success);
-    }
-
-    .toast.error {
-      border-left: 4px solid var(--red-danger);
-    }
-
-    .toast.info {
-      border-left: 4px solid var(--blue-info);
-    }
-
-    .toast.warning {
-      border-left: 4px solid var(--amber-warn);
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .body-row {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .topnav-claim-info,
-      .topnav-links {
-        display: none;
-      }
-
-      .phase-segments {
-        flex-wrap: wrap;
-      }
-
-      .phase-segment-label {
-        font-size: 9px;
-      }
-    }
-
-    .hidden {
-      display: none !important;
+      color: var(--gray-600);
+      max-width: 500px;
+      margin: 0 auto;
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <!-- Top Nav -->
-    <nav class="topnav">
-      <a href="/app/resource-center.html" class="topnav-brand">Claim Command Pro</a>
-      <div class="topnav-claim-info">
-        <span id="topnav-claim-number">—</span>
-      </div>
-      <div class="topnav-links">
-        <a href="/app/claim-summary.html" class="topnav-link">Summary</a>
-        <a href="/app/upload-documents.html" class="topnav-link">Documents</a>
-        <a href="/app/claim-journal.html" class="topnav-link">Journal</a>
-        <a href="/app/claim-financial-summary.html" class="topnav-link">Financial</a>
-        <a href="/app/claim-deadlines.html" class="topnav-link">Deadlines</a>
-        <a href="/app/messages.html" class="topnav-link">Messages</a>
-      </div>
-    </nav>
 
-    <!-- Phase Bar -->
-    <div class="phase-bar">
-      <div class="phase-segments" id="phase-segments"></div>
-      <div class="progress-ring-container">
-        <svg class="progress-ring-circle" width="38" height="38">
-          <circle class="progress-ring-bg" cx="19" cy="19" r="16"></circle>
-          <circle class="progress-ring-progress" cx="19" cy="19" r="16" id="progress-ring-circle"></circle>
-        </svg>
-        <div class="progress-ring-label" id="progress-ring-label">0/18</div>
-      </div>
-    </div>
-
-    <!-- Deadline Alert -->
-    <div class="deadline-alert" id="deadline-alert">
-      <span class="deadline-alert-icon">⚠</span>
-      <span class="deadline-alert-text">Upcoming deadline: Proof of Loss statement due in 7 days</span>
-      <button class="deadline-alert-dismiss" id="deadline-alert-dismiss">×</button>
-    </div>
-
-    <!-- Body Row -->
-    <div class="body-row">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="sidebar-claim-block">
-          <div class="sidebar-claim-label">Claim Number</div>
-          <div class="sidebar-claim-number" id="sidebar-claim-number">CLM-2024-0847</div>
-          <div class="sidebar-claim-badges">
-            <span class="sidebar-badge status-active">Active</span>
-            <span class="sidebar-badge status-day">Day 85</span>
-          </div>
-        </div>
-        <nav class="sidebar-nav" id="sidebar-nav"></nav>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="main-content" id="main-content">
-        <div id="financial-summary-container"></div>
-        <div id="phase-content"></div>
-      </main>
-    </div>
-  </div>
-
-  <!-- Next Action Modal -->
-  <div class="modal-overlay hidden" id="next-action-modal">
-    <div class="modal-content">
+  <!-- Welcome Modal -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">Next Action Required</h2>
-        <button class="modal-close" id="modal-close-btn">×</button>
+        <div class="modal-title">Claim Command <span class="pro">Pro</span></div>
+        <div class="modal-claim-num">CLM-2024-0847</div>
       </div>
       <div class="modal-body">
-        <div class="modal-step-title" id="modal-step-title"></div>
-        <div id="modal-escalation-block"></div>
-        <div class="modal-body-text" id="modal-body-text"></div>
-        <div class="modal-actions">
-          <button class="modal-cta-button" id="modal-cta-btn"></button>
-          <div class="modal-dismiss-link" id="modal-dismiss-link">Dismiss for Now</div>
+        <div class="modal-eyebrow">Welcome to your Claim Command Center.</div>
+        <h2 class="modal-heading">Here's what to do right now.</h2>
+        
+        <ul class="modal-instructions">
+          <li class="modal-instruction">
+            <div class="instruction-number">1</div>
+            <div class="instruction-text">
+              <strong>Start at Step 1 — don't skip ahead</strong>
+              Every step in this system builds on the last. Starting at the beginning protects your rights and prevents costly mistakes. Step 1 takes about 10 minutes to read.
+            </div>
+          </li>
+          <li class="modal-instruction">
+            <div class="instruction-number">2</div>
+            <div class="instruction-text">
+              <strong>Complete each step before moving to the next</strong>
+              When you finish a step, click Mark Complete. This keeps your roadmap current and unlocks the next phase. Don't mark anything complete until you've actually done it.
+            </div>
+          </li>
+          <li class="modal-instruction">
+            <div class="instruction-number">3</div>
+            <div class="instruction-text">
+              <strong>Use the roadmap bar at the top to track your progress</strong>
+              The colored step tiles across the top show your entire claim journey. Your current step is highlighted. You can click any step to jump to it — but complete them in order.
+            </div>
+          </li>
+          <li class="modal-instruction">
+            <div class="instruction-number">4</div>
+            <div class="instruction-text">
+              <strong>Don't contact your insurer until you've completed Step 3</strong>
+              Step 3 gives you the exact language to use when reporting your loss. What you say — and what you don't say — in your first contact with the insurer matters more than most people realize.
+            </div>
+          </li>
+        </ul>
+
+        <div class="modal-alert">
+          <div class="alert-icon">!</div>
+          <div class="alert-text">
+            If you have already reported your loss to your insurer, that's okay — start at Step 1 anyway. We'll tell you what to do based on where you are.
+          </div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button" onclick="closeModal()">I understand — take me to Step 1 →</button>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/app/assets/js/claim-command-center-components.js"></script>
-  <script>
-    // ============================================================================
-    // DATA MODEL
-    // ============================================================================
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="nav-left">
+      <div class="nav-brand">Claim Command <span class="pro">Pro</span></div>
+      <div class="nav-divider"></div>
+      <div class="nav-claim-num">CLM-2024-0847</div>
+    </div>
+    <div class="nav-pills">
+      <button class="nav-pill active">Claim Summary</button>
+      <button class="nav-pill">My Documents</button>
+      <button class="nav-pill">Claim Journal</button>
+      <button class="nav-pill">Financials</button>
+      <button class="nav-pill">Deadlines</button>
+      <button class="nav-pill">Messages</button>
+    </div>
+  </nav>
 
-    const PHASES = [
-      {
-        id: 1,
-        name: 'Establish',
-        label: 'Foundation',
-        description: 'Understand your policy and rights before taking action',
-        color: 'var(--phase-1-color)',
-        lightColor: 'var(--phase-1-light)',
-        steps: [1, 2, 3]
-      },
-      {
-        id: 2,
-        name: 'Document',
-        label: 'Field Work',
-        description: 'Build the evidentiary record before the adjuster sets scope',
-        color: 'var(--phase-2-color)',
-        lightColor: 'var(--phase-2-light)',
-        steps: [4, 5, 6, 7]
-      },
-      {
-        id: 3,
-        name: 'Analyze',
-        label: 'Dispute Work',
-        description: 'Identify the gap between what you\'re owed and what was offered',
-        color: 'var(--phase-3-color)',
-        lightColor: 'var(--phase-3-light)',
-        steps: [8, 9, 10]
-      },
-      {
-        id: 4,
-        name: 'Recover',
-        label: 'Additional Claims',
-        description: 'Capture every category of loss beyond the structure',
-        color: 'var(--phase-4-color)',
-        lightColor: 'var(--phase-4-light)',
-        steps: [11, 12, 13]
-      },
-      {
-        id: 5,
-        name: 'Resolve',
-        label: 'Close',
-        description: 'Negotiate, escalate, and close with full recovery confirmed',
-        color: 'var(--phase-5-color)',
-        lightColor: 'var(--phase-5-light)',
-        steps: [14, 15, 16, 17, 18]
-      }
-    ];
+  <!-- Phase Bar -->
+  <div class="phase-bar">
+    <div class="phase-items">
+      <div class="phase-item active">
+        <div class="phase-dot"></div>
+        <span>Establish</span>
+        <span style="opacity: 0.6;">0/3</span>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-item">
+        <div class="phase-dot"></div>
+        <span>Document</span>
+        <span style="opacity: 0.6;">0/4</span>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-item">
+        <div class="phase-dot"></div>
+        <span>Analyze</span>
+        <span style="opacity: 0.6;">0/3</span>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-item">
+        <div class="phase-dot"></div>
+        <span>Recover</span>
+        <span style="opacity: 0.6;">0/3</span>
+      </div>
+      <div class="phase-arrow">→</div>
+      <div class="phase-item">
+        <div class="phase-dot"></div>
+        <span>Resolve</span>
+        <span style="opacity: 0.6;">0/5</span>
+      </div>
+    </div>
+    <div class="phase-counter">Steps completed: <strong>0/18</strong></div>
+  </div>
 
-    const STEPS = [
-      {
-        n: 1,
-        phase: 1,
-        title: 'Review the Claim Process Guide',
-        sub: 'Understand the full lifecycle before you act',
-        why: 'Most policyholders make avoidable mistakes in the first 48 hours. An insurance claim is not automatic reimbursement — it is a structured financial review governed by your policy contract.',
-        what: 'Read this briefing fully. Understand what the carrier is evaluating, what your responsibilities are, and what this Command Center provides at each step.',
-        provides: [
-          'Full claim lifecycle overview',
-          'Payment structure breakdown',
-          'Underpayment risk summary',
-          'Overview of all AI-powered analysis tools'
-        ],
-        tool: null,
-        fn: null,
-        briefing: true
-      },
-      {
-        n: 2,
-        phase: 1,
-        title: 'Review Your Policy with AI Policy Analyzer',
-        sub: 'AI-powered coverage extraction from your documents',
-        why: 'Your policy defines what\'s covered, how much you can claim, and what exclusions apply. Missing a covered item or misunderstanding a limit costs thousands. Knowing your policy prevents the adjuster from denying valid claims.',
-        what: 'Upload your full insurance policy (declarations page and all endorsements). Review coverage limits, deductibles, and exclusions. Note special provisions or riders.',
-        provides: [
-          'Structured coverage extraction',
-          'Coverage limits and exclusions',
-          'Policy triggers and endorsements'
-        ],
-        tool: 'AI Policy Analyzer',
-        fn: 'openPolicyAnalysisTool'
-      },
-      {
-        n: 3,
-        phase: 1,
-        title: 'Report the Loss Properly',
-        sub: 'Notification language that protects your rights',
-        why: 'How you report your claim sets the tone for the entire process. Vague or incomplete reports give adjusters room to minimize your claim. A clear, factual report protects your rights and establishes the scope of damage from day one.',
-        what: 'Describe the incident clearly: what happened, when it happened, and what was damaged. Avoid speculation or exaggeration. Stick to observable facts.',
-        provides: [
-          'Guided loss report template',
-          'Checklist of required information',
-          'Language review to avoid red flags'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 4,
-        phase: 2,
-        title: 'Prepare for Recorded Statements',
-        sub: 'What to say — and what not to — when the carrier calls',
-        why: 'Insurance companies use recorded statements to lock you into a version of events. Any inconsistency or unclear answer will be used to deny your claim later. Preparation prevents costly mistakes.',
-        what: 'Review your loss report and timeline. Practice answering common questions clearly and concisely. Know what you can say "I don\'t know" to. Never guess or speculate.',
-        provides: [
-          'List of common adjuster questions',
-          'Safe answer frameworks',
-          'Red flag phrases to avoid'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 5,
-        phase: 2,
-        title: 'Document All Damage',
-        sub: 'Evidence standards carriers require to approve scope',
-        why: 'Photos and videos are your proof. Without clear documentation, the adjuster can claim damage didn\'t exist or was pre-existing. Thorough documentation protects your claim and prevents disputes.',
-        what: 'Take wide-angle and close-up photos of all damage. Include date stamps. Photograph serial numbers, model numbers, and receipts. Document the entire affected area, not just obvious damage.',
-        provides: [
-          'Photo checklist by room and area',
-          'Organized digital evidence folder',
-          'Metadata preservation guidance'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 6,
-        phase: 2,
-        title: 'Manage the Inspection',
-        sub: 'What the adjuster is doing and how to protect your position',
-        why: 'The adjuster\'s inspection determines what gets paid. If you\'re unprepared or miss hidden damage, you\'ll be fighting uphill for months. Being present and informed ensures nothing is overlooked.',
-        what: 'Be present during the inspection. Point out all damage areas. Ask questions about what\'s being noted. Take your own notes and photos of what the adjuster examines.',
-        provides: [
-          'Pre-inspection checklist',
-          'Questions to ask the adjuster',
-          'Inspection follow-up template'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 7,
-        phase: 2,
-        title: 'Obtain a Contractor Estimate',
-        sub: 'Independent scope that becomes your negotiation anchor',
-        why: 'The insurance company\'s estimate is a starting position, not a final number. A licensed contractor\'s estimate provides leverage and reveals what the insurer left out.',
-        what: 'Hire a licensed, insured contractor to inspect the damage and provide a detailed written estimate. Ensure it includes line-item pricing, labor, materials, and code upgrade costs.',
-        provides: [
-          'Contractor vetting checklist',
-          'Estimate quality review criteria',
-          'Red flags in contractor proposals'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 8,
-        phase: 3,
-        title: 'Review Estimates with AI Estimate Analyzer',
-        sub: 'Line-by-line gap detection against the carrier\'s estimate',
-        why: 'Insurance estimates omit items, use cheaper materials, or underestimate labor. A line-by-line comparison reveals exactly where the insurer is underpaying you, giving you specific items to challenge.',
-        what: 'Upload both the insurance estimate and contractor estimate. Review each line item for discrepancies in quantity, unit cost, or scope. Identify missing items or undervalued work.',
-        provides: [
-          'Line-by-line estimate comparison',
-          'Identified discrepancies with dollar value of each gap',
-          'Missing documentation requirements'
-        ],
-        tool: 'AI Estimate Analyzer',
-        fn: 'openEstimateComparisonTool'
-      },
-      {
-        n: 9,
-        phase: 3,
-        title: 'Identify Code and Coverage Issues',
-        sub: 'Local code requirements carriers frequently exclude',
-        why: 'Building code upgrades and ordinance/law coverage add thousands to your claim. Many policyholders do not know these exist or how to trigger them.',
-        what: 'Check if repairs require code upgrades. Review your policy for ordinance/law coverage. Document any code compliance requirements from your contractor or building department.',
-        provides: [
-          'Code upgrade identification',
-          'Coverage trigger analysis',
-          'Documentation requirements'
-        ],
-        tool: 'Coverage Trigger Checker',
-        fn: 'openProofChecklistTool'
-      },
-      {
-        n: 10,
-        phase: 3,
-        title: 'Structure and Submit Supplements',
-        sub: 'Formatted supplement packet built to insurer standards',
-        why: 'Supplemental claims recover money for damage discovered after the initial estimate. Poorly written supplements get denied. A structured supplement with supporting evidence gets paid.',
-        what: 'Document newly discovered damage with photos and contractor notes. Provide a clear description of what was found, why it was not in the original estimate, and why it is covered.',
-        provides: [
-          'Structured supplement letter with policy citations',
-          'Required proof checklist',
-          'Submission tracking'
-        ],
-        tool: 'Supplement Letter Generator',
-        fn: 'openSupplementGeneratorTool'
-      },
-      {
-        n: 11,
-        phase: 4,
-        title: 'Track Additional Living Expenses',
-        sub: 'ALE documentation that maximizes what you\'re owed',
-        why: 'If your home is uninhabitable, your policy likely covers temporary housing and related expenses. Without detailed records, you\'ll leave money on the table.',
-        what: 'Save all receipts for temporary housing, meals, storage, pet boarding, and increased commuting costs. Track dates and amounts. Compare to your normal pre-loss expenses.',
-        provides: [
-          'ALE expense tracker',
-          'Reimbursable expense categories',
-          'Claim submission format'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 12,
-        phase: 4,
-        title: 'Build Your Contents Inventory',
-        sub: 'Structured personal property claim with proof framework',
-        why: 'Personal property claims are undervalued because policyholders forget items or cannot prove ownership. A detailed inventory with values and proof maximizes your contents recovery.',
-        what: 'List every damaged or destroyed item by room. Include purchase dates, original cost, and replacement cost. Attach photos, receipts, or credit card statements as proof.',
-        provides: [
-          'Room-by-room inventory template',
-          'Valuation guidance',
-          'Proof of ownership checklist'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 13,
-        phase: 4,
-        title: 'Review the Settlement Breakdown',
-        sub: 'Verify every line before accepting any payment',
-        why: 'Settlement letters are complex. Understanding exactly what\'s being paid, what\'s being withheld, and why prevents you from accepting a lowball offer or missing withheld depreciation.',
-        what: 'Read the settlement letter carefully. Identify the actual cash value (ACV) payment, recoverable depreciation, and any deductions. Compare to your contractor estimate and policy limits.',
-        provides: [
-          'Settlement breakdown analysis',
-          'Highlighted discrepancies',
-          'Recovery opportunities'
-        ],
-        tool: 'AI Settlement Analyzer',
-        fn: 'openSettlementAnalysisTool'
-      },
-      {
-        n: 14,
-        phase: 5,
-        title: 'Negotiate in Writing',
-        sub: 'Communication strategy that creates a paper trail',
-        why: 'Verbal negotiations disappear. Written demands create a paper trail, establish your position, and force the insurer to respond on the record.',
-        what: 'Draft a clear, professional demand letter citing specific policy provisions, contractor estimates, and evidence. Request a specific dollar amount. Set a reasonable response deadline.',
-        provides: [
-          'Demand letter template',
-          'Policy citation guidance',
-          'Evidence attachment checklist'
-        ],
-        tool: 'Demand Letter Generator',
-        fn: 'openDemandLetterTool'
-      },
-      {
-        n: 15,
-        phase: 5,
-        title: 'Escalate if Necessary',
-        sub: 'Formal dispute pathways when the carrier won\'t move',
-        why: 'Adjusters have managers. Managers have supervisors. State regulators oversee insurers. Knowing when and how to escalate breaks deadlocks and moves your claim forward.',
-        what: 'Request escalation to a supervisor or manager. File a complaint with your state\'s DOI if the insurer is delaying or denying in bad faith. Document all escalation attempts.',
-        provides: [
-          'Escalation status evaluation',
-          'Recommended escalation level',
-          'Template generation'
-        ],
-        tool: 'Escalation Evaluator',
-        fn: 'evaluateEscalation'
-      },
-      {
-        n: 16,
-        phase: 5,
-        title: 'Recover Depreciation',
-        sub: 'Recoverability analysis and submission timing',
-        why: 'Replacement cost policies withhold depreciation until repairs are complete. Many policyholders never recover this money because they don\'t submit proof of completion.',
-        what: 'Complete repairs and obtain final invoices from your contractor. Submit proof of payment and completion to the insurer. Request release of all withheld depreciation.',
-        provides: [
-          'Depreciation recovery checklist',
-          'Required documentation list',
-          'Submission letter template'
-        ],
-        tool: null,
-        fn: null
-      },
-      {
-        n: 17,
-        phase: 5,
-        title: 'Review Release Language',
-        sub: 'What you\'re signing away — and what to push back on',
-        why: 'Signing a release closes your claim permanently. Broad release language can waive your right to future claims or legal action. Understanding what you\'re signing prevents costly mistakes.',
-        what: 'Read the release carefully. Ensure it only releases the specific claim and doesn\'t waive future rights. If the language is too broad, request a revision or consult an attorney.',
-        provides: [
-          'Release language review',
-          'Red flag terms and clauses',
-          'Revision request template'
-        ],
-        tool: 'Release Document Analyzer',
-        fn: 'openReleaseAnalysisTool'
-      },
-      {
-        n: 18,
-        phase: 5,
-        title: 'Confirm Final Payment',
-        sub: 'Verification checklist before the claim is closed',
-        why: 'The final payment should match the agreed settlement amount to the dollar. Discrepancies, missing checks, or incorrect payees can delay closure.',
-        what: 'Compare the final payment to the settlement letter. Verify all checks are received and deposited. Confirm no amounts are missing or incorrectly allocated. Keep copies of all payment records.',
-        provides: [
-          'Payment verification checklist',
-          'Discrepancy resolution guide',
-          'Final claim closure confirmation'
-        ],
-        tool: null,
-        fn: null
-      }
-    ];
+  <!-- Main Layout -->
+  <div class="main-layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="claim-info">
+        <div class="claim-info-label">Claim Number</div>
+        <div class="claim-info-number">CLM-2024-0847</div>
+        <div class="claim-badges">
+          <div class="badge active">Active</div>
+          <div class="badge day">Day 85</div>
+        </div>
+      </div>
 
-    // ============================================================================
-    // STATE MANAGEMENT
-    // ============================================================================
+      <div class="phase-group active expanded">
+        <div class="phase-header">
+          <div class="phase-name">Establish</div>
+          <div class="phase-count">0/3</div>
+        </div>
+        <div class="phase-steps">
+          <div class="step-item active" onclick="goToStep(1)">
+            <div class="step-number">01</div>
+            <div class="step-title">Review the Claim Process Guide</div>
+          </div>
+          <div class="step-item" onclick="goToStep(2)">
+            <div class="step-number">02</div>
+            <div class="step-title">Review Your Policy with AI Policy Analyzer</div>
+          </div>
+          <div class="step-item" onclick="goToStep(3)">
+            <div class="step-number">03</div>
+            <div class="step-title">Report the Loss Properly</div>
+          </div>
+        </div>
+      </div>
 
-    let currentClaimId = null;
-    let currentAuthToken = null;
-    let completedSteps = [];
-    let dismissalCount = 0;
-    let lastVisitTimestamp = null;
-    let currentStep = 1;
-    let expandedPhases = [1];
+      <div class="phase-group">
+        <div class="phase-header">
+          <div class="phase-name">Document</div>
+          <div class="phase-count">0/4</div>
+        </div>
+      </div>
 
-    function loadState() {
-      try {
-        const statusData = localStorage.getItem('ccc_step_status');
-        if (statusData) {
-          completedSteps = JSON.parse(statusData);
-        }
-        
-        const dismissals = localStorage.getItem('ccc_dismissals');
-        if (dismissals) {
-          dismissalCount = parseInt(dismissals, 10);
-        }
-        
-        const lastVisit = localStorage.getItem('ccc_last_visit');
-        if (lastVisit) {
-          lastVisitTimestamp = parseInt(lastVisit, 10);
-        }
-        
-        const deadlineDismissed = localStorage.getItem('ccc_deadline_dismissed');
-        if (deadlineDismissed === 'true') {
-          document.getElementById('deadline-alert').classList.add('hidden');
-        }
-      } catch (e) {
-        console.error('Failed to load state:', e);
-      }
-    }
+      <div class="phase-group">
+        <div class="phase-header">
+          <div class="phase-name">Analyze</div>
+          <div class="phase-count">0/3</div>
+        </div>
+      </div>
 
-    function saveState() {
-      try {
-        localStorage.setItem('ccc_step_status', JSON.stringify(completedSteps));
-        localStorage.setItem('ccc_dismissals', dismissalCount.toString());
-        localStorage.setItem('ccc_last_visit', Date.now().toString());
-      } catch (e) {
-        console.error('Failed to save state:', e);
-      }
-    }
+      <div class="phase-group">
+        <div class="phase-header">
+          <div class="phase-name">Recover</div>
+          <div class="phase-count">0/3</div>
+        </div>
+      </div>
 
-    function isStepCompleted(stepNum) {
-      return completedSteps.includes(stepNum);
-    }
+      <div class="phase-group">
+        <div class="phase-header">
+          <div class="phase-name">Resolve</div>
+          <div class="phase-count">0/5</div>
+        </div>
+      </div>
+    </aside>
 
-    function markStepComplete(stepNum) {
-      if (!completedSteps.includes(stepNum)) {
-        completedSteps.push(stepNum);
-        saveState();
-        render();
-        
-        setTimeout(() => {
-          if (allStepsComplete()) {
-            showCompletionModal();
-          } else {
-            showNextActionModal();
-          }
-        }, 1000);
-      }
-    }
-
-    function allStepsComplete() {
-      return completedSteps.length === 18;
-    }
-
-    function getNextIncompleteStep() {
-      for (let i = 1; i <= 18; i++) {
-        if (!isStepCompleted(i)) {
-          return i;
-        }
-      }
-      return null;
-    }
-
-    function navigateToStep(stepNum) {
-      currentStep = stepNum;
-      const phase = STEPS.find(s => s.n === stepNum).phase;
-      if (!expandedPhases.includes(phase)) {
-        expandedPhases.push(phase);
-      }
-      render();
-      document.getElementById('main-content').scrollTop = 0;
-    }
-
-    function getPhaseForStep(stepNum) {
-      return STEPS.find(s => s.n === stepNum)?.phase || 1;
-    }
-
-    function getPhaseCompletion(phaseId) {
-      const phase = PHASES.find(p => p.id === phaseId);
-      const completed = phase.steps.filter(s => isStepCompleted(s)).length;
-      return { completed, total: phase.steps.length };
-    }
-
-    // ============================================================================
-    // ESCALATION LOGIC
-    // ============================================================================
-
-    function getEscalationTier() {
-      const now = Date.now();
-      const daysSinceLastVisit = lastVisitTimestamp 
-        ? Math.floor((now - lastVisitTimestamp) / (1000 * 60 * 60 * 24))
-        : 0;
-
-      if (dismissalCount >= 5 || daysSinceLastVisit >= 8) return 3;
-      if (dismissalCount >= 3 || daysSinceLastVisit >= 5) return 2;
-      if (dismissalCount >= 1 || daysSinceLastVisit >= 2) return 1;
-      return 0;
-    }
-
-    function getEscalationMessage(tier) {
-      const messages = {
-        1: 'You have pending steps. Delaying reduces your negotiating position.',
-        2: 'Multiple steps incomplete. Your risk of underpayment is increasing.',
-        3: 'Your claim has stalled. Unaddressed steps significantly reduce recovery.'
-      };
-      return messages[tier] || '';
-    }
-
-    // ============================================================================
-    // MODAL SYSTEM
-    // ============================================================================
-
-    function showNextActionModal() {
-      const nextStep = getNextIncompleteStep();
-      if (!nextStep) return;
-
-      const step = STEPS.find(s => s.n === nextStep);
-      const tier = getEscalationTier();
-
-      const modal = document.getElementById('next-action-modal');
-      const modalStepTitle = document.getElementById('modal-step-title');
-      const modalEscalationBlock = document.getElementById('modal-escalation-block');
-      const modalBodyText = document.getElementById('modal-body-text');
-      const modalCtaBtn = document.getElementById('modal-cta-btn');
-      const modalCloseBtn = document.getElementById('modal-close-btn');
-
-      modalStepTitle.textContent = `Next up: Step ${nextStep} — ${step.title}`;
+    <!-- Content Area -->
+    <main class="content-area">
       
-      if (tier > 0) {
-        const tierClass = `tier-${tier}`;
-        modalEscalationBlock.className = `modal-escalation-block ${tierClass}`;
-        modalEscalationBlock.textContent = getEscalationMessage(tier);
-        modalEscalationBlock.style.display = 'block';
-      } else {
-        modalEscalationBlock.style.display = 'none';
-      }
-
-      const whyPreview = step.why.substring(0, 150) + '...';
-      modalBodyText.textContent = whyPreview;
-
-      modalCtaBtn.textContent = `Go to Step ${nextStep}`;
-      modalCtaBtn.onclick = () => {
-        modal.classList.add('hidden');
-        navigateToStep(nextStep);
-      };
-
-      if (tier >= 3) {
-        modalCloseBtn.classList.add('hidden');
-      } else {
-        modalCloseBtn.classList.remove('hidden');
-      }
-
-      modal.classList.remove('hidden');
-    }
-
-    function showCompletionModal() {
-      const modal = document.getElementById('next-action-modal');
-      const modalStepTitle = document.getElementById('modal-step-title');
-      const modalEscalationBlock = document.getElementById('modal-escalation-block');
-      const modalBodyText = document.getElementById('modal-body-text');
-      const modalCtaBtn = document.getElementById('modal-cta-btn');
-      const modalCloseBtn = document.getElementById('modal-close-btn');
-
-      document.querySelector('.modal-title').textContent = 'All Steps Complete';
-      modalStepTitle.textContent = '';
-      modalEscalationBlock.style.display = 'none';
-      modalBodyText.textContent = 'Review your Financial Summary and confirm final payment.';
-      modalCtaBtn.textContent = 'View Financial Summary';
-      modalCtaBtn.onclick = () => {
-        window.location.href = '/app/claim-financial-summary.html';
-      };
-      modalCloseBtn.classList.remove('hidden');
-
-      modal.classList.remove('hidden');
-    }
-
-    function dismissModal() {
-      dismissalCount++;
-      saveState();
-      document.getElementById('next-action-modal').classList.add('hidden');
-    }
-
-    // ============================================================================
-    // RENDER FUNCTIONS
-    // ============================================================================
-
-    function render() {
-      renderSidebar();
-      renderPhaseBar();
-      renderMainContent();
-      renderProgressRing();
-    }
-
-    function renderSidebar() {
-      const nav = document.getElementById('sidebar-nav');
-      nav.innerHTML = '';
-
-      PHASES.forEach(phase => {
-        const { completed, total } = getPhaseCompletion(phase.id);
-        const isExpanded = expandedPhases.includes(phase.id);
-
-        const group = document.createElement('div');
-        group.className = `sidebar-phase-group ${isExpanded ? 'expanded' : ''}`;
-
-        const header = document.createElement('div');
-        header.className = 'sidebar-phase-header';
-        header.onclick = () => {
-          if (expandedPhases.includes(phase.id)) {
-            expandedPhases = expandedPhases.filter(p => p !== phase.id);
-          } else {
-            expandedPhases.push(phase.id);
-          }
-          render();
-        };
-
-        header.innerHTML = `
-          <div class="sidebar-phase-dot" style="background: ${phase.color};"></div>
-          <div class="sidebar-phase-name">${phase.name}</div>
-          <div class="sidebar-phase-count">${completed}/${total}</div>
-          <div class="sidebar-phase-caret">›</div>
-        `;
-
-        const stepsContainer = document.createElement('div');
-        stepsContainer.className = 'sidebar-phase-steps';
-
-        phase.steps.forEach(stepNum => {
-          const step = STEPS.find(s => s.n === stepNum);
-          const isActive = currentStep === stepNum;
-          const isCompleted = isStepCompleted(stepNum);
-
-          const item = document.createElement('div');
-          item.className = `sidebar-step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
-          item.onclick = () => navigateToStep(stepNum);
-
-          item.innerHTML = `
-            <div class="sidebar-step-number">${stepNum.toString().padStart(2, '0')}</div>
-            <div class="sidebar-step-title">${step.title}</div>
-            <div class="sidebar-step-check">${isCompleted ? '✓' : ''}</div>
-          `;
-
-          stepsContainer.appendChild(item);
-        });
-
-        group.appendChild(header);
-        group.appendChild(stepsContainer);
-        nav.appendChild(group);
-      });
-    }
-
-    function renderPhaseBar() {
-      const segments = document.getElementById('phase-segments');
-      segments.innerHTML = '';
-
-      PHASES.forEach(phase => {
-        const { completed, total } = getPhaseCompletion(phase.id);
-        const percentage = (completed / total) * 100;
-
-        const segment = document.createElement('div');
-        segment.className = 'phase-segment';
-        segment.setAttribute('data-steps', total);
-        segment.onclick = () => {
-          const firstStep = phase.steps[0];
-          navigateToStep(firstStep);
-        };
-
-        segment.innerHTML = `
-          <div class="phase-segment-label">${phase.name}</div>
-          <div class="phase-segment-track">
-            <div class="phase-segment-fill" style="width: ${percentage}%; background: ${phase.color};"></div>
-          </div>
-        `;
-
-        segments.appendChild(segment);
-      });
-    }
-
-    function renderProgressRing() {
-      const completed = completedSteps.length;
-      const total = 18;
-      const percentage = (completed / total) * 100;
-
-      const label = document.getElementById('progress-ring-label');
-      label.textContent = `${completed}/${total}`;
-
-      const circle = document.getElementById('progress-ring-circle');
-      const radius = 16;
-      const circumference = 2 * Math.PI * radius;
-      const offset = circumference - (percentage / 100) * circumference;
-
-      circle.style.strokeDasharray = `${circumference} ${circumference}`;
-      circle.style.strokeDashoffset = offset;
-    }
-
-    function renderMainContent() {
-      const container = document.getElementById('phase-content');
-      const phase = PHASES.find(p => p.id === getPhaseForStep(currentStep));
-
-      container.innerHTML = '';
-
-      const band = document.createElement('div');
-      band.className = 'phase-band';
-      band.style.borderLeftColor = phase.color;
-      band.innerHTML = `
-        <div class="phase-band-header">Phase ${phase.id} — ${phase.label}</div>
-        <div class="phase-band-title">${phase.name}</div>
-        <div class="phase-band-description">${phase.description}</div>
-      `;
-      container.appendChild(band);
-
-      const phaseSteps = STEPS.filter(s => s.phase === phase.id);
-      phaseSteps.forEach(step => {
-        const card = renderStepCard(step);
-        container.appendChild(card);
-      });
-    }
-
-    function renderStepCard(step) {
-      const isActive = currentStep === step.n;
-      const isCompleted = isStepCompleted(step.n);
-      const phase = PHASES.find(p => p.id === step.phase);
-
-      const card = document.createElement('div');
-      card.className = `step-card ${isActive ? 'active' : ''}`;
-
-      const header = document.createElement('div');
-      header.className = 'step-card-header';
-      if (!isActive) {
-        header.onclick = () => navigateToStep(step.n);
-      }
-
-      header.innerHTML = `
-        <div class="step-number-badge" style="background: ${phase.lightColor}; color: ${phase.color};">
-          ${step.n}
+      <!-- Metric Strip -->
+      <div class="metric-strip">
+        <div class="metric-block">
+          <div class="metric-label">What your insurer offered</div>
+          <div class="metric-value">$18,200</div>
+          <div class="metric-sublabel">Initial estimate</div>
         </div>
-        <div class="step-card-header-text">
-          <div class="step-card-title">${step.title}</div>
-          <div class="step-card-sub">${step.sub}</div>
+        <div class="metric-block highlight-emerald">
+          <div class="metric-label">What your loss is actually worth</div>
+          <div class="metric-value">$36,750</div>
+          <div class="metric-sublabel">Verified claim value</div>
         </div>
-        <div class="step-status-pill ${isCompleted ? 'completed' : 'pending'}">
-          ${isCompleted ? '✓ Complete' : 'Pending'}
+        <div class="metric-block highlight-red">
+          <div class="metric-label">Money you may be leaving behind</div>
+          <div class="metric-value">$18,550</div>
+          <div class="metric-sublabel">Gap identified</div>
         </div>
-      `;
+        <div class="metric-block teal-value">
+          <div class="metric-label">Where you are in the process</div>
+          <div class="metric-value">Step 1 of 18</div>
+          <div class="metric-sublabel">Roadmap progress</div>
+        </div>
+      </div>
 
-      card.appendChild(header);
-
-      if (isActive) {
-        const body = document.createElement('div');
-        body.className = 'step-card-body';
-
-        body.innerHTML = `
-          <div class="step-section">
-            <div class="step-section-label">Why this matters</div>
-            <div class="step-section-content">${step.why}</div>
+      <!-- Roadmap Strip -->
+      <div class="roadmap-strip">
+        <div class="roadmap-label">Your 18-Step Claim Roadmap — click any step to jump to it</div>
+        <div class="roadmap-tiles">
+          <div class="roadmap-tile phase-establish active" onclick="goToStep(1)">
+            <div class="tile-number">01</div>
+            <div class="tile-label">Claim Process Guide</div>
           </div>
-          <div class="step-section">
-            <div class="step-section-label">What you do</div>
-            <div class="step-section-content">${step.what}</div>
+          <div class="roadmap-tile phase-establish" onclick="goToStep(2)">
+            <div class="tile-number">02</div>
+            <div class="tile-label">Review Your Policy</div>
           </div>
-          <div class="step-section">
-            <div class="step-section-label">What Claim Command provides</div>
-            <div class="step-section-content">
-              <ul>
-                ${step.provides.map(p => `<li>${p}</li>`).join('')}
-              </ul>
+          <div class="roadmap-tile phase-establish" onclick="goToStep(3)">
+            <div class="tile-number">03</div>
+            <div class="tile-label">Report the Loss</div>
+          </div>
+          <div class="roadmap-tile phase-document">
+            <div class="tile-number">04</div>
+            <div class="tile-label">Document Damage</div>
+          </div>
+          <div class="roadmap-tile phase-document">
+            <div class="tile-number">05</div>
+            <div class="tile-label">Contractor Estimates</div>
+          </div>
+          <div class="roadmap-tile phase-document">
+            <div class="tile-number">06</div>
+            <div class="tile-label">Adjuster Prep</div>
+          </div>
+          <div class="roadmap-tile phase-document">
+            <div class="tile-number">07</div>
+            <div class="tile-label">Contents Inventory</div>
+          </div>
+          <div class="roadmap-tile phase-analyze">
+            <div class="tile-number">08</div>
+            <div class="tile-label">Review Estimate</div>
+          </div>
+          <div class="roadmap-tile phase-analyze">
+            <div class="tile-number">09</div>
+            <div class="tile-label">Pricing Analysis</div>
+          </div>
+          <div class="roadmap-tile phase-analyze">
+            <div class="tile-number">10</div>
+            <div class="tile-label">Coverage Gaps</div>
+          </div>
+          <div class="roadmap-tile phase-recover">
+            <div class="tile-number">11</div>
+            <div class="tile-label">Supplement Request</div>
+          </div>
+          <div class="roadmap-tile phase-recover">
+            <div class="tile-number">12</div>
+            <div class="tile-label">Dispute Letters</div>
+          </div>
+          <div class="roadmap-tile phase-recover">
+            <div class="tile-number">13</div>
+            <div class="tile-label">ACV vs RCV</div>
+          </div>
+          <div class="roadmap-tile phase-resolve">
+            <div class="tile-number">14</div>
+            <div class="tile-label">Negotiation</div>
+          </div>
+          <div class="roadmap-tile phase-resolve">
+            <div class="tile-number">15</div>
+            <div class="tile-label">Appraisal / Mediation</div>
+          </div>
+          <div class="roadmap-tile phase-resolve">
+            <div class="tile-number">16</div>
+            <div class="tile-label">Settlement Review</div>
+          </div>
+          <div class="roadmap-tile phase-resolve">
+            <div class="tile-number">17</div>
+            <div class="tile-label">Final Recovery</div>
+          </div>
+          <div class="roadmap-tile phase-resolve">
+            <div class="tile-number">18</div>
+            <div class="tile-label">Close the Claim</div>
+          </div>
+        </div>
+        <div class="phase-legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--teal);"></div>
+            <span>Establish</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--emerald);"></div>
+            <span>Document</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--orange);"></div>
+            <span>Analyze</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--amber);"></div>
+            <span>Recover</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background: var(--red);"></div>
+            <span>Resolve</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Header -->
+      <div class="content-header">
+        <div class="content-eyebrow">Phase 1 — Foundation</div>
+        <h1 class="content-title">Establish</h1>
+        <p class="content-desc">Start here. Understand your rights and the claim process before you take any action.</p>
+      </div>
+
+      <!-- Step Cards -->
+      <div class="step-cards">
+        
+        <!-- Step 1 -->
+        <div class="step-card active-card" id="step-1">
+          <div class="step-card-header" onclick="toggleStep('step-1')">
+            <div class="card-number">01</div>
+            <div class="card-text">
+              <div class="card-title">Review the Claim Process Guide</div>
+              <div class="card-subtitle">Read this first — it explains the entire claim process before you take any action</div>
+            </div>
+            <div class="card-status in-progress">In Progress</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Most policyholders make costly mistakes in the first 48 hours because they don't know how the process works. An insurance claim is not automatic reimbursement — it is a formal financial review governed by your policy contract. Understanding what to expect before you act protects your rights and gives you the best chance at a full recovery.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Read this guide from start to finish before you contact your insurer or sign anything. It explains what the insurance company is looking for, what your responsibilities are as a policyholder, and exactly what Claim Command Pro will help you do at each step.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A plain-language overview of the entire claim process from start to finish</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">How your insurer calculates and pays your claim — and where they can shortchange you</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">The most common ways insurers underpay claims and how to catch them</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A guide to every tool inside Claim Command Pro and when to use each one</div>
+              </li>
+            </ul>
+
+            <button class="expand-button">Read the full claim process guide — click to expand ↓</button>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" disabled style="opacity: 0.4;">← Step 0</button>
+              <button class="nav-button" onclick="goToStep(2)">Step 2 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(1)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card collapsed" id="step-2">
+          <div class="step-card-header" onclick="toggleStep('step-2')">
+            <div class="card-number">02</div>
+            <div class="card-text">
+              <div class="card-title">Review Your Policy with AI Policy Analyzer</div>
+              <div class="card-subtitle">We read your policy and tell you exactly what you're covered for — in plain language</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Your insurer knows your policy better than you do — and they use that to their advantage. Most policyholders have coverage they don't know about and rights they never exercise. Before your insurer tells you what they'll pay, you need to know what your policy actually says you're owed.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Upload your declarations page and policy documents. Claim Command Pro's AI Policy Analyzer will read every page, extract your coverage limits, deductibles, and endorsements, and flag every coverage trigger that applies to your specific type of loss. You don't need to understand insurance language — we translate it for you.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A plain-language summary of exactly what your policy covers for this type of loss</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Your exact deductible amounts and coverage limits — clearly labeled</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Additional coverages attached to your policy that you may not know you have</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A list of areas where your coverage may fall short and what to do about it</div>
+              </li>
+            </ul>
+
+            <div class="ai-banner">
+              <div class="ai-chip">AI</div>
+              <div class="ai-text">Upload your policy documents and the AI Policy Analyzer reads them for you. You'll get a clear, plain-language breakdown of your coverage in minutes — no insurance expertise required.</div>
             </div>
           </div>
-        `;
-
-        if (step.tool) {
-          const toolSlot = document.createElement('div');
-          toolSlot.className = 'step-tool-slot';
-          toolSlot.innerHTML = `
-            <div class="step-tool-info">
-              <div class="step-tool-label">AI Tool</div>
-              <div class="step-tool-name">${step.tool}</div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(1)">← Step 1</button>
+              <button class="nav-button" onclick="goToStep(3)">Step 3 →</button>
             </div>
-            <button class="step-tool-button" onclick="${step.fn}()">Launch →</button>
-          `;
-          body.appendChild(toolSlot);
+            <button class="complete-button" onclick="completeStep(2)">Mark Complete →</button>
+          </div>
+        </div>
 
-          if (step.n === 9 || step.n === 15) {
-            const outputArea = document.createElement('div');
-            outputArea.id = `tool-output-${step.n}`;
-            body.appendChild(outputArea);
-          }
-        }
-
-        if (step.briefing) {
-          const briefingToggle = document.createElement('div');
-          briefingToggle.className = 'step-briefing-toggle';
-          briefingToggle.textContent = 'Read the full claim process briefing ▾';
-          briefingToggle.onclick = function() {
-            this.classList.toggle('expanded');
-            this.textContent = this.classList.contains('expanded')
-              ? 'Hide full briefing ▴'
-              : 'Read the full claim process briefing ▾';
-          };
-
-          const briefingContent = document.createElement('div');
-          briefingContent.className = 'step-briefing-content';
-          briefingContent.innerHTML = getBriefingContent();
-
-          body.appendChild(briefingToggle);
-          body.appendChild(briefingContent);
-        }
-
-        const actionRow = document.createElement('div');
-        actionRow.className = 'step-action-row';
-
-        const prevStep = step.n - 1;
-        const nextStep = step.n + 1;
-
-        actionRow.innerHTML = `
-          <button class="step-nav-button" ${prevStep < 1 ? 'disabled' : ''} onclick="navigateToStep(${prevStep})">
-            ← Step ${prevStep}
-          </button>
-          <button class="step-nav-button" ${nextStep > 18 ? 'disabled' : ''} onclick="navigateToStep(${nextStep})">
-            Step ${nextStep} →
-          </button>
-          <button class="step-complete-button ${isCompleted ? 'completed' : ''}" onclick="markStepComplete(${step.n})">
-            ${isCompleted ? '✓ Completed' : 'Mark complete →'}
-          </button>
-        `;
-
-        body.appendChild(actionRow);
-        card.appendChild(body);
-      }
-
-      return card;
-    }
-
-    function getBriefingContent() {
-      return `
-        <h4>Why this matters</h4>
-        <p>You have experienced a property loss. You are now entering a formal insurance claim process.</p>
-        <p>An insurance claim is not automatic reimbursement. It is a structured financial review governed by your policy contract. Payment is based on:</p>
-        <ul>
-          <li>What your policy covers</li>
-          <li>What damage is verified</li>
-          <li>What is documented</li>
-          <li>What is supported with pricing</li>
-          <li>Whether policy conditions are satisfied</li>
-        </ul>
-        <p>The insurance company does not build your claim for you. You are responsible for presenting it properly. This Command Center ensures you do that correctly.</p>
-
-        <h4>The reality of insurance claims</h4>
-        <p>Insurance carriers evaluate claims using: policy language, written documentation, photos and videos, contractor estimates, invoices and receipts, payment records, timelines, and compliance with policy conditions.</p>
-        <p>Verbal explanations are not enough.</p>
-        <ul>
-          <li>If something is not documented, it will not be paid.</li>
-          <li>If something cannot be supported, it will be reduced.</li>
-          <li>If something is submitted incorrectly, it will be delayed.</li>
-          <li>If deadlines are missed, rights will be limited.</li>
-        </ul>
-
-        <h4>What the insurance company must determine</h4>
-        <p>Before issuing payment, the insurer must determine: that a covered cause of loss occurred, the date and circumstances of the loss, the full scope of physical damage, the reasonable cost to repair or replace, whether claimed items fall within policy coverage, and whether policy conditions have been satisfied.</p>
-
-        <h4>How claim payments typically work</h4>
-        <p>Payments come in stages:</p>
-        <ul>
-          <li>An initial Actual Cash Value (ACV) payment</li>
-          <li>Withheld depreciation, recoverable after repairs are complete</li>
-          <li>Supplemental payments for missed or newly discovered damage</li>
-          <li>Separate payments for contents and structure</li>
-          <li>Additional Living Expense reimbursements</li>
-        </ul>
-        <p><strong>The first check is not the final amount.</strong></p>
-
-        <h4>Where policyholders commonly lose money</h4>
-        <ul>
-          <li>Damage is not fully documented</li>
-          <li>Estimates are not compared line-by-line</li>
-          <li>Code upgrades are overlooked</li>
-          <li>Supplements are poorly structured</li>
-          <li>Deadlines are missed</li>
-          <li>Depreciation is never recovered</li>
-          <li>Settlement breakdowns are not analyzed</li>
-          <li>Broad release language is signed without review</li>
-        </ul>
-        <p>Most claim problems begin early — during reporting, inspection, and estimate review. This is why the steps must be followed in order.</p>
-
-        <h4>AI-powered tools you'll use</h4>
-        <ul>
-          <li><strong>AI Policy Analyzer (Step 2)</strong> — Extracts coverage limits, deductibles, settlement type (RCV/ACV), and ordinance & law provisions from your insurance policy.</li>
-          <li><strong>AI Estimate Analyzer (Step 8)</strong> — Performs line-by-line comparison between your contractor estimate and the insurance carrier estimate.</li>
-          <li><strong>Supplement Letter Generator (Step 10)</strong> — Creates a professional supplement claim letter with policy citations.</li>
-          <li><strong>Settlement Analyzer (Step 13)</strong> — Breaks down settlement letters to show RCV, ACV, and depreciation withheld.</li>
-          <li><strong>Demand Letter Generator (Step 14)</strong> — Generates a formal demand letter with policy citations and specific dollar amounts.</li>
-          <li><strong>Release Document Analyzer (Step 17)</strong> — Reviews release language to identify problematic clauses and waived rights.</li>
-        </ul>
-        <p>These tools appear within their designated steps because each requires context and data from previous steps.</p>
-      `;
-    }
-
-    // ============================================================================
-    // TOOL FUNCTIONS
-    // ============================================================================
-
-    async function openPolicyAnalysisTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
-
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 2,
-        toolType: 'policy-analysis',
-        title: 'AI Policy Analyzer',
-        description: 'Upload your insurance policy to extract coverage limits, deductibles, and special provisions.',
-        requiredDocuments: [
-          { key: 'policy_pdf', label: 'Insurance Policy (PDF)' }
-        ],
-        onRun: async (files) => {
-          const response = await fetch('/.netlify/functions/analyze-policy-v2', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({
-              claim_id: currentClaimId,
-              policy_pdf_url: files.policy_pdf.url,
-              document_id: files.policy_pdf.id
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Policy analysis failed');
-          }
-
-          const result = await response.json();
-          await loadFinancialSummary();
-          return result.data;
-        },
-        onClose: () => {}
-      });
-
-      modal.render();
-      modal.show();
-    }
-
-    async function openEstimateComparisonTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
-
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 8,
-        toolType: 'estimate-comparison',
-        title: 'AI Estimate Analyzer',
-        description: 'Upload both estimates for line-by-line comparison and gap analysis.',
-        requiredDocuments: [
-          { key: 'carrier_estimate_pdf', label: 'Insurance Carrier Estimate (PDF)' },
-          { key: 'contractor_estimate_pdf', label: 'Contractor Estimate (PDF)' }
-        ],
-        onRun: async (files) => {
-          const response = await fetch('/.netlify/functions/analyze-estimates-v2', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({
-              claim_id: currentClaimId,
-              carrier_estimate_pdf_url: files.carrier_estimate_pdf.url,
-              contractor_estimate_pdf_url: files.contractor_estimate_pdf.url,
-              carrier_document_id: files.carrier_estimate_pdf.id,
-              contractor_document_id: files.contractor_estimate_pdf.id
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Estimate analysis failed');
-          }
-
-          const result = await response.json();
-          await analyzeEvidenceGaps(currentClaimId, currentAuthToken);
-          await loadFinancialSummary();
-          return result.data;
-        },
-        onClose: () => {}
-      });
-
-      modal.render();
-      modal.show();
-    }
-
-    async function openProofChecklistTool() {
-      const outputArea = document.getElementById('tool-output-9');
-      if (!outputArea) return;
-
-      if (!currentAuthToken || !currentClaimId) {
-        outputArea.innerHTML = '<div class="tool-output-area"><p style="color: var(--text-muted);">Complete Step 2 (Policy Analysis) and Step 8 (Estimate Comparison) first.</p></div>';
-        return;
-      }
-
-      outputArea.innerHTML = '<div class="tool-output-area"><p>Loading evidence gaps...</p></div>';
-
-      try {
-        const { createClient } = supabase;
-        const supabaseClient = createClient(
-          'https://your-project.supabase.co',
-          'your-anon-key'
-        );
-
-        const { data: gaps } = await supabaseClient
-          .from('claim_evidence_gaps')
-          .select('*')
-          .eq('claim_id', currentClaimId)
-          .eq('resolved', false)
-          .order('severity', { ascending: false });
-
-        const { data: triggers } = await supabaseClient
-          .from('claim_policy_triggers')
-          .select('*')
-          .eq('claim_id', currentClaimId)
-          .limit(1)
-          .single();
-
-        let html = '<div class="tool-output-area">';
-
-        if (triggers?.ordinance_trigger) {
-          html += `
-            <div class="proof-checklist-item">
-              <div class="proof-checklist-header">
-                <input type="checkbox" class="proof-checklist-checkbox" data-type="ordinance">
-                <div class="proof-checklist-title">Ordinance & Law Coverage Trigger ($${triggers.ordinance_trigger_amount?.toLocaleString() || '0'})</div>
-              </div>
-              <div class="proof-checklist-docs">
-                <p>Required documentation:</p>
-                <ul>
-                  <li>Building department code citation</li>
-                  <li>Contractor code compliance reference</li>
-                </ul>
-              </div>
+        <!-- Step 3 -->
+        <div class="step-card collapsed" id="step-3">
+          <div class="step-card-header" onclick="toggleStep('step-3')">
+            <div class="card-number">03</div>
+            <div class="card-text">
+              <div class="card-title">Report the Loss Properly</div>
+              <div class="card-subtitle">How to report your loss to the insurance company without making costly mistakes</div>
             </div>
-          `;
-        }
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">What you say when you first report the loss can limit what you're paid — permanently. Vague or poorly worded reports give the insurer grounds to restrict your coverage before the adjuster even arrives. The right notification language locks in your full rights under the policy from day one.</p>
 
-        if (triggers?.matching_trigger) {
-          html += `
-            <div class="proof-checklist-item">
-              <div class="proof-checklist-header">
-                <input type="checkbox" class="proof-checklist-checkbox" data-type="matching">
-                <div class="proof-checklist-title">Matching Endorsement Trigger</div>
-              </div>
-              <div class="proof-checklist-docs">
-                <p>Required documentation:</p>
-                <ul>
-                  <li>Photos showing material discontinuity</li>
-                  <li>Contractor statement on matching requirements</li>
-                </ul>
-              </div>
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use the loss notification template we provide to report your claim. Do not admit fault, guess at dollar amounts, or describe damage in detail until a full professional inspection is done. We tell you exactly what to say — and exactly what not to say.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A ready-to-use letter template with the right language to protect your full claim rights</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">What to say and what to avoid when communicating with your insurer</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">The most common statements that limit coverage — and how to avoid making them</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">A checklist to confirm your loss report was filed correctly and completely</div>
+              </li>
+            </ul>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(2)">← Step 2</button>
+              <button class="nav-button" disabled style="opacity: 0.4;">Step 4 →</button>
             </div>
-          `;
-        }
+            <button class="complete-button" onclick="completeStep(3)">Mark Complete →</button>
+          </div>
+        </div>
 
-        if (gaps && gaps.length > 0) {
-          gaps.forEach(gap => {
-            html += `
-              <div class="proof-checklist-item">
-                <div class="proof-checklist-header">
-                  <input type="checkbox" class="proof-checklist-checkbox" data-gap-id="${gap.id}">
-                  <div class="proof-checklist-title">${gap.description} ($${gap.delta_amount?.toLocaleString() || '0'})</div>
-                </div>
-              </div>
-            `;
-          });
-        }
+        <!-- Phase Preview -->
+        <div class="phase-preview">
+          <div class="preview-label">Next Phase</div>
+          <div class="preview-title">Document</div>
+          <p class="preview-text">Complete all 3 Establish steps above to unlock the Document phase.</p>
+        </div>
 
-        if (!triggers && (!gaps || gaps.length === 0)) {
-          html += '<p style="color: var(--text-muted);">Complete Step 2 (Policy Analysis) and Step 8 (Estimate Comparison) first.</p>';
-        }
+      </div>
 
-        html += '</div>';
-        outputArea.innerHTML = html;
+    </main>
 
-        outputArea.querySelectorAll('.proof-checklist-checkbox').forEach(checkbox => {
-          checkbox.addEventListener('change', async (e) => {
-            const gapId = e.target.dataset.gapId;
-            if (gapId) {
-              await supabaseClient
-                .from('claim_evidence_gaps')
-                .update({ resolved: e.target.checked, resolved_at: new Date().toISOString() })
-                .eq('id', gapId);
-            }
-          });
-        });
+  </div>
 
-      } catch (error) {
-        outputArea.innerHTML = '<div class="tool-output-area"><p style="color: var(--red-danger);">Failed to load evidence gaps.</p></div>';
-      }
+  <script>
+    function closeModal() {
+      document.getElementById('welcomeModal').classList.add('hidden');
+      document.getElementById('step-1').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    async function openSupplementGeneratorTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
+    function toggleStep(id) {
+      const card = document.getElementById(id);
+      card.classList.toggle('collapsed');
+    }
 
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
-
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 10,
-        toolType: 'supplement-generator',
-        title: 'Supplement Letter Generator',
-        description: 'Generate a professional supplement claim letter with policy citations.',
-        requiredDocuments: [],
-        onRun: async () => {
-          const response = await fetch('/.netlify/functions/generate-supplement-v2', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({ claim_id: currentClaimId })
-          });
-
-          if (!response.ok) {
-            throw new Error('Supplement generation failed');
-          }
-
-          const result = await response.json();
-          return result.data;
-        },
-        onClose: () => {}
+    function goToStep(num) {
+      // Collapse all cards
+      document.querySelectorAll('.step-card').forEach(card => {
+        card.classList.add('collapsed');
       });
 
-      modal.render();
-      modal.show();
+      // Expand target card
+      const targetCard = document.getElementById('step-' + num);
+      if (targetCard) {
+        targetCard.classList.remove('collapsed');
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
 
-    async function openSettlementAnalysisTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
+    function completeStep(num) {
+      const card = document.getElementById('step-' + num);
+      if (!card) return;
+
+      // Mark current step as complete
+      card.classList.remove('active-card');
+      card.classList.add('collapsed');
+      card.style.opacity = '0.7';
+      
+      const status = card.querySelector('.card-status');
+      status.textContent = 'Complete';
+      status.classList.remove('in-progress', 'pending');
+      status.style.background = 'rgba(16,185,129,0.15)';
+      status.style.color = 'var(--emerald)';
+
+      const cardNumber = card.querySelector('.card-number');
+      cardNumber.style.border = 'none';
+      cardNumber.style.background = 'var(--emerald)';
+      cardNumber.style.color = 'white';
+      cardNumber.textContent = '✓';
+
+      // Update sidebar
+      const sidebarStep = document.querySelector(`.step-item[onclick="goToStep(${num})"]`);
+      if (sidebarStep) {
+        sidebarStep.classList.remove('active');
+        sidebarStep.classList.add('done');
       }
 
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
+      // Activate next step if exists
+      const nextCard = document.getElementById('step-' + (num + 1));
+      if (nextCard) {
+        nextCard.classList.add('active-card');
+        nextCard.classList.remove('collapsed');
+        
+        const nextStatus = nextCard.querySelector('.card-status');
+        nextStatus.textContent = 'In Progress';
+        nextStatus.classList.remove('pending');
+        nextStatus.classList.add('in-progress');
 
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 13,
-        toolType: 'settlement-analysis',
-        title: 'AI Settlement Analyzer',
-        description: 'Upload your settlement letter for detailed breakdown analysis.',
-        requiredDocuments: [
-          { key: 'settlement_pdf', label: 'Settlement Letter (PDF)' }
-        ],
-        onRun: async (files) => {
-          const response = await fetch('/.netlify/functions/analyze-settlement', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({
-              claim_id: currentClaimId,
-              settlement_pdf_url: files.settlement_pdf.url,
-              document_id: files.settlement_pdf.id
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Settlement analysis failed');
-          }
-
-          const result = await response.json();
-          return result.data;
-        },
-        onClose: () => {}
-      });
-
-      modal.render();
-      modal.show();
-    }
-
-    async function openDemandLetterTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
-
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 14,
-        toolType: 'demand-letter',
-        title: 'Demand Letter Generator',
-        description: 'Generate a formal demand letter with policy citations and specific amounts.',
-        requiredDocuments: [],
-        onRun: async () => {
-          const response = await fetch('/.netlify/functions/generate-demand-letter', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({ claim_id: currentClaimId })
-          });
-
-          if (!response.ok) {
-            throw new Error('Demand letter generation failed');
-          }
-
-          const result = await response.json();
-          return result.data;
-        },
-        onClose: () => {}
-      });
-
-      modal.render();
-      modal.show();
-    }
-
-    async function evaluateEscalation() {
-      const outputArea = document.getElementById('tool-output-15');
-      if (!outputArea) return;
-
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      outputArea.innerHTML = '<div class="tool-output-area"><p>Evaluating escalation status...</p></div>';
-
-      try {
-        const response = await fetch('/.netlify/functions/evaluate-escalation-status', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentAuthToken}`
-          },
-          body: JSON.stringify({ claim_id: currentClaimId })
-        });
-
-        if (!response.ok) {
-          throw new Error('Escalation evaluation failed');
+        const nextSidebarStep = document.querySelector(`.step-item[onclick="goToStep(${num + 1})"]`);
+        if (nextSidebarStep) {
+          nextSidebarStep.classList.add('active');
         }
 
-        const result = await response.json();
-        const data = result.data;
-
-        let html = '<div class="escalation-result">';
-
-        if (data.escalation_level === 0) {
-          html += `
-            <div class="escalation-alert level-0">
-              <strong>No Escalation Required</strong><br>
-              Claim is progressing normally.
-            </div>
-          `;
-        } else {
-          const levelClass = `level-${data.escalation_level}`;
-          html += `
-            <div class="escalation-alert ${levelClass}">
-              <div class="escalation-badge" style="background: rgba(0,0,0,0.1);">Level ${data.escalation_level} Escalation</div>
-              <div class="escalation-details">${data.recommendation}</div>
-              ${data.underpayment_amount > 0 || data.days_since_supplement || data.days_since_last_response ? `
-                <div class="escalation-metrics">
-                  ${data.underpayment_amount > 0 ? `
-                    <div class="escalation-metric">
-                      <div class="escalation-metric-label">Underpayment</div>
-                      <div class="escalation-metric-value">$${data.underpayment_amount.toLocaleString()}</div>
-                    </div>
-                  ` : ''}
-                  ${data.days_since_supplement ? `
-                    <div class="escalation-metric">
-                      <div class="escalation-metric-label">Days Since Supplement</div>
-                      <div class="escalation-metric-value">${data.days_since_supplement}</div>
-                    </div>
-                  ` : ''}
-                  ${data.days_since_last_response ? `
-                    <div class="escalation-metric">
-                      <div class="escalation-metric-label">Days Since Response</div>
-                      <div class="escalation-metric-value">${data.days_since_last_response}</div>
-                    </div>
-                  ` : ''}
-                </div>
-              ` : ''}
-            </div>
-            <button class="step-tool-button" onclick="generateEscalationTemplate('${data.template_type}')">
-              Generate ${data.template_type === 'supervisor' ? 'Supervisor Request' : data.template_type === 'doi_complaint' ? 'DOI Complaint' : 'Appraisal Demand'}
-            </button>
-          `;
-        }
-
-        html += '</div>';
-        outputArea.innerHTML = html;
-
-      } catch (error) {
-        outputArea.innerHTML = '<div class="tool-output-area"><p style="color: var(--red-danger);">Failed to evaluate escalation status.</p></div>';
+        nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+
+      // Update counter
+      const completed = document.querySelectorAll('.step-card[style*="opacity: 0.7"]').length;
+      document.querySelector('.phase-counter strong').textContent = completed + '/18';
     }
-
-    async function generateEscalationTemplate(templateType) {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      try {
-        const response = await fetch('/.netlify/functions/generate-escalation-template', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentAuthToken}`
-          },
-          body: JSON.stringify({
-            claim_id: currentClaimId,
-            template_type: templateType
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error('Template generation failed');
-        }
-
-        const result = await response.json();
-        showTemplateOverlay(result.data);
-
-      } catch (error) {
-        showToast('Failed to generate template', 'error');
-      }
-    }
-
-    function showTemplateOverlay(content) {
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px;';
-
-      const container = document.createElement('div');
-      container.style.cssText = 'background: white; border-radius: 12px; max-width: 800px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px;';
-
-      const header = document.createElement('div');
-      header.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;';
-      header.innerHTML = `
-        <h3 style="margin: 0; font-size: 18px; font-weight: 700;">Escalation Template</h3>
-        <button style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted);">×</button>
-      `;
-
-      const textarea = document.createElement('textarea');
-      textarea.style.cssText = 'width: 100%; min-height: 400px; padding: 12px; border: 1px solid var(--border-light); border-radius: 8px; font-family: inherit; font-size: 14px; line-height: 1.6; margin-bottom: 16px;';
-      textarea.value = content;
-
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'step-tool-button';
-      copyBtn.textContent = 'Copy to Clipboard';
-      copyBtn.onclick = () => {
-        textarea.select();
-        document.execCommand('copy');
-        showToast('Template copied to clipboard', 'success');
-      };
-
-      container.appendChild(header);
-      container.appendChild(textarea);
-      container.appendChild(copyBtn);
-      overlay.appendChild(container);
-
-      header.querySelector('button').onclick = () => {
-        document.body.removeChild(overlay);
-      };
-
-      overlay.onclick = (e) => {
-        if (e.target === overlay) {
-          document.body.removeChild(overlay);
-        }
-      };
-
-      document.body.appendChild(overlay);
-    }
-
-    async function openReleaseAnalysisTool() {
-      if (!currentAuthToken || !currentClaimId) {
-        showToast('Authentication required. Please sign in.', 'error');
-        return;
-      }
-
-      if (typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.StepToolModal) {
-        showToast('Requires live server connection.', 'error');
-        return;
-      }
-
-      const modal = new ClaimCommandCenter.StepToolModal({
-        stepNumber: 17,
-        toolType: 'release-analysis',
-        title: 'Release Document Analyzer',
-        description: 'Upload your release document to identify problematic clauses.',
-        requiredDocuments: [
-          { key: 'release_pdf', label: 'Release Document (PDF)' }
-        ],
-        onRun: async (files) => {
-          const response = await fetch('/.netlify/functions/analyze-release', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${currentAuthToken}`
-            },
-            body: JSON.stringify({
-              claim_id: currentClaimId,
-              release_pdf_url: files.release_pdf.url,
-              document_id: files.release_pdf.id
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Release analysis failed');
-          }
-
-          const result = await response.json();
-          return result.data;
-        },
-        onClose: () => {}
-      });
-
-      modal.render();
-      modal.show();
-    }
-
-    async function analyzeEvidenceGaps(claimId, token) {
-      try {
-        const response = await fetch('/.netlify/functions/analyze-evidence-gaps', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ claim_id: claimId })
-        });
-
-        if (!response.ok) return null;
-        return (await response.json()).data;
-      } catch (error) {
-        console.error('Evidence gap analysis failed:', error);
-        return null;
-      }
-    }
-
-    async function loadFinancialSummary() {
-      if (!currentClaimId || typeof ClaimCommandCenter === 'undefined' || !ClaimCommandCenter.FinancialSummaryPanel) {
-        return;
-      }
-
-      try {
-        const panel = new ClaimCommandCenter.FinancialSummaryPanel(currentClaimId);
-        await panel.load();
-        const container = document.getElementById('financial-summary-container');
-        const rendered = panel.render();
-        if (rendered) {
-          container.innerHTML = '';
-          container.appendChild(rendered);
-        }
-      } catch (error) {
-        console.error('Failed to load financial summary:', error);
-      }
-    }
-
-    // ============================================================================
-    // STUBS FOR LOCAL PREVIEW
-    // ============================================================================
-
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-
-      setTimeout(() => {
-        if (toast.parentNode) {
-          document.body.removeChild(toast);
-        }
-      }, 2500);
-    }
-
-    function initializeStubs() {
-      if (typeof ClaimCommandCenter === 'undefined') {
-        window.ClaimCommandCenter = {
-          getAuthToken: async () => null,
-          getClaimId: () => null,
-          showToast: showToast,
-          StepToolModal: function() {
-            return {
-              render: () => {},
-              show: () => showToast('Requires live server connection.', 'error')
-            };
-          },
-          FinancialSummaryPanel: function() {
-            return {
-              load: () => Promise.resolve(),
-              render: () => null,
-              data: null
-            };
-          }
-        };
-      }
-    }
-
-    // ============================================================================
-    // INITIALIZATION
-    // ============================================================================
-
-    async function initialize() {
-      loadState();
-
-      setTimeout(() => {
-        initializeStubs();
-      }, 100);
-
-      setTimeout(async () => {
-        if (typeof ClaimCommandCenter !== 'undefined') {
-          currentAuthToken = await ClaimCommandCenter.getAuthToken();
-          currentClaimId = ClaimCommandCenter.getClaimId();
-
-          if (currentClaimId) {
-            await loadFinancialSummary();
-          }
-        }
-      }, 200);
-
-      render();
-
-      const tier = getEscalationTier();
-      if (tier > 0 && !allStepsComplete()) {
-        setTimeout(() => {
-          showNextActionModal();
-        }, 1000);
-      }
-
-      document.getElementById('modal-close-btn').onclick = () => {
-        document.getElementById('next-action-modal').classList.add('hidden');
-      };
-
-      document.getElementById('modal-dismiss-link').onclick = () => {
-        dismissModal();
-      };
-
-      document.getElementById('deadline-alert-dismiss').onclick = () => {
-        document.getElementById('deadline-alert').classList.add('hidden');
-        localStorage.setItem('ccc_deadline_dismissed', 'true');
-      };
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const claimIdParam = urlParams.get('claim_id');
-      if (claimIdParam) {
-        currentClaimId = claimIdParam;
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', initialize);
   </script>
+
 </body>
 </html>
-  
