@@ -121,8 +121,8 @@
 
     /* HERO SECTION */
     .hero {
-      background: var(--navy);
-      padding: 5rem 0 6rem;
+      background: #0a1628;
+      padding: 4rem 0 5rem;
       position: relative;
     }
 
@@ -132,193 +132,257 @@
       padding: 0 2rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
+      gap: 4rem;
+      align-items: start;
     }
 
-    .hero-left h1 {
-      font-size: 4rem;
-      font-weight: 800;
-      line-height: 1.1;
+    .hero-badge {
+      display: inline-block;
+      background: rgba(20, 184, 166, 0.15);
+      border: 1px solid var(--teal);
+      color: var(--teal);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.6);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .hero-headline {
+      font-size: 3.5rem;
+      font-weight: 400;
+      line-height: 1.2;
       color: #ffffff;
-      margin-bottom: 2.5rem;
-    }
-
-    .money-contrast {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 2rem;
       margin-bottom: 2rem;
     }
 
-    .money-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-      font-size: 1.25rem;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .money-line:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .money-label {
-      font-weight: 500;
-    }
-
-    .money-value {
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .missing-amount {
-      background: rgba(20, 184, 166, 0.1);
-      border: 3px solid var(--teal);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-
-    .missing-label {
-      font-size: 1.25rem;
+    .hero-amount-light {
       color: rgba(255, 255, 255, 0.9);
-      font-weight: 600;
-      margin-bottom: 0.5rem;
     }
 
-    .missing-value {
-      font-size: 5rem;
-      font-weight: 900;
+    .hero-amount-teal {
       color: var(--teal);
-      line-height: 1;
     }
 
-    .truth-statement {
-      font-size: 1.75rem;
+    .hero-statement {
+      font-size: 1.5rem;
       font-weight: 600;
       color: #ffffff;
       margin-bottom: 1.5rem;
-      line-height: 1.3;
+      line-height: 1.4;
     }
 
-    .supporting-text {
-      font-size: 1.25rem;
-      color: rgba(255, 255, 255, 0.85);
+    .hero-supporting {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.75);
       margin-bottom: 2.5rem;
-      line-height: 1.5;
+      line-height: 1.6;
+      max-width: 540px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .btn-primary {
-      padding: 1.25rem 3rem;
+      padding: 1rem 2rem;
       background: var(--teal);
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 1.25rem;
+      border-radius: 8px;
+      font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 20px rgba(20, 184, 166, 0.4);
+      transition: all 0.2s;
       display: inline-block;
       text-decoration: none;
     }
 
     .btn-primary:hover {
       background: var(--teal-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 24px rgba(20, 184, 166, 0.5);
+      transform: translateY(-1px);
     }
 
-    .trust-line {
-      font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 1rem;
+    .btn-secondary-hero {
+      padding: 1rem 2rem;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.9);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      text-decoration: none;
+    }
+
+    .btn-secondary-hero:hover {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hero-trust {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.6);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
-    .trust-line::before {
-      content: '✓';
+    .trust-check {
       color: var(--teal);
       font-weight: 700;
-      font-size: 1.25rem;
     }
 
-    /* COMMAND CENTER PANEL */
-    .command-panel {
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(255, 255, 255, 0.1);
+    .trust-divider {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* HERO CALCULATOR */
+    .hero-calculator {
+      background: white;
       border-radius: 16px;
       padding: 2.5rem;
-      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     }
 
-    .panel-title {
+    .calc-header h3 {
       font-size: 1.5rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .calc-header p {
+      font-size: 0.95rem;
+      color: var(--gray-600);
       margin-bottom: 2rem;
     }
 
-    .panel-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+    .calc-input-group {
+      margin-bottom: 1.5rem;
     }
 
-    .panel-stat {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 1.5rem;
-    }
-
-    .panel-stat-label {
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.7);
-      text-transform: uppercase;
+    .calc-input-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--gray-600);
       letter-spacing: 0.05em;
       margin-bottom: 0.5rem;
     }
 
-    .panel-stat-value {
-      font-size: 2.5rem;
-      font-weight: 800;
+    .calc-input-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      transition: border-color 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .calc-input-group input:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    .calc-vs {
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin: 1rem 0;
+      font-weight: 600;
+    }
+
+    .calc-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 1.5rem;
+    }
+
+    .calc-btn:hover {
+      background: var(--navy-light);
+    }
+
+    .calc-result-hero {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+      border: 2px solid var(--teal);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      display: none;
+    }
+
+    .calc-result-hero.active {
+      display: block;
+    }
+
+    .calc-result-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+    }
+
+    .calc-result-value {
+      font-size: 3rem;
+      font-weight: 700;
       color: var(--teal);
       line-height: 1;
     }
 
-    .panel-alerts {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 1.5rem;
+    /* STATS BAR */
+    .stats-bar {
+      background: #0d1b2e;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .alert-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: rgba(255, 255, 255, 0.9);
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .stat-label {
       font-size: 0.95rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .alert-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .alert-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--teal);
-      border-radius: 50%;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.4;
     }
 
     /* CALCULATOR SECTION */
@@ -632,16 +696,17 @@
         gap: 3rem;
       }
 
-      .hero-left h1 {
-        font-size: 3rem;
-      }
-
-      .missing-value {
-        font-size: 4rem;
+      .hero-headline {
+        font-size: 2.5rem;
       }
 
       .system-grid {
         grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
       }
     }
 
@@ -654,16 +719,16 @@
         display: flex;
       }
 
-      .hero-left h1 {
-        font-size: 2.25rem;
+      .hero-headline {
+        font-size: 2rem;
       }
 
-      .missing-value {
-        font-size: 3rem;
-      }
-
-      .truth-statement {
+      .hero-statement {
         font-size: 1.25rem;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
       }
 
       .section-title {
@@ -679,10 +744,6 @@
       }
 
       .testimonials {
-        grid-template-columns: 1fr;
-      }
-
-      .panel-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -714,66 +775,82 @@
     <div class="hero-container">
       <!-- LEFT SIDE -->
       <div class="hero-left">
-        <h1>Why Do Policyholders Use Claim Command Pro?</h1>
+        <div class="hero-badge">FREE POLICY ANALYSIS</div>
+        
+        <div class="hero-eyebrow">Why do policyholders use Claim Command Pro?</div>
+        
+        <h1 class="hero-headline">
+          Their insurer said <span class="hero-amount-light">$18,200.</span><br>
+          Their contractor said<br>
+          <span class="hero-amount-teal">$36,750.</span>
+        </h1>
 
-        <div class="money-contrast">
-          <div class="money-line">
-            <span class="money-label">Insurance Estimate:</span>
-            <span class="money-value">$18,200</span>
-          </div>
-          <div class="money-line">
-            <span class="money-label">Actual Cost:</span>
-            <span class="money-value">$36,750</span>
-          </div>
-
-          <div class="missing-amount">
-            <div class="missing-label">Missing:</div>
-            <div class="missing-value">$18,550</div>
-          </div>
+        <div class="hero-statement">
+          And 8 out of 10 times, the insurance company is the one who's wrong.
         </div>
 
-        <div class="truth-statement">
-          8 out of 10 times, the insurance company is the one who's wrong.
+        <div class="hero-supporting">
+          Claim Command Pro detects missing scope, suppressed pricing, and unclaimed coverage — before you accept a settlement that shortchanges you.
         </div>
 
-        <div class="supporting-text">
-          Identify and recover the money your claim is missing — and maximize your payout.
+        <div class="hero-ctas">
+          <a href="#calculator" class="btn-primary">Start Free Policy Analysis</a>
+          <a href="#how-it-works" class="btn-secondary-hero">See How It Works</a>
         </div>
 
-        <a href="#calculator" class="btn-primary">Run Free Policy Analysis</a>
-        <div class="trust-line">Trusted by policyholders daily to improve claim outcomes.</div>
+        <div class="hero-trust">
+          <span class="trust-check">✓</span> No credit card required
+          <span class="trust-divider">•</span>
+          Results in minutes
+        </div>
       </div>
 
-      <!-- RIGHT SIDE - COMMAND CENTER -->
+      <!-- RIGHT SIDE - CALCULATOR -->
       <div class="hero-right">
-        <div class="command-panel">
-          <div class="panel-title">Claim Command Center</div>
-          
-          <div class="panel-grid">
-            <div class="panel-stat">
-              <div class="panel-stat-label">Claim Gap</div>
-              <div class="panel-stat-value">$18,550</div>
-            </div>
-            <div class="panel-stat">
-              <div class="panel-stat-label">Coverage Alerts</div>
-              <div class="panel-stat-value">3</div>
-            </div>
+        <div class="hero-calculator">
+          <div class="calc-header">
+            <h3>Claim Gap Calculator</h3>
+            <p>Enter your numbers to see what may be missing</p>
           </div>
 
-          <div class="panel-alerts">
-            <div class="alert-item">
-              <div class="alert-dot"></div>
-              <span>Estimate Flags Detected</span>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot"></div>
-              <span>Missing Scope Identified</span>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot"></div>
-              <span>Coverage Gaps Found</span>
-            </div>
+          <div class="calc-input-group">
+            <label>INSURANCE ESTIMATE</label>
+            <input type="text" id="hero-insurance" placeholder="$18,200" oninput="calculateHeroGap()">
           </div>
+
+          <div class="calc-vs">vs.</div>
+
+          <div class="calc-input-group">
+            <label>CONTRACTOR ESTIMATE</label>
+            <input type="text" id="hero-contractor" placeholder="$36,750" oninput="calculateHeroGap()">
+          </div>
+
+          <button class="calc-btn">Run Full Claim Analysis →</button>
+
+          <div class="calc-result-hero" id="hero-calc-result">
+            <div class="calc-result-label">Potential Missing Value</div>
+            <div class="calc-result-value" id="hero-gap-value">$18,550</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">8 in 10</div>
+          <div class="stat-label">Insurance estimates contain missing scope or suppressed pricing</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$18,400</div>
+          <div class="stat-label">Average gap between insurer estimate and verified repair scope</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">18 steps</div>
+          <div class="stat-label">Guided claim management from first notice to final settlement</div>
         </div>
       </div>
     </div>
@@ -915,6 +992,35 @@
   </footer>
 
   <script>
+    function calculateHeroGap() {
+      const insuranceInput = document.getElementById('hero-insurance').value;
+      const contractorInput = document.getElementById('hero-contractor').value;
+      
+      const parseAmount = (val) => {
+        return parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+      };
+      
+      const formatCurrency = (val) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(val);
+      };
+      
+      const insurance = parseAmount(insuranceInput);
+      const contractor = parseAmount(contractorInput);
+      
+      if (insurance > 0 && contractor > 0) {
+        const gap = Math.max(0, contractor - insurance);
+        document.getElementById('hero-calc-result').classList.add('active');
+        document.getElementById('hero-gap-value').textContent = formatCurrency(gap);
+      } else {
+        document.getElementById('hero-calc-result').classList.remove('active');
+      }
+    }
+
     function calculateMissing() {
       const insuranceInput = document.getElementById('insurance-estimate').value;
       const repairInput = document.getElementById('repair-cost').value;
