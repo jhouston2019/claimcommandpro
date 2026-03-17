@@ -2,13 +2,9 @@
  * Pricing Validation Engine
  * Validates line-item pricing against market data sources
  * Detects pricing manipulation and provides market-rate comparisons
+ * 
+ * NO AI - Pure rule-based logic with market data comparison
  */
-
-const OpenAI = require('openai');
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
 
 /**
  * Market pricing database (expandable with real data sources)
@@ -17,28 +13,41 @@ const openai = new OpenAI({
 const MARKET_PRICING = {
   // Roofing (per SQ - 100 SF)
   'asphalt_shingles_install': { min: 300, max: 500, avg: 400, unit: 'SQ' },
+  'asphalt shingles (architectural)': { min: 80, max: 150, avg: 115, unit: 'SQ' },
   'asphalt_shingles_material': { min: 80, max: 150, avg: 115, unit: 'SQ' },
   'tear_off_shingles': { min: 50, max: 100, avg: 75, unit: 'SQ' },
   'ridge_vent_install': { min: 10, max: 20, avg: 15, unit: 'LF' },
   'drip_edge': { min: 2, max: 5, avg: 3.5, unit: 'LF' },
   'ice_water_shield': { min: 3, max: 6, avg: 4.5, unit: 'SF' },
+  'metal roofing': { min: 700, max: 1200, avg: 950, unit: 'SQ' },
+  'tile roofing': { min: 800, max: 1500, avg: 1150, unit: 'SQ' },
+  'flat roof membrane': { min: 400, max: 700, avg: 550, unit: 'SQ' },
   
   // Siding (per SF)
   'vinyl_siding_install': { min: 4, max: 8, avg: 6, unit: 'SF' },
   'fiber_cement_siding': { min: 8, max: 15, avg: 11.5, unit: 'SF' },
   'wood_siding': { min: 6, max: 12, avg: 9, unit: 'SF' },
+  'brick veneer': { min: 12, max: 25, avg: 18.5, unit: 'SF' },
+  'stucco': { min: 6, max: 12, avg: 9, unit: 'SF' },
   
   // Drywall (per SF)
   'drywall_removal': { min: 0.5, max: 2, avg: 1.25, unit: 'SF' },
   'drywall_install': { min: 2, max: 4, avg: 3, unit: 'SF' },
+  'drywall 1/2"': { min: 2, max: 4, avg: 3, unit: 'SF' },
+  'drywall 5/8"': { min: 2.25, max: 4.5, avg: 3.4, unit: 'SF' },
   'drywall_finish': { min: 1, max: 3, avg: 2, unit: 'SF' },
   'texture_ceiling': { min: 0.75, max: 2, avg: 1.5, unit: 'SF' },
   
   // Flooring (per SF)
   'carpet_install': { min: 3, max: 8, avg: 5.5, unit: 'SF' },
+  'carpet padding': { min: 0.5, max: 1.5, avg: 1, unit: 'SF' },
   'hardwood_install': { min: 8, max: 15, avg: 11.5, unit: 'SF' },
+  'engineered hardwood': { min: 7, max: 13, avg: 10, unit: 'SF' },
   'tile_install': { min: 10, max: 20, avg: 15, unit: 'SF' },
+  'ceramic tile': { min: 8, max: 16, avg: 12, unit: 'SF' },
+  'porcelain tile': { min: 10, max: 20, avg: 15, unit: 'SF' },
   'vinyl_plank_install': { min: 5, max: 10, avg: 7.5, unit: 'SF' },
+  'laminate flooring': { min: 4, max: 8, avg: 6, unit: 'SF' },
   
   // Labor rates (per hour)
   'general_labor': { min: 35, max: 65, avg: 50, unit: 'HR' },
@@ -48,25 +57,51 @@ const MARKET_PRICING = {
   // Painting (per SF)
   'interior_paint': { min: 1.5, max: 4, avg: 2.75, unit: 'SF' },
   'exterior_paint': { min: 2, max: 5, avg: 3.5, unit: 'SF' },
+  'primer': { min: 0.5, max: 1.5, avg: 1, unit: 'SF' },
+  'trim painting': { min: 2, max: 4, avg: 3, unit: 'LF' },
   
   // Plumbing
   'water_heater_install': { min: 800, max: 1500, avg: 1150, unit: 'EA' },
   'toilet_install': { min: 200, max: 400, avg: 300, unit: 'EA' },
   'sink_install': { min: 250, max: 500, avg: 375, unit: 'EA' },
+  'faucet install': { min: 150, max: 350, avg: 250, unit: 'EA' },
+  'shower valve': { min: 300, max: 600, avg: 450, unit: 'EA' },
+  'pipe repair': { min: 150, max: 400, avg: 275, unit: 'EA' },
   
   // Electrical
   'outlet_install': { min: 75, max: 150, avg: 112.5, unit: 'EA' },
   'light_fixture_install': { min: 100, max: 250, avg: 175, unit: 'EA' },
   'circuit_breaker': { min: 150, max: 300, avg: 225, unit: 'EA' },
+  'electrical panel': { min: 1200, max: 2500, avg: 1850, unit: 'EA' },
+  'ceiling fan install': { min: 150, max: 350, avg: 250, unit: 'EA' },
   
   // HVAC
   'hvac_unit_install': { min: 3000, max: 8000, avg: 5500, unit: 'EA' },
   'ductwork': { min: 15, max: 35, avg: 25, unit: 'LF' },
+  'furnace': { min: 2500, max: 6000, avg: 4250, unit: 'EA' },
+  'air conditioner': { min: 2500, max: 6000, avg: 4250, unit: 'EA' },
   
   // Windows/Doors
   'window_install': { min: 300, max: 800, avg: 550, unit: 'EA' },
   'door_install': { min: 400, max: 1200, avg: 800, unit: 'EA' },
-  'garage_door': { min: 800, max: 2000, avg: 1400, unit: 'EA' }
+  'garage_door': { min: 800, max: 2000, avg: 1400, unit: 'EA' },
+  'sliding glass door': { min: 800, max: 1800, avg: 1300, unit: 'EA' },
+  'french doors': { min: 1000, max: 2500, avg: 1750, unit: 'EA' },
+  
+  // Cabinets and Countertops
+  'kitchen cabinets': { min: 100, max: 300, avg: 200, unit: 'LF' },
+  'bathroom vanity': { min: 400, max: 1500, avg: 950, unit: 'EA' },
+  'granite countertop': { min: 50, max: 100, avg: 75, unit: 'SF' },
+  'quartz countertop': { min: 60, max: 120, avg: 90, unit: 'SF' },
+  
+  // Insulation
+  'fiberglass insulation': { min: 1, max: 2.5, avg: 1.75, unit: 'SF' },
+  'spray foam insulation': { min: 2.5, max: 5, avg: 3.75, unit: 'SF' },
+  
+  // Structural
+  'framing lumber': { min: 2, max: 5, avg: 3.5, unit: 'BF' },
+  'structural beam': { min: 15, max: 35, avg: 25, unit: 'LF' },
+  'joist repair': { min: 200, max: 500, avg: 350, unit: 'EA' }
 };
 
 /**
@@ -347,29 +382,10 @@ Return JSON array with format:
 ]`;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4-turbo-preview',
-      messages: [
-        { role: 'system', content: 'You are a construction pricing expert specializing in insurance claim estimates.' },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.3,
-      response_format: { type: 'json_object' }
-    });
-    
-    const response = JSON.parse(completion.choices[0].message.content);
-    const validations = response.validations || [];
-    
-    return topItems.map((item, idx) => {
-      const validation = validations[idx] || {};
-      return {
-        line_item_id: item.id,
-        description: item.description,
-        ai_validation: validation,
-        ai_confidence: 0.75,
-        ai_model: 'gpt-4-turbo-preview'
-      };
-    });
+    // AI pricing validation disabled - using rule-based validation only
+    // This function is a placeholder for future AI-enhanced validation
+    console.log('[Pricing Validation] AI validation skipped - using rule-based validation only');
+    return [];
   } catch (error) {
     console.error('AI pricing validation error:', error);
     return [];

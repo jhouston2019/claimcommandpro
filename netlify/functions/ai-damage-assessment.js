@@ -1,5 +1,8 @@
 /**
  * AI Damage Assessment Function
+ * 
+ * NOW POWERED BY DAMAGE PATTERN RECOGNITION ENGINE
+ * Combines rule-based pattern matching with AI analysis for expert-level damage assessment
  */
 
 const { runOpenAI, sanitizeInput } = require('./lib/ai-utils');
@@ -11,11 +14,14 @@ const {
   postProcessResponse,
   validateProfessionalOutput
 } = require('./utils/prompt-hardening');
-
+const {
+  analyzeDamagePattern,
+  identifyHiddenDamageRisks,
+  generateScopeOfWork,
+  assessCausationStrength
+} = require('./lib/damage-pattern-db');
 
 exports.handler = async (event) => {
-  // ✅ PHASE 5B: FULLY HARDENED
-
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -24,20 +30,6 @@ exports.handler = async (event) => {
   };
 
   if (event.httpMethod === 'OPTIONS') {
-    
-    // PHASE 5B: Post-process and validate
-    const processedResponse = postProcessResponse(rawResponse, 'report');
-    const validation = validateProfessionalOutput(processedResponse, 'report');
-
-    if (!validation.pass) {
-      console.warn('[ai-damage-assessment] Quality issues:', validation.issues);
-      await LOG_EVENT('quality_warning', 'ai-damage-assessment', {
-        issues: validation.issues,
-        score: validation.score,
-        user_id: user.id
-      });
-    }
-
     return { statusCode: 200, headers, body: '' };
   }
 
@@ -89,7 +81,6 @@ exports.handler = async (event) => {
       };
     }
 
-    // Unified body parsing
     let body;
     try {
       body = JSON.parse(event.body || '{}');
@@ -101,49 +92,179 @@ exports.handler = async (event) => {
       };
     }
     
-    // Log event
     await LOG_EVENT('ai_request', 'ai-damage-assessment', { payload: body });
     
-    const { damage_description = '', damage_types = [], damage_items = [], claimInfo = {} } = body;
-
-    const systemMessage = getClaimGradeSystemMessage('report');
+    const { 
+      damage_description = '', 
+      damage_types = [], 
+      damage_items = [], 
+      claimInfo = {},
+      property_details = {},
+      evidence_items = []
+    } = body;
 
     const startTime = Date.now();
 
+    // DAMAGE PATTERN ENGINE: Analyze damage pattern
+    const patternAnalysis = analyzeDamagePattern({
+      description: damage_description,
+      damage_types: damage_types
+    });
+
+    // DAMAGE PATTERN ENGINE: Identify hidden damage risks
+    const primaryDamageType = damage_types[0] || 'water';
+    const hiddenRisks = identifyHiddenDamageRisks(damage_description, primaryDamageType);
+
+    // DAMAGE PATTERN ENGINE: Generate scope of work
+    const scopeOfWork = generateScopeOfWork(patternAnalysis, {
+      square_feet: property_details.square_feet || 2000,
+      age: property_details.age || 20,
+      jurisdiction: property_details.jurisdiction || claimInfo.jurisdiction || ''
+    });
+
+    // DAMAGE PATTERN ENGINE: Assess causation strength
+    const causationAssessment = assessCausationStrength({
+      evidence_items: evidence_items
+    }, primaryDamageType);
+
     const totalCost = damage_items.reduce((sum, item) => sum + (item.total || 0), 0);
 
-    let userPrompt = `Analyze this damage assessment:
+    const systemMessage = {
+      role: 'system',
+      content: `${getClaimGradeSystemMessage('report').content}
 
-Description: ${sanitizeInput(damage_description)}
-Damage Types: ${damage_types.join(', ') || 'Not specified'}
-Items: ${JSON.stringify(damage_items)}
-Total Cost: ${totalCost.toLocaleString()}
+DAMAGE ASSESSMENT EXPERTISE:
+You are an expert damage assessor with specialized knowledge of:
+- Construction and restoration practices
+- Damage pattern recognition
+- Hidden damage identification
+- Scope of work development
+- Causation analysis
+- Code compliance requirements
 
-Provide:
-1. Damage assessment summary
-2. Cost breakdown analysis
-3. Recommendations for repair/replacement
-4. Important considerations
+INTELLIGENCE DATA PROVIDED:
+1. Damage Pattern Analysis: ${patternAnalysis.pattern_identified ? patternAnalysis.primary_pattern : 'Pattern not identified'}
+2. Hidden Damage Risks: ${hiddenRisks.length} risks identified
+3. Scope of Work: ${scopeOfWork.scope_available ? 'Generated' : 'Requires inspection'}
+4. Causation Strength: ${causationAssessment.causation_strength}
 
-Format as HTML.`;
+CRITICAL INSTRUCTIONS:
+1. Use the provided pattern analysis as your foundation
+2. Emphasize hidden damage risks that require investigation
+3. Provide specific scope of work with trade breakdowns
+4. Assess causation strength and coverage implications
+5. Identify code compliance requirements
+6. Format as professional HTML with clear sections and cost breakdowns`
+    };
 
-    const assessment = await runOpenAI(systemPrompt, userPrompt, {
+    let userPrompt = `Provide expert damage assessment for this claim:
+
+DAMAGE DESCRIPTION:
+${sanitizeInput(damage_description)}
+
+DAMAGE TYPES:
+${damage_types.join(', ') || 'Not specified'}
+
+DAMAGE ITEMS:
+${JSON.stringify(damage_items, null, 2)}
+
+TOTAL COST: $${totalCost.toLocaleString()}
+
+PROPERTY DETAILS:
+${JSON.stringify(property_details, null, 2)}
+
+PATTERN ANALYSIS (Rule-Based):
+${JSON.stringify(patternAnalysis, null, 2)}
+
+HIDDEN DAMAGE RISKS (Expert Database):
+${JSON.stringify(hiddenRisks, null, 2)}
+
+SCOPE OF WORK (Generated):
+${JSON.stringify(scopeOfWork, null, 2)}
+
+CAUSATION ASSESSMENT (Rule-Based):
+${JSON.stringify(causationAssessment, null, 2)}
+
+Provide comprehensive damage assessment including:
+
+1. DAMAGE SUMMARY
+   - Primary damage pattern identified
+   - Severity and extent
+   - Affected areas and systems
+
+2. COST BREAKDOWN
+   - Demolition and removal
+   - Structural repairs
+   - Mechanical systems
+   - Finishes and cosmetic
+   - Hidden damage contingency
+
+3. HIDDEN DAMAGE RISKS
+   - Specific risks identified
+   - Inspection methods required
+   - Estimated additional costs
+
+4. SCOPE OF WORK
+   - Trade-by-trade breakdown
+   - Timeline estimate
+   - Code compliance requirements
+
+5. CAUSATION ANALYSIS
+   - Causation strength assessment
+   - Supporting evidence present
+   - Missing evidence needed
+   - Coverage implications
+
+6. RECOMMENDATIONS
+   - Immediate actions
+   - Additional inspections needed
+   - Documentation priorities
+   - Mitigation requirements
+
+Format as professional HTML with clear headings, bullet points, and cost tables.`;
+
+    userPrompt = enhancePromptWithContext(userPrompt, claimInfo, 'report');
+
+    const rawResponse = await runOpenAI(systemMessage.content, userPrompt, {
       model: 'gpt-4o',
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 2500
     });
+
+    const processedResponse = postProcessResponse(rawResponse, 'report');
+    const validation = validateProfessionalOutput(processedResponse, 'report');
+
+    if (!validation.pass) {
+      console.warn('[ai-damage-assessment] Quality issues:', validation.issues);
+      await LOG_EVENT('quality_warning', 'ai-damage-assessment', {
+        issues: validation.issues,
+        score: validation.score,
+        user_id: user.id
+      });
+    }
 
     const endTime = Date.now();
     const durationMs = endTime - startTime;
 
     const result = {
-      html: assessment,
-      assessment: assessment,
+      html: processedResponse,
+      assessment: processedResponse,
       total_cost: totalCost,
-      item_count: damage_items.length
+      item_count: damage_items.length,
+      pattern_identified: patternAnalysis.pattern_identified,
+      primary_pattern: patternAnalysis.primary_pattern,
+      hidden_risks_count: hiddenRisks.length,
+      causation_strength: causationAssessment.causation_strength,
+      scope_available: scopeOfWork.scope_available,
+      intelligence_summary: {
+        pattern: patternAnalysis.primary_pattern || 'Unknown',
+        confidence: patternAnalysis.confidence || 'low',
+        hidden_risks: hiddenRisks.length,
+        causation: causationAssessment.causation_strength,
+        scope_generated: scopeOfWork.scope_available
+      }
     };
 
-    // Log usage
     await LOG_USAGE({
       function: 'ai-damage-assessment',
       duration_ms: durationMs,
@@ -152,16 +273,25 @@ Format as HTML.`;
       success: true
     });
 
-    // Log cost
     await LOG_COST({
       function: 'ai-damage-assessment',
-      estimated_cost_usd: 0.002
+      estimated_cost_usd: 0.003
     });
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ success: true, data: result, metadata: { quality_score: validation.score, validation_passed: validation.pass }, error: null })
+      body: JSON.stringify({ 
+        success: true, 
+        data: result, 
+        metadata: { 
+          quality_score: validation.score, 
+          validation_passed: validation.pass,
+          engine_powered: true,
+          intelligence_sources: ['damage-pattern-db']
+        }, 
+        error: null 
+      })
     };
 
   } catch (error) {
@@ -182,5 +312,3 @@ Format as HTML.`;
     };
   }
 };
-
-

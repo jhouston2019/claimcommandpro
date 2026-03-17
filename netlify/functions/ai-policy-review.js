@@ -1,6 +1,9 @@
 /**
  * AI Policy Review Function
  * Reviews and analyzes insurance policies
+ * 
+ * NOW POWERED BY POLICY INTELLIGENCE ENGINE
+ * Combines rule-based policy knowledge with AI interpretation for expert-level analysis
  */
 
 const { runOpenAI, sanitizeInput, validateRequired } = require('./lib/ai-utils');
@@ -12,6 +15,16 @@ const {
   postProcessResponse,
   validateProfessionalOutput
 } = require('./utils/prompt-hardening');
+const { parsePDF, extractPolicySections, extractCoverageLimits } = require('./lib/pdf-parser');
+const {
+  STANDARD_POLICY_FORMS,
+  STANDARD_EXCLUSIONS_DETAIL,
+  COMMON_ENDORSEMENTS,
+  analyzeCoverageForDamage,
+  detectCoverageGaps,
+  interpretClause,
+  getStandardLanguage
+} = require('./lib/policy-intelligence-db');
 
 
 exports.handler = async (event) => {
@@ -96,18 +109,69 @@ exports.handler = async (event) => {
 
     const { 
       policy_text, 
-      policy_type = '', 
+      policy_type = 'HO-3', 
       jurisdiction = '', 
       deductible = '', 
       claimInfo = {},
-      analysis_mode = 'coverage-gap' // NEW: Support different analysis modes
+      analysis_mode = 'coverage-gap',
+      damage_type = '',
+      claim_scenario = {}
     } = body;
     const sanitizedText = sanitizeInput(policy_text);
 
     const startTime = Date.now();
 
-    // PHASE 5B: Use claim-grade system message
-    const systemMessage = getClaimGradeSystemMessage('analysis');
+    // POLICY INTELLIGENCE ENGINE: Extract structured policy data
+    const policySections = extractPolicySections(sanitizedText);
+    const coverageLimits = extractCoverageLimits(sanitizedText);
+    const policyForm = STANDARD_POLICY_FORMS[policy_type] || STANDARD_POLICY_FORMS['HO-3'];
+
+    // POLICY INTELLIGENCE ENGINE: Detect coverage gaps using rule-based logic
+    let engineGaps = [];
+    if (claim_scenario && Object.keys(claim_scenario).length > 0) {
+      engineGaps = detectCoverageGaps(coverageLimits, policy_type, {
+        ...claim_scenario,
+        damageType: damage_type || claim_scenario.damageType,
+        endorsements: claim_scenario.endorsements || []
+      });
+    }
+
+    // POLICY INTELLIGENCE ENGINE: Analyze coverage for specific damage type
+    let coverageAnalysis = null;
+    if (damage_type) {
+      coverageAnalysis = analyzeCoverageForDamage(policySections, damage_type, policy_type);
+    }
+
+    // PHASE 5B: Use claim-grade system message with policy expertise
+    const systemMessage = {
+      role: 'system',
+      content: `${getClaimGradeSystemMessage('analysis').content}
+
+POLICY ANALYSIS EXPERTISE:
+You are analyzing insurance policies with expert-level knowledge of:
+- Standard policy forms (HO-3, HO-5, DP-3, Commercial Property)
+- Common exclusions and their standard language
+- Sublimits and coverage restrictions
+- Endorsement options and their implications
+- Jurisdiction-specific requirements
+
+CRITICAL INSTRUCTIONS:
+1. Use the provided policy intelligence data (standard forms, exclusions, limits) as your foundation
+2. Cross-reference policy text against standard policy language
+3. Identify deviations from standard forms
+4. Flag ambiguous language that should be interpreted in insured's favor (contra proferentem)
+5. Provide specific policy section references for all findings
+6. Return ONLY valid JSON - no markdown, no code blocks, no explanatory text
+
+POLICY FORM KNOWLEDGE:
+${JSON.stringify(policyForm, null, 2)}
+
+STANDARD EXCLUSIONS:
+${Object.keys(STANDARD_EXCLUSIONS_DETAIL).join(', ')}
+
+COMMON ENDORSEMENTS:
+${Object.keys(COMMON_ENDORSEMENTS).join(', ')}`
+    };
 
     // Build prompt based on analysis mode
     let userPrompt;
@@ -213,7 +277,11 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
       
       case 'coverage-gap':
       default:
-        // Default: coverage gap analysis
+        // POLICY INTELLIGENCE ENGINE: Inject rule-based gap detection
+        const engineGapsSummary = engineGaps.length > 0 
+          ? `\n\nRULE-BASED GAP DETECTION RESULTS:\n${JSON.stringify(engineGaps, null, 2)}\n\nUse these as your foundation and add any additional gaps you identify from the policy text.`
+          : '';
+
         userPrompt = `Analyze this insurance policy and return ONLY valid JSON with this exact structure:
 
 {
@@ -237,13 +305,24 @@ Deductible: ${deductible}
 
 Policy Text:
 ${sanitizedText}
+${engineGapsSummary}
+
+EXTRACTED COVERAGE LIMITS:
+${JSON.stringify(coverageLimits, null, 2)}
+
+POLICY FORM ANALYSIS:
+- Form Type: ${policy_type}
+- Coverage Basis: ${JSON.stringify(policyForm.coverage_basis)}
+- Standard Exclusions: ${policyForm.common_exclusions.join(', ')}
 
 Focus on:
-1. Coverage gaps and limitations
+1. Coverage gaps and limitations (prioritize rule-based gaps identified above)
 2. Key exclusions that could impact claims
 3. Sublimits that may restrict payouts
 4. Missing endorsements or riders
 5. Deadline requirements
+6. Deviations from standard policy form language
+7. Ambiguous language requiring contra proferentem interpretation
 
 Severity Guidelines:
 - HIGH: Could result in claim denial or >$10k impact
@@ -337,15 +416,33 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
       estimated_cost_usd: 0.002
     });
 
+    // Enrich result with policy intelligence data
+    const enrichedResult = {
+      ...result,
+      policy_intelligence: {
+        policy_form: policy_type,
+        extracted_limits: coverageLimits,
+        standard_exclusions: policyForm.common_exclusions,
+        rule_based_gaps: engineGaps,
+        coverage_analysis: coverageAnalysis,
+        recommended_endorsements: Object.entries(COMMON_ENDORSEMENTS)
+          .filter(([key, end]) => !claim_scenario.endorsements?.includes(key))
+          .map(([key, end]) => ({ name: key, ...end }))
+          .slice(0, 5)
+      }
+    };
+
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({ 
         success: true, 
-        data: result,
+        data: enrichedResult,
         metadata: {
           quality_score: validation.score,
-          validation_passed: validation.pass
+          validation_passed: validation.pass,
+          engine_powered: true,
+          rule_based_gaps_detected: engineGaps.length
         },
         error: null 
       })

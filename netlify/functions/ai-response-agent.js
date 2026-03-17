@@ -1,6 +1,9 @@
 /**
  * AI Response Agent Function
  * Generates professional response letters to insurer communications
+ * 
+ * NOW ENHANCED WITH LEGAL PRECEDENT ENGINE + CARRIER TACTIC ENGINE
+ * Combines legal knowledge and carrier intelligence with AI letter generation
  */
 
 const { runOpenAI, sanitizeInput, validateRequired } = require('./lib/ai-utils');
@@ -12,6 +15,15 @@ const {
   postProcessResponse,
   validateProfessionalOutput
 } = require('./utils/prompt-hardening');
+const {
+  getLegalStandards,
+  analyzeBadFaithPotential
+} = require('./lib/legal-precedent-db');
+const {
+  detectCarrierTactics,
+  getCarrierIntelligence,
+  CARRIER_TACTICS
+} = require('./lib/carrier-tactic-db');
 
 
 exports.handler = async (event) => {
@@ -100,7 +112,10 @@ exports.handler = async (event) => {
       insurer_name = '',
       denial_letter_text,
       tone = 'professional',
-      claimInfo = {} // PHASE 5B: Claim context from frontend
+      claimInfo = {},
+      jurisdiction = claimInfo.jurisdiction || '',
+      days_since_claim = 0,
+      claim_history = {}
     } = body;
 
     // Sanitize inputs
@@ -109,8 +124,61 @@ exports.handler = async (event) => {
 
     const startTime = Date.now();
 
-    // PHASE 5B: Use claim-grade system message
-    const systemMessage = getClaimGradeSystemMessage('letter');
+    // LEGAL PRECEDENT ENGINE: Get jurisdiction standards
+    const legalStandards = jurisdiction ? getLegalStandards(jurisdiction) : null;
+
+    // LEGAL PRECEDENT ENGINE: Analyze bad faith potential
+    let badFaithAnalysis = null;
+    if (legalStandards && days_since_claim > 0) {
+      badFaithAnalysis = analyzeBadFaithPotential({
+        days_since_acknowledgment: body.days_since_acknowledgment || 15,
+        days_since_claim: days_since_claim,
+        lowball_offer: body.lowball_offer || false,
+        offer_percentage: body.offer_percentage || 100,
+        offer_amount: body.offer_amount || 0,
+        valuation: body.valuation || 0,
+        inadequate_investigation: body.inadequate_investigation || false,
+        investigation_deficiencies: body.investigation_deficiencies || [],
+        denial_without_explanation: sanitizedText.length < 200
+      }, jurisdiction);
+    }
+
+    // CARRIER TACTIC ENGINE: Detect tactics in correspondence
+    const carrierTactics = detectCarrierTactics({
+      events: claim_history.events || [],
+      days_since_claim: days_since_claim,
+      offer_percentage: body.offer_percentage || 100
+    }, insurer_name);
+
+    // CARRIER INTELLIGENCE: Get carrier profile
+    const carrierIntel = getCarrierIntelligence(insurer_name);
+
+    // PHASE 5B: Enhanced system message with legal and carrier intelligence
+    const systemMessage = {
+      role: 'system',
+      content: `${getClaimGradeSystemMessage('letter').content}
+
+RESPONSE LETTER EXPERTISE:
+You are an expert insurance claim correspondent with comprehensive knowledge of:
+- Legal standards and statutory requirements by jurisdiction
+- Carrier-specific tactics and appropriate countermeasures
+- Professional correspondence formatting and tone
+- Strategic positioning in claim negotiations
+
+INTELLIGENCE DATA PROVIDED:
+${legalStandards ? `Legal Standards: ${jurisdiction} - Deadlines: ${JSON.stringify(legalStandards.claim_handling_deadlines)}` : 'No jurisdiction data'}
+${badFaithAnalysis ? `Bad Faith Potential: ${badFaithAnalysis.bad_faith_potential} - Triggers: ${badFaithAnalysis.triggers.length}` : 'No bad faith analysis'}
+${carrierTactics.detected_tactics.length > 0 ? `Carrier Tactics Detected: ${carrierTactics.detected_tactics.map(t => t.tactic).join(', ')}` : 'No tactics detected'}
+${carrierIntel.profile ? `Carrier Profile: ${carrierIntel.profile.claim_philosophy}` : 'No carrier profile'}
+
+CRITICAL INSTRUCTIONS:
+1. Reference specific legal standards and statutory deadlines when applicable
+2. Address detected carrier tactics with appropriate countermeasures
+3. Cite relevant case law or statutes if tone is firm/escalation/attorney-style
+4. Maintain professional tone while asserting policyholder rights
+5. Include specific deadlines for carrier response
+6. Format as proper business letter with all required elements`
+    };
 
     const toneInstructions = {
       professional: 'Use a professional, cooperative tone. Focus on facts and policy compliance.',
@@ -119,20 +187,57 @@ exports.handler = async (event) => {
       'attorney-style': 'Use a formal, legalistic tone appropriate for attorney correspondence. Cite legal precedents when relevant.'
     };
 
-    // Build user prompt
-    let userPrompt = `Analyze the following insurer correspondence and draft a ${tone} response letter.
+    // Build enhanced user prompt with intelligence data
+    let userPrompt = `Draft a ${tone} response letter to this insurer correspondence:
 
-Insurer: ${sanitizedInsurer}
-Claim Type: ${claim_type}
-Tone: ${toneInstructions[tone] || toneInstructions.professional}
+INSURER: ${sanitizedInsurer}
+CLAIM TYPE: ${claim_type}
+JURISDICTION: ${jurisdiction || 'Not specified'}
+TONE: ${toneInstructions[tone] || toneInstructions.professional}
 
-Insurer Correspondence:
+INSURER CORRESPONDENCE:
 ${sanitizedText}
 
-Please provide:
-1. A professional subject line
-2. A complete response letter body addressing all points
-3. Three recommended next steps
+LEGAL INTELLIGENCE:
+${legalStandards ? JSON.stringify({
+  claim_handling_deadlines: legalStandards.claim_handling_deadlines,
+  key_statutes: legalStandards.key_statutes.map(s => `${s.code}: ${s.description}`),
+  bad_faith_triggers: legalStandards.bad_faith_triggers
+}, null, 2) : 'No jurisdiction-specific standards available'}
+
+BAD FAITH ANALYSIS:
+${badFaithAnalysis ? JSON.stringify({
+  potential: badFaithAnalysis.bad_faith_potential,
+  triggers: badFaithAnalysis.triggers,
+  recommended_actions: badFaithAnalysis.recommended_actions
+}, null, 2) : 'No bad faith concerns identified'}
+
+CARRIER TACTICS DETECTED:
+${carrierTactics.detected_tactics.length > 0 ? JSON.stringify(carrierTactics.detected_tactics.map(t => ({
+  tactic: t.tactic,
+  severity: t.severity,
+  countermeasure: t.countermeasure
+})), null, 2) : 'No specific tactics detected'}
+
+CARRIER PROFILE:
+${carrierIntel.profile ? JSON.stringify({
+  philosophy: carrierIntel.profile.claim_philosophy,
+  common_tactics: carrierIntel.profile.common_tactics,
+  negotiation_leverage: carrierIntel.profile.negotiation_leverage
+}, null, 2) : 'No carrier-specific intelligence available'}
+
+Draft a response letter that:
+1. Addresses all points in insurer correspondence
+2. References applicable legal standards and deadlines
+3. Counters any detected carrier tactics
+4. Asserts policyholder rights appropriately for the tone
+5. Sets clear deadlines for carrier response
+6. Includes proper business letter formatting
+
+Provide:
+1. Professional subject line
+2. Complete letter body with proper salutation, body paragraphs, and closing
+3. Three specific next steps with timelines
 
 Format your response as JSON:
 {
@@ -141,7 +246,6 @@ Format your response as JSON:
   "next_steps": ["Step 1", "Step 2", "Step 3"]
 }`;
 
-    // PHASE 5B: Enhance prompt with claim context and harden
     userPrompt = enhancePromptWithContext(userPrompt, claimInfo, 'letter');
 
     // Call OpenAI
@@ -167,6 +271,14 @@ Format your response as JSON:
     // PHASE 5B: Post-process and validate letter body
     result.body = postProcessResponse(result.body, 'letter');
     const validation = validateProfessionalOutput(result.body, 'letter');
+
+    // Enrich result with intelligence metadata
+    result.intelligence_applied = {
+      legal_standards_referenced: legalStandards ? true : false,
+      bad_faith_triggers_identified: badFaithAnalysis?.triggers.length || 0,
+      carrier_tactics_countered: carrierTactics.detected_tactics.length,
+      jurisdiction: jurisdiction || 'Not specified'
+    };
 
     if (!validation.pass) {
       console.warn('[ai-response-agent] Quality issues detected:', validation.issues);
@@ -195,7 +307,6 @@ Format your response as JSON:
       estimated_cost_usd: 0.002
     });
 
-    // PHASE 5B: Include quality metadata in response
     return {
       statusCode: 200,
       headers,
@@ -204,7 +315,9 @@ Format your response as JSON:
         data: result, 
         metadata: {
           quality_score: validation.score,
-          validation_passed: validation.pass
+          validation_passed: validation.pass,
+          engine_powered: true,
+          intelligence_sources: ['legal-precedent-db', 'carrier-tactic-db']
         },
         error: null 
       })

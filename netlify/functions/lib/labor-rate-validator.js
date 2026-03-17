@@ -576,10 +576,46 @@ async function validateLaborRates(params) {
 
 module.exports = {
   validateLaborRates,
+  validateLaborRate: (trade, rate, state, city) => {
+    const rateData = lookupLaborRate(trade, state, city);
+    if (!rateData) {
+      return {
+        status: 'unknown',
+        message: 'Labor rate data not available for this trade/region',
+        provided_rate: rate
+      };
+    }
+    
+    if (rate < rateData.min) {
+      return {
+        status: 'undervalued',
+        provided_rate: rate,
+        market_range: { min: rateData.min, avg: rateData.avg, max: rateData.max },
+        deviation: ((rateData.min - rate) / rateData.min * 100).toFixed(1) + '%',
+        message: `Rate is ${((rateData.min - rate) / rateData.min * 100).toFixed(1)}% below market minimum`
+      };
+    } else if (rate > rateData.max) {
+      return {
+        status: 'overvalued',
+        provided_rate: rate,
+        market_range: { min: rateData.min, avg: rateData.avg, max: rateData.max },
+        deviation: ((rate - rateData.max) / rateData.max * 100).toFixed(1) + '%',
+        message: `Rate is ${((rate - rateData.max) / rateData.max * 100).toFixed(1)}% above market maximum`
+      };
+    } else {
+      return {
+        status: 'within_range',
+        provided_rate: rate,
+        market_range: { min: rateData.min, avg: rateData.avg, max: rateData.max },
+        message: 'Rate is within market range'
+      };
+    }
+  },
   detectLaborItem,
   identifyTrade,
   calculateHourlyRate,
   lookupLaborRate,
   calculateLaborScore,
-  LABOR_RATES
+  LABOR_RATES,
+  REGIONAL_LABOR_RATES: LABOR_RATES
 };
