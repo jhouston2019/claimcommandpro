@@ -1089,31 +1089,99 @@
         </div>
       </div>
 
-      <div class="phase-group">
+      <div class="phase-group" onclick="togglePhase(this)">
         <div class="phase-header">
           <div class="phase-name">Document</div>
           <div class="phase-count">0/4</div>
         </div>
+        <div class="phase-steps">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(4)">
+            <div class="step-number">04</div>
+            <div class="step-title">Document Damage Thoroughly</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(5)">
+            <div class="step-number">05</div>
+            <div class="step-title">Get Contractor Estimates</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(6)">
+            <div class="step-number">06</div>
+            <div class="step-title">Prepare for Adjuster Inspection</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(7)">
+            <div class="step-number">07</div>
+            <div class="step-title">Complete Contents Inventory</div>
+          </div>
+        </div>
       </div>
 
-      <div class="phase-group">
+      <div class="phase-group" onclick="togglePhase(this)">
         <div class="phase-header">
           <div class="phase-name">Analyze</div>
           <div class="phase-count">0/3</div>
         </div>
+        <div class="phase-steps">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(8)">
+            <div class="step-number">08</div>
+            <div class="step-title">Review Insurance Estimate</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(9)">
+            <div class="step-number">09</div>
+            <div class="step-title">Analyze Pricing Deviations</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(10)">
+            <div class="step-number">10</div>
+            <div class="step-title">Identify Coverage Gaps</div>
+          </div>
+        </div>
       </div>
 
-      <div class="phase-group">
+      <div class="phase-group" onclick="togglePhase(this)">
         <div class="phase-header">
           <div class="phase-name">Recover</div>
           <div class="phase-count">0/3</div>
         </div>
+        <div class="phase-steps">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(11)">
+            <div class="step-number">11</div>
+            <div class="step-title">Submit Supplement Request</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(12)">
+            <div class="step-number">12</div>
+            <div class="step-title">Send Dispute Letters</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(13)">
+            <div class="step-number">13</div>
+            <div class="step-title">Recover ACV vs RCV Difference</div>
+          </div>
+        </div>
       </div>
 
-      <div class="phase-group">
+      <div class="phase-group" onclick="togglePhase(this)">
         <div class="phase-header">
           <div class="phase-name">Resolve</div>
           <div class="phase-count">0/5</div>
+        </div>
+        <div class="phase-steps">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(14)">
+            <div class="step-number">14</div>
+            <div class="step-title">Negotiate Settlement</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(15)">
+            <div class="step-number">15</div>
+            <div class="step-title">Consider Appraisal or Mediation</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(16)">
+            <div class="step-number">16</div>
+            <div class="step-title">Review Settlement Offer</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(17)">
+            <div class="step-number">17</div>
+            <div class="step-title">Execute Final Recovery</div>
+          </div>
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(18)">
+            <div class="step-number">18</div>
+            <div class="step-title">Close the Claim</div>
+          </div>
         </div>
       </div>
     </aside>
@@ -1401,11 +1469,664 @@
           </div>
         </div>
 
-        <!-- Phase Preview -->
-        <div class="phase-preview">
-          <div class="preview-label">Next Phase</div>
-          <div class="preview-title">Document</div>
-          <p class="preview-text">Complete all 3 Establish steps above to unlock the Document phase.</p>
+        <!-- Step 4 -->
+        <div class="step-card collapsed" id="step-4">
+          <div class="step-card-header" onclick="toggleStep('step-4')">
+            <div class="card-number">04</div>
+            <div class="card-text">
+              <div class="card-title">Document Damage Thoroughly</div>
+              <div class="card-subtitle">Create a complete visual record of all damage before repairs begin</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Your photos and documentation are the only proof you have of what was damaged. Without thorough documentation, the insurer can deny items they claim weren't damaged or weren't part of the loss. Once repairs begin, you lose the ability to prove what was there.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Photograph every damaged area from multiple angles. Include wide shots showing the full room or area, medium shots showing specific damage, and close-ups of details. Use our damage documentation tool to organize photos by room and damage type.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Photo upload organizer that categorizes images by room and damage type</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Damage documentation checklist to ensure you capture everything</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Room-by-room documentation guide with specific photo requirements</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/damage-documentation-tool.html" class="expand-button" style="text-decoration: none; display: block;">Open Damage Documentation Tool →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(3)">← Step 3</button>
+              <button class="nav-button" onclick="goToStep(5)">Step 5 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(4)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-card collapsed" id="step-5">
+          <div class="step-card-header" onclick="toggleStep('step-5')">
+            <div class="card-number">05</div>
+            <div class="card-text">
+              <div class="card-title">Get Contractor Estimates</div>
+              <div class="card-subtitle">Obtain professional repair estimates to compare against the insurer's offer</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">The insurance company's estimate is often incomplete or underpriced. A licensed contractor's estimate gives you leverage to challenge lowball offers and proves the true cost of repairs. Without it, you have no basis to dispute what the insurer says the work costs.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Get at least two written estimates from licensed contractors who specialize in your type of damage. Use our contractor scope checklist to make sure their estimates include everything that was damaged. Don't let contractors talk to your adjuster directly until you review their estimate first.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Contractor scope checklist to ensure estimates are complete</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Questions to ask contractors before hiring them</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Red flags that indicate a contractor estimate may be inflated or incomplete</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/contractor-scope-checklist.html" class="expand-button" style="text-decoration: none; display: block;">Open Contractor Scope Checklist →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(4)">← Step 4</button>
+              <button class="nav-button" onclick="goToStep(6)">Step 6 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(5)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step-card collapsed" id="step-6">
+          <div class="step-card-header" onclick="toggleStep('step-6')">
+            <div class="card-number">06</div>
+            <div class="card-text">
+              <div class="card-title">Prepare for Adjuster Inspection</div>
+              <div class="card-subtitle">Know what to expect and how to protect your rights during the inspection</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">The adjuster's inspection determines what the insurance company will pay. What you say and show during the inspection can either strengthen or weaken your claim. Most policyholders unknowingly hurt their claims by volunteering information the adjuster didn't ask for or failing to point out damage the adjuster missed.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Walk the adjuster through every damaged area using your documentation as a guide. Point out damage the adjuster may miss. Answer questions directly but don't volunteer extra information. Use our carrier request logger to document everything the adjuster says and requests.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Adjuster inspection checklist with what to show and what to say</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Carrier request logger to document all adjuster requests and statements</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Common adjuster tactics and how to respond to them</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/carrier-request-logger.html" class="expand-button" style="text-decoration: none; display: block;">Open Carrier Request Logger →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(5)">← Step 5</button>
+              <button class="nav-button" onclick="goToStep(7)">Step 7 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(6)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 7 -->
+        <div class="step-card collapsed" id="step-7">
+          <div class="step-card-header" onclick="toggleStep('step-7')">
+            <div class="card-number">07</div>
+            <div class="card-text">
+              <div class="card-title">Complete Contents Inventory</div>
+              <div class="card-subtitle">Document all damaged personal property with values and proof of ownership</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Personal property claims are where insurers push back hardest. Without proof of ownership and accurate values, the insurer will deny items or pay pennies on the dollar. A complete inventory with supporting documentation is the only way to recover full value for your belongings.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">List every damaged item with its description, age, purchase price, and replacement cost. Include receipts, photos, or other proof of ownership where possible. Use our contents inventory tool to organize items by room and category.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Contents inventory tool with room-by-room organization</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Contents valuation calculator that estimates replacement costs</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Acceptable proof of ownership alternatives when you don't have receipts</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/contents-inventory.html" class="expand-button" style="text-decoration: none; display: block;">Open Contents Inventory Tool →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(6)">← Step 6</button>
+              <button class="nav-button" onclick="goToStep(8)">Step 8 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(7)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 8 -->
+        <div class="step-card collapsed" id="step-8">
+          <div class="step-card-header" onclick="toggleStep('step-8')">
+            <div class="card-number">08</div>
+            <div class="card-text">
+              <div class="card-title">Review Insurance Estimate</div>
+              <div class="card-subtitle">Compare the insurer's estimate against contractor bids and identify gaps</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">The insurance company's estimate is almost always lower than what repairs actually cost. They use outdated pricing, omit necessary work, and apply aggressive depreciation. If you accept their first estimate without review, you leave thousands of dollars on the table.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Upload both the insurance estimate and your contractor estimates to our estimate review tool. We'll identify line-by-line discrepancies, missing scope items, and pricing gaps. Use this analysis to build your case for a supplement.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Estimate comparison tool that highlights discrepancies line by line</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Missing scope detector that identifies work the insurer left out</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Total gap calculation showing exactly how much you're being underpaid</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/estimate-review.html" class="expand-button" style="text-decoration: none; display: block;">Open Estimate Review Tool →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(7)">← Step 7</button>
+              <button class="nav-button" onclick="goToStep(9)">Step 9 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(8)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 9 -->
+        <div class="step-card collapsed" id="step-9">
+          <div class="step-card-header" onclick="toggleStep('step-9')">
+            <div class="card-number">09</div>
+            <div class="card-text">
+              <div class="card-title">Analyze Pricing Deviations</div>
+              <div class="card-subtitle">Identify where the insurer's pricing falls below market rates</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Insurance companies often use pricing software that's 6-12 months out of date or doesn't reflect your local market. They also apply arbitrary reductions to labor rates and material costs. These pricing games can reduce your settlement by 20-30 percent or more.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our pricing deviation analyzer to compare the insurer's line item prices against current market rates in your area. Document every item priced below market and calculate the total impact on your claim.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Pricing deviation analyzer with local market rate comparisons</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Line item discrepancy finder that flags underpriced materials and labor</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Pricing justification documentation to support your supplement request</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/pricing-deviation-analyzer.html" class="expand-button" style="text-decoration: none; display: block;">Open Pricing Deviation Analyzer →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(8)">← Step 8</button>
+              <button class="nav-button" onclick="goToStep(10)">Step 10 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(9)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 10 -->
+        <div class="step-card collapsed" id="step-10">
+          <div class="step-card-header" onclick="toggleStep('step-10')">
+            <div class="card-number">10</div>
+            <div class="card-text">
+              <div class="card-title">Identify Coverage Gaps</div>
+              <div class="card-subtitle">Find coverage the insurer didn't apply that you're entitled to under your policy</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Insurance companies routinely fail to apply coverage provisions that would increase your payout. Code upgrade coverage, ordinance and law, overhead and profit, and additional coverages are frequently overlooked or denied even when your policy clearly provides them.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Run our coverage gap detector to identify policy provisions the insurer didn't apply. Use our scope omission detector to find repair work that should be covered but wasn't included in the estimate.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Coverage gap detector that identifies unapplied policy provisions</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Scope omission detector that finds missing repair work</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Policy language citations to support your coverage arguments</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/coverage-gap-detector.html" class="expand-button" style="text-decoration: none; display: block;">Open Coverage Gap Detector →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(9)">← Step 9</button>
+              <button class="nav-button" onclick="goToStep(11)">Step 11 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(10)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 11 -->
+        <div class="step-card collapsed" id="step-11">
+          <div class="step-card-header" onclick="toggleStep('step-11')">
+            <div class="card-number">11</div>
+            <div class="card-text">
+              <div class="card-title">Submit Supplement Request</div>
+              <div class="card-subtitle">Request additional payment for items the insurer missed or undervalued</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">A supplement request is your formal demand for the insurer to pay what they owe. Without a properly documented supplement, the insurer will simply ignore your complaints about their low estimate. A strong supplement backed by evidence forces them to respond and negotiate.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our supplement calculation tool to total all gaps, missing items, and coverage issues. Generate a professional supplement cover letter that presents your case clearly and demands a specific dollar amount.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Supplement calculation tool that totals all identified gaps</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Supplement cover letter generator with professional formatting</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Supporting documentation package to back up your request</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/supplement-calculation-tool.html" class="expand-button" style="text-decoration: none; display: block;">Open Supplement Calculator →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(10)">← Step 10</button>
+              <button class="nav-button" onclick="goToStep(12)">Step 12 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(11)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 12 -->
+        <div class="step-card collapsed" id="step-12">
+          <div class="step-card-header" onclick="toggleStep('step-12')">
+            <div class="card-number">12</div>
+            <div class="card-text">
+              <div class="card-title">Send Dispute Letters</div>
+              <div class="card-subtitle">Formally challenge denials and lowball offers with documented evidence</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">When the insurer denies coverage or refuses to increase their offer, a formal dispute letter creates a paper trail and puts them on notice that you're serious. It also preserves your right to escalate to appraisal, mediation, or litigation if needed.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our response letter generator to create a formal dispute letter addressing each denial or shortfall. Reference specific policy language and attach supporting evidence. Send via certified mail to create a documented record.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Response letter generator with templates for common disputes</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Estimate revision request generator for specific line item challenges</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Escalation language that signals you're prepared to take further action</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/response-letter-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Response Letter Generator →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(11)">← Step 11</button>
+              <button class="nav-button" onclick="goToStep(13)">Step 13 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(12)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 13 -->
+        <div class="step-card collapsed" id="step-13">
+          <div class="step-card-header" onclick="toggleStep('step-13')">
+            <div class="card-number">13</div>
+            <div class="card-text">
+              <div class="card-title">Recover ACV vs RCV Difference</div>
+              <div class="card-subtitle">Claim the depreciation holdback after repairs are complete</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Most policies pay Actual Cash Value (depreciated amount) up front and hold back Replacement Cost Value until repairs are done. Many policyholders never recover this holdback because they don't know how to claim it or don't have proper documentation of completed repairs.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Once repairs are complete, use our RCV recovery submitter to generate a claim for the depreciation holdback. Include invoices, photos of completed work, and proof of payment to contractors.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">RCV recovery submitter that calculates your holdback amount</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Depreciation calculator showing ACV vs RCV breakdown</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Required documentation checklist for RCV recovery</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/rcv-recovery-submitter.html" class="expand-button" style="text-decoration: none; display: block;">Open RCV Recovery Tool →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(12)">← Step 12</button>
+              <button class="nav-button" onclick="goToStep(14)">Step 14 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(13)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 14 -->
+        <div class="step-card collapsed" id="step-14">
+          <div class="step-card-header" onclick="toggleStep('step-14')">
+            <div class="card-number">14</div>
+            <div class="card-text">
+              <div class="card-title">Negotiate Settlement</div>
+              <div class="card-subtitle">Use strategic negotiation tactics to maximize your final payout</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Insurance adjusters are trained negotiators working to minimize payouts. Without a clear strategy and knowledge of negotiation tactics, you'll accept less than you're owed. Strategic negotiation can increase your settlement by 15-40 percent beyond the insurer's initial offer.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our negotiation strategy generator to develop a plan based on your specific situation. Employ our negotiation language generator to craft responses that apply pressure without burning bridges.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Negotiation strategy generator tailored to your claim situation</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Negotiation language generator with proven response templates</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Common adjuster tactics and how to counter them effectively</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/negotiation-strategy-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Negotiation Strategy Tool →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(13)">← Step 13</button>
+              <button class="nav-button" onclick="goToStep(15)">Step 15 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(14)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 15 -->
+        <div class="step-card collapsed" id="step-15">
+          <div class="step-card-header" onclick="toggleStep('step-15')">
+            <div class="card-number">15</div>
+            <div class="card-text">
+              <div class="card-title">Consider Appraisal or Mediation</div>
+              <div class="card-subtitle">Escalate to formal dispute resolution if negotiation fails</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">When the insurer refuses to negotiate in good faith, appraisal or mediation may be your only option short of litigation. These processes are faster and cheaper than lawsuits but still require preparation and understanding of the rules.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our escalation readiness checker to determine if you're ready for appraisal or mediation. Review the process requirements and costs before invoking your policy's dispute resolution clause.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Escalation readiness checker to assess if you should proceed</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Appraisal vs mediation comparison guide</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Demand letter templates to invoke policy dispute resolution clauses</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/escalation-readiness-checker.html" class="expand-button" style="text-decoration: none; display: block;">Open Escalation Readiness Checker →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(14)">← Step 14</button>
+              <button class="nav-button" onclick="goToStep(16)">Step 16 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(15)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 16 -->
+        <div class="step-card collapsed" id="step-16">
+          <div class="step-card-header" onclick="toggleStep('step-16')">
+            <div class="card-number">16</div>
+            <div class="card-text">
+              <div class="card-title">Review Settlement Offer</div>
+              <div class="card-subtitle">Evaluate the final offer and decide whether to accept or continue fighting</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Once you accept a settlement and sign a release, you give up all rights to additional payment. If the settlement doesn't cover your actual losses, you're stuck. You need to carefully evaluate whether the offer is fair before signing anything.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Compare the settlement offer against your documented losses using our payment tracker. Calculate whether the offer covers all repairs, contents, and additional expenses. Don't sign a release until you're certain the amount is adequate.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Payment tracker showing all payments received vs total claim value</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Settlement adequacy calculator to determine if the offer is fair</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Release language review to identify problematic terms</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/payment-tracker.html" class="expand-button" style="text-decoration: none; display: block;">Open Payment Tracker →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(15)">← Step 15</button>
+              <button class="nav-button" onclick="goToStep(17)">Step 17 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(16)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 17 -->
+        <div class="step-card collapsed" id="step-17">
+          <div class="step-card-header" onclick="toggleStep('step-17')">
+            <div class="card-number">17</div>
+            <div class="card-text">
+              <div class="card-title">Execute Final Recovery</div>
+              <div class="card-subtitle">Collect final payment and ensure all claim proceeds are received</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">Even after accepting a settlement, you need to ensure the check arrives, clears, and covers what was promised. Insurers sometimes issue partial payments or include unexpected deductions. You need to verify you received every dollar you're owed.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Track all final payments and verify they match the settlement agreement. Use our claim archive generator to create a complete record of your claim for future reference or potential reopening.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Final payment verification checklist</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Claim archive generator to preserve all documentation</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">What to do if final payment doesn't match the settlement agreement</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Claim Archive Generator →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(16)">← Step 16</button>
+              <button class="nav-button" onclick="goToStep(18)">Step 18 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(17)">Mark Complete →</button>
+          </div>
+        </div>
+
+        <!-- Step 18 -->
+        <div class="step-card collapsed" id="step-18">
+          <div class="step-card-header" onclick="toggleStep('step-18')">
+            <div class="card-number">18</div>
+            <div class="card-text">
+              <div class="card-title">Close the Claim</div>
+              <div class="card-subtitle">Finalize all documentation and officially close your claim file</div>
+            </div>
+            <div class="card-status pending">Pending</div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">A properly closed claim ensures you have no lingering obligations and preserves your ability to reopen if additional damage appears later. It also creates a complete record you can reference if you ever need to file another claim.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Use our claim package assembly tool to compile all documentation into a final claim file. Store this package securely for at least 7 years. Confirm with your insurer that the claim is officially closed.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Claim package assembly tool that organizes all documents</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Claim closure checklist to ensure nothing is missed</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Document retention guidelines for future reference</div>
+              </li>
+            </ul>
+
+            <a href="app/tools/claim-package-assembly.html" class="expand-button" style="text-decoration: none; display: block;">Open Claim Package Assembly →</a>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(17)">← Step 17</button>
+              <button class="nav-button" disabled style="opacity: 0.4;">Step 19 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(18)">Mark Complete →</button>
+          </div>
         </div>
 
       </div>
@@ -1415,6 +2136,9 @@
   </div>
 
   <script>
+    // State tracking
+    let completedSteps = [];
+
     function closeModal() {
       document.getElementById('welcomeModal').classList.add('hidden');
       document.getElementById('step-1').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1423,6 +2147,10 @@
     function toggleStep(id) {
       const card = document.getElementById(id);
       card.classList.toggle('collapsed');
+    }
+
+    function togglePhase(phaseGroup) {
+      phaseGroup.classList.toggle('expanded');
     }
 
     function goToStep(num) {
@@ -1460,12 +2188,23 @@
       cardNumber.style.color = 'white';
       cardNumber.textContent = '✓';
 
-      // Update sidebar
-      const sidebarStep = document.querySelector(`.step-item[onclick="goToStep(${num})"]`);
-      if (sidebarStep) {
-        sidebarStep.classList.remove('active');
-        sidebarStep.classList.add('done');
+      // Track completion
+      if (!completedSteps.includes(num)) {
+        completedSteps.push(num);
       }
+
+      // Update sidebar
+      const sidebarSteps = document.querySelectorAll('.step-item');
+      sidebarSteps.forEach(item => {
+        const onclick = item.getAttribute('onclick');
+        if (onclick && onclick.includes(`goToStep(${num})`)) {
+          item.classList.remove('active');
+          item.classList.add('done');
+        }
+      });
+
+      // Update phase counters
+      updatePhaseCounts();
 
       // Activate next step if exists
       const nextCard = document.getElementById('step-' + (num + 1));
@@ -1478,18 +2217,130 @@
         nextStatus.classList.remove('pending');
         nextStatus.classList.add('in-progress');
 
-        const nextSidebarStep = document.querySelector(`.step-item[onclick="goToStep(${num + 1})"]`);
-        if (nextSidebarStep) {
-          nextSidebarStep.classList.add('active');
-        }
+        // Update sidebar for next step
+        sidebarSteps.forEach(item => {
+          const onclick = item.getAttribute('onclick');
+          if (onclick && onclick.includes(`goToStep(${num + 1})`)) {
+            item.classList.add('active');
+          }
+        });
+
+        // Unlock next phase if needed
+        unlockNextPhase(num + 1);
 
         nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
       // Update counter
-      const completed = document.querySelectorAll('.step-card[style*="opacity: 0.7"]').length;
-      document.querySelector('.phase-counter strong').textContent = completed + '/18';
+      document.querySelector('.phase-counter strong').textContent = completedSteps.length + '/18';
+
+      // Update phase bar
+      updatePhaseBar();
     }
+
+    function updatePhaseCounts() {
+      const phases = [
+        { name: 'Establish', start: 1, end: 3 },
+        { name: 'Document', start: 4, end: 7 },
+        { name: 'Analyze', start: 8, end: 10 },
+        { name: 'Recover', start: 11, end: 13 },
+        { name: 'Resolve', start: 14, end: 18 }
+      ];
+
+      phases.forEach(phase => {
+        const completed = completedSteps.filter(s => s >= phase.start && s <= phase.end).length;
+        const total = phase.end - phase.start + 1;
+        
+        const phaseGroups = document.querySelectorAll('.phase-group');
+        phaseGroups.forEach(group => {
+          const nameEl = group.querySelector('.phase-name');
+          if (nameEl && nameEl.textContent === phase.name) {
+            const countEl = group.querySelector('.phase-count');
+            if (countEl) {
+              countEl.textContent = `${completed}/${total}`;
+            }
+          }
+        });
+      });
+    }
+
+    function unlockNextPhase(stepNum) {
+      // Unlock Document phase after step 3
+      if (stepNum === 4) {
+        const docPhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
+          g.querySelector('.phase-name').textContent === 'Document'
+        );
+        if (docPhase) {
+          docPhase.classList.add('expanded');
+        }
+      }
+      // Unlock Analyze phase after step 7
+      if (stepNum === 8) {
+        const analyzePhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
+          g.querySelector('.phase-name').textContent === 'Analyze'
+        );
+        if (analyzePhase) {
+          analyzePhase.classList.add('expanded');
+        }
+      }
+      // Unlock Recover phase after step 10
+      if (stepNum === 11) {
+        const recoverPhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
+          g.querySelector('.phase-name').textContent === 'Recover'
+        );
+        if (recoverPhase) {
+          recoverPhase.classList.add('expanded');
+        }
+      }
+      // Unlock Resolve phase after step 13
+      if (stepNum === 14) {
+        const resolvePhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
+          g.querySelector('.phase-name').textContent === 'Resolve'
+        );
+        if (resolvePhase) {
+          resolvePhase.classList.add('expanded');
+        }
+      }
+    }
+
+    function updatePhaseBar() {
+      const phases = [
+        { name: 'Establish', start: 1, end: 3, element: 0 },
+        { name: 'Document', start: 4, end: 7, element: 1 },
+        { name: 'Analyze', start: 8, end: 10, element: 2 },
+        { name: 'Recover', start: 11, end: 13, element: 3 },
+        { name: 'Resolve', start: 14, end: 18, element: 4 }
+      ];
+
+      const phaseItems = document.querySelectorAll('.phase-item');
+      
+      phases.forEach((phase, idx) => {
+        const completed = completedSteps.filter(s => s >= phase.start && s <= phase.end).length;
+        const total = phase.end - phase.start + 1;
+        const phaseItem = phaseItems[idx];
+        
+        if (phaseItem) {
+          const countSpan = phaseItem.querySelector('span:last-child');
+          if (countSpan) {
+            countSpan.textContent = `${completed}/${total}`;
+          }
+
+          // Update phase status
+          if (completed === total) {
+            phaseItem.classList.remove('active');
+            phaseItem.classList.add('done');
+          } else if (completedSteps.some(s => s >= phase.start && s <= phase.end)) {
+            phaseItem.classList.add('active');
+          }
+        }
+      });
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Show modal on load
+      document.getElementById('welcomeModal').classList.remove('hidden');
+    });
   </script>
 
 </body>
