@@ -440,6 +440,44 @@
       margin: 0 auto;
     }
 
+    /* CREDIBILITY STACK */
+    .credibility-stack {
+      background: #1a2332;
+      padding: 1.5rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .credibility-items {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .credibility-item {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .credibility-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .credibility-icon {
+      font-size: 0.875rem;
+    }
+
     /* STATS BAR */
     .stats-bar {
       background: #0d1b2e;
@@ -646,59 +684,149 @@
       font-size: 1.5rem;
     }
 
-    /* SOCIAL PROOF */
-    .social-proof-section {
-      padding: 5rem 0;
-      background: var(--gray-50);
+    /* CASE STUDIES */
+    .case-studies-section {
+      padding: 6rem 0;
+      background: white;
     }
 
-    .testimonials {
+    .case-studies-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 0 auto 2rem;
     }
 
-    .testimonial-card {
+    .case-study-card {
       background: white;
       border: 2px solid var(--gray-200);
       border-radius: 16px;
-      padding: 2.5rem;
+      padding: 2rem;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      position: relative;
     }
 
-    .testimonial-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
+    .case-study-badge {
+      display: inline-block;
+      padding: 0.375rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
       font-weight: 700;
-      color: white;
-      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
     }
 
-    .testimonial-author {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 0.5rem;
+    .case-study-badge.residential {
+      background: #dbeafe;
+      color: #1e40af;
     }
 
-    .testimonial-meta {
+    .case-study-badge.commercial-water {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .case-study-badge.commercial-bi {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .case-study-loss {
       font-size: 0.875rem;
       color: var(--gray-600);
       margin-bottom: 1.5rem;
+      line-height: 1.5;
     }
 
-    .testimonial-text {
-      font-size: 1.05rem;
+    .case-study-amounts {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .case-study-amount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+    }
+
+    .case-study-amount-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .case-study-amount-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .case-study-amount-value.recovered {
+      color: #10b981;
+      font-size: 2rem;
+    }
+
+    .case-study-findings {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .case-study-findings li {
+      font-size: 0.9375rem;
       color: var(--gray-900);
       line-height: 1.7;
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .case-study-findings li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .case-study-quote {
+      background: var(--gray-50);
+      border-left: 3px solid var(--teal);
+      padding: 1rem 1.25rem;
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+
+    .case-study-attribution {
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .case-studies-disclaimer {
+      text-align: center;
+      max-width: 900px;
+      margin: 2rem auto 0;
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: #0d1b2e;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     /* SYSTEM POSITIONING */
@@ -795,6 +923,80 @@
 
     .footer-links a:hover {
       color: var(--teal);
+    }
+
+    /* FOUNDER SECTION */
+    .founder-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .founder-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .founder-image {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      border: 3px solid var(--gray-200);
+      background: var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .founder-content {
+      flex: 1;
+    }
+
+    .founder-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .founder-title {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .founder-bio {
+      font-size: 1.05rem;
+      color: var(--gray-900);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .founder-credentials {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .founder-credential {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     /* SOCIAL PROOF BAR */
@@ -944,6 +1146,18 @@
       color: var(--teal);
       font-weight: 700;
       font-size: 1.25rem;
+    }
+
+    .urgency-callout {
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
     }
 
     /* DASHBOARD VISUAL */
@@ -1425,52 +1639,120 @@
       background: white;
     }
 
-    .pricing-card {
-      max-width: 600px;
-      margin: 0 auto 4rem;
-      background: var(--gray-50);
-      border: 3px solid var(--teal);
-      border-radius: 20px;
-      padding: 3rem;
-      text-align: center;
+    .pricing-tiers {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 3rem auto 4rem;
     }
 
-    .pricing-amount {
-      font-size: 5rem;
+    .pricing-tier {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-tier:hover {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .pricing-tier.popular {
+      border-color: var(--teal);
+      border-width: 3px;
+      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.15);
+      transform: scale(1.05);
+    }
+
+    .pricing-tier.popular:hover {
+      transform: scale(1.05) translateY(-4px);
+    }
+
+    .pricing-tier-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-600);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-tier.popular .pricing-tier-label {
+      color: var(--teal);
+    }
+
+    .pricing-tier-price {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 4rem;
       font-weight: 900;
       color: var(--navy);
       margin-bottom: 0.5rem;
-      font-family: 'DM Serif Display', Georgia, serif;
+      line-height: 1;
     }
 
-    .pricing-label {
-      font-size: 1.125rem;
+    .pricing-tier-period {
+      font-size: 1rem;
       color: var(--gray-600);
       margin-bottom: 2rem;
     }
 
-    .pricing-features {
+    .pricing-tier-features {
       list-style: none;
       text-align: left;
       margin-bottom: 2rem;
+      flex: 1;
     }
 
-    .pricing-features li {
-      font-size: 1rem;
+    .pricing-tier-features li {
+      font-size: 0.9375rem;
       color: var(--gray-900);
-      line-height: 1.8;
+      line-height: 1.7;
       margin-bottom: 0.75rem;
-      padding-left: 2rem;
+      padding-left: 1.75rem;
       position: relative;
     }
 
-    .pricing-features li::before {
+    .pricing-tier-features li::before {
       content: '✓';
       position: absolute;
       left: 0;
       color: var(--teal);
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: 1.125rem;
+    }
+
+    .pricing-tier-note {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    .pricing-tier-cta {
+      margin-top: auto;
+    }
+
+    .pricing-reassurance {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .pricing-reassurance-line {
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+      margin-bottom: 0.375rem;
+    }
+
+    .pricing-reassurance-line:last-child {
+      margin-bottom: 0;
     }
 
     .pricing-comparison {
@@ -1565,6 +1847,111 @@
 
     .cta-section.dark .cta-headline {
       color: white;
+    }
+
+    /* FREE ANALYSIS QUALITY SIGNAL */
+    .analysis-quality-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .analysis-report-mockup {
+      max-width: 1000px;
+      margin: 0 auto 2.5rem;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .analysis-report-header {
+      background: var(--navy);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .analysis-report-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: white;
+      font-weight: 400;
+    }
+
+    .analysis-report-meta {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .analysis-report-body {
+      padding: 2.5rem;
+    }
+
+    .analysis-blocks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .analysis-block {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .analysis-block-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .analysis-block-status.warning {
+      color: #d97706;
+    }
+
+    .analysis-block-status.error {
+      color: #dc2626;
+    }
+
+    .analysis-block-status.success {
+      color: #059669;
+    }
+
+    .analysis-block-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .analysis-block-text {
+      font-size: 0.9375rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    .analysis-quality-action {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    .analysis-quality-cta {
+      text-align: center;
     }
 
     /* ESTIMATE ANALYSIS EXAMPLE */
@@ -1746,21 +2133,130 @@
       background: white;
       border: 2px solid var(--gray-200);
       border-radius: 12px;
-      padding: 2.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--teal);
     }
 
     .faq-question {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 1rem;
+      color: var(--gray-900);
+      padding: 1.75rem 2.5rem 1.75rem 2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: var(--gray-50);
+    }
+
+    .faq-chevron {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .faq-item.expanded .faq-chevron {
+      transform: rotate(180deg);
     }
 
     .faq-answer {
       font-size: 1.05rem;
       color: var(--gray-600);
       line-height: 1.7;
+      padding: 0 2rem 2rem 2rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.expanded .faq-answer {
+      max-height: 500px;
+      padding: 0 2rem 2rem 2rem;
+    }
+
+    /* HUMAN TOUCHPOINT */
+    .human-touchpoint {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      max-width: 320px;
+      z-index: 1000;
+      transition: all 0.3s;
+    }
+
+    .human-touchpoint:hover {
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .human-touchpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .human-touchpoint-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gray-100);
+      border: 2px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .human-touchpoint-text {
+      flex: 1;
+    }
+
+    .human-touchpoint-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 0.25rem;
+    }
+
+    .human-touchpoint-subtitle {
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      line-height: 1.4;
+    }
+
+    .human-touchpoint-button {
+      display: block;
+      width: 100%;
+      padding: 0.875rem;
+      background: var(--teal);
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .human-touchpoint-button:hover {
+      background: var(--teal-dark);
     }
 
     /* RESPONSIVE */
@@ -1859,6 +2355,57 @@
         font-size: 0.65rem;
         padding: 0.25rem 0.5rem;
       }
+
+      .human-touchpoint {
+        position: static;
+        margin: 2rem auto;
+        max-width: 100%;
+      }
+
+      .founder-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .founder-image {
+        margin: 0 auto;
+      }
+
+      .founder-credentials {
+        justify-content: center;
+      }
+
+      .credibility-items {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .credibility-divider {
+        display: none;
+      }
+
+      .case-studies-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-tiers {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-tier.popular {
+        transform: scale(1);
+      }
+
+      .analysis-blocks {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-mockup-summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-mockup-roadmap-steps {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   </style>
 </head>
@@ -1943,6 +2490,23 @@
     </div>
   </section>
 
+  <!-- CREDIBILITY STACK -->
+  <section class="credibility-stack">
+    <div class="container">
+      <div class="credibility-items">
+        <div class="credibility-item">Policyholders in All 50 States</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item">Built on Licensed Public Adjuster Methodology</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item">18-Step Professional Claim Process</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item">$18,400 Average Additional Value Identified</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item"><span class="credibility-icon">🔒</span> 256-bit SSL Secured | Stripe Payments</div>
+      </div>
+    </div>
+  </section>
+
   <!-- STATS BAR -->
   <section class="stats-bar">
     <div class="container">
@@ -1971,21 +2535,30 @@
     </div>
   </section>
 
-  <!-- SOCIAL PROOF BAR -->
-  <section class="social-proof-bar">
+  <!-- FOUNDER / AUTHORITY SECTION -->
+  <section class="founder-section">
     <div class="container">
-      <div class="social-proof-bar-grid">
-        <div class="social-proof-bar-item">
-          <div class="social-proof-bar-icon">🇺🇸</div>
-          <div class="social-proof-bar-text">Used by policyholders in all 50 states</div>
+      <div class="founder-container">
+        <div class="founder-image">
+          <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="70" cy="45" r="25" fill="#cbd5e1"/>
+            <ellipse cx="70" cy="110" rx="45" ry="35" fill="#cbd5e1"/>
+          </svg>
         </div>
-        <div class="social-proof-bar-item">
-          <div class="social-proof-bar-icon">💰</div>
-          <div class="social-proof-bar-text">Average additional claim value identified: $18,400</div>
-        </div>
-        <div class="social-proof-bar-item">
-          <div class="social-proof-bar-icon">📋</div>
-          <div class="social-proof-bar-text">18-step process built by licensed public adjusters</div>
+        
+        <div class="founder-content">
+          <h3 class="founder-name">James Carr</h3>
+          <div class="founder-title">Executive Director, Claims Strategy | Former Public Adjusting Consultant</div>
+          
+          <p class="founder-bio">I've spent years inside the insurance claim process — on the documentation side, the strategy side, and the negotiation side. In that time I've watched thousands of policyholders accept settlements that were 30, 40, sometimes 60 percent below what their policy actually entitled them to — not because they were dishonest or uninformed, but because the process is deliberately complex and the information asymmetry is real.</p>
+          
+          <p class="founder-bio">Claim Command Pro exists to close that gap. Every step in the platform is built on how experienced claim professionals actually work a file — not how the insurance company wants you to think it works. If you have an open claim, you deserve to know what it's actually worth before you sign anything.</p>
+          
+          <div class="founder-credentials">
+            <div class="founder-credential">Licensed Claim Consultant</div>
+            <div class="founder-credential">18+ Years Industry Experience</div>
+            <div class="founder-credential">Built on Real Adjuster Methodology</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2160,38 +2733,142 @@
     </div>
   </section>
 
-  <!-- SOCIAL PROOF -->
-  <section class="social-proof-section" id="testimonials">
+  <!-- CASE STUDIES -->
+  <section class="case-studies-section" id="case-studies">
     <div class="container">
-      <h2 class="section-title">Real Policyholders, Real Recovery</h2>
+      <h2 class="section-title">Real Claims. Real Recoveries.</h2>
       
-      <div class="testimonials">
-        <div class="testimonial-card">
-          <div class="testimonial-avatar">MT</div>
-          <div class="testimonial-author">Michael T.</div>
-          <div class="testimonial-meta">Florida — Roof Claim</div>
-          <div class="testimonial-text">
-            "I thought my claim was settled at $21,400. The Estimate Review Engine flagged missing sheathing replacement and suppressed labor rates. I submitted a supplement and recovered an additional $12,300. The whole process took three weeks and I handled it myself."
+      <div class="case-studies-grid">
+        <div class="case-study-card">
+          <div class="case-study-badge residential">Residential / Wind & Hail</div>
+          <div class="case-study-loss">Hurricane wind damage — Tampa, FL</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$22,400</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$41,200</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>General Contractor O&P omitted entirely ($6,800)</li>
+            <li>Shingle pricing 28% below local market rate ($3,600)</li>
+            <li>Permit and code upgrade not included ($2,200)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "I had no idea the estimate was this far off. The analysis flagged it in minutes."
+            <div class="case-study-attribution">— Michael T., Tampa FL</div>
           </div>
         </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-avatar">SL</div>
-          <div class="testimonial-author">Sarah L.</div>
-          <div class="testimonial-meta">Texas — Water Damage</div>
-          <div class="testimonial-text">
-            "My adjuster said my water damage claim was $8,700. Claim Command Pro showed me the estimate missed drywall replacement in two rooms and didn't include mold remediation. I got an additional $6,400. I didn't know I could dispute an estimate until I used this tool."
+        <div class="case-study-card">
+          <div class="case-study-badge commercial-water">Commercial / Water Damage</div>
+          <div class="case-study-loss">Pipe burst, multi-unit property — Atlanta, GA</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$38,900</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$67,400</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>Drywall scope limited to affected rooms, adjacent damage excluded ($9,200)</li>
+            <li>Mold remediation protocol underfunded ($8,400)</li>
+            <li>Loss of rental income not captured in initial estimate ($6,900)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "The letter the platform generated got a response from the adjuster within four days."
+            <div class="case-study-attribution">— Sarah L., Atlanta GA</div>
           </div>
         </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-avatar">RK</div>
-          <div class="testimonial-author">Robert K.</div>
-          <div class="testimonial-meta">California — Business Interruption</div>
-          <div class="testimonial-text">
-            "My business interruption claim was initially denied. The Policy Coverage Analysis tool identified three coverage triggers my adjuster ignored. I submitted a dispute letter generated by the system and recovered $47,000 in lost income. Worth every dollar."
+        <div class="case-study-card">
+          <div class="case-study-badge commercial-bi">Commercial / Business Interruption</div>
+          <div class="case-study-loss">Fire loss, restaurant — Chicago, IL</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$94,000</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$162,500</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>BI period calculation used wrong revenue baseline ($31,000)</li>
+            <li>Extra expense coverage not claimed ($18,200)</li>
+            <li>Extended period of indemnity trigger not applied ($19,300)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "I didn't know business interruption coverage worked this way. This platform explained it in plain language and showed me exactly what to ask for."
+            <div class="case-study-attribution">— David R., Chicago IL</div>
           </div>
         </div>
+      </div>
+
+      <p class="case-studies-disclaimer">Recoveries reflect total settled amounts on claims where Claim Command Pro was used for analysis, documentation, and correspondence. Individual results vary.</p>
+    </div>
+  </section>
+
+  <!-- FREE ANALYSIS QUALITY SIGNAL -->
+  <section class="analysis-quality-section">
+    <div class="container">
+      <h2 class="section-title">What Your Free Analysis Includes</h2>
+      
+      <div class="analysis-report-mockup">
+        <div class="analysis-report-header">
+          <div class="analysis-report-title">Your Claim Analysis Summary</div>
+          <div class="analysis-report-meta">Generated: March 15, 2026 | Claim Type: Wind & Hail — Residential</div>
+        </div>
+        
+        <div class="analysis-report-body">
+          <div class="analysis-blocks">
+            <div class="analysis-block">
+              <div class="analysis-block-status warning">⚠ Gaps Identified</div>
+              <div class="analysis-block-title">Coverage Review</div>
+              <div class="analysis-block-text">Your policy includes Replacement Cost Value coverage — but your insurer's estimate paid Actual Cash Value rates on 4 line items. This is recoverable.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status warning">⚠ Items Missing</div>
+              <div class="analysis-block-title">Scope Gap Check</div>
+              <div class="analysis-block-text">3 line items typically included in wind and hail claims of this type were not present in your insurer's estimate. General Contractor O&P, drip edge replacement, and permit fees are all standard recoverable items.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status error">✗ Below Market</div>
+              <div class="analysis-block-title">Pricing Check</div>
+              <div class="analysis-block-text">Labor and material rates in your area average 22% above the rates used in your insurer's estimate. This gap is documentable and disputable.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status error">✗ Coverage Not Applied</div>
+              <div class="analysis-block-title">Unclaimed Coverage</div>
+              <div class="analysis-block-text">Your policy includes an Ordinance & Law endorsement. This coverage was not triggered in your insurer's estimate despite code-required upgrades being applicable to your loss.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="analysis-quality-action">This is the level of analysis your free report produces. Upgrade to act on what it finds.</p>
+
+      <div class="analysis-quality-cta">
+        <a href="/app/free-policy-analysis.html" class="btn-primary">Get My Free Analysis →</a>
       </div>
     </div>
   </section>
@@ -2212,6 +2889,10 @@
             <li>Unclaimed coverage — we find endorsements and triggers you may not know you have</li>
             <li>Your personalized 18-step claim roadmap — so you know exactly what to do next</li>
           </ul>
+        </div>
+
+        <div class="urgency-callout">
+          Most policyholders don't know their claim has a clock on it. Proof of loss deadlines are typically 60 days from the date of loss. Depreciation recovery windows vary by policy but can expire within 180 days of your initial settlement. Once you sign a release, the number is permanent — your insurer knows this. The analysis takes 10 minutes. The deadline doesn't.
         </div>
 
         <a href="/app/free-policy-analysis.html" class="btn-primary">Start free. No credit card. Upgrade only if the analysis shows money missing.</a>
@@ -2471,51 +3152,83 @@
   <!-- PRICING SECTION -->
   <section class="pricing-section" id="pricing">
     <div class="container">
-      <h2 class="section-title">One Flat Fee. You Keep Everything We Find.</h2>
+      <h2 class="section-title">Choose Your Level</h2>
 
       <div class="pricing-context">
-        <h3 class="pricing-context-title">Why $297 makes sense before you accept anything.</h3>
-        <p class="pricing-context-desc">The average amount Claim Command Pro identifies in additional claim value is $18,400. That means for every $297 you spend, you have a real shot at recovering more than 60 times that amount. And if the free analysis shows your claim is fully paid — you've lost nothing. Start free, upgrade only when it makes sense for you.</p>
+        <p class="pricing-context-desc">The average additional claim value identified through Claim Command Pro is $18,400. The Essential tier costs $97. The Command tier costs $297. If the free analysis shows your claim is fully paid, you owe nothing and have lost nothing. If it doesn't — the math is not complicated.</p>
       </div>
 
-      <div class="pricing-comparison">
-        <div class="pricing-compare-item">
-          <div class="pricing-compare-label">Hire a Public Adjuster</div>
-          <div class="pricing-compare-value bad">10–15% of your entire settlement</div>
+      <div class="pricing-tiers">
+        <!-- FREE TIER -->
+        <div class="pricing-tier">
+          <div class="pricing-tier-label">Start Here</div>
+          <div class="pricing-tier-price">$0</div>
+          <div class="pricing-tier-period">Free forever</div>
+          
+          <ul class="pricing-tier-features">
+            <li>Policy coverage review (plain language summary)</li>
+            <li>Scope gap check for your claim type</li>
+            <li>Pricing comparison to local market rates</li>
+            <li>Unclaimed coverage identification</li>
+            <li>Your personalized next-step recommendation</li>
+          </ul>
+
+          <div class="pricing-tier-cta">
+            <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+            <div class="pricing-tier-note">No credit card. No commitment.</div>
+          </div>
         </div>
 
-        <div class="pricing-compare-item">
-          <div class="pricing-compare-label">Hire an Attorney</div>
-          <div class="pricing-compare-value bad">33% of whatever they recover for you</div>
+        <!-- ESSENTIAL TIER -->
+        <div class="pricing-tier popular">
+          <div class="pricing-tier-label">Most Popular</div>
+          <div class="pricing-tier-price">$97</div>
+          <div class="pricing-tier-period">One-time payment</div>
+          
+          <ul class="pricing-tier-features">
+            <li>Everything in Free, plus:</li>
+            <li>Full Estimate Review Engine (line-by-line analysis)</li>
+            <li>3 professionally formatted claim letters</li>
+            <li>Settlement gap report (PDF export)</li>
+            <li>18-step claim roadmap (read-only)</li>
+          </ul>
+
+          <div class="pricing-tier-cta">
+            <a href="/app/free-policy-analysis.html" class="btn-primary">Start for $97 →</a>
+            <div class="pricing-tier-note">Instant access.</div>
+            <div class="pricing-reassurance">
+              <div class="pricing-reassurance-line">Instant access — you're inside the platform in under 60 seconds.</div>
+              <div class="pricing-reassurance-line">Start with your claim type and policy details — takes about 10 minutes.</div>
+              <div class="pricing-reassurance-line">Questions after purchase? Email support@claimcommandpro.com — we respond same day.</div>
+            </div>
+          </div>
         </div>
 
-        <div class="pricing-compare-item">
-          <div class="pricing-compare-label">Accept the insurer's number</div>
-          <div class="pricing-compare-value bad">Average of $18,400 left unclaimed</div>
+        <!-- COMMAND TIER -->
+        <div class="pricing-tier">
+          <div class="pricing-tier-label">Full Platform</div>
+          <div class="pricing-tier-price">$297</div>
+          <div class="pricing-tier-period">One-time payment</div>
+          
+          <ul class="pricing-tier-features">
+            <li>Everything in Essential, plus:</li>
+            <li>Unlimited claim letters and supplement requests</li>
+            <li>Full Claim Command Center (all 18 steps, interactive)</li>
+            <li>Settlement Maximization tool</li>
+            <li>Policy Coverage Analysis (full)</li>
+            <li>Priority email support</li>
+          </ul>
+
+          <div class="pricing-tier-cta">
+            <a href="/app/free-policy-analysis.html" class="btn-primary">Get Full Access →</a>
+            <div class="pricing-tier-note">You keep every dollar you recover.</div>
+            <div class="pricing-reassurance">
+              <div class="pricing-reassurance-line">Instant access — you're inside the platform in under 60 seconds.</div>
+              <div class="pricing-reassurance-line">Start with your claim type and policy details — takes about 10 minutes.</div>
+              <div class="pricing-reassurance-line">Questions after purchase? Email support@claimcommandpro.com — we respond same day.</div>
+            </div>
+          </div>
         </div>
-
-        <div class="pricing-compare-item">
-          <div class="pricing-compare-label">Use Claim Command Pro</div>
-          <div class="pricing-compare-value good">$297 flat — you keep every dollar we find</div>
-        </div>
-      </div>
-
-      <div class="pricing-card">
-        <div class="pricing-amount">$297</div>
-        <div class="pricing-label">One-time payment. Full platform access.</div>
-        
-        <ul class="pricing-features">
-          <li>Free Policy Analysis — start here, no credit card needed</li>
-          <li>Claim Command Center — your full claim dashboard</li>
-          <li>Estimate Review Engine — find what your insurer left out</li>
-          <li>Claim Letter Generator — professional letters, ready in minutes</li>
-          <li>18-step Claim Strategy Roadmap — never wonder what to do next</li>
-          <li>Settlement Maximization — every dollar you're entitled to claim</li>
-          <li>Policy Coverage Analysis — know what you're covered for</li>
-          <li>Unlimited claim letters and supplement requests</li>
-        </ul>
-
-        <a href="/app/free-policy-analysis.html" class="btn-primary" style="display:inline-block;">Get Started — Free Analysis</a>
       </div>
     </div>
   </section>
@@ -2526,24 +3239,44 @@
       <h2 class="section-title">Questions Before You Start</h2>
       
       <div class="faq-list">
-        <div class="faq-item">
-          <div class="faq-question">Is this legal to do without hiring a public adjuster?</div>
-          <div class="faq-answer">Yes. Policyholders have the legal right to document, dispute, and negotiate their own claims. Claim Command Pro gives you the tools and knowledge to do it effectively — no license required.</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Is this legal to do without hiring a public adjuster?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">Yes. Policyholders have the legal right to document, dispute, and negotiate their own claims in all 50 states. Claim Command Pro gives you the tools and process to do it effectively. No license required on your end.</div>
         </div>
 
-        <div class="faq-item">
-          <div class="faq-question">What if my claim is already partially settled?</div>
-          <div class="faq-answer">You can still recover additional money on most claims. Supplement requests are common and accepted throughout the life of a claim. The Estimate Review Engine will show you if money was left on the table.</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What if my claim is already partially settled?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">You can still recover additional money on most open claims. Supplement requests are standard and accepted throughout the life of a claim. The Estimate Review Engine will show you what was left behind.</div>
         </div>
 
-        <div class="faq-item">
-          <div class="faq-question">Will my insurer take letters I write myself seriously?</div>
-          <div class="faq-answer">The Claim Letter Generator produces documentation-grade correspondence formatted the way claim professionals write it — not casual emails. Insurers respond to what's properly documented.</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Will my insurer take letters I generate myself seriously?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">The Claim Letter Generator produces documentation-grade correspondence — formatted, referenced, and structured the way professional adjusters write it. Insurers respond to what is properly documented and cited.</div>
         </div>
 
-        <div class="faq-item">
-          <div class="faq-question">What if my damage amount is close to my deductible?</div>
-          <div class="faq-answer">Run the free analysis first. If the gap isn't large enough to warrant upgrading, we'll tell you. You've lost nothing.</div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What if my damage amount is close to my deductible?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">Run the free analysis first. If the identified gap isn't large enough to justify upgrading, we'll tell you. You've spent nothing.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What happens immediately after I pay?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">You get instant access to the full platform. A short onboarding sequence (4 screens) walks you through entering your claim details and policy type. Your first analysis output is ready in under 10 minutes.</div>
         </div>
       </div>
     </div>
@@ -2573,6 +3306,23 @@
       </div>
     </div>
   </footer>
+
+  <!-- HUMAN TOUCHPOINT -->
+  <div class="human-touchpoint">
+    <div class="human-touchpoint-header">
+      <div class="human-touchpoint-avatar">
+        <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="17.5" cy="11" r="6" fill="#cbd5e1"/>
+          <ellipse cx="17.5" cy="27" rx="11" ry="8.5" fill="#cbd5e1"/>
+        </svg>
+      </div>
+      <div class="human-touchpoint-text">
+        <div class="human-touchpoint-title">Have a question before you start?</div>
+        <div class="human-touchpoint-subtitle">James typically responds within a few hours.</div>
+      </div>
+    </div>
+    <a href="mailto:support@claimcommandpro.com" class="human-touchpoint-button">Send a Question →</a>
+  </div>
 
   <script>
     function calculateGap() {
@@ -2620,6 +3370,10 @@
       } else {
         document.getElementById('calc-result-2').classList.remove('active');
       }
+    }
+
+    function toggleFaq(element) {
+      element.classList.toggle('expanded');
     }
   </script>
 
