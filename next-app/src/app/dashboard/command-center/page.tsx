@@ -212,18 +212,22 @@ export default function ClaimIntelligenceDashboard() {
     )
   }
 
+  const coverageIssueCount = coverageFlags.length
+  const estimateIssueCount = (analysis.missing_scope_items?.length || 0) + (analysis.pricing_suppressions?.length || 0)
+  const confidenceLevel = analysis.claim_intelligence_score >= 75 ? 'High' : analysis.claim_intelligence_score >= 50 ? 'Medium' : 'Low'
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="bg-gradient-to-r from-gray-900 to-blue-900 border-b border-teal-500/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Claim Intelligence Dashboard</h1>
-              <p className="text-blue-200">Real-time claim analysis and carrier behavior intelligence</p>
+              <h1 className="text-2xl font-bold text-white mb-1">Claim Intelligence Command Center</h1>
+              <p className="text-teal-300 text-sm">Financial Recovery Control Panel</p>
             </div>
-            <Link href="/dashboard" className="text-blue-200 hover:text-white flex items-center gap-2">
-              <ArrowRight className="w-5 h-5 rotate-180" />
+            <Link href="/dashboard" className="text-teal-300 hover:text-teal-200 flex items-center gap-2 text-sm">
+              <ArrowRight className="w-4 h-4 rotate-180" />
               Back to Dashboard
             </Link>
           </div>
@@ -232,8 +236,90 @@ export default function ClaimIntelligenceDashboard() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* CLAIM OVERVIEW PANEL */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {/* CLAIM GAP DOMINANCE - ABOVE THE FOLD */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl p-8 mb-8 border-2 border-teal-500/50">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2 uppercase tracking-wide">Claim Gap Detected</h2>
+            <div className="mb-4">
+              <span className="text-7xl md:text-8xl font-black text-teal-400">
+                ${analysis.claim_gap.toLocaleString()}
+              </span>
+            </div>
+            <p className="text-xl text-teal-300 font-semibold mb-1">Potentially Missing</p>
+            <p className="text-sm text-gray-400 max-w-2xl mx-auto">
+              Based on estimate analysis, coverage review, and scope comparison
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+            <div className="text-center p-4 bg-gray-900/50 rounded-lg border border-teal-500/30">
+              <p className="text-3xl font-bold text-teal-400">{coverageIssueCount}</p>
+              <p className="text-sm text-gray-400 mt-1">Coverage Issues</p>
+            </div>
+            <div className="text-center p-4 bg-gray-900/50 rounded-lg border border-teal-500/30">
+              <p className="text-3xl font-bold text-teal-400">{estimateIssueCount}</p>
+              <p className="text-sm text-gray-400 mt-1">Estimate Issues</p>
+            </div>
+            <div className="text-center p-4 bg-gray-900/50 rounded-lg border border-teal-500/30">
+              <p className="text-3xl font-bold text-teal-400">{confidenceLevel}</p>
+              <p className="text-sm text-gray-400 mt-1">Confidence</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ACTION PANEL - HIGH VISIBILITY */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <Link 
+            href="/documentation-builder"
+            className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-6 px-6 rounded-xl shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-3"
+          >
+            <FileText className="w-6 h-6" />
+            Generate Claim Letter
+          </Link>
+          <button 
+            onClick={() => window.print()}
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-6 px-6 rounded-xl shadow-xl border-2 border-teal-500/50 transition-all hover:scale-105 flex items-center justify-center gap-3"
+          >
+            <BarChart3 className="w-6 h-6" />
+            Export Gap Report
+          </button>
+          <Link 
+            href="/strategy-advisor"
+            className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-6 px-6 rounded-xl shadow-xl border-2 border-teal-500/50 transition-all hover:scale-105 flex items-center justify-center gap-3"
+          >
+            <Target className="w-6 h-6" />
+            View Recovery Plan
+          </Link>
+        </div>
+
+        {/* RECOVERY CONFIDENCE METER */}
+        {analysis.claim_intelligence_score > 0 && (
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-lg p-6 mb-8 border border-teal-500/30">
+            <h2 className="text-xl font-bold text-white mb-4">Recovery Confidence Meter</h2>
+            <div className="flex items-center gap-6">
+              <div className="flex-1">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-gray-400">Estimated Recovery Likelihood</span>
+                  <span className="text-teal-400 font-bold text-lg">{confidenceLevel}</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-4">
+                  <div 
+                    className={`h-4 rounded-full transition-all ${
+                      analysis.claim_intelligence_score >= 75 ? 'bg-teal-500' :
+                      analysis.claim_intelligence_score >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}
+                    style={{ width: `${analysis.claim_intelligence_score}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-5xl font-bold text-teal-400">{analysis.claim_intelligence_score}%</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           
           {/* Claim Intelligence Score */}
           <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-blue-100">
@@ -390,55 +476,11 @@ export default function ClaimIntelligenceDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           
-          {/* ESTIMATE REVIEW ENGINE */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-orange-600" />
-              Estimate Review
-            </h2>
-
-            {analysis.missing_scope_items && analysis.missing_scope_items.length > 0 ? (
-              <div className="space-y-3">
-                <div className="bg-orange-50 border-l-4 border-orange-600 p-4 rounded">
-                  <p className="font-semibold text-orange-900 mb-2">
-                    Missing Repair Items Detected ({analysis.missing_scope_items.length})
-                  </p>
-                  <ul className="space-y-1 text-sm text-orange-800">
-                    {analysis.missing_scope_items.slice(0, 5).map((item: any, idx: number) => (
-                      <li key={idx}>• {item.item || item}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {analysis.pricing_suppressions && analysis.pricing_suppressions.length > 0 && (
-                  <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded">
-                    <p className="font-semibold text-red-900 mb-2">Pricing Suppression Detected</p>
-                    <ul className="space-y-1 text-sm text-red-800">
-                      {analysis.pricing_suppressions.slice(0, 3).map((item: any, idx: number) => (
-                        <li key={idx}>• {item.description || item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {analysis.labor_suppression_rate && analysis.labor_suppression_rate > 0 && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-600 p-4 rounded">
-                    <p className="font-semibold text-yellow-900">
-                      Labor pricing {analysis.labor_suppression_rate}% below regional average
-                    </p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className="text-gray-600 text-center py-8">No estimate issues detected</p>
-            )}
-          </div>
-
-          {/* COVERAGE GAP DETECTION */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-600" />
-              Coverage Analysis
+          {/* UNCLAIMED COVERAGE DETECTED */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border-2 border-red-500/50">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <Shield className="w-6 h-6 text-red-400" />
+              Unclaimed Coverage Detected
             </h2>
 
             {coverageFlags.length > 0 ? (
@@ -446,176 +488,201 @@ export default function ClaimIntelligenceDashboard() {
                 {coverageFlags.map((flag, idx) => (
                   <div 
                     key={idx}
-                    className={`p-4 rounded-lg border-l-4 ${
-                      flag.alert_severity === 'critical' ? 'bg-red-50 border-red-600' :
-                      flag.alert_severity === 'warning' ? 'bg-yellow-50 border-yellow-600' :
-                      'bg-blue-50 border-blue-600'
-                    }`}
+                    className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-teal-500"
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <p className="font-semibold text-gray-900 capitalize">
-                        {flag.coverage_type.replace(/_/g, ' ')}
+                      <p className="font-bold text-white capitalize">
+                        {flag.coverage_type.replace(/_/g, ' ')} not applied
                       </p>
                       {flag.estimated_value > 0 && (
-                        <span className="text-sm font-bold text-green-600">
+                        <span className="text-lg font-black text-teal-400">
                           +${flag.estimated_value.toLocaleString()}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-700">{flag.coverage_alert}</p>
+                    <p className="text-sm text-gray-300">{flag.coverage_alert}</p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 text-center py-8">No coverage gaps detected</p>
+              <div className="text-center py-8">
+                <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <p className="text-gray-400">All coverage properly applied</p>
+              </div>
+            )}
+          </div>
+
+          {/* ESTIMATE ISSUES DETECTED */}
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 border-2 border-orange-500/50">
+            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <AlertTriangle className="w-6 h-6 text-orange-400" />
+              Estimate Issues Detected
+            </h2>
+
+            {(analysis.missing_scope_items?.length > 0 || analysis.pricing_suppressions?.length > 0) ? (
+              <div className="space-y-3">
+                {analysis.pricing_suppressions && analysis.pricing_suppressions.length > 0 && (
+                  <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-red-500">
+                    <p className="font-bold text-white mb-1">Material pricing below market</p>
+                    <p className="text-sm text-gray-300">
+                      {analysis.pricing_suppressions[0]?.description || 'Pricing suppression detected'}
+                    </p>
+                    {analysis.pricing_suppressions[0]?.estimated_impact && (
+                      <p className="text-teal-400 font-bold mt-2">
+                        ${analysis.pricing_suppressions[0].estimated_impact.toLocaleString()} impact
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {analysis.missing_scope_items && analysis.missing_scope_items.length > 0 && (
+                  <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-orange-500">
+                    <p className="font-bold text-white mb-2">Missing line items</p>
+                    <ul className="space-y-1 text-sm text-gray-300">
+                      {analysis.missing_scope_items.slice(0, 4).map((item: any, idx: number) => (
+                        <li key={idx} className="flex justify-between">
+                          <span>• {item.item || item}</span>
+                          {item.estimated_value && (
+                            <span className="text-teal-400 font-bold ml-3">
+                              ${item.estimated_value.toLocaleString()}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {analysis.labor_suppression_rate && analysis.labor_suppression_rate > 0 && (
+                  <div className="p-4 bg-gray-900/50 rounded-lg border-l-4 border-yellow-500">
+                    <p className="font-bold text-white">Labor undercalculated</p>
+                    <p className="text-sm text-gray-300 mt-1">
+                      {analysis.labor_suppression_rate}% below regional average
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <p className="text-gray-400">No estimate issues detected</p>
+              </div>
             )}
           </div>
         </div>
 
-        {/* CARRIER BEHAVIOR INTELLIGENCE */}
+        {/* CARRIER BEHAVIOR DETECTED - HIGH VALUE */}
         {carrierPatterns.length > 0 && (
-          <div className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-xl shadow-lg p-6 text-white mb-8">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Shield className="w-6 h-6" />
-              Carrier Behavior Intelligence: {carrierName}
+          <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-xl shadow-2xl p-6 text-white mb-8 border-2 border-red-500/50">
+            <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+              <AlertTriangle className="w-6 h-6 text-red-300" />
+              Carrier Behavior Detected
             </h2>
+            <p className="text-red-200 mb-6">Carrier: <span className="font-bold">{carrierName}</span></p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              {carrierPatterns.slice(0, 3).map((pattern, idx) => (
-                <div key={idx} className="bg-white/10 backdrop-blur rounded-lg p-4 border border-white/20">
-                  <p className="text-sm text-blue-200 mb-1 capitalize">
-                    {pattern.issue_type.replace(/_/g, ' ')}
-                  </p>
-                  <p className="text-3xl font-bold mb-2">{pattern.frequency}</p>
-                  <p className="text-sm text-blue-200">
-                    Avg Gap: ${Math.round(pattern.avg_claim_gap).toLocaleString()}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {carrierPatterns.find(p => p.issue_type === 'labor_suppression') && (
+                <div className="bg-red-950/50 backdrop-blur rounded-lg p-4 border border-red-500/30">
+                  <p className="text-sm text-red-200 mb-2">Labor suppression:</p>
+                  <p className="text-4xl font-black text-teal-400">High</p>
+                  <p className="text-xs text-red-300 mt-2">
+                    {carrierPatterns.find(p => p.issue_type === 'labor_suppression')?.frequency} cases
                   </p>
                 </div>
-              ))}
+              )}
+
+              {carrierPatterns.find(p => p.issue_type === 'op_omission') && (
+                <div className="bg-red-950/50 backdrop-blur rounded-lg p-4 border border-red-500/30">
+                  <p className="text-sm text-red-200 mb-2">O&P omission:</p>
+                  <p className="text-4xl font-black text-teal-400">Likely</p>
+                  <p className="text-xs text-red-300 mt-2">
+                    {carrierPatterns.find(p => p.issue_type === 'op_omission')?.frequency} cases
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-red-950/50 backdrop-blur rounded-lg p-4 border border-red-500/30">
+                <p className="text-sm text-red-200 mb-2">Avg underpayment pattern:</p>
+                <p className="text-4xl font-black text-teal-400">
+                  ${Math.round(carrierPatterns.reduce((sum, p) => sum + p.avg_claim_gap, 0) / carrierPatterns.length).toLocaleString()}
+                </p>
+              </div>
             </div>
 
-            {carrierPatterns[0]?.common_missing_items && carrierPatterns[0].common_missing_items.length > 0 && (
-              <div className="bg-white/10 backdrop-blur rounded-lg p-4 border border-white/20">
-                <p className="font-semibold mb-3">Common Missing Scope Items:</p>
-                <div className="flex flex-wrap gap-2">
-                  {carrierPatterns[0].common_missing_items.map((item: string, idx: number) => (
-                    <span key={idx} className="px-3 py-1 bg-white/20 rounded-full text-sm">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="bg-red-950/30 rounded-lg p-3 border border-red-500/30">
+              <p className="text-xs text-red-200">Based on historical claim patterns</p>
+            </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* CLAIM GAP BREAKDOWN - DETAILED VIEW */}
+        <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-2xl p-6 mb-8 border border-teal-500/30">
+          <h2 className="text-2xl font-bold text-white mb-6">Claim Gap Breakdown</h2>
           
-          {/* CLAIM TIMELINE */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-600" />
-              Claim Timeline
-            </h2>
-
-            {timeline.length > 0 ? (
-              <div className="space-y-3">
-                {timeline.map((milestone, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <div className={`mt-1 w-3 h-3 rounded-full flex-shrink-0 ${
-                      milestone.milestone_status === 'completed' ? 'bg-green-600' :
-                      milestone.milestone_status === 'pending' ? 'bg-yellow-600' : 'bg-red-600'
-                    }`}></div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold text-gray-900 capitalize">
-                          {milestone.milestone_type.replace(/_/g, ' ')}
-                        </p>
-                        <span className="text-sm text-gray-500">
-                          {new Date(milestone.milestone_date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      {milestone.description && (
-                        <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600 text-center py-8">No timeline data available</p>
-            )}
-          </div>
-
-          {/* ALERTS PANEL */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              Active Alerts
-            </h2>
-
-            {alerts.length > 0 ? (
-              <div className="space-y-3">
-                {alerts.map((alert, idx) => (
-                  <div 
-                    key={idx}
-                    className={`p-4 rounded-lg border ${getSeverityBadge(alert.alert_severity)}`}
-                  >
-                    <p className="font-semibold mb-1">{alert.alert_title}</p>
-                    <p className="text-sm mb-2">{alert.alert_message}</p>
-                    {alert.action_required && alert.action_url && (
-                      <Link 
-                        href={alert.action_url}
-                        className="text-sm font-semibold flex items-center gap-1 hover:underline"
-                      >
-                        Take Action <ArrowRight className="w-4 h-4" />
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600 text-center py-8">No active alerts</p>
-            )}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-3 px-4 text-sm font-bold text-gray-400 uppercase">Category</th>
+                  <th className="text-right py-3 px-4 text-sm font-bold text-gray-400 uppercase">Insurance Paid</th>
+                  <th className="text-right py-3 px-4 text-sm font-bold text-gray-400 uppercase">Actual Cost</th>
+                  <th className="text-right py-3 px-4 text-sm font-bold text-teal-400 uppercase">Missing</th>
+                </tr>
+              </thead>
+              <tbody>
+                {analysis.missing_scope_items && analysis.missing_scope_items.length > 0 ? (
+                  analysis.missing_scope_items.slice(0, 5).map((item: any, idx: number) => {
+                    const insurancePaid = item.insurance_value || Math.round(analysis.insurance_estimate * 0.3)
+                    const actualCost = item.estimated_value || Math.round(analysis.contractor_estimate * 0.3)
+                    const missing = actualCost - insurancePaid
+                    
+                    return (
+                      <tr key={idx} className="border-b border-gray-700/50 hover:bg-gray-800/50">
+                        <td className="py-4 px-4 text-white font-medium">{item.item || 'Roofing'}</td>
+                        <td className="py-4 px-4 text-right text-gray-300">${insurancePaid.toLocaleString()}</td>
+                        <td className="py-4 px-4 text-right text-white font-semibold">${actualCost.toLocaleString()}</td>
+                        <td className="py-4 px-4 text-right text-teal-400 font-black text-lg">${missing.toLocaleString()}</td>
+                      </tr>
+                    )
+                  })
+                ) : (
+                  <>
+                    <tr className="border-b border-gray-700/50">
+                      <td className="py-4 px-4 text-white font-medium">Roofing</td>
+                      <td className="py-4 px-4 text-right text-gray-300">${Math.round(analysis.insurance_estimate * 0.45).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-white font-semibold">${Math.round(analysis.contractor_estimate * 0.45).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-teal-400 font-black text-lg">${Math.round(analysis.claim_gap * 0.45).toLocaleString()}</td>
+                    </tr>
+                    <tr className="border-b border-gray-700/50">
+                      <td className="py-4 px-4 text-white font-medium">Interior</td>
+                      <td className="py-4 px-4 text-right text-gray-300">${Math.round(analysis.insurance_estimate * 0.25).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-white font-semibold">${Math.round(analysis.contractor_estimate * 0.25).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-teal-400 font-black text-lg">${Math.round(analysis.claim_gap * 0.25).toLocaleString()}</td>
+                    </tr>
+                    <tr className="border-b border-gray-700/50">
+                      <td className="py-4 px-4 text-white font-medium">Exterior</td>
+                      <td className="py-4 px-4 text-right text-gray-300">${Math.round(analysis.insurance_estimate * 0.20).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-white font-semibold">${Math.round(analysis.contractor_estimate * 0.20).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-teal-400 font-black text-lg">${Math.round(analysis.claim_gap * 0.20).toLocaleString()}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-4 px-4 text-white font-medium">Other</td>
+                      <td className="py-4 px-4 text-right text-gray-300">${Math.round(analysis.insurance_estimate * 0.10).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-white font-semibold">${Math.round(analysis.contractor_estimate * 0.10).toLocaleString()}</td>
+                      <td className="py-4 px-4 text-right text-teal-400 font-black text-lg">${Math.round(analysis.claim_gap * 0.10).toLocaleString()}</td>
+                    </tr>
+                  </>
+                )}
+                <tr className="border-t-2 border-teal-500">
+                  <td className="py-4 px-4 text-white font-black text-lg">TOTAL</td>
+                  <td className="py-4 px-4 text-right text-gray-300 font-bold">${analysis.insurance_estimate.toLocaleString()}</td>
+                  <td className="py-4 px-4 text-right text-white font-bold">${analysis.contractor_estimate.toLocaleString()}</td>
+                  <td className="py-4 px-4 text-right text-teal-400 font-black text-2xl">${analysis.claim_gap.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-
-        {/* ACTION CENTER */}
-        {actions.length > 0 && (
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <Zap className="w-6 h-6 text-yellow-600" />
-              Recommended Next Actions
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {actions.map((action, idx) => (
-                <div 
-                  key={idx}
-                  className="p-5 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200 hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-bold text-gray-900">{action.action_title}</h3>
-                    {action.estimated_impact > 0 && (
-                      <span className="text-sm font-bold text-green-600 whitespace-nowrap ml-2">
-                        +${action.estimated_impact.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-700 mb-4">{action.action_description}</p>
-                  {action.action_url && (
-                    <Link 
-                      href={action.action_url}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800"
-                    >
-                      Start Action <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
       </div>
     </div>
