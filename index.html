@@ -740,7 +740,15 @@
       font-size: 3rem;
       font-weight: 800;
       color: white;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-cta p {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
     }
 
     /* FOOTER */
@@ -775,6 +783,342 @@
       color: var(--teal);
     }
 
+    /* TOOLS SECTION */
+    .tools-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      text-align: center;
+      max-width: 800px;
+      margin: -1.5rem auto 4rem;
+      line-height: 1.6;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .tool-card {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: all 0.3s;
+    }
+
+    .tool-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .tool-number {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tool-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .tool-desc {
+      font-size: 1rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    /* FREE POLICY ANALYSIS */
+    .analysis-section {
+      padding: 6rem 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .analysis-section .section-title {
+      color: white;
+    }
+
+    .analysis-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .analysis-desc {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .analysis-checklist {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .analysis-checklist ul {
+      list-style: none;
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .analysis-checklist li {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .analysis-checklist li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    /* DASHBOARD VISUAL */
+    .dashboard-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .dashboard-visual {
+      max-width: 1100px;
+      margin: 3rem auto 0;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-placeholder {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border-radius: 12px;
+      padding: 4rem;
+      text-align: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .platform-callouts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .platform-callout {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .platform-callout-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .platform-callout-desc {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* ROADMAP SECTION */
+    .roadmap-section {
+      padding: 6rem 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .roadmap-section .section-title {
+      color: white;
+    }
+
+    .roadmap-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .roadmap-step {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .roadmap-step:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--teal);
+    }
+
+    .roadmap-step-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 1rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .roadmap-step-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+
+    .roadmap-step-desc {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+    }
+
+    /* PRICING SECTION */
+    .pricing-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .pricing-card {
+      max-width: 600px;
+      margin: 0 auto 4rem;
+      background: var(--gray-50);
+      border: 3px solid var(--teal);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+    }
+
+    .pricing-amount {
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .pricing-label {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .pricing-features li {
+      font-size: 1rem;
+      color: var(--gray-900);
+      line-height: 1.8;
+      margin-bottom: 0.75rem;
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .pricing-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+    }
+
+    .pricing-compare-item {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .pricing-compare-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-compare-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .pricing-compare-value.bad {
+      color: #ef4444;
+    }
+
+    .pricing-compare-value.good {
+      color: var(--teal);
+    }
+
+    .pricing-context {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pricing-context-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-context-desc {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    /* STAT BLOCKS (for updated stats section) */
+    .stat-block-label {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.4;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -788,6 +1132,22 @@
       .stats-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .roadmap-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .platform-callouts {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -910,15 +1270,61 @@
       <div class="stats-grid">
         <div class="stat-item">
           <div class="stat-number">8 in 10</div>
-          <div class="stat-label">Insurance estimates contain missing scope or suppressed pricing</div>
+          <div class="stat-block-label">Insurance estimates contain missing scope, suppressed pricing, or unclaimed coverage</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">$18,400</div>
-          <div class="stat-label">Average gap between insurer estimate and verified repair scope</div>
+          <div class="stat-block-label">Average additional money identified per claim analysis</div>
         </div>
         <div class="stat-item">
           <div class="stat-number">18 steps</div>
-          <div class="stat-label">Guided claim management from first notice to final settlement</div>
+          <div class="stat-block-label">Steps that walk you through your entire claim — start to finish</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT'S INSIDE CLAIM COMMAND PRO -->
+  <section class="tools-section" id="tools">
+    <div class="container">
+      <h2 class="section-title">What's Inside Claim Command Pro</h2>
+      <p class="section-subtitle">Six tools, each with one job. Together they walk you through every step of your claim — from reading your policy to cashing your settlement check.</p>
+      
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-number">Tool 01</div>
+          <div class="tool-title">Claim Command Center</div>
+          <div class="tool-desc">Your home base for the entire claim. See where you are, what's done, what's next, and what you need to do today — all in one place. You'll never lose track of your claim again.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 02</div>
+          <div class="tool-title">Estimate Review Engine</div>
+          <div class="tool-desc">Upload your insurance company's estimate. We'll go through it line by line and flag everything that's missing, underpriced, or incorrect — so you know exactly what to dispute and how much more you're owed.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 03</div>
+          <div class="tool-title">Claim Letter Generator</div>
+          <div class="tool-desc">Tell us what you need and we'll write the letter. Supplement requests, coverage disputes, adjuster responses — professional, documented correspondence your insurer has to take seriously. Ready in minutes.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 04</div>
+          <div class="tool-title">Claim Strategy Guidance</div>
+          <div class="tool-desc">An 18-step roadmap built by claim professionals. At every step, we tell you exactly what to do, what to say to your insurer, and what mistakes to avoid. You won't have to guess what comes next.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 05</div>
+          <div class="tool-title">Settlement Maximization</div>
+          <div class="tool-desc">Most policyholders leave money behind because they don't know what to ask for. This tool shows you every recovery lever available — including depreciation recovery, replacement cost vs. actual cash value, and code upgrade coverage — and how to claim them.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 06</div>
+          <div class="tool-title">Policy Coverage Analysis</div>
+          <div class="tool-desc">Your insurance policy is written to protect the insurer, not to be understood by you. We read it for you — plain language, no jargon — and tell you exactly what you're covered for, what's excluded, and what triggers apply to your specific loss.</div>
         </div>
       </div>
     </div>
@@ -1005,36 +1411,147 @@
     </div>
   </section>
 
-  <!-- SYSTEM POSITIONING -->
-  <section class="system-section" id="system">
+  <!-- FREE POLICY ANALYSIS -->
+  <section class="analysis-section" id="free-analysis">
     <div class="container">
-      <h2 class="section-title">Manage Your Entire Claim in One System</h2>
+      <h2 class="section-title">Start With a Free Policy Analysis</h2>
       
-      <div class="system-grid">
-        <div class="system-item">
-          <div class="system-icon">📤</div>
-          <div class="system-text">Upload and analyze claim documents</div>
+      <div class="analysis-content">
+        <p class="analysis-desc">Before you spend a dollar, answer a few questions about your claim and we'll show you where you may be losing money. You'll get a clear, plain-language breakdown of what your policy covers, what your insurer may have missed, and exactly what to do next.</p>
+        
+        <div class="analysis-checklist">
+          <ul>
+            <li>Coverage review — we read your policy and tell you in plain language what you're covered for</li>
+            <li>Scope gap check — we identify line items likely missing from your insurer's estimate</li>
+            <li>Pricing check — we flag if your insurer paid below local market rates for labor and materials</li>
+            <li>Unclaimed coverage — we find endorsements and triggers you may not know you have</li>
+            <li>Your personalized 18-step claim roadmap — so you know exactly what to do next</li>
+          </ul>
         </div>
 
-        <div class="system-item">
-          <div class="system-icon">💰</div>
-          <div class="system-text">Detect missing claim value</div>
+        <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Policy Analysis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD VISUAL SECTION -->
+  <section class="dashboard-section" id="dashboard">
+    <div class="container">
+      <h2 class="section-title">The Claim Command Center</h2>
+      
+      <div class="dashboard-visual">
+        <div class="dashboard-placeholder">
+          [Dashboard Screenshot / UI Mockup]
+        </div>
+        
+        <div class="platform-callouts">
+          <div class="platform-callout">
+            <div class="platform-callout-title">You always know where you are</div>
+            <div class="platform-callout-desc">Five phases — Establish, Document, Analyze, Recover, Resolve. A progress bar at the top of every screen shows exactly how far you've come and what's left to do.</div>
+          </div>
+
+          <div class="platform-callout">
+            <div class="platform-callout-title">Every step tells you what to do</div>
+            <div class="platform-callout-desc">Each of the 18 steps explains why it matters, exactly what action to take, and what Claim Command Pro gives you to complete it. You're never left to figure it out on your own.</div>
+          </div>
+
+          <div class="platform-callout">
+            <div class="platform-callout-title">AI does the heavy lifting</div>
+            <div class="platform-callout-desc">Policy review, estimate analysis, and claim letter writing are all handled by AI — giving you the same output a claim professional would produce, in minutes, for a fraction of the cost.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLAIM ROADMAP -->
+  <section class="roadmap-section" id="roadmap">
+    <div class="container">
+      <h2 class="section-title">The Claim Command Process</h2>
+      <p class="section-subtitle" style="color:rgba(255,255,255,0.5);">Five phases. Eighteen steps. Built by claim professionals. At every step, you'll know exactly what to do, what to say to your insurer, and what comes next.</p>
+      
+      <div class="roadmap-steps">
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">1</div>
+          <div class="roadmap-step-title">Claim Setup</div>
+          <div class="roadmap-step-desc">Policy review and claim foundation</div>
         </div>
 
-        <div class="system-item">
-          <div class="system-icon">✍️</div>
-          <div class="system-text">Generate claim letters</div>
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">2</div>
+          <div class="roadmap-step-title">Document Damage</div>
+          <div class="roadmap-step-desc">Photos and estimates</div>
         </div>
 
-        <div class="system-item">
-          <div class="system-icon">📊</div>
-          <div class="system-text">Track claim progress</div>
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">3</div>
+          <div class="roadmap-step-title">Analyze the Claim</div>
+          <div class="roadmap-step-desc">Detect missing scope and underpayment</div>
         </div>
 
-        <div class="system-item">
-          <div class="system-icon">🎯</div>
-          <div class="system-text">Monitor settlement</div>
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">4</div>
+          <div class="roadmap-step-title">Recover Missing Value</div>
+          <div class="roadmap-step-desc">Generate supplements and claim letters</div>
         </div>
+
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">5</div>
+          <div class="roadmap-step-title">Maximize Settlement</div>
+          <div class="roadmap-step-desc">Finalize claim recovery</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING SECTION -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <h2 class="section-title">One Flat Fee. You Keep Everything We Find.</h2>
+      
+      <div class="pricing-card">
+        <div class="pricing-amount">$297</div>
+        <div class="pricing-label">One-time payment. Full platform access.</div>
+        
+        <ul class="pricing-features">
+          <li>Free Policy Analysis — start here, no credit card needed</li>
+          <li>Claim Command Center — your full claim dashboard</li>
+          <li>Estimate Review Engine — find what your insurer left out</li>
+          <li>Claim Letter Generator — professional letters, ready in minutes</li>
+          <li>18-step Claim Strategy Roadmap — never wonder what to do next</li>
+          <li>Settlement Maximization — every dollar you're entitled to claim</li>
+          <li>Policy Coverage Analysis — know what you're covered for</li>
+          <li>Unlimited claim letters and supplement requests</li>
+        </ul>
+
+        <a href="/app/free-policy-analysis.html" class="btn-primary" style="display:inline-block;">Start Free Policy Analysis</a>
+      </div>
+
+      <div class="pricing-comparison">
+        <div class="pricing-compare-item">
+          <div class="pricing-compare-label">Hire a Public Adjuster</div>
+          <div class="pricing-compare-value bad">10–15% of your entire settlement</div>
+        </div>
+
+        <div class="pricing-compare-item">
+          <div class="pricing-compare-label">Hire an Attorney</div>
+          <div class="pricing-compare-value bad">33% of whatever they recover for you</div>
+        </div>
+
+        <div class="pricing-compare-item">
+          <div class="pricing-compare-label">Accept the insurer's number</div>
+          <div class="pricing-compare-value bad">Average of $18,400 left unclaimed</div>
+        </div>
+
+        <div class="pricing-compare-item">
+          <div class="pricing-compare-label">Use Claim Command Pro</div>
+          <div class="pricing-compare-value good">$297 flat — you keep every dollar we find</div>
+        </div>
+      </div>
+
+      <div class="pricing-context">
+        <h3 class="pricing-context-title">Why $297 makes sense before you accept anything.</h3>
+        <p class="pricing-context-desc">The average amount Claim Command Pro identifies in additional claim value is $18,400. That means for every $297 you spend, you have a real shot at recovering more than 60 times that amount. And if the free analysis shows your claim is fully paid — you've lost nothing. Start free, upgrade only when it makes sense for you.</p>
       </div>
     </div>
   </section>
@@ -1042,8 +1559,9 @@
   <!-- FINAL CTA -->
   <section class="final-cta">
     <div class="container">
-      <h2>Run Free Policy Analysis</h2>
-      <a href="/app/free-policy-analysis.html" class="btn-primary">Run Free Policy Analysis</a>
+      <h2>Don't Sign Anything Until You Know What Your Claim Is Worth.</h2>
+      <p>Start with a free analysis. Answer a few questions about your claim and we'll show you — in plain language — what your policy covers, what your insurer may have missed, and what to do about it. No credit card. No commitment. Just answers.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Policy Analysis</a>
     </div>
   </section>
 
