@@ -1,15 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { FileText, Download, Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 export default function DocumentationBuilderPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [user, setUser] = useState<any>(null)
   const [isPaid, setIsPaid] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [autoFilling, setAutoFilling] = useState(false)
   const [formData, setFormData] = useState({
     claimNumber: '',
     carrier: '',
@@ -26,6 +28,12 @@ export default function DocumentationBuilderPage() {
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    if (user && searchParams.get('autoFill') === 'true' && searchParams.get('claimId')) {
+      autoFillFromAnalysis(searchParams.get('claimId')!)
+    }
+  }, [user, searchParams])
+
   const checkAuth = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
@@ -41,6 +49,96 @@ export default function DocumentationBuilderPage() {
       .single()
 
     setIsPaid(profile?.is_paid || false)
+  }
+
+  const autoFillFromAnalysis = async (claimId: string) => {
+    setAutoFilling(true)
+    try {
+      const [claimRes, analysisRes, coverageRes] = await Promise.all([
+        supabase.from('claims').select('*').eq('id', claimId).single(),
+        supabase.from('claim_analysis').select('*').eq('claim_id', claimId).single(),
+        supabase.from('coverage_flags').select('*').eq('claim_id', claimId).eq('is_resolved', false)
+      ])
+
+      const claim = claimRes.data
+      const analysis = analysisRes.data
+      const coverage = coverageRes.data || []
+
+      let scopeDoc = 'MISSING SCOPE ITEMS DETECTED:\n\n'
+      if (analysis?.missing_scope_items && analysis.missing_scope_items.length > 0) {
+        analysis.missing_scope_items.forEach((item: any) => {
+          scopeDoc += `• ${item.item || item}`
+          if (item.estimated_value) {
+            scopeDoc += ` - Estimated value: $${item.estimated_value.toLocaleString()}`
+          }
+          scopeDoc += '\n'
+        })
+      }
+
+      scopeDoc += '\n\nPRICING DISCREPANCIES:\n\n'
+      if (analysis?.pricing_suppressions && analysis.pricing_suppressions.length > 0) {
+        analysis.pricing_suppressions.forEach((issue: any) => {
+          scopeDoc += `• ${issue.description || issue}`
+          if (issue.estimated_impact) {
+            scopeDoc += ` - Impact: $${issue.estimated_impact.toLocaleString()}`
+          }
+          scopeDoc += '\n'
+        })
+      }
+
+      scopeDoc += '\n\nCOVERAGE ISSUES:\n\n'
+      coverage.forEach((flag: any) => {
+        scopeDoc += `• ${flag.coverage_alert}`
+        if (flag.estimated_value > 0) {
+          scopeDoc += ` - Value: $${flag.estimated_value.toLocaleString()}`
+        }
+        scopeDoc += '\n'
+      })
+
+      const disputeTemplate = `Dear ${claim?.carrier_name || 'Insurance Carrier'},
+
+RE: Claim #${claim?.claim_number || '[CLAIM NUMBER]'} - Dispute of Estimate
+
+I am writing to formally dispute the estimate provided for my claim. My analysis has identified significant discrepancies totaling $${analysis?.claim_gap.toLocaleString() || '0'}.
+
+MISSING SCOPE ITEMS:
+${analysis?.missing_scope_items?.map((item: any) => `• ${item.item || item}`).join('\n') || '• [Items to be listed]'}
+
+COVERAGE NOT APPLIED:
+${coverage.map((flag: any) => `• ${flag.coverage_type.replace(/_/g, ' ')} - ${flag.coverage_alert}`).join('\n') || '• [Coverage items to be listed]'}
+
+PRICING DISCREPANCIES:
+${analysis?.pricing_suppressions?.map((issue: any) => `• ${issue.description || issue}`).join('\n') || '• [Pricing issues to be listed]'}
+
+I request a full review of this estimate and application of all applicable coverage.
+
+Sincerely,
+[Your Name]`
+
+      const evidenceItems = [
+        'Insurance estimate',
+        'Contractor estimate',
+        'Photographs of damage',
+        'Policy declarations page',
+        ...analysis?.missing_scope_items?.map((item: any) => `Documentation for ${item.item || item}`) || []
+      ]
+
+      setFormData({
+        claimNumber: claim?.claim_number || '',
+        carrier: claim?.carrier_name || '',
+        claimType: claim?.claim_type || '',
+        dateOfLoss: claim?.loss_date || '',
+        scopeDocumentation: scopeDoc,
+        evidenceChecklist: evidenceItems.slice(0, 10),
+        disputeLetter: disputeTemplate,
+        proofOfLoss: 'Proof of Loss documentation based on detected gaps and coverage issues.'
+      })
+
+    } catch (error) {
+      console.error('Auto-fill failed:', error)
+    } finally {
+      setAutoFilling(false)
+    }
   }
 
   const addChecklistItem = () => {
@@ -103,11 +201,23 @@ export default function DocumentationBuilderPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="section-container">
         <div className="max-w-4xl mx-auto">
+          
+          {autoFilling && (
+            <div className="bg-teal-50 border-2 border-teal-500 rounded-xl p-4 mb-6">
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-5 h-5 text-teal-600 animate-spin" />
+                <p className="text-teal-900 font-semibold">
+                  Auto-filling letter with detected gaps and coverage issues...
+                </p>
+              </div>
+            </div>
+          )}
+
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Documentation Packet Builder
+            Recovery Letter Generator
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Create a comprehensive claim documentation packet with all required evidence and templates.
+            Professional claim letter pre-filled with your detected gaps and missing coverage.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-6">

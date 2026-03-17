@@ -172,16 +172,33 @@ export default function DashboardPage() {
 
           {/* Claim Operating System - Featured */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">Claim Operating System</h2>
+            <h2 className="text-2xl font-bold mb-4">Find Your Missing Claim Money</h2>
+            <Link href="/claim-flow" className="card hover:shadow-xl transition-shadow bg-gradient-to-br from-teal-600 to-teal-700 text-white border-2 border-teal-500 mb-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-white/20 backdrop-blur rounded-lg p-3">
+                  <DollarSign className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1">Upload Estimate → Find Missing Money</h3>
+                  <p className="text-teal-100 text-sm">
+                    5-second analysis reveals exactly how much you're owed. Most users find $10k-$25k.
+                  </p>
+                </div>
+                <div className="text-white font-semibold">
+                  Start →
+                </div>
+              </div>
+            </Link>
+
             <Link href="/claim-os/create" className="card hover:shadow-xl transition-shadow bg-gradient-to-br from-blue-600 to-blue-700 text-white border-2 border-blue-500 mb-4">
               <div className="flex items-center gap-4">
                 <div className="bg-white/20 backdrop-blur rounded-lg p-3">
                   <FileText className="w-8 h-8 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-1">Create New Claim Workspace</h3>
+                  <h3 className="text-xl font-bold mb-1">Create Full Claim Workspace</h3>
                   <p className="text-blue-100 text-sm">
-                    Full claim management system with documents, intelligence, strategy, and tracking
+                    Complete claim management system with documents, intelligence, strategy, and tracking
                   </p>
                 </div>
                 <div className="text-white font-semibold">
