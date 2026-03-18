@@ -117,11 +117,11 @@ exports.handler = async (event) => {
       const prompt = buildSupplementLetterPrompt(discrepancyData, policyData, claimInfo);
       
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance supplement letter writer. Return only valid JSON with no additional text.'
+            content: 'You are an expert insurance supplement letter writer with deep knowledge of policy provisions and claim documentation. Before drafting, analyze: 1) Which discrepancies have the strongest evidence? 2) What policy provisions support each item? 3) Are there code compliance requirements? 4) What is the total supplement amount justified? 5) What tone will be most effective? Return only valid JSON with no additional text.'
           },
           {
             role: 'user',
@@ -152,7 +152,7 @@ exports.handler = async (event) => {
         content_html: supplementResult.letter_html,
         content_markdown: supplementResult.letter_markdown,
         template_version: '1.0',
-        ai_model: 'gpt-4-turbo-preview',
+        ai_model: 'gpt-4o',
         status: 'draft'
       })
       .select()
@@ -171,7 +171,7 @@ exports.handler = async (event) => {
         step_number: 10,
         output_type: 'supplement_letter',
         output_json: supplementResult,
-        ai_model: 'gpt-4-turbo-preview',
+        ai_model: 'gpt-4o',
         processing_time_ms: Date.now() - startTime
       })
       .select()

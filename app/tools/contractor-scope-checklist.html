@@ -3,82 +3,648 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contractor Scope Checklist - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
+  <title>Contractor Scope Checklist | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #dee2e6;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #ff6a00;
+      color: white;
+      border-color: #ff6a00;
+    }
+
+    .info-box {
+      background: #fff3e0;
+      border-left: 4px solid #ff6a00;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #e65100;
+      margin-bottom: 10px;
+    }
+
+    .info-box p {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #ff6a00;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #ff6a00;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #e65100;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 106, 0, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #adb5bd;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ff6a00;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .checklist-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .checklist-section h4 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+    }
+
+    .checklist-item {
+      background: white;
+      padding: 15px;
+      border-left: 4px solid #ff6a00;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+
+    .checklist-item h5 {
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .checklist-item p {
+      color: #6c757d;
+      line-height: 1.6;
+      font-size: 0.95em;
+    }
+
+    .checklist-item .priority {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .checklist-item .priority.critical {
+      background: #dc3545;
+      color: white;
+    }
+
+    .checklist-item .priority.important {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .checklist-item .priority.recommended {
+      background: #28a745;
+      color: white;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .warning-box h4 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #ff6a00;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">Contractor Scope Checklist</h1>
-    <p class="tool-page-subtitle">Verify completeness of repair scope</p>
-  </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔨 Contractor Scope Checklist</h1>
+      <p>AI-generated checklist to verify contractor estimates are complete</p>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">Step 4 Tool</h2>
+    <div class="content">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="backend">
+          🔒 Secure Mode (Recommended)
+        </button>
+        <button class="mode-btn" data-mode="client">
+          🔑 Client Mode (Your API Key)
+        </button>
       </div>
-      <div class="tool-card-body">
-        <p>This tool is part of Step 4 of the Step-by-Step Claim Guide.</p>
-        
-        
 
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>Verify completeness of repair scope</p>
+      <div class="info-box">
+        <h3>Why This Matters</h3>
+        <p>
+          Contractor estimates often miss critical items that insurance adjusters catch. This tool generates 
+          a comprehensive checklist based on your damage type to ensure nothing is overlooked before you 
+          submit your contractor's scope to the insurance company.
+        </p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <form id="checklistForm">
+        <div class="form-section">
+          <h3>Project Information</h3>
+          
+          <div class="form-group">
+            <label for="claimNumber">Claim Number</label>
+            <input type="text" id="claimNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="projectType">Project Type *</label>
+            <select id="projectType" required>
+              <option value="">Select project type...</option>
+              <option value="Roof Replacement">Roof Replacement</option>
+              <option value="Water Damage Restoration">Water Damage Restoration</option>
+              <option value="Fire Damage Restoration">Fire Damage Restoration</option>
+              <option value="Interior Remodel">Interior Remodel</option>
+              <option value="Structural Repair">Structural Repair</option>
+              <option value="Exterior Repair">Exterior Repair</option>
+              <option value="Full Restoration">Full Restoration</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="damageDescription">Damage Description *</label>
+            <textarea id="damageDescription" required placeholder="Describe all damage that needs repair..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="contractorEstimate">Contractor's Estimate Amount</label>
+            <input type="number" id="contractorEstimate" placeholder="36750">
+          </div>
+
+          <div class="form-group">
+            <label for="scopeOfWork">Contractor's Scope of Work</label>
+            <textarea id="scopeOfWork" placeholder="Paste or describe what the contractor included in their estimate..."></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" id="apiKeyGroup" style="display: none;">
+          <label for="apiKey">OpenAI API Key *</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="color: #6c757d; display: block; margin-top: 5px;">
+            Your key is stored locally and never sent to our servers
+          </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          📋 Generate Scope Checklist
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Generating comprehensive scope checklist...</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="warning-box" id="warningBox" style="display: none;">
+          <h4>⚠️ Critical Items Missing</h4>
+          <div id="criticalWarnings"></div>
+        </div>
+
+        <div class="checklist-section">
+          <h4>✅ Comprehensive Scope Checklist</h4>
+          <div id="checklistItems"></div>
+        </div>
+
+        <div class="checklist-section">
+          <h4>💰 Cost Considerations</h4>
+          <div id="costConsiderations"></div>
+        </div>
+
+        <div class="checklist-section">
+          <h4>📋 Questions to Ask Your Contractor</h4>
+          <div id="contractorQuestions"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Claim Guide
-      </button>
-      <button class="tool-btn tool-btn-primary" onclick="markComplete()">
-        Mark as Complete →
-      </button>
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
     </div>
-
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../../step-by-step-claim-guide.html?step=4';
+    let currentMode = 'backend';
+
+    // Mode switching
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        
+        const apiKeyGroup = document.getElementById('apiKeyGroup');
+        apiKeyGroup.style.display = currentMode === 'client' ? 'block' : 'none';
+        
+        if (currentMode === 'client') {
+          const savedKey = localStorage.getItem('openai_api_key');
+          if (savedKey) {
+            document.getElementById('apiKey').value = savedKey;
+          }
+        }
+      });
+    });
+
+    // Form submission
+    document.getElementById('checklistForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const projectType = document.getElementById('projectType').value;
+      const damageDescription = document.getElementById('damageDescription').value.trim();
+      const contractorEstimate = document.getElementById('contractorEstimate').value;
+      const scopeOfWork = document.getElementById('scopeOfWork').value.trim();
+
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('submitBtn').disabled = true;
+
+      try {
+        let checklist;
+        
+        if (currentMode === 'backend') {
+          checklist = await generateWithBackend(claimNumber, projectType, damageDescription, contractorEstimate, scopeOfWork);
+        } else {
+          checklist = await generateWithClient(claimNumber, projectType, damageDescription, contractorEstimate, scopeOfWork);
+        }
+
+        displayResults(checklist);
+        saveToLocalStorage(claimNumber, projectType, checklist);
+        logToJournal(claimNumber, projectType);
+
+      } catch (error) {
+        console.error('Generation error:', error);
+        document.getElementById('error').textContent = error.message || 'Generation failed. Please try again.';
+        document.getElementById('error').classList.add('active');
+      } finally {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    });
+
+    async function generateWithBackend(claimNumber, projectType, damageDescription, contractorEstimate, scopeOfWork) {
+      const token = localStorage.getItem('supabase_token');
+      if (!token) {
+        throw new Error('Authentication required. Please log in first.');
+      }
+
+      const response = await fetch('/.netlify/functions/generate-scope-checklist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          claim_number: claimNumber,
+          project_type: projectType,
+          damage_description: damageDescription,
+          contractor_estimate: contractorEstimate,
+          scope_of_work: scopeOfWork
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Backend generation failed');
+      }
+
+      return await response.json();
     }
 
-    function markComplete() {
-      saveClaimData('tool_contractor-scope-checklist_complete', true);
-      alert('✓ Tool marked as complete!\n\nReturning to Claim Guide...');
-      goBack();
+    async function generateWithClient(claimNumber, projectType, damageDescription, contractorEstimate, scopeOfWork) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) {
+        throw new Error('OpenAI API key required for client mode');
+      }
+
+      localStorage.setItem('openai_api_key', apiKey);
+
+      const prompt = `Generate a comprehensive contractor scope checklist for this insurance claim repair project:
+
+PROJECT INFO:
+- Type: ${projectType}
+- Damage Description: ${damageDescription}
+${contractorEstimate ? `- Contractor's Estimate: $${parseFloat(contractorEstimate).toLocaleString()}` : ''}
+${scopeOfWork ? `- Contractor's Scope:\n${scopeOfWork}` : ''}
+
+Generate a detailed checklist in JSON format:
+{
+  "checklist_items": [
+    {
+      "category": "string - category name (e.g., Materials, Labor, Permits, etc.)",
+      "item": "string - specific item to verify",
+      "description": "string - why this matters",
+      "priority": "critical|important|recommended",
+      "typical_cost_range": "string - typical cost if applicable"
+    }
+  ],
+  "critical_missing_items": [
+    "string - items commonly missed that could be expensive"
+  ],
+  "cost_considerations": [
+    "string - cost factors to discuss with contractor"
+  ],
+  "questions_for_contractor": [
+    "string - specific questions to ask"
+  ],
+  "red_flags": [
+    "string - warning signs in the estimate"
+  ]
+}
+
+Focus on:
+- Items commonly missed by contractors
+- Code compliance requirements
+- Permit requirements
+- Warranty considerations
+- Hidden damage potential
+- Material quality specifications`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert construction project manager and insurance restoration specialist. Generate comprehensive scope checklists that protect policyholders from incomplete contractor estimates. Return only valid JSON with no additional text.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API request failed');
+      }
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: contractor-scope-checklist');
+    function displayResults(checklist) {
+      // Show critical warnings if any
+      if (checklist.critical_missing_items && checklist.critical_missing_items.length > 0) {
+        document.getElementById('warningBox').style.display = 'block';
+        document.getElementById('criticalWarnings').innerHTML = 
+          '<ul>' + checklist.critical_missing_items.map(item => `<li>${item}</li>`).join('') + '</ul>';
+      }
+
+      // Group checklist items by category
+      const groupedItems = {};
+      checklist.checklist_items.forEach(item => {
+        if (!groupedItems[item.category]) {
+          groupedItems[item.category] = [];
+        }
+        groupedItems[item.category].push(item);
+      });
+
+      const checklistHtml = Object.entries(groupedItems).map(([category, items]) => `
+        <h5 style="color: #ff6a00; margin: 20px 0 10px 0;">${category}</h5>
+        ${items.map(item => `
+          <div class="checklist-item">
+            <h5>${item.item}</h5>
+            <p>${item.description}</p>
+            ${item.typical_cost_range ? `<p><em>Typical Cost: ${item.typical_cost_range}</em></p>` : ''}
+            <span class="priority ${item.priority}">${item.priority.toUpperCase()}</span>
+          </div>
+        `).join('')}
+      `).join('');
+
+      document.getElementById('checklistItems').innerHTML = checklistHtml;
+
+      document.getElementById('costConsiderations').innerHTML = 
+        '<ul>' + checklist.cost_considerations.map(c => `<li>${c}</li>`).join('') + '</ul>';
+
+      document.getElementById('contractorQuestions').innerHTML = 
+        '<ul>' + checklist.questions_for_contractor.map(q => `<li>${q}</li>`).join('') + '</ul>';
+
+      document.getElementById('results').classList.add('active');
+    }
+
+    function saveToLocalStorage(claimNumber, projectType, checklist) {
+      const key = `scope_checklist_${claimNumber || 'latest'}`;
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        project_type: projectType,
+        checklist
+      }));
+    }
+
+    function logToJournal(claimNumber, projectType) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'scope_checklist_generated',
+        description: `Contractor scope checklist generated for ${projectType}`,
+        amount: null,
+        related_step: 'Step 5',
+        reference_id: claimNumber || projectType
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load saved data
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        document.getElementById('claimNumber').value = claimNumber;
+      }
     });
   </script>
-
-
-<script type="module">
-  import { WorkflowViewController } from '/app/assets/js/controllers/index.js';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    WorkflowViewController.initTool({
-      "toolId": "contractor-scope-checklist",
-      "toolName": "Contractor Scope Checklist",
-      "supabaseTable": "evidence_items",
-      "viewType": "table"
-});
-  });
-</script>
-
 </body>
 </html>

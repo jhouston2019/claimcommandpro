@@ -3,125 +3,528 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carrier Request Logger - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
+  <title>Carrier Request Logger | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #13547a 0%, #80d0c7 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .info-box {
+      background: #d1ecf1;
+      border-left: 4px solid #13547a;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #0c5460;
+      margin-bottom: 10px;
+    }
+
+    .info-box p {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #dee2e6;
+    }
+
+    .stat-card .number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #13547a;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .label {
+      color: #6c757d;
+      font-size: 0.9em;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #13547a;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #13547a;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0d3d57;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(19, 84, 122, 0.3);
+    }
+
+    .requests-log {
+      margin-top: 40px;
+    }
+
+    .requests-log h3 {
+      color: #1e3c72;
+      margin-bottom: 20px;
+    }
+
+    .request-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #13547a;
+      margin-bottom: 15px;
+    }
+
+    .request-card .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .request-card h4 {
+      color: #495057;
+      font-size: 1.1em;
+    }
+
+    .request-card .date {
+      color: #6c757d;
+      font-size: 0.9em;
+    }
+
+    .request-card .status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .request-card .status.pending {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .request-card .status.received {
+      background: #28a745;
+      color: white;
+    }
+
+    .request-card .status.overdue {
+      background: #dc3545;
+      color: white;
+    }
+
+    .request-card p {
+      color: #6c757d;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .request-card .actions {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .request-card .actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+
+    .request-card .actions .mark-received {
+      background: #28a745;
+      color: white;
+    }
+
+    .request-card .actions .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #13547a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+  </style>
 </head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">Carrier Request Logger</h1>
-    <p class="tool-page-subtitle">Log carrier requests and deadlines</p>
-  </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📋 Carrier Request Logger</h1>
+      <p>Track all requests to and from your insurance company</p>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">Step 12 Tool</h2>
+    <div class="content">
+      <div class="info-box">
+        <h3>Why Track Requests?</h3>
+        <p>
+          Document every request you make and every document the insurer asks for. This creates a paper trail, 
+          helps you follow up on overdue items, and can be critical evidence if the claim is delayed or denied. 
+          Most policies require the insurer to respond within specific timeframes.
+        </p>
       </div>
-      <div class="tool-card-body">
-        <p>This tool is part of Step 12 of the Step-by-Step Claim Guide.</p>
-        
-        <!-- L1 Structured Form -->
-        <form data-tool-form class="tool-form">
-          <div class="tool-form-group">
-            <label for="requestDate" class="tool-label">Request Date</label>
-            <input type="date" id="requestDate" name="requestDate" class="tool-input" required />
-          </div>
 
-          <div class="tool-form-group">
-            <label for="requestType" class="tool-label">Request Type</label>
-            <select id="requestType" name="requestType" class="tool-input" required>
-              <option value="">Select request type...</option>
-              <option value="information-request">Information Request</option>
-              <option value="document-request">Document Request</option>
-              <option value="inspection-request">Inspection Request</option>
-              <option value="euo-request">EUO Request</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="responseDeadline" class="tool-label">Response Deadline</label>
-            <input type="date" id="responseDeadline" name="responseDeadline" class="tool-input" required />
-          </div>
-
-          <div class="tool-form-group">
-            <label for="requestStatus" class="tool-label">Status</label>
-            <select id="requestStatus" name="requestStatus" class="tool-input" required>
-              <option value="">Select status...</option>
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="overdue">Overdue</option>
-            </select>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="notes" class="tool-label">Notes (Optional)</label>
-            <textarea id="notes" name="notes" class="tool-input" rows="2" maxlength="300" placeholder="Brief notes (max 300 characters)..."></textarea>
-          </div>
-
-          <div class="tool-form-actions">
-            <button type="submit" data-save-btn class="tool-btn tool-btn-primary">Log Request</button>
-          </div>
-        </form>
-
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>Log carrier requests and deadlines</p>
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div class="number" id="totalRequests">0</div>
+          <div class="label">Total Requests</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="pendingRequests">0</div>
+          <div class="label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="number" id="overdueRequests">0</div>
+          <div class="label">Overdue</div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Claim Guide
-      </button>
-      <button class="tool-btn tool-btn-primary" onclick="markComplete()">
-        Mark as Complete →
-      </button>
-    </div>
+      <div class="error" id="error"></div>
 
+      <div class="form-section">
+        <h3>Log New Request</h3>
+        
+        <div class="form-group">
+          <label for="claimNumber">Claim Number</label>
+          <input type="text" id="claimNumber">
+        </div>
+
+        <div class="form-group">
+          <label for="requestType">Request Type *</label>
+          <select id="requestType" required>
+            <option value="">Select type...</option>
+            <option value="Document Request (from insurer)">Document Request (from insurer)</option>
+            <option value="Information Request (from insurer)">Information Request (from insurer)</option>
+            <option value="Document Submission (to insurer)">Document Submission (to insurer)</option>
+            <option value="Follow-up (to insurer)">Follow-up (to insurer)</option>
+            <option value="Inspection Request">Inspection Request</option>
+            <option value="Payment Request">Payment Request</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="requestDescription">Description *</label>
+          <textarea id="requestDescription" required placeholder="What was requested or submitted?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="requestDate">Request Date *</label>
+          <input type="date" id="requestDate" required>
+        </div>
+
+        <div class="form-group">
+          <label for="dueDate">Due Date / Expected Response Date</label>
+          <input type="date" id="dueDate">
+        </div>
+
+        <div class="form-group">
+          <label for="requestedBy">Requested By</label>
+          <input type="text" id="requestedBy" placeholder="Adjuster name or 'You'">
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="logRequest()">
+          ➕ Log Request
+        </button>
+      </div>
+
+      <div class="requests-log">
+        <h3>Request History</h3>
+        <div id="requestsList">
+          <p style="text-align: center; color: #6c757d; padding: 40px;">
+            No requests logged yet. Add your first request above.
+          </p>
+        </div>
+      </div>
+
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+    </div>
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../../step-by-step-claim-guide.html?step=12';
+    let requests = [];
+
+    function logRequest() {
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const requestType = document.getElementById('requestType').value;
+      const requestDescription = document.getElementById('requestDescription').value.trim();
+      const requestDate = document.getElementById('requestDate').value;
+      const dueDate = document.getElementById('dueDate').value;
+      const requestedBy = document.getElementById('requestedBy').value.trim();
+
+      if (!requestType || !requestDescription || !requestDate) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const request = {
+        id: Date.now(),
+        claim_number: claimNumber,
+        type: requestType,
+        description: requestDescription,
+        request_date: requestDate,
+        due_date: dueDate,
+        requested_by: requestedBy,
+        status: 'pending',
+        logged_at: new Date().toISOString()
+      };
+
+      requests.unshift(request);
+      saveRequests();
+      renderRequests();
+      updateStats();
+
+      document.getElementById('requestType').value = '';
+      document.getElementById('requestDescription').value = '';
+      document.getElementById('requestDate').value = '';
+      document.getElementById('dueDate').value = '';
+      document.getElementById('requestedBy').value = '';
+
+      logToJournal(claimNumber, requestType);
     }
 
-    function markComplete() {
-      saveClaimData('tool_carrier-request-logger_complete', true);
-      alert('✓ Tool marked as complete!\n\nReturning to Claim Guide...');
-      goBack();
+    function markReceived(id) {
+      const request = requests.find(r => r.id === id);
+      if (request) {
+        request.status = 'received';
+        request.received_date = new Date().toISOString();
+        saveRequests();
+        renderRequests();
+        updateStats();
+      }
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: carrier-request-logger');
+    function deleteRequest(id) {
+      if (confirm('Delete this request?')) {
+        requests = requests.filter(r => r.id !== id);
+        saveRequests();
+        renderRequests();
+        updateStats();
+      }
+    }
+
+    function getRequestStatus(request) {
+      if (request.status === 'received') return 'received';
+      if (!request.due_date) return 'pending';
+      
+      const today = new Date();
+      const dueDate = new Date(request.due_date);
+      return today > dueDate ? 'overdue' : 'pending';
+    }
+
+    function renderRequests() {
+      const container = document.getElementById('requestsList');
+      
+      if (requests.length === 0) {
+        container.innerHTML = `
+          <p style="text-align: center; color: #6c757d; padding: 40px;">
+            No requests logged yet. Add your first request above.
+          </p>
+        `;
+        return;
+      }
+
+      container.innerHTML = requests.map(request => {
+        const status = getRequestStatus(request);
+        return `
+          <div class="request-card">
+            <div class="header-row">
+              <div>
+                <h4>${request.type}</h4>
+                <span class="status ${status}">${status.toUpperCase()}</span>
+              </div>
+              <div class="date">${new Date(request.request_date).toLocaleDateString()}</div>
+            </div>
+            <p><strong>Description:</strong> ${request.description}</p>
+            ${request.requested_by ? `<p><strong>Requested By:</strong> ${request.requested_by}</p>` : ''}
+            ${request.due_date ? `<p><strong>Due Date:</strong> ${new Date(request.due_date).toLocaleDateString()}</p>` : ''}
+            ${request.claim_number ? `<p><strong>Claim:</strong> ${request.claim_number}</p>` : ''}
+            <div class="actions">
+              ${status !== 'received' ? `<button class="mark-received" onclick="markReceived(${request.id})">✓ Mark Received</button>` : ''}
+              <button class="delete-btn" onclick="deleteRequest(${request.id})">Delete</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateStats() {
+      document.getElementById('totalRequests').textContent = requests.length;
+      
+      const pending = requests.filter(r => getRequestStatus(r) === 'pending').length;
+      const overdue = requests.filter(r => getRequestStatus(r) === 'overdue').length;
+      
+      document.getElementById('pendingRequests').textContent = pending;
+      document.getElementById('overdueRequests').textContent = overdue;
+    }
+
+    function saveRequests() {
+      localStorage.setItem('carrier_requests', JSON.stringify(requests));
+    }
+
+    function loadRequests() {
+      const saved = localStorage.getItem('carrier_requests');
+      if (saved) {
+        requests = JSON.parse(saved);
+        renderRequests();
+        updateStats();
+      }
+    }
+
+    function logToJournal(claimNumber, requestType) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'carrier_request_logged',
+        description: `Carrier request logged: ${requestType}`,
+        amount: null,
+        related_step: 'Step 6',
+        reference_id: claimNumber || 'general'
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadRequests();
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        document.getElementById('claimNumber').value = claimNumber;
+      }
+
+      document.getElementById('requestDate').valueAsDate = new Date();
     });
   </script>
-
-
-<script type="module">
-  import { WorkflowViewController } from '/app/assets/js/controllers/index.js';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    WorkflowViewController.initTool({
-      "toolId": "carrier-request-logger",
-      "toolName": "Carrier Request Logger",
-      "supabaseTable": "journal_entries",
-      "viewType": "timeline"
-});
-  });
-</script>
-
 </body>
 </html>

@@ -3,150 +3,648 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pricing Deviation Analyzer - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
+  <title>Pricing Deviation Analyzer | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d4145a 0%, #ff6a88 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #dee2e6;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #d4145a;
+      color: white;
+      border-color: #d4145a;
+    }
+
+    .info-box {
+      background: #ffe5f3;
+      border-left: 4px solid #d4145a;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #c71585;
+      margin-bottom: 10px;
+    }
+
+    .info-box p {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #d4145a;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .comparison-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #d4145a;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #a01045;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 20, 90, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #adb5bd;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9em;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #d4145a;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .deviation-card {
+      background: linear-gradient(135deg, #ff6a88 0%, #ff9a56 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .deviation-card h2 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .deviation-card p {
+      font-size: 1.2em;
+      opacity: 0.95;
+    }
+
+    .analysis-section {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .analysis-section h4 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+    }
+
+    .deviation-item {
+      background: white;
+      padding: 15px;
+      border-left: 4px solid #ff6a88;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    .deviation-item h5 {
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .deviation-item p {
+      color: #6c757d;
+      line-height: 1.6;
+    }
+
+    .deviation-item .amount {
+      font-size: 1.2em;
+      color: #d4145a;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #d4145a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">Pricing Deviation Analyzer</h1>
-    <p class="tool-page-subtitle">Analyze pricing differences</p>
-  </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Pricing Deviation Analyzer</h1>
+      <p>Compare line-item pricing between contractor and insurer estimates</p>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">Step 5 Tool</h2>
+    <div class="content">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="backend">
+          🔒 Secure Mode (Recommended)
+        </button>
+        <button class="mode-btn" data-mode="client">
+          🔑 Client Mode (Your API Key)
+        </button>
       </div>
-      <div class="tool-card-body">
-        <p>This tool is part of Step 5 of the Step-by-Step Claim Guide.</p>
-        
-        
 
-        
-        <!-- Input Form -->
-        <form data-tool-form class="tool-form">
-          <div class="tool-form-group">
-            <label for="estimateUpload" class="tool-label">Upload Estimate Document</label>
-            <input 
-              type="file" 
-              id="estimateUpload" 
-              name="estimateUpload" 
-              class="tool-input" 
-              accept=".pdf,.txt"
-              required
-            />
-            <small>Upload estimate to analyze pricing deviations.</small>
-          </div>
+      <div class="info-box">
+        <h3>What This Tool Does</h3>
+        <p>
+          Insurance companies often use lower pricing than market rates. This tool compares line-item pricing 
+          between your contractor's estimate and the insurer's estimate, identifying significant deviations 
+          and providing market rate justifications.
+        </p>
+      </div>
 
-          <div class="tool-form-group">
-            <label for="jurisdiction" class="tool-label">Jurisdiction (State)</label>
-            <input 
-              type="text" 
-              id="jurisdiction" 
-              name="jurisdiction" 
-              class="tool-input" 
-              placeholder="e.g., California"
-              required
-            />
-          </div>
+      <div class="error" id="error"></div>
 
-          <div class="tool-form-group">
-            <label for="claimType" class="tool-label">Type of Claim</label>
-            <select id="claimType" name="claimType" class="tool-input" required>
-              <option value="">Select claim type...</option>
-              <option value="fire">Fire Damage</option>
-              <option value="water">Water Damage</option>
-              <option value="wind">Wind/Hail Damage</option>
-              <option value="structural">Structural</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="context" class="tool-label">Brief Context (Optional, max 500 chars)</label>
-            <textarea 
-              id="context" 
-              name="context" 
-              class="tool-textarea" 
-              rows="3" 
-              maxlength="500"
-              placeholder="e.g., Pricing seems unusually low for roofing..."
-            ></textarea>
-          </div>
-
-          <div class="tool-form-actions">
-            <button type="submit" data-analyze-btn class="tool-btn tool-btn-primary">
-              Analyze Pricing
-            </button>
-          </div>
-        </form>
-
-        <!-- Output Area -->
-        <div data-tool-output id="output" class="tool-output" style="display: none;">
-          <h3 class="tool-section-title">Analysis Results</h3>
-          <div class="tool-output-content"></div>
+      <form id="analysisForm">
+        <div class="form-section">
+          <h3>Claim Information</h3>
           
-          <div class="tool-form-actions" style="margin-top: 1.5rem;">
-            <button data-export-pdf class="tool-btn tool-btn-secondary">
-              Export as PDF
-            </button>
-            <button data-copy-clipboard class="tool-btn tool-btn-secondary">
-              Copy to Clipboard
-            </button>
+          <div class="form-group">
+            <label for="claimNumber">Claim Number</label>
+            <input type="text" id="claimNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="location">Property Location (City, State) *</label>
+            <input type="text" id="location" required placeholder="Austin, TX">
           </div>
         </div>
 
+        <div class="form-section">
+          <h3>Estimates Comparison</h3>
+          
+          <div class="form-group">
+            <label for="contractorTotal">Contractor Total Estimate *</label>
+            <input type="number" id="contractorTotal" required placeholder="36750">
+          </div>
 
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>Analyze pricing differences</p>
+          <div class="form-group">
+            <label for="insurerTotal">Insurer Total Estimate *</label>
+            <input type="number" id="insurerTotal" required placeholder="18200">
+          </div>
+
+          <div class="form-group">
+            <label for="lineItemComparison">Line Item Comparison *</label>
+            <textarea id="lineItemComparison" required placeholder="Paste line items from both estimates, or describe major differences:
+
+Example:
+Shingle removal: Contractor $2,800 | Insurer $1,200
+Architectural shingles: Contractor $8,500 | Insurer $5,200
+Labor: Contractor $12,000 | Insurer $6,500"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="marketContext">Market Context / Notes</label>
+            <textarea id="marketContext" placeholder="Any relevant market conditions, labor shortages, material costs, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="form-group" id="apiKeyGroup" style="display: none;">
+          <label for="apiKey">OpenAI API Key *</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="color: #6c757d; display: block; margin-top: 5px;">
+            Your key is stored locally and never sent to our servers
+          </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          🔍 Analyze Pricing Deviations
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing pricing deviations...</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="deviation-card">
+          <h2 id="totalDeviation">$0</h2>
+          <p>Total Pricing Deviation</p>
+        </div>
+
+        <div class="analysis-section">
+          <h4>📉 Line Item Deviations</h4>
+          <div id="deviationsList"></div>
+        </div>
+
+        <div class="analysis-section">
+          <h4>💡 Market Rate Analysis</h4>
+          <div id="marketAnalysis"></div>
+        </div>
+
+        <div class="analysis-section">
+          <h4>📋 Recommended Actions</h4>
+          <div id="recommendations"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Claim Guide
-      </button>
-      
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
     </div>
-
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../../step-by-step-claim-guide.html?step=5';
-    }
+    let currentMode = 'backend';
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: pricing-deviation-analyzer');
-    });
-  </script>
-
-
-  <script type="module">
-    import { AIToolController } from '../assets/js/controllers/index.js';
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      await AIToolController.initTool({
-        toolId: 'pricing-deviation-analyzer',
-        toolName: 'Pricing Deviation Analyzer',
-        backendFunction: '/.netlify/functions/ai-estimate-comparison',
-        outputFormat: 'structured',
-        customData: { analysis_mode: 'pricing-deviation' }
+    // Mode switching
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        
+        const apiKeyGroup = document.getElementById('apiKeyGroup');
+        apiKeyGroup.style.display = currentMode === 'client' ? 'block' : 'none';
+        
+        if (currentMode === 'client') {
+          const savedKey = localStorage.getItem('openai_api_key');
+          if (savedKey) {
+            document.getElementById('apiKey').value = savedKey;
+          }
+        }
       });
     });
-  </script>
 
+    // Form submission
+    document.getElementById('analysisForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const location = document.getElementById('location').value.trim();
+      const contractorTotal = parseFloat(document.getElementById('contractorTotal').value);
+      const insurerTotal = parseFloat(document.getElementById('insurerTotal').value);
+      const lineItemComparison = document.getElementById('lineItemComparison').value.trim();
+      const marketContext = document.getElementById('marketContext').value.trim();
+
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('submitBtn').disabled = true;
+
+      try {
+        let analysis;
+        
+        if (currentMode === 'backend') {
+          analysis = await analyzeWithBackend(claimNumber, location, contractorTotal, insurerTotal, lineItemComparison, marketContext);
+        } else {
+          analysis = await analyzeWithClient(claimNumber, location, contractorTotal, insurerTotal, lineItemComparison, marketContext);
+        }
+
+        displayResults(analysis);
+        saveToLocalStorage(claimNumber, analysis);
+        logToJournal(claimNumber, analysis.total_deviation);
+
+      } catch (error) {
+        console.error('Analysis error:', error);
+        document.getElementById('error').textContent = error.message || 'Analysis failed. Please try again.';
+        document.getElementById('error').classList.add('active');
+      } finally {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    });
+
+    async function analyzeWithBackend(claimNumber, location, contractorTotal, insurerTotal, lineItemComparison, marketContext) {
+      const token = localStorage.getItem('supabase_token');
+      if (!token) {
+        throw new Error('Authentication required. Please log in first.');
+      }
+
+      const response = await fetch('/.netlify/functions/analyze-pricing-deviations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          claim_number: claimNumber,
+          location,
+          contractor_total: contractorTotal,
+          insurer_total: insurerTotal,
+          line_items: lineItemComparison,
+          market_context: marketContext
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Backend analysis failed');
+      }
+
+      return await response.json();
+    }
+
+    async function analyzeWithClient(claimNumber, location, contractorTotal, insurerTotal, lineItemComparison, marketContext) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) {
+        throw new Error('OpenAI API key required for client mode');
+      }
+
+      localStorage.setItem('openai_api_key', apiKey);
+
+      const totalDeviation = contractorTotal - insurerTotal;
+      const deviationPercent = ((totalDeviation / contractorTotal) * 100).toFixed(1);
+
+      const prompt = `Analyze pricing deviations between contractor and insurance estimates:
+
+LOCATION: ${location}
+
+TOTALS:
+- Contractor Estimate: $${contractorTotal.toLocaleString()}
+- Insurer Estimate: $${insurerTotal.toLocaleString()}
+- Total Deviation: $${totalDeviation.toLocaleString()} (${deviationPercent}%)
+
+LINE ITEM COMPARISON:
+${lineItemComparison}
+
+${marketContext ? `MARKET CONTEXT:\n${marketContext}\n` : ''}
+
+Provide a comprehensive pricing deviation analysis in JSON format:
+{
+  "total_deviation": number,
+  "deviation_percentage": number,
+  "line_item_deviations": [
+    {
+      "item": "string - line item name",
+      "contractor_price": number,
+      "insurer_price": number,
+      "deviation": number,
+      "deviation_percent": number,
+      "explanation": "string - why this deviation exists",
+      "market_justification": "string - market rate justification for contractor price"
+    }
+  ],
+  "market_analysis": {
+    "location_factors": "string - how location affects pricing",
+    "current_market_conditions": "string - relevant market conditions",
+    "labor_cost_analysis": "string - labor rate analysis",
+    "material_cost_analysis": "string - material cost analysis"
+  },
+  "recommendations": [
+    "string - specific actions to address deviations"
+  ],
+  "supporting_data_needed": [
+    "string - data to gather to support contractor pricing"
+  ]
+}`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert construction cost estimator and insurance claims pricing analyst. Analyze pricing deviations between contractor and insurer estimates, providing market rate justifications. Return only valid JSON with no additional text.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.2,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API request failed');
+      }
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
+    }
+
+    function displayResults(analysis) {
+      document.getElementById('totalDeviation').textContent = `$${analysis.total_deviation.toLocaleString()}`;
+
+      const deviationsHtml = analysis.line_item_deviations.map(item => `
+        <div class="deviation-item">
+          <h5>${item.item}</h5>
+          <p><strong>Contractor:</strong> $${item.contractor_price.toLocaleString()} | <strong>Insurer:</strong> $${item.insurer_price.toLocaleString()}</p>
+          <p class="amount">Deviation: $${item.deviation.toLocaleString()} (${item.deviation_percent.toFixed(1)}%)</p>
+          <p>${item.explanation}</p>
+          <p><em>Market Justification: ${item.market_justification}</em></p>
+        </div>
+      `).join('');
+      document.getElementById('deviationsList').innerHTML = deviationsHtml;
+
+      const marketHtml = `
+        <p><strong>Location Factors:</strong> ${analysis.market_analysis.location_factors}</p>
+        <p><strong>Market Conditions:</strong> ${analysis.market_analysis.current_market_conditions}</p>
+        <p><strong>Labor Costs:</strong> ${analysis.market_analysis.labor_cost_analysis}</p>
+        <p><strong>Material Costs:</strong> ${analysis.market_analysis.material_cost_analysis}</p>
+      `;
+      document.getElementById('marketAnalysis').innerHTML = marketHtml;
+
+      const recsHtml = analysis.recommendations.map(rec => `<p>• ${rec}</p>`).join('');
+      const dataHtml = analysis.supporting_data_needed.map(data => `<p>→ ${data}</p>`).join('');
+      document.getElementById('recommendations').innerHTML = recsHtml + '<br><p><strong>Supporting Data Needed:</strong></p>' + dataHtml;
+
+      document.getElementById('results').classList.add('active');
+    }
+
+    function saveToLocalStorage(claimNumber, analysis) {
+      const key = `pricing_deviation_${claimNumber || 'latest'}`;
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        analysis
+      }));
+    }
+
+    function logToJournal(claimNumber, deviation) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'pricing_deviation_analysis',
+        description: `Pricing deviation analysis completed — $${deviation.toLocaleString()} total deviation identified`,
+        amount: deviation,
+        related_step: 'Step 9',
+        reference_id: claimNumber || 'analysis'
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load saved data
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        document.getElementById('claimNumber').value = claimNumber;
+      }
+    });
+  </script>
 </body>
 </html>

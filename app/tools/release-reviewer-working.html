@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Release Reviewer - Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0575e6 0%, #021b79 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .mode-selector h3 {
+      margin-bottom: 15px;
+      color: #0575e6;
+    }
+
+    .mode-options {
+      display: flex;
+      gap: 15px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mode-option:hover {
+      border-color: #0575e6;
+      background: #e3f2fd;
+    }
+
+    .mode-option.active {
+      border-color: #0575e6;
+      background: #bbdefb;
+      box-shadow: 0 4px 12px rgba(5, 117, 230, 0.2);
+    }
+
+    .mode-option h4 {
+      margin-bottom: 5px;
+      color: #021b79;
+    }
+
+    .mode-option p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .input-section {
+      margin-bottom: 30px;
+    }
+
+    .input-section h3 {
+      margin-bottom: 15px;
+      color: #021b79;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #0575e6;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .results {
+      margin-top: 40px;
+      display: none;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results h3 {
+      margin-bottom: 20px;
+      color: #021b79;
+    }
+
+    .verdict-banner {
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .verdict-safe {
+      background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+      color: white;
+    }
+
+    .verdict-caution {
+      background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+      color: #333;
+    }
+
+    .verdict-danger {
+      background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+      color: white;
+    }
+
+    .review-card {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0575e6;
+    }
+
+    .review-card h4 {
+      margin-bottom: 15px;
+      color: #021b79;
+    }
+
+    .review-card ul {
+      list-style-position: inside;
+      line-height: 1.8;
+    }
+
+    .clause-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border: 2px solid #dee2e6;
+    }
+
+    .clause-item.danger {
+      border-color: #dc3545;
+      background: #f8d7da;
+    }
+
+    .clause-item.warning {
+      border-color: #ffc107;
+      background: #fff3cd;
+    }
+
+    .clause-item.safe {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+
+    .clause-text {
+      font-style: italic;
+      margin: 10px 0;
+      padding: 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 4px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #0575e6;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .info-box {
+      background: #d1ecf1;
+      border-left: 4px solid #0c5460;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .warning-box {
+      background: #fff3cd;
+      border-left: 4px solid #856404;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      color: #856404;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .api-key-input {
+      display: none;
+    }
+
+    .api-key-input.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+      <h1>📋 Release Reviewer</h1>
+      <p>Analyze settlement releases for problematic clauses before signing</p>
+    </div>
+
+    <div class="content">
+      <div class="info-box">
+        <strong>What This Tool Does:</strong> Reviews settlement release documents to identify problematic clauses, overly broad language, and hidden waivers that could hurt you.
+      </div>
+
+      <div class="warning-box">
+        <strong>⚠️ CRITICAL:</strong> NEVER sign a release without reviewing it carefully. Releases can waive your right to future claims, even for damage not yet discovered.
+      </div>
+
+      <div class="mode-selector">
+        <h3>Choose Mode</h3>
+        <div class="mode-options">
+          <div class="mode-option active" data-mode="backend" onclick="selectMode('backend')">
+            <h4>🔒 Backend Mode</h4>
+            <p>Uses Netlify backend with OpenAI (requires login)</p>
+          </div>
+          <div class="mode-option" data-mode="client" onclick="selectMode('client')">
+            <h4>🔑 Client Mode</h4>
+            <p>Direct OpenAI API (requires your API key)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-key-input" id="apiKeySection">
+        <div class="form-group">
+          <label>OpenAI API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="display: block; margin-top: 5px; color: #666;">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></small>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <h3>Upload Release Document</h3>
+        
+        <div class="form-group">
+          <label>Release/Settlement Agreement PDF</label>
+          <input type="file" id="releaseFile" accept=".pdf">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="reviewRelease()" id="reviewBtn">
+        Review Release Document
+      </button>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing release document for problematic clauses...</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results" id="results">
+        <h3>Release Analysis</h3>
+        <div id="reviewContent"></div>
+        <button class="btn btn-primary" onclick="exportReview()">Export Analysis</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    let selectedMode = 'backend';
+    let reviewData = null;
+
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.querySelectorAll('.mode-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      event.target.closest('.mode-option').classList.add('active');
+
+      const apiKeySection = document.getElementById('apiKeySection');
+      if (mode === 'client') {
+        apiKeySection.classList.add('show');
+        const savedKey = localStorage.getItem('openai_api_key');
+        if (savedKey) {
+          document.getElementById('apiKey').value = savedKey;
+        }
+      } else {
+        apiKeySection.classList.remove('show');
+      }
+    }
+
+    async function reviewRelease() {
+      const fileInput = document.getElementById('releaseFile');
+
+      if (!fileInput.files[0]) {
+        showError('Please upload a release document PDF');
+        return;
+      }
+
+      if (selectedMode === 'client') {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        if (!apiKey) {
+          showError('Please enter your OpenAI API key');
+          return;
+        }
+        localStorage.setItem('openai_api_key', apiKey);
+      }
+
+      showLoading();
+      hideError();
+      hideResults();
+
+      try {
+        const pdfText = await extractPDFText(fileInput.files[0]);
+        
+        let result;
+        if (selectedMode === 'backend') {
+          result = await reviewWithBackend(pdfText);
+        } else {
+          result = await reviewWithClient(pdfText);
+        }
+
+        displayResults(result);
+      } catch (error) {
+        console.error('Review error:', error);
+        if (selectedMode === 'backend') {
+          showError('Backend unavailable. Try Client Mode instead. Error: ' + error.message);
+        } else {
+          showError('Review failed: ' + error.message);
+        }
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function extractPDFText(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += pageText + '\n';
+      }
+
+      return fullText;
+    }
+
+    async function reviewWithBackend(pdfText) {
+      const claimId = localStorage.getItem('current_claim_id') || 'demo-claim';
+      
+      const response = await fetch('/.netlify/functions/analyze-release', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getAuthToken()}`
+        },
+        body: JSON.stringify({
+          claim_id: claimId,
+          release_text: pdfText
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend request failed');
+      }
+
+      const data = await response.json();
+      return data.data;
+    }
+
+    async function reviewWithClient(pdfText) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+
+      const prompt = `You are an expert insurance attorney reviewing a settlement release document. Analyze this release for problematic clauses.
+
+RELEASE DOCUMENT TEXT:
+${pdfText}
+
+Analyze the release and return a JSON object with this structure:
+{
+  "overall_verdict": "<safe|caution|danger>",
+  "recommendation": "<sign|negotiate_changes|reject>",
+  "risk_level": <1-10>,
+  "summary": "<2-3 sentence summary>",
+  "problematic_clauses": [
+    {
+      "clause_text": "<exact text>",
+      "issue": "<what's wrong>",
+      "severity": "<low|medium|high>",
+      "recommendation": "<what to do>"
+    }
+  ],
+  "acceptable_clauses": [
+    {
+      "clause_text": "<exact text>",
+      "explanation": "<why it's ok>"
+    }
+  ],
+  "missing_protections": [
+    "<protection that should be included>"
+  ],
+  "suggested_revisions": [
+    {
+      "original": "<problematic text>",
+      "revised": "<better version>"
+    }
+  ],
+  "red_flags": [
+    "<major concern>"
+  ],
+  "next_steps": [
+    "<action to take>"
+  ]
+}
+
+Focus on:
+- Overly broad waivers
+- Future claim waivers
+- Confidentiality clauses
+- Indemnification
+- Attorney fee waivers
+- Scope of release
+- Unknown damage clauses`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert insurance attorney specializing in settlement releases. Return only valid JSON.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.2,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API call failed');
+      }
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
+    }
+
+    async function getAuthToken() {
+      if (window.supabaseClient) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        return session?.access_token;
+      }
+      return null;
+    }
+
+    function displayResults(result) {
+      reviewData = result;
+
+      let verdictClass = 'verdict-safe';
+      let verdictIcon = '✅';
+      if (result.overall_verdict === 'caution') {
+        verdictClass = 'verdict-caution';
+        verdictIcon = '⚠️';
+      } else if (result.overall_verdict === 'danger') {
+        verdictClass = 'verdict-danger';
+        verdictIcon = '🚨';
+      }
+
+      const verdictHTML = `
+        <div class="verdict-banner ${verdictClass}">
+          ${verdictIcon} ${result.overall_verdict.toUpperCase()}: ${result.recommendation.toUpperCase().replace('_', ' ')}
+          <div style="font-size: 14px; margin-top: 10px; font-weight: normal;">${result.summary}</div>
+          <div style="font-size: 16px; margin-top: 10px;">Risk Level: ${result.risk_level}/10</div>
+        </div>
+      `;
+
+      let html = verdictHTML;
+
+      if (result.problematic_clauses && result.problematic_clauses.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #dc3545;">
+            <h4>🚨 Problematic Clauses</h4>
+            ${result.problematic_clauses.map(clause => `
+              <div class="clause-item ${clause.severity === 'high' ? 'danger' : clause.severity === 'medium' ? 'warning' : 'safe'}">
+                <strong>${clause.severity.toUpperCase()} SEVERITY</strong>
+                <div class="clause-text">"${clause.clause_text}"</div>
+                <p><strong>Issue:</strong> ${clause.issue}</p>
+                <p><strong>Recommendation:</strong> ${clause.recommendation}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (result.red_flags && result.red_flags.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #dc3545;">
+            <h4>🚩 Red Flags</h4>
+            <ul>
+              ${result.red_flags.map(flag => `<li>${flag}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      if (result.missing_protections && result.missing_protections.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #ffc107;">
+            <h4>⚠️ Missing Protections</h4>
+            <ul>
+              ${result.missing_protections.map(protection => `<li>${protection}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      if (result.suggested_revisions && result.suggested_revisions.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #17a2b8;">
+            <h4>✏️ Suggested Revisions</h4>
+            ${result.suggested_revisions.map((rev, i) => `
+              <div style="margin-bottom: 20px;">
+                <strong>Revision ${i + 1}:</strong>
+                <div style="background: #f8d7da; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                  <strong>Original:</strong> "${rev.original}"
+                </div>
+                <div style="background: #d4edda; padding: 10px; border-radius: 4px;">
+                  <strong>Revised:</strong> "${rev.revised}"
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (result.acceptable_clauses && result.acceptable_clauses.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #28a745;">
+            <h4>✅ Acceptable Clauses</h4>
+            ${result.acceptable_clauses.map(clause => `
+              <div class="clause-item safe">
+                <div class="clause-text">"${clause.clause_text}"</div>
+                <p>${clause.explanation}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (result.next_steps && result.next_steps.length > 0) {
+        html += `
+          <div class="review-card" style="border-left-color: #0575e6;">
+            <h4>📋 Next Steps</h4>
+            <ul>
+              ${result.next_steps.map(step => `<li>${step}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
+      document.getElementById('reviewContent').innerHTML = html;
+      document.getElementById('results').classList.add('show');
+
+      saveToLocalStorage(result);
+      logToJournal('release_reviewed', `Release reviewed: ${result.overall_verdict} - ${result.recommendation}`);
+    }
+
+    function exportReview() {
+      if (!reviewData) return;
+
+      const text = `RELEASE REVIEW REPORT
+Generated: ${new Date().toLocaleString()}
+
+OVERALL VERDICT: ${reviewData.overall_verdict.toUpperCase()}
+RECOMMENDATION: ${reviewData.recommendation.toUpperCase()}
+RISK LEVEL: ${reviewData.risk_level}/10
+
+SUMMARY
+${reviewData.summary}
+
+PROBLEMATIC CLAUSES
+${reviewData.problematic_clauses ? reviewData.problematic_clauses.map((clause, i) => `
+${i + 1}. [${clause.severity.toUpperCase()} SEVERITY]
+   Clause: "${clause.clause_text}"
+   Issue: ${clause.issue}
+   Recommendation: ${clause.recommendation}
+`).join('\n') : 'None identified'}
+
+RED FLAGS
+${reviewData.red_flags ? reviewData.red_flags.map((flag, i) => `${i + 1}. ${flag}`).join('\n') : 'None'}
+
+MISSING PROTECTIONS
+${reviewData.missing_protections ? reviewData.missing_protections.map((p, i) => `${i + 1}. ${p}`).join('\n') : 'None'}
+
+SUGGESTED REVISIONS
+${reviewData.suggested_revisions ? reviewData.suggested_revisions.map((rev, i) => `
+${i + 1}. Original: "${rev.original}"
+   Revised: "${rev.revised}"
+`).join('\n') : 'None'}
+
+NEXT STEPS
+${reviewData.next_steps ? reviewData.next_steps.map((step, i) => `${i + 1}. ${step}`).join('\n') : 'N/A'}
+`;
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `release-review-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveToLocalStorage(result) {
+      const saved = JSON.parse(localStorage.getItem('release_reviews') || '[]');
+      saved.push({
+        timestamp: new Date().toISOString(),
+        result: result
+      });
+      localStorage.setItem('release_reviews', JSON.stringify(saved));
+    }
+
+    function logToJournal(actionType, description) {
+      try {
+        const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+        journal.push({
+          timestamp: new Date().toISOString(),
+          action_type: actionType,
+          description: description,
+          related_step: 'Step 18'
+        });
+        localStorage.setItem('claimJournal', JSON.stringify(journal));
+      } catch (e) {
+        console.warn('Failed to log to journal:', e);
+      }
+    }
+
+    function showLoading() {
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('reviewBtn').disabled = true;
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('reviewBtn').disabled = false;
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+    }
+
+    function hideError() {
+      document.getElementById('error').classList.remove('show');
+    }
+
+    function hideResults() {
+      document.getElementById('results').classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectMode('backend');
+    });
+  </script>
+</body>
+</html>

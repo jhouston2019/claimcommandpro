@@ -122,11 +122,11 @@ exports.handler = async (event) => {
       const prompt = buildEstimateComparisonPrompt(contractorText, carrierText);
       
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance estimate analyst. Return only valid JSON with no additional text.'
+            content: 'You are an expert insurance estimate analyst with expertise in construction costs, line-item pricing, and estimate reconciliation. Before comparing, analyze: 1) Are all contractor line items addressed by the insurer? 2) Are quantities and measurements consistent? 3) Are unit prices reasonable for the market? 4) Are there missing categories or scope gaps? 5) Is depreciation properly applied? Return only valid JSON with no additional text.'
           },
           {
             role: 'user',
@@ -156,7 +156,7 @@ exports.handler = async (event) => {
         output_type: 'estimate_comparison',
         output_json: comparisonResult,
         input_document_ids: [body.contractor_document_id, body.carrier_document_id].filter(Boolean),
-        ai_model: 'gpt-4-turbo-preview',
+        ai_model: 'gpt-4o',
         processing_time_ms: Date.now() - startTime
       })
       .select()

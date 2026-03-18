@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demand Letter Generator - Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .mode-selector h3 {
+      margin-bottom: 15px;
+      color: #2a5298;
+    }
+
+    .mode-options {
+      display: flex;
+      gap: 15px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mode-option:hover {
+      border-color: #2a5298;
+      background: #f0f4ff;
+    }
+
+    .mode-option.active {
+      border-color: #2a5298;
+      background: #e3f2fd;
+      box-shadow: 0 4px 12px rgba(42, 82, 152, 0.2);
+    }
+
+    .mode-option h4 {
+      margin-bottom: 5px;
+      color: #1e3c72;
+    }
+
+    .mode-option p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .input-section {
+      margin-bottom: 30px;
+    }
+
+    .input-section h3 {
+      margin-bottom: 15px;
+      color: #1e3c72;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2a5298;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .file-upload {
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-upload:hover {
+      border-color: #2a5298;
+      background: #f8f9fa;
+    }
+
+    .file-upload.active {
+      border-color: #28a745;
+      background: #d4edda;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .results {
+      margin-top: 40px;
+      padding: 30px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results h3 {
+      margin-bottom: 20px;
+      color: #1e3c72;
+    }
+
+    .letter-preview {
+      background: white;
+      padding: 40px;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      font-family: 'Georgia', serif;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2a5298;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .info-box {
+      background: #d1ecf1;
+      border-left: 4px solid #0c5460;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .api-key-input {
+      display: none;
+    }
+
+    .api-key-input.show {
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #dee2e6;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1e3c72;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+      <h1>🔥 Demand Letter Generator</h1>
+      <p>Generate a formal demand letter with policy citations and specific amounts</p>
+    </div>
+
+    <div class="content">
+      <div class="info-box">
+        <strong>What This Tool Does:</strong> Creates a professional demand letter that formally requests payment for underpaid or unpaid covered losses, with specific dollar amounts, policy citations, and legal language.
+      </div>
+
+      <div class="mode-selector">
+        <h3>Choose Mode</h3>
+        <div class="mode-options">
+          <div class="mode-option active" data-mode="backend" onclick="selectMode('backend')">
+            <h4>🔒 Backend Mode</h4>
+            <p>Uses Netlify backend with OpenAI (requires login)</p>
+          </div>
+          <div class="mode-option" data-mode="client" onclick="selectMode('client')">
+            <h4>🔑 Client Mode</h4>
+            <p>Direct OpenAI API (requires your API key)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-key-input" id="apiKeySection">
+        <div class="form-group">
+          <label>OpenAI API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="display: block; margin-top: 5px; color: #666;">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></small>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <h3>Claim Information</h3>
+        
+        <div class="form-group">
+          <label>Claim Number</label>
+          <input type="text" id="claimNumber" placeholder="e.g., CLM-2024-12345">
+        </div>
+
+        <div class="form-group">
+          <label>Insurance Company Name</label>
+          <input type="text" id="insurerName" placeholder="e.g., State Farm">
+        </div>
+
+        <div class="form-group">
+          <label>Adjuster Name (if known)</label>
+          <input type="text" id="adjusterName" placeholder="e.g., John Smith">
+        </div>
+
+        <div class="form-group">
+          <label>Policy Number</label>
+          <input type="text" id="policyNumber" placeholder="e.g., POL-123456">
+        </div>
+
+        <div class="form-group">
+          <label>Date of Loss</label>
+          <input type="text" id="lossDate" placeholder="e.g., January 15, 2024">
+        </div>
+
+        <div class="form-group">
+          <label>Total Demand Amount ($)</label>
+          <input type="number" id="demandAmount" placeholder="e.g., 18550">
+        </div>
+
+        <div class="form-group">
+          <label>Summary of Discrepancies</label>
+          <textarea id="discrepancies" placeholder="Describe the key issues:
+- Missing items totaling $X
+- Undervalued labor totaling $Y
+- Code upgrade requirements totaling $Z"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Supporting Evidence (optional)</label>
+          <textarea id="evidence" placeholder="List key evidence:
+- Independent contractor estimate
+- Photographic evidence
+- Building code citations"></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="generateDemandLetter()" id="generateBtn">
+        Generate Demand Letter
+      </button>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Generating your demand letter...</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results" id="results">
+        <h3>Your Demand Letter</h3>
+        <div class="stats" id="stats"></div>
+        <div class="letter-preview" id="letterPreview"></div>
+        <button class="btn btn-primary" onclick="copyLetter()">Copy to Clipboard</button>
+        <button class="btn btn-secondary" onclick="downloadLetter()">Download as Text</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedMode = 'backend';
+    let generatedLetter = '';
+
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.querySelectorAll('.mode-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      event.target.closest('.mode-option').classList.add('active');
+
+      const apiKeySection = document.getElementById('apiKeySection');
+      if (mode === 'client') {
+        apiKeySection.classList.add('show');
+        const savedKey = localStorage.getItem('openai_api_key');
+        if (savedKey) {
+          document.getElementById('apiKey').value = savedKey;
+        }
+      } else {
+        apiKeySection.classList.remove('show');
+      }
+    }
+
+    async function generateDemandLetter() {
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const insurerName = document.getElementById('insurerName').value.trim();
+      const policyNumber = document.getElementById('policyNumber').value.trim();
+      const lossDate = document.getElementById('lossDate').value.trim();
+      const demandAmount = parseFloat(document.getElementById('demandAmount').value);
+      const discrepancies = document.getElementById('discrepancies').value.trim();
+      const evidence = document.getElementById('evidence').value.trim();
+      const adjusterName = document.getElementById('adjusterName').value.trim() || 'Claims Department';
+
+      if (!claimNumber || !insurerName || !policyNumber || !lossDate || !demandAmount || !discrepancies) {
+        showError('Please fill in all required fields');
+        return;
+      }
+
+      if (selectedMode === 'client') {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        if (!apiKey) {
+          showError('Please enter your OpenAI API key');
+          return;
+        }
+        localStorage.setItem('openai_api_key', apiKey);
+      }
+
+      showLoading();
+      hideError();
+      hideResults();
+
+      try {
+        let result;
+        if (selectedMode === 'backend') {
+          result = await generateWithBackend(claimNumber, insurerName, adjusterName, policyNumber, lossDate, demandAmount, discrepancies, evidence);
+        } else {
+          result = await generateWithClient(claimNumber, insurerName, adjusterName, policyNumber, lossDate, demandAmount, discrepancies, evidence);
+        }
+
+        displayResults(result);
+      } catch (error) {
+        console.error('Generation error:', error);
+        if (selectedMode === 'backend') {
+          showError('Backend unavailable. Try Client Mode instead. Error: ' + error.message);
+        } else {
+          showError('Generation failed: ' + error.message);
+        }
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function generateWithBackend(claimNumber, insurerName, adjusterName, policyNumber, lossDate, demandAmount, discrepancies, evidence) {
+      const claimId = localStorage.getItem('current_claim_id') || 'demo-claim';
+      
+      const response = await fetch('/.netlify/functions/generate-demand-letter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getAuthToken()}`
+        },
+        body: JSON.stringify({
+          claim_id: claimId,
+          claim_number: claimNumber,
+          insurer_name: insurerName,
+          adjuster_name: adjusterName,
+          policy_number: policyNumber,
+          loss_date: lossDate,
+          demand_amount: demandAmount,
+          discrepancies: discrepancies,
+          evidence: evidence
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend request failed');
+      }
+
+      const data = await response.json();
+      return {
+        letter: data.data.letter_content,
+        amount: data.data.demand_amount
+      };
+    }
+
+    async function generateWithClient(claimNumber, insurerName, adjusterName, policyNumber, lossDate, demandAmount, discrepancies, evidence) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+
+      const prompt = `Generate a formal demand letter for an insurance claim with the following details:
+
+Claim Number: ${claimNumber}
+Insurance Company: ${insurerName}
+Adjuster: ${adjusterName}
+Policy Number: ${policyNumber}
+Date of Loss: ${lossDate}
+Demand Amount: $${demandAmount.toLocaleString()}
+
+Discrepancies:
+${discrepancies}
+
+Supporting Evidence:
+${evidence || 'Independent contractor estimate, photographic evidence, building code citations'}
+
+Requirements:
+1. Professional, firm tone
+2. Include policy provisions about RCV coverage
+3. List specific discrepancies with amounts
+4. Demand payment within 15 business days
+5. Reference potential bad faith if not resolved
+6. Include proper letter format with Re: line
+7. List supporting documentation
+8. Total length: 400-600 words
+
+Return ONLY the letter text, properly formatted.`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert insurance demand letter writer. Generate professional, legally sound demand letters.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 2000
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API call failed');
+      }
+
+      const data = await response.json();
+      const letter = data.choices[0].message.content;
+
+      return {
+        letter: letter,
+        amount: demandAmount
+      };
+    }
+
+    async function getAuthToken() {
+      if (window.supabaseClient) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        return session?.access_token;
+      }
+      return null;
+    }
+
+    function displayResults(result) {
+      generatedLetter = result.letter;
+
+      const statsHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Demand Amount</div>
+          <div class="stat-value">$${result.amount.toLocaleString()}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Response Deadline</div>
+          <div class="stat-value">15 Days</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Letter Length</div>
+          <div class="stat-value">${result.letter.split(' ').length} words</div>
+        </div>
+      `;
+
+      document.getElementById('stats').innerHTML = statsHTML;
+      document.getElementById('letterPreview').textContent = result.letter;
+      document.getElementById('results').classList.add('show');
+
+      saveToLocalStorage(result);
+      logToJournal('demand_letter_generated', `Demand letter generated for $${result.amount.toLocaleString()}`);
+    }
+
+    function copyLetter() {
+      navigator.clipboard.writeText(generatedLetter);
+      alert('Letter copied to clipboard!');
+    }
+
+    function downloadLetter() {
+      const blob = new Blob([generatedLetter], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `demand-letter-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveToLocalStorage(result) {
+      const saved = JSON.parse(localStorage.getItem('demand_letters') || '[]');
+      saved.push({
+        timestamp: new Date().toISOString(),
+        amount: result.amount,
+        letter: result.letter
+      });
+      localStorage.setItem('demand_letters', JSON.stringify(saved));
+    }
+
+    function logToJournal(actionType, description) {
+      try {
+        const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+        journal.push({
+          timestamp: new Date().toISOString(),
+          action_type: actionType,
+          description: description,
+          related_step: 'Step 12'
+        });
+        localStorage.setItem('claimJournal', JSON.stringify(journal));
+      } catch (e) {
+        console.warn('Failed to log to journal:', e);
+      }
+    }
+
+    function showLoading() {
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('generateBtn').disabled = true;
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('generateBtn').disabled = false;
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+    }
+
+    function hideError() {
+      document.getElementById('error').classList.remove('show');
+    }
+
+    function hideResults() {
+      document.getElementById('results').classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectMode('backend');
+    });
+  </script>
+</body>
+</html>

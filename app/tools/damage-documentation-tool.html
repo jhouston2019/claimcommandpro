@@ -3,160 +3,746 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Damage Documentation Tool - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <link rel="stylesheet" href="../assets/css/structured-tool-outputs.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
+  <title>Damage Documentation Tool | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d4145a 0%, #fbb034 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 20px;
+      border: 2px solid #dee2e6;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: #d4145a;
+      color: white;
+      border-color: #d4145a;
+    }
+
+    .info-box {
+      background: #fff3cd;
+      border-left: 4px solid #fbb034;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #856404;
+      margin-bottom: 10px;
+    }
+
+    .info-box ul {
+      margin-left: 20px;
+      color: #495057;
+      line-height: 1.8;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #d4145a;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .photo-upload {
+      border: 2px dashed #dee2e6;
+      padding: 40px;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8f9fa;
+    }
+
+    .photo-upload:hover {
+      border-color: #d4145a;
+      background: #fff;
+    }
+
+    .photo-upload.dragover {
+      border-color: #fbb034;
+      background: #fff3cd;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .photo-item {
+      position: relative;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .photo-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .photo-item .photo-info {
+      padding: 10px;
+      font-size: 0.85em;
+      color: #6c757d;
+    }
+
+    .photo-item button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8em;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #d4145a;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #a01045;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 20, 90, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #adb5bd;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #d4145a;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .results {
+      display: none;
+      margin-top: 30px;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .analysis-card {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #d4145a;
+    }
+
+    .analysis-card h4 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+    }
+
+    .analysis-card ul {
+      margin-left: 20px;
+      line-height: 1.8;
+      color: #495057;
+    }
+
+    .recommendation-box {
+      background: #d1ecf1;
+      border-left: 4px solid #0c5460;
+      padding: 20px;
+      border-radius: 4px;
+      margin-top: 20px;
+    }
+
+    .recommendation-box h4 {
+      color: #0c5460;
+      margin-bottom: 10px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #d4145a;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">Damage Documentation Tool</h1>
-    <p class="tool-page-subtitle">Generate comprehensive damage documentation reports</p>
-  </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📸 Damage Documentation Tool</h1>
+      <p>AI-powered photo analysis and documentation guidance</p>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">L3 Analysis Tool</h2>
+    <div class="content">
+      <div class="mode-selector">
+        <button class="mode-btn active" data-mode="backend">
+          🔒 Secure Mode (Recommended)
+        </button>
+        <button class="mode-btn" data-mode="client">
+          🔑 Client Mode (Your API Key)
+        </button>
       </div>
-      <div class="tool-card-body">
-        <p>Generate a complete damage documentation checklist and report to ensure you have all required evidence for your claim.</p>
-        
-        <!-- Input Form -->
-        <form data-tool-form class="tool-form">
-          <div class="tool-form-group">
-            <label for="damagePhotos" class="tool-label">Upload Damage Photos (Optional)</label>
-            <input 
-              type="file" 
-              id="damagePhotos" 
-              name="damagePhotos" 
-              class="tool-input" 
-              accept="image/*,.pdf"
-              multiple
-            />
-            <small>Upload existing damage photos for assessment.</small>
-          </div>
 
-          <div class="tool-form-group">
-            <label for="claimType" class="tool-label">Type of Damage</label>
-            <select id="claimType" name="claimType" class="tool-input" required>
-              <option value="">Select damage type...</option>
-              <option value="fire">Fire Damage</option>
-              <option value="water">Water Damage</option>
-              <option value="wind">Wind/Hurricane Damage</option>
-              <option value="hail">Hail Damage</option>
-              <option value="theft">Theft/Vandalism</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
+      <div class="info-box">
+        <h3>📷 Documentation Best Practices</h3>
+        <ul>
+          <li>Take photos from multiple angles (wide, medium, close-up)</li>
+          <li>Include reference objects for scale (ruler, coin, hand)</li>
+          <li>Capture serial numbers and model numbers of damaged items</li>
+          <li>Document the entire area, not just obvious damage</li>
+          <li>Take photos before any cleanup or temporary repairs</li>
+          <li>Use good lighting and focus</li>
+        </ul>
+      </div>
 
-          <div class="tool-form-group">
-            <label for="lossCategory" class="tool-label">Loss Category</label>
-            <select id="lossCategory" name="lossCategory" class="tool-input" required>
-              <option value="">Select loss category...</option>
-              <option value="structure">Structure</option>
-              <option value="contents">Contents</option>
-              <option value="both">Structure & Contents</option>
-              <option value="ale">Additional Living Expenses</option>
-            </select>
-          </div>
+      <div class="error" id="error"></div>
 
-          <div class="tool-form-group">
-            <label for="witnessStatements" class="tool-label">Witness Statements (Optional, max 500 chars)</label>
-            <textarea 
-              id="witnessStatements" 
-              name="witnessStatements" 
-              class="tool-textarea" 
-              rows="3" 
-              maxlength="500"
-              placeholder="Enter any witness statements or observations..."
-            ></textarea>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="context" class="tool-label">Incident Description (max 500 chars)</label>
-            <textarea 
-              id="context" 
-              name="context" 
-              class="tool-textarea" 
-              rows="4" 
-              maxlength="500"
-              placeholder="Describe what happened and the extent of damage..."
-              required
-            ></textarea>
-          </div>
-
-          <div class="tool-form-actions">
-            <button type="submit" data-analyze-btn class="tool-btn tool-btn-primary">
-              Generate Documentation Checklist
-            </button>
-          </div>
-        </form>
-
-        <!-- Output Area -->
-        <div data-tool-output id="output" class="tool-output" style="display: none;">
-          <h3 class="tool-section-title">Documentation Checklist</h3>
-          <div class="tool-output-content"></div>
+      <form id="docForm">
+        <div class="form-section">
+          <h3>Claim Information</h3>
           
-          <div class="tool-form-actions" style="margin-top: 1.5rem;">
-            <button data-export-pdf class="tool-btn tool-btn-secondary">
-              Export as PDF
-            </button>
-            <button data-copy-clipboard class="tool-btn tool-btn-secondary">
-              Copy to Clipboard
-            </button>
+          <div class="form-group">
+            <label for="claimNumber">Claim Number</label>
+            <input type="text" id="claimNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="damageArea">Damage Area / Room *</label>
+            <input type="text" id="damageArea" required placeholder="Master Bedroom, Roof, Kitchen, etc.">
+          </div>
+
+          <div class="form-group">
+            <label for="damageType">Type of Damage *</label>
+            <select id="damageType" required>
+              <option value="">Select damage type...</option>
+              <option value="Roof Damage">Roof Damage</option>
+              <option value="Water Damage">Water Damage</option>
+              <option value="Fire Damage">Fire Damage</option>
+              <option value="Structural Damage">Structural Damage</option>
+              <option value="Contents Damage">Contents Damage</option>
+              <option value="Mold">Mold</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="damageDescription">Damage Description *</label>
+            <textarea id="damageDescription" required placeholder="Describe the damage in detail..."></textarea>
           </div>
         </div>
 
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>This tool analyzes your damage type and creates a comprehensive documentation checklist including required photos, documents, witness statements, and other evidence needed to support your claim.</p>
+        <div class="form-section">
+          <h3>Upload Photos</h3>
+          
+          <div class="form-group">
+            <label>Damage Photos *</label>
+            <div class="photo-upload" id="photoUpload">
+              <p style="font-size: 1.2em; margin-bottom: 10px;">📸 Click or drag photos here</p>
+              <p style="font-size: 0.9em; color: #6c757d;">
+                Upload multiple photos showing damage from different angles
+              </p>
+            </div>
+            <input type="file" id="photoInput" multiple accept="image/*" style="display: none;">
+            <div class="photo-grid" id="photoGrid"></div>
+          </div>
+        </div>
+
+        <div class="form-group" id="apiKeyGroup" style="display: none;">
+          <label for="apiKey">OpenAI API Key *</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="color: #6c757d; display: block; margin-top: 5px;">
+            Your key is stored locally and never sent to our servers
+          </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          🔍 Analyze Documentation
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing your damage documentation...</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="analysis-card">
+          <h4>📊 Documentation Quality Assessment</h4>
+          <div id="qualityAssessment"></div>
+        </div>
+
+        <div class="analysis-card">
+          <h4>✅ What You Captured Well</h4>
+          <div id="strengths"></div>
+        </div>
+
+        <div class="analysis-card">
+          <h4>⚠️ Missing or Weak Documentation</h4>
+          <div id="gaps"></div>
+        </div>
+
+        <div class="recommendation-box">
+          <h4>💡 Recommendations</h4>
+          <div id="recommendations"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Resource Center
-      </button>
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
     </div>
-
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../resource-center.html';
-    }
+    let currentMode = 'backend';
+    let uploadedPhotos = [];
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: damage-documentation-tool');
-    });
-  </script>
-
-  <script type="module">
-    import { AIToolController } from '../assets/js/controllers/index.js';
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      await AIToolController.initTool({
-        toolId: 'damage-documentation-tool',
-        toolName: 'Damage Documentation Tool',
-        backendFunction: '/.netlify/functions/ai-policy-review',
-        outputFormat: 'structured',
-        customData: { analysis_mode: 'damage-documentation' }
+    // Mode switching
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+        
+        const apiKeyGroup = document.getElementById('apiKeyGroup');
+        apiKeyGroup.style.display = currentMode === 'client' ? 'block' : 'none';
+        
+        if (currentMode === 'client') {
+          const savedKey = localStorage.getItem('openai_api_key');
+          if (savedKey) {
+            document.getElementById('apiKey').value = savedKey;
+          }
+        }
       });
     });
-  </script>
 
+    // Photo upload handling
+    const photoUpload = document.getElementById('photoUpload');
+    const photoInput = document.getElementById('photoInput');
+    const photoGrid = document.getElementById('photoGrid');
+
+    photoUpload.addEventListener('click', () => photoInput.click());
+
+    photoUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      photoUpload.classList.add('dragover');
+    });
+
+    photoUpload.addEventListener('dragleave', () => {
+      photoUpload.classList.remove('dragover');
+    });
+
+    photoUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      photoUpload.classList.remove('dragover');
+      handlePhotos(e.dataTransfer.files);
+    });
+
+    photoInput.addEventListener('change', (e) => {
+      handlePhotos(e.target.files);
+    });
+
+    function handlePhotos(files) {
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+          uploadedPhotos.push(file);
+          addPhotoToGrid(file);
+        }
+      });
+    }
+
+    function addPhotoToGrid(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `
+          <img src="${e.target.result}" alt="${file.name}">
+          <div class="photo-info">${file.name}</div>
+          <button type="button" onclick="removePhoto('${file.name}')">×</button>
+        `;
+        photoGrid.appendChild(photoItem);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removePhoto(filename) {
+      uploadedPhotos = uploadedPhotos.filter(f => f.name !== filename);
+      renderPhotoGrid();
+    }
+
+    function renderPhotoGrid() {
+      photoGrid.innerHTML = '';
+      uploadedPhotos.forEach(file => addPhotoToGrid(file));
+    }
+
+    // Form submission
+    document.getElementById('docForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (uploadedPhotos.length === 0) {
+        alert('Please upload at least one photo');
+        return;
+      }
+
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const damageArea = document.getElementById('damageArea').value.trim();
+      const damageType = document.getElementById('damageType').value;
+      const damageDescription = document.getElementById('damageDescription').value.trim();
+
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('submitBtn').disabled = true;
+
+      try {
+        let analysis;
+        
+        if (currentMode === 'backend') {
+          analysis = await analyzeWithBackend(claimNumber, damageArea, damageType, damageDescription, uploadedPhotos);
+        } else {
+          analysis = await analyzeWithClient(claimNumber, damageArea, damageType, damageDescription, uploadedPhotos);
+        }
+
+        displayResults(analysis);
+        saveToLocalStorage(claimNumber, damageArea, analysis);
+        logToJournal(claimNumber, damageArea, uploadedPhotos.length);
+
+      } catch (error) {
+        console.error('Analysis error:', error);
+        document.getElementById('error').textContent = error.message || 'Analysis failed. Please try again.';
+        document.getElementById('error').classList.add('active');
+      } finally {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    });
+
+    async function analyzeWithBackend(claimNumber, damageArea, damageType, damageDescription, photos) {
+      const token = localStorage.getItem('supabase_token');
+      if (!token) {
+        throw new Error('Authentication required. Please log in first.');
+      }
+
+      const photosData = await Promise.all(
+        photos.map(async file => ({
+          name: file.name,
+          type: file.type,
+          data: await fileToBase64(file)
+        }))
+      );
+
+      const response = await fetch('/.netlify/functions/analyze-damage-documentation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          claim_number: claimNumber,
+          damage_area: damageArea,
+          damage_type: damageType,
+          damage_description: damageDescription,
+          photos: photosData
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'Backend analysis failed');
+      }
+
+      return await response.json();
+    }
+
+    async function analyzeWithClient(claimNumber, damageArea, damageType, damageDescription, photos) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) {
+        throw new Error('OpenAI API key required for client mode');
+      }
+
+      localStorage.setItem('openai_api_key', apiKey);
+
+      const prompt = `Analyze this damage documentation for an insurance claim:
+
+DAMAGE INFO:
+- Area/Room: ${damageArea}
+- Type: ${damageType}
+- Description: ${damageDescription}
+- Number of Photos: ${photos.length}
+
+Evaluate the documentation quality and provide guidance in JSON format:
+{
+  "overall_quality_score": number (0-100),
+  "quality_assessment": "string - overall assessment",
+  "strengths": [
+    "string - what was documented well"
+  ],
+  "gaps": [
+    "string - what is missing or weak"
+  ],
+  "recommendations": [
+    "string - specific actions to improve documentation"
+  ],
+  "additional_photos_needed": [
+    "string - specific photos to take"
+  ],
+  "documentation_checklist": [
+    {
+      "item": "string",
+      "status": "complete|incomplete|partial",
+      "importance": "critical|important|helpful"
+    }
+  ]
+}`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert insurance claims adjuster and documentation specialist. Evaluate damage documentation quality and provide actionable guidance to strengthen the claim. Return only valid JSON with no additional text.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API request failed');
+      }
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
+    }
+
+    function displayResults(analysis) {
+      document.getElementById('qualityAssessment').innerHTML = `
+        <p><strong>Quality Score:</strong> ${analysis.overall_quality_score}/100</p>
+        <p>${analysis.quality_assessment}</p>
+      `;
+
+      document.getElementById('strengths').innerHTML = 
+        '<ul>' + analysis.strengths.map(s => `<li>${s}</li>`).join('') + '</ul>';
+
+      document.getElementById('gaps').innerHTML = 
+        '<ul>' + analysis.gaps.map(g => `<li>${g}</li>`).join('') + '</ul>';
+
+      const recsHtml = `
+        <p><strong>Immediate Actions:</strong></p>
+        <ul>${analysis.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+        ${analysis.additional_photos_needed?.length > 0 ? `
+          <p style="margin-top: 15px;"><strong>Additional Photos Needed:</strong></p>
+          <ul>${analysis.additional_photos_needed.map(p => `<li>${p}</li>`).join('')}</ul>
+        ` : ''}
+      `;
+      document.getElementById('recommendations').innerHTML = recsHtml;
+
+      document.getElementById('results').classList.add('active');
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function saveToLocalStorage(claimNumber, damageArea, analysis) {
+      const key = `damage_doc_${claimNumber}_${damageArea.replace(/\s+/g, '_')}`;
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        analysis,
+        photo_count: uploadedPhotos.length
+      }));
+    }
+
+    function logToJournal(claimNumber, damageArea, photoCount) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'damage_documentation',
+        description: `Damage documentation analyzed for ${damageArea} — ${photoCount} photos uploaded`,
+        amount: null,
+        related_step: 'Step 4',
+        reference_id: claimNumber || damageArea
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load saved data
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        document.getElementById('claimNumber').value = claimNumber;
+      }
+    });
+  </script>
 </body>
 </html>
-
-

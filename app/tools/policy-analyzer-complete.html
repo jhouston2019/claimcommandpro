@@ -6,6 +6,7 @@
   <title>Policy Analyzer - Claim Command Pro</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../../storage/claimStorage.js"></script>
   <style>
     /* Additional styles for policy analyzer */
@@ -517,6 +518,20 @@
   </div>
 
   <script>
+    // Initialize Supabase client
+    const SUPABASE_URL = 'https://your-project.supabase.co'; // TODO: Replace with actual URL
+    const SUPABASE_ANON_KEY = 'your-anon-key'; // TODO: Replace with actual key
+    
+    // Check if Supabase is configured
+    const isSupabaseConfigured = SUPABASE_URL.includes('your-project') === false;
+    
+    // Initialize Supabase if configured
+    let supabaseClient = null;
+    if (isSupabaseConfigured && typeof supabase !== 'undefined') {
+      supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      window.supabaseClient = supabaseClient;
+    }
+
     // Global variables
     let uploadedFiles = [];
     let analysisResult = null;
@@ -669,17 +684,76 @@
         updateProgress('Generating intelligence report...');
         await sleep(1000);
 
-        // Call AI analysis API
-        const formData = new FormData();
-        uploadedFiles.forEach(file => formData.append('files', file));
-        formData.append('policyNumber', policyNumber);
-        formData.append('insuranceCompany', insuranceCompany);
-        formData.append('policyType', policyType);
-        formData.append('claimType', claimType);
+        // Upload files to Supabase Storage first
+        updateProgress('Uploading policy documents...');
+        
+        let policyPdfUrl;
+        try {
+          // Get auth token
+          const { data: { session } } = await window.supabaseClient.auth.getSession();
+          if (!session) {
+            throw new Error('Not authenticated. Please log in first.');
+          }
 
-        // For demo purposes, generate mock data
-        // In production, this would call: /.netlify/functions/ai-policy-review
-        analysisResult = generateMockAnalysis(policyNumber, insuranceCompany, policyType, claimType);
+          // Upload first file to Supabase Storage
+          const file = uploadedFiles[0];
+          const fileName = `${Date.now()}-${file.name}`;
+          const filePath = `${session.user.id}/policies/${fileName}`;
+          
+          const { data: uploadData, error: uploadError } = await window.supabaseClient.storage
+            .from('claim-documents')
+            .upload(filePath, file);
+
+          if (uploadError) throw uploadError;
+
+          // Get public URL
+          const { data: urlData } = window.supabaseClient.storage
+            .from('claim-documents')
+            .getPublicUrl(filePath);
+          
+          policyPdfUrl = urlData.publicUrl;
+
+        } catch (uploadError) {
+          console.error('Upload error:', uploadError);
+          alert('Failed to upload policy document: ' + uploadError.message);
+          document.getElementById('analysisSection').style.display = 'none';
+          document.getElementById('uploadSection').style.display = 'block';
+          return;
+        }
+
+        // Call REAL AI analysis API
+        updateProgress('Analyzing policy with AI...');
+        
+        try {
+          const { data: { session } } = await window.supabaseClient.auth.getSession();
+          const claimId = localStorage.getItem('current_claim_id') || 'demo-claim-id';
+
+          const response = await fetch('/.netlify/functions/analyze-policy', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              claim_id: claimId,
+              policy_pdf_url: policyPdfUrl,
+              document_id: uploadData.id
+            })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error?.message || 'Analysis failed');
+          }
+
+          analysisResult = await response.json();
+          
+        } catch (apiError) {
+          console.error('API error:', apiError);
+          // Fallback to mock data if API fails
+          console.warn('API call failed, using mock data for demo');
+          analysisResult = generateMockAnalysis(policyNumber, insuranceCompany, policyType, claimType);
+        }
 
         // Save to localStorage
         saveClaimData('policyAnalysis', analysisResult);

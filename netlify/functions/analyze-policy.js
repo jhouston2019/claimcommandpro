@@ -95,11 +95,11 @@ exports.handler = async (event) => {
       const prompt = buildPolicyAnalysisPrompt(policyText);
       
       const completion = await openai.chat.completions.create({
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4o',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance policy analyst. Return only valid JSON with no additional text.'
+            content: 'You are an expert insurance policy analyst with expertise in policy interpretation, coverage law, and claim valuation. Before analyzing, identify: 1) Coverage type (RCV vs ACV), 2) All applicable limits and sublimits, 3) Key exclusions and limitations, 4) Special provisions or endorsements, 5) Deductible structure. Return only valid JSON with no additional text.'
           },
           {
             role: 'user',
@@ -129,7 +129,7 @@ exports.handler = async (event) => {
         output_type: 'policy_analysis',
         output_json: analysisResult,
         input_document_ids: body.document_id ? [body.document_id] : [],
-        ai_model: 'gpt-4-turbo-preview',
+        ai_model: 'gpt-4o',
         processing_time_ms: Date.now() - startTime
       })
       .select()

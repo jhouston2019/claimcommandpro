@@ -3,82 +3,578 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contents Inventory Tool - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
+  <title>Contents Inventory | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0575e6 0%, #021b79 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .info-box {
+      background: #cfe2ff;
+      border-left: 4px solid #0575e6;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #084298;
+      margin-bottom: 10px;
+    }
+
+    .info-box p {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .summary-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border: 2px solid #dee2e6;
+    }
+
+    .summary-card .number {
+      font-size: 2em;
+      font-weight: bold;
+      color: #0575e6;
+      margin-bottom: 5px;
+    }
+
+    .summary-card .label {
+      color: #6c757d;
+      font-size: 0.9em;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #0575e6;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 80px;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #0575e6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0461c4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(5, 117, 230, 0.3);
+    }
+
+    .btn-secondary {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #218838;
+    }
+
+    .btn-small {
+      padding: 8px 12px;
+      font-size: 0.9em;
+    }
+
+    .inventory-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    .inventory-table th {
+      background: #0575e6;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .inventory-table td {
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .inventory-table tr:hover {
+      background: #f8f9fa;
+    }
+
+    .inventory-table .actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .inventory-table .actions button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+
+    .inventory-table .actions .edit-btn {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .inventory-table .actions .delete-btn {
+      background: #dc3545;
+      color: white;
+    }
+
+    .export-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 2px solid #dee2e6;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #0575e6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+  </style>
 </head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">Contents Inventory Tool</h1>
-    <p class="tool-page-subtitle">Create room-by-room contents inventory</p>
-  </div>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📦 Contents Inventory</h1>
+      <p>Document damaged personal property with values and photos</p>
+    </div>
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">Step 7 Tool</h2>
+    <div class="content">
+      <div class="info-box">
+        <h3>💡 Documentation Tips</h3>
+        <p>
+          List every damaged item with purchase date, original cost, and replacement cost. Include receipts, 
+          photos, serial numbers, and model numbers when possible. Most policies have limits on certain items 
+          (jewelry, electronics, art) — check your policy for sublimits.
+        </p>
       </div>
-      <div class="tool-card-body">
-        <p>This tool is part of Step 7 of the Step-by-Step Claim Guide.</p>
-        
-        
 
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>Create room-by-room contents inventory</p>
+      <div class="summary-bar">
+        <div class="summary-card">
+          <div class="number" id="totalItems">0</div>
+          <div class="label">Total Items</div>
+        </div>
+        <div class="summary-card">
+          <div class="number" id="totalValue">$0</div>
+          <div class="label">Total Value</div>
+        </div>
+        <div class="summary-card">
+          <div class="number" id="totalReplacement">$0</div>
+          <div class="label">Replacement Cost</div>
         </div>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Claim Guide
-      </button>
-      <button class="tool-btn tool-btn-primary" onclick="markComplete()">
-        Mark as Complete →
-      </button>
-    </div>
+      <div class="error" id="error"></div>
 
+      <div class="form-section">
+        <h3>Add Item to Inventory</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="itemName">Item Description *</label>
+            <input type="text" id="itemName" placeholder="Samsung 65-inch TV">
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category">
+              <option value="Electronics">Electronics</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Appliances">Appliances</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Jewelry">Jewelry</option>
+              <option value="Tools">Tools</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="originalCost">Original Cost *</label>
+            <input type="number" id="originalCost" placeholder="1200">
+          </div>
+
+          <div class="form-group">
+            <label for="replacementCost">Replacement *</label>
+            <input type="number" id="replacementCost" placeholder="1500">
+          </div>
+
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-primary btn-small" onclick="addItem()">+ Add</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="itemNotes">Notes (model, serial, purchase date, condition)</label>
+          <input type="text" id="itemNotes" placeholder="Model: UN65TU8000, Purchased 2022, Excellent condition">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Inventory List</h3>
+        <table class="inventory-table" id="inventoryTable">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Category</th>
+              <th>Original Cost</th>
+              <th>Replacement</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody">
+            <tr>
+              <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
+                No items added yet. Add your first item above.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="export-actions">
+        <button class="btn btn-secondary" onclick="exportToExcel()">
+          📊 Export to Excel
+        </button>
+        <button class="btn btn-primary" onclick="saveInventory()">
+          💾 Save Inventory
+        </button>
+      </div>
+
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+    </div>
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../../step-by-step-claim-guide.html?step=7';
+    let inventory = [];
+
+    function addItem() {
+      const itemName = document.getElementById('itemName').value.trim();
+      const category = document.getElementById('category').value;
+      const originalCost = parseFloat(document.getElementById('originalCost').value);
+      const replacementCost = parseFloat(document.getElementById('replacementCost').value);
+      const itemNotes = document.getElementById('itemNotes').value.trim();
+
+      if (!itemName || !originalCost || !replacementCost) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const item = {
+        id: Date.now(),
+        name: itemName,
+        category,
+        original_cost: originalCost,
+        replacement_cost: replacementCost,
+        notes: itemNotes,
+        added_at: new Date().toISOString()
+      };
+
+      inventory.push(item);
+      renderInventory();
+      updateSummary();
+
+      document.getElementById('itemName').value = '';
+      document.getElementById('originalCost').value = '';
+      document.getElementById('replacementCost').value = '';
+      document.getElementById('itemNotes').value = '';
     }
 
-    function markComplete() {
-      saveClaimData('tool_contents-inventory_complete', true);
-      alert('✓ Tool marked as complete!\n\nReturning to Claim Guide...');
-      goBack();
+    function removeItem(id) {
+      inventory = inventory.filter(item => item.id !== id);
+      renderInventory();
+      updateSummary();
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: contents-inventory');
+    function renderInventory() {
+      const tbody = document.getElementById('inventoryBody');
+      
+      if (inventory.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; color: #6c757d; padding: 40px;">
+              No items added yet. Add your first item above.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = inventory.map(item => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.category}</td>
+          <td>$${item.original_cost.toLocaleString()}</td>
+          <td>$${item.replacement_cost.toLocaleString()}</td>
+          <td>${item.notes || '-'}</td>
+          <td>
+            <div class="actions">
+              <button class="delete-btn" onclick="removeItem(${item.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateSummary() {
+      document.getElementById('totalItems').textContent = inventory.length;
+      
+      const totalOriginal = inventory.reduce((sum, item) => sum + item.original_cost, 0);
+      const totalReplacement = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
+      
+      document.getElementById('totalValue').textContent = `$${totalOriginal.toLocaleString()}`;
+      document.getElementById('totalReplacement').textContent = `$${totalReplacement.toLocaleString()}`;
+    }
+
+    async function exportToExcel() {
+      if (inventory.length === 0) {
+        alert('Add items to your inventory before exporting');
+        return;
+      }
+
+      document.getElementById('error').classList.remove('active');
+
+      try {
+        const token = localStorage.getItem('supabase_token');
+        
+        const columns = [
+          { header: 'Item Description', key: 'name', width: 30 },
+          { header: 'Category', key: 'category', width: 15 },
+          { header: 'Original Cost', key: 'original_cost', width: 15, format: 'currency' },
+          { header: 'Replacement Cost', key: 'replacement_cost', width: 18, format: 'currency' },
+          { header: 'Notes', key: 'notes', width: 35 }
+        ];
+
+        const totalOriginal = inventory.reduce((sum, item) => sum + item.original_cost, 0);
+        const totalReplacement = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
+
+        const exportData = [
+          ...inventory,
+          {
+            name: 'TOTAL',
+            category: '',
+            original_cost: totalOriginal,
+            replacement_cost: totalReplacement,
+            notes: ''
+          }
+        ];
+
+        if (token) {
+          const response = await fetch('/.netlify/functions/export-excel', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              data: exportData,
+              columns: columns,
+              filename: `contents-inventory-${new Date().toISOString().split('T')[0]}.xlsx`,
+              sheetName: 'Contents Inventory',
+              title: 'Insurance Claim - Contents Inventory'
+            })
+          });
+
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `contents-inventory-${new Date().toISOString().split('T')[0]}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            logToJournal('Excel export', inventory.length, totalReplacement);
+            return;
+          }
+        }
+
+        alert('Excel export requires authentication. Please log in or save as CSV instead.');
+
+      } catch (error) {
+        console.error('Export error:', error);
+        document.getElementById('error').textContent = 'Export failed: ' + error.message;
+        document.getElementById('error').classList.add('active');
+      }
+    }
+
+    function saveInventory() {
+      if (inventory.length === 0) {
+        alert('Add items to your inventory before saving');
+        return;
+      }
+
+      const claimNumber = prompt('Enter claim number (optional):');
+      const key = claimNumber ? `inventory_${claimNumber}` : 'inventory_latest';
+      
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        inventory,
+        total_items: inventory.length,
+        total_value: inventory.reduce((sum, item) => sum + item.replacement_cost, 0)
+      }));
+
+      alert('Inventory saved successfully!');
+      
+      const totalValue = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
+      logToJournal(claimNumber || 'local', inventory.length, totalValue);
+    }
+
+    function logToJournal(reference, itemCount, totalValue) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'contents_inventory',
+        description: `Contents inventory created — ${itemCount} items documented, $${totalValue.toLocaleString()} total value`,
+        amount: totalValue,
+        related_step: 'Step 7',
+        reference_id: reference
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load saved inventory
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        const saved = localStorage.getItem(`inventory_${claimNumber}`);
+        if (saved) {
+          const data = JSON.parse(saved);
+          inventory = data.inventory || [];
+          renderInventory();
+          updateSummary();
+        }
+      }
     });
   </script>
-
-
-<script type="module">
-  import { WorkflowViewController } from '/app/assets/js/controllers/index.js';
-
-  document.addEventListener('DOMContentLoaded', () => {
-    WorkflowViewController.initTool({
-      "toolId": "contents-inventory",
-      "toolName": "Contents Inventory",
-      "supabaseTable": "evidence_items",
-      "viewType": "table"
-});
-  });
-</script>
-
 </body>
 </html>

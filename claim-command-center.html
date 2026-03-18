@@ -205,68 +205,513 @@
 
     /* Top Nav */
     .top-nav {
-      height: 52px;
       background: var(--navy);
       border-bottom: 1px solid var(--navy-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
+      padding: 20px 24px;
       flex-shrink: 0;
+      text-align: center;
     }
 
-    .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    .nav-header {
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .nav-brand {
       font-family: 'DM Serif Display', serif;
-      font-size: 18px;
+      font-size: 28px;
       color: white;
+      margin-bottom: 6px;
     }
 
     .nav-brand .pro {
       color: var(--teal);
     }
 
+    .nav-tagline {
+      font-size: 14px;
+      color: var(--gray-400);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
     .nav-divider {
       width: 1px;
-      height: 20px;
+      height: 16px;
       background: var(--navy-border);
     }
 
     .nav-claim-num {
       color: var(--gray-400);
+      font-size: 13px;
+    }
+
+    /* Claim Summary Panel */
+    .claim-summary-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 360px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      z-index: 1000;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .claim-summary-panel.minimized {
+      transform: translateX(calc(100% + 20px));
+    }
+
+    .summary-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 999;
+      transition: all 0.3s ease;
+    }
+
+    .summary-toggle:hover {
+      background: var(--teal-dark);
+      transform: scale(1.1);
+    }
+
+    .claim-summary-panel.minimized ~ .summary-toggle {
+      display: flex;
+    }
+
+    @media (max-width: 1400px) {
+      .claim-summary-panel {
+        width: 320px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .claim-summary-panel {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        max-height: 50vh;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .claim-summary-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+      }
+    }
+
+    .summary-header {
+      background: var(--navy);
+      color: white;
+      padding: 20px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .summary-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .summary-subtitle {
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .summary-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .summary-section:last-child {
+      border-bottom: none;
+    }
+
+    .summary-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gray-600);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
       font-size: 14px;
     }
 
-    .nav-pills {
-      display: flex;
-      gap: 8px;
+    .summary-label {
+      color: var(--gray-600);
     }
 
-    .nav-pill {
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
+    .summary-value {
+      color: var(--gray-900);
+      font-weight: 600;
+    }
+
+    .summary-gap {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border: 2px solid var(--red);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .summary-gap-label {
+      font-size: 12px;
+      color: var(--red);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .summary-gap-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 32px;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .summary-synopsis {
+      background: var(--gray-50);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-900);
+    }
+
+    .summary-progress {
+      list-style: none;
+    }
+
+    .summary-progress-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .summary-progress-item:last-child {
+      border-bottom: none;
+    }
+
+    .progress-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .progress-icon.completed {
+      background: var(--emerald);
+      color: white;
+    }
+
+    .progress-icon.in-progress {
+      background: var(--teal);
+      color: white;
+    }
+
+    .progress-icon.locked {
+      background: var(--gray-200);
       color: var(--gray-400);
-      background: transparent;
+    }
+
+    .progress-text {
+      flex: 1;
+      font-size: 13px;
+      color: var(--gray-900);
+    }
+
+    .progress-status {
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+
+    /* Claim Journal Panel */
+    .claim-journal-panel {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 14px;
+      margin: 20px 40px;
+      overflow: hidden;
+    }
+
+    .journal-header {
+      background: var(--gray-50);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .journal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .journal-entries {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .journal-entry {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      gap: 16px;
+    }
+
+    .journal-entry:last-child {
+      border-bottom: none;
+    }
+
+    .journal-timestamp {
+      font-size: 11px;
+      color: var(--gray-400);
+      min-width: 80px;
+      flex-shrink: 0;
+    }
+
+    .journal-content {
+      flex: 1;
+    }
+
+    .journal-description {
+      font-size: 14px;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .journal-meta {
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .journal-amount {
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    .journal-empty {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--gray-400);
+      font-size: 14px;
+    }
+
+    /* Next Step Banner */
+    .next-step-banner {
+      background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+      border: 2px solid var(--teal);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .next-step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .next-step-content {
+      flex: 1;
+    }
+
+    .next-step-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--teal);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .next-step-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .next-step-desc {
+      font-size: 14px;
+      color: var(--gray-600);
+    }
+
+    .next-step-button {
+      padding: 12px 24px;
+      background: var(--teal);
+      color: white;
       border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .next-step-button:hover {
+      background: var(--teal-dark);
+    }
+
+    /* Action Path Cards */
+    .action-paths {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 24px;
+    }
+
+    .action-path-card {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .action-path-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 4px 12px rgba(20,184,166,0.15);
+    }
+
+    .action-path-card.primary {
+      border-color: var(--teal);
+      background: var(--teal-dim);
+    }
+
+    .action-path-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .action-path-card.primary .action-path-badge {
+      background: var(--teal);
+      color: white;
+    }
+
+    .action-path-card.secondary .action-path-badge {
+      background: var(--gray-200);
+      color: var(--gray-600);
+    }
+
+    .action-path-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+
+    .action-path-desc {
+      font-size: 14px;
+      color: var(--gray-600);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .action-path-time {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 16px;
+    }
+
+    .action-path-button {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
 
-    .nav-pill:hover {
+    .action-path-card.primary .action-path-button {
+      background: var(--teal);
       color: white;
-      background: rgba(255,255,255,0.05);
     }
 
-    .nav-pill.active {
-      background: var(--teal-dim);
-      color: var(--teal);
+    .action-path-card.primary .action-path-button:hover {
+      background: var(--teal-dark);
+    }
+
+    .action-path-card.secondary .action-path-button {
+      background: white;
+      color: var(--gray-900);
+      border: 2px solid var(--gray-300);
+    }
+
+    .action-path-card.secondary .action-path-button:hover {
+      border-color: var(--gray-400);
+      background: var(--gray-50);
+    }
+
+    /* Guide Modal */
+    .guide-modal {
+      max-width: 900px;
+    }
+
+    .guide-modal .modal-body {
+      max-height: 70vh;
+      overflow-y: auto;
     }
 
     /* Phase Bar */
@@ -1056,6 +1501,78 @@
 </head>
 <body>
 
+  <!-- Summary Toggle Button -->
+  <button class="summary-toggle" id="summaryToggle" onclick="toggleSummary()">📊</button>
+
+  <!-- Claim Summary Panel -->
+  <div class="claim-summary-panel" id="claimSummary">
+    <div class="summary-header">
+      <div class="summary-title">Your Claim Snapshot</div>
+      <div class="summary-subtitle">Real-time tracking of your claim progress</div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-section-title">Policy Summary</div>
+      <div class="summary-row">
+        <span class="summary-label">Dwelling Coverage</span>
+        <span class="summary-value" id="dwellingCoverage">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Deductible</span>
+        <span class="summary-value" id="deductible">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Settlement Type</span>
+        <span class="summary-value" id="settlementType">—</span>
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-section-title">Estimate Comparison</div>
+      <div class="summary-row">
+        <span class="summary-label">Insurance Estimate</span>
+        <span class="summary-value" id="insuranceEstimate">$18,200</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Your Estimated Loss</span>
+        <span class="summary-value" id="yourEstimate">$36,750</span>
+      </div>
+    </div>
+
+    <div class="summary-gap">
+      <div class="summary-gap-label">Claim Gap Identified</div>
+      <div class="summary-gap-amount" id="claimGap">$18,550</div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-section-title">Action Summary</div>
+      <div class="summary-synopsis" id="actionSummary">
+        You're just getting started. Complete Step 1 to understand the claim process, then upload your policy to see your coverage details here.
+      </div>
+    </div>
+
+    <div class="summary-section">
+      <div class="summary-section-title">Progress Tracker</div>
+      <ul class="summary-progress" id="progressTracker">
+        <li class="summary-progress-item">
+          <div class="progress-icon in-progress">1</div>
+          <div class="progress-text">Understand the Process</div>
+          <div class="progress-status">In Progress</div>
+        </li>
+        <li class="summary-progress-item">
+          <div class="progress-icon locked">2</div>
+          <div class="progress-text">Review Your Policy</div>
+          <div class="progress-status">Locked</div>
+        </li>
+        <li class="summary-progress-item">
+          <div class="progress-icon locked">3</div>
+          <div class="progress-text">Report the Loss</div>
+          <div class="progress-status">Locked</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Welcome Modal -->
   <div class="modal-overlay" id="welcomeModal">
     <div class="modal">
@@ -1113,18 +1630,14 @@
 
   <!-- Top Nav -->
   <nav class="top-nav">
-    <div class="nav-left">
-      <div class="nav-brand">Claim Command <span class="pro">Pro</span></div>
-      <div class="nav-divider"></div>
-      <div class="nav-claim-num">CLM-2024-0847</div>
-    </div>
-    <div class="nav-pills">
-      <button class="nav-pill active">Claim Summary</button>
-      <button class="nav-pill">My Documents</button>
-      <button class="nav-pill">Claim Journal</button>
-      <button class="nav-pill">Financials</button>
-      <button class="nav-pill">Deadlines</button>
-      <button class="nav-pill">Messages</button>
+    <div class="nav-header">
+      <div class="nav-brand">Claim Command Center</div>
+      <div class="nav-tagline">Follow the exact steps. Document everything. Maximize your claim.</div>
+      <div class="nav-meta">
+        <div class="nav-claim-num">Claim #CLM-2024-0847</div>
+        <div class="nav-divider"></div>
+        <div class="nav-claim-num">Day 85 • Active</div>
+      </div>
     </div>
   </nav>
 
@@ -1186,7 +1699,7 @@
         <div class="phase-steps">
           <div class="step-item active" onclick="goToStep(1)">
             <div class="step-number">01</div>
-            <div class="step-title">Review the Claim Process Guide</div>
+            <div class="step-title">Start Here: Understand Your Claim</div>
           </div>
           <div class="step-item" onclick="goToStep(2)">
             <div class="step-number">02</div>
@@ -1431,6 +1944,28 @@
         <p class="content-desc">Start here. Understand your rights and the claim process before you take any action.</p>
       </div>
 
+      <!-- Claim Activity Log -->
+      <div class="claim-journal-panel">
+        <div class="journal-header">
+          <div class="journal-title">📋 Claim Activity Log</div>
+          <div style="font-size: 12px; color: var(--gray-600); margin-top: 4px;">Every action is tracked automatically</div>
+        </div>
+        <div class="journal-entries" id="journalEntries">
+          <div class="journal-empty">No activity yet. Your actions will be tracked here automatically.</div>
+        </div>
+      </div>
+
+      <!-- Next Step Banner (Hidden initially) -->
+      <div class="next-step-banner hidden" id="nextStepBanner">
+        <div class="next-step-icon">✓</div>
+        <div class="next-step-content">
+          <div class="next-step-label">Completed</div>
+          <div class="next-step-title" id="nextStepTitle">Step 1 Complete</div>
+          <div class="next-step-desc" id="nextStepDesc">Great work! Let's move to the next step.</div>
+        </div>
+        <button class="next-step-button" id="nextStepButton" onclick="continueToNextStep()">Continue to Step 2 →</button>
+      </div>
+
       <!-- Step Cards -->
       <div class="step-cards">
         
@@ -1439,39 +1974,512 @@
           <div class="step-card-header" onclick="toggleStep('step-1')">
             <div class="card-number">01</div>
             <div class="card-text">
-              <div class="card-title">Review the Claim Process Guide</div>
-              <div class="card-subtitle">Read this first — it explains the entire claim process before you take any action</div>
+              <div class="card-title">Start Here: Understand Your Claim Before You Act</div>
+              <div class="card-subtitle">Most policyholders make mistakes in the first 48 hours that cost them thousands</div>
             </div>
             <div class="card-status in-progress">In Progress</div>
           </div>
           <div class="step-body">
+            <div class="modal-alert" style="margin-bottom: 24px;">
+              <div class="alert-icon">!</div>
+              <div class="alert-text">
+                <strong>Most policyholders make mistakes in the first 48 hours that cost them thousands.</strong><br>
+                This step shows you exactly how the claim process works — and what you must do next.
+              </div>
+            </div>
+
+            <div class="section-label">Choose Your Path</div>
+            <p class="section-text" style="margin-bottom: 20px;">You have two options to get started. We recommend viewing the guide first, but you can skip ahead if you're ready to begin.</p>
+
+            <div class="action-paths">
+              <div class="action-path-card primary" onclick="openGuideModal()">
+                <div class="action-path-badge">Recommended</div>
+                <div class="action-path-title">View the Claim Process Guide</div>
+                <div class="action-path-desc">Understand how insurance claims work and what to expect at each phase</div>
+                <div class="action-path-time">⏱ 5 minute overview</div>
+                <button class="action-path-button">Open Guide →</button>
+              </div>
+
+              <div class="action-path-card secondary" onclick="skipToSetup()">
+                <div class="action-path-badge">Skip Ahead</div>
+                <div class="action-path-title">Start Your Claim Setup</div>
+                <div class="action-path-desc">Jump directly to uploading your policy and setting up your claim</div>
+                <div class="action-path-time">⏱ Start immediately</div>
+                <button class="action-path-button">Skip to Step 2 →</button>
+              </div>
+            </div>
+
+            <div class="section-label" style="margin-top: 32px;">Why This Matters</div>
             <div class="section-label">Why This Matters</div>
             <p class="section-text">Most policyholders make costly mistakes in the first 48 hours because they don't know how the process works. An insurance claim is not automatic reimbursement — it is a formal financial review governed by your policy contract. Understanding what to expect before you act protects your rights and gives you the best chance at a full recovery.</p>
 
             <div class="section-label">What You Do</div>
             <p class="section-text">Read this guide from start to finish before you contact your insurer or sign anything. It explains what the insurance company is looking for, what your responsibilities are as a policyholder, and exactly what Claim Command Pro will help you do at each step.</p>
 
-            <div class="section-label">What Claim Command Pro Provides</div>
+            <div class="section-label">The Complete Claim Process: What to Expect</div>
+            <p class="section-text">An insurance claim follows a predictable sequence. Understanding this sequence helps you prepare for each stage and avoid common mistakes. Here's what happens from the moment you discover damage until you receive final payment.</p>
+
+            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--teal);">Phase 1: Establish (Days 1-14)</div>
+            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Understand your rights, review your policy, and report the loss properly before taking any action that could limit your coverage.</p>
+            
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text">A plain-language overview of the entire claim process from start to finish</div>
+                <div class="provides-text"><strong>Step 1 — Review the Claim Process Guide:</strong> Read this guide to understand the entire claim process before you act. Most mistakes happen because policyholders don't know what's coming next.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text">How your insurer calculates and pays your claim — and where they can shortchange you</div>
+                <div class="provides-text"><strong>Step 2 — Review Your Policy with AI Policy Analyzer:</strong> Upload your policy and let our AI extract your coverage limits, deductibles, settlement type (RCV vs ACV), and special provisions. You need to know what you're covered for before your insurer tells you what they'll pay.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text">The most common ways insurers underpay claims and how to catch them</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">A guide to every tool inside Claim Command Pro and when to use each one</div>
+                <div class="provides-text"><strong>Step 3 — Report the Loss Properly:</strong> Use our loss notification template to report your claim with the right language. What you say in your first contact with the insurer can limit your coverage permanently.</div>
               </li>
             </ul>
 
-            <button class="expand-button">Read the full claim process guide — click to expand ↓</button>
+            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--emerald);">Phase 2: Document (Days 7-45)</div>
+            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Create a complete record of all damage before repairs begin. Without thorough documentation, you cannot prove what was damaged or what it will cost to fix.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 4 — Document Damage Thoroughly:</strong> Photograph every damaged area from multiple angles. Use our damage documentation tool to organize photos by room and damage type. Once repairs start, you lose the ability to prove what was damaged.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 5 — Get Contractor Estimates:</strong> Obtain at least two written estimates from licensed contractors. Their estimates give you leverage to challenge the insurer's lowball offer and prove the true cost of repairs.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 6 — Prepare for Adjuster Inspection:</strong> Know what to say and show during the inspection. Use our carrier request logger to document everything the adjuster says and requests. The inspection determines what the insurer will pay.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 7 — Complete Contents Inventory:</strong> List every damaged item with description, age, purchase price, and replacement cost. Include receipts or proof of ownership. Without this, the insurer will deny items or pay pennies on the dollar.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--orange);">Phase 3: Analyze (Days 30-60)</div>
+            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Compare the insurer's estimate against contractor bids and identify every gap, missing item, and undervalued line item. This is where you build your case for additional payment.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 8 — Review Insurance Estimate:</strong> Upload both the insurance estimate and contractor estimates to our estimate review tool. We identify line-by-line discrepancies, missing scope items, and pricing gaps automatically.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 9 — Analyze Pricing Deviations:</strong> Use our pricing deviation analyzer to compare the insurer's line item prices against current market rates. Document every item priced below market and calculate the total impact on your claim.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 10 — Identify Coverage Gaps:</strong> Run our coverage gap detector to find policy provisions the insurer didn't apply (code upgrade coverage, ordinance and law, overhead and profit). Use our scope omission detector to find repair work that should be covered but wasn't included.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--amber);">Phase 4: Recover (Days 45-90)</div>
+            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Submit supplement requests, dispute denials, and recover depreciation holdbacks. This is where you fight for every dollar you're owed.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 11 — Submit Supplement Request:</strong> Use our supplement calculation tool to total all gaps and generate a professional supplement cover letter. A properly documented supplement forces the insurer to respond and negotiate.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 12 — Send Dispute Letters:</strong> Use our response letter generator to create formal dispute letters addressing each denial or shortfall. Reference specific policy language and attach supporting evidence. Send via certified mail.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 13 — Recover ACV vs RCV Difference:</strong> Once repairs are complete, use our RCV recovery submitter to claim the depreciation holdback. Include invoices, photos of completed work, and proof of payment to contractors.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--red);">Phase 5: Resolve (Days 60-120)</div>
+            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Negotiate final settlement, evaluate offers, and close the claim. Don't sign any release until you're certain the amount covers all your losses.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 14 — Negotiate Settlement:</strong> Use our negotiation strategy generator to develop a plan based on your situation. Employ our negotiation language generator to craft responses that apply pressure without burning bridges.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 15 — Consider Appraisal or Mediation:</strong> If negotiation fails, use our escalation readiness checker to determine if you should invoke appraisal or mediation. These processes are faster and cheaper than lawsuits but require preparation.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 16 — Review Settlement Offer:</strong> Compare the settlement offer against your documented losses using our payment tracker. Calculate whether the offer covers all repairs, contents, and additional expenses before signing.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 17 — Execute Final Recovery:</strong> Track all final payments and verify they match the settlement agreement. Use our claim archive generator to create a complete record of your claim for future reference.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 18 — Close the Claim:</strong> Use our claim package assembly tool to compile all documentation into a final claim file. Store this package securely for at least 7 years. Confirm with your insurer that the claim is officially closed.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">How Insurance Companies Calculate Your Claim</div>
+            <p class="section-text">Understanding how insurers calculate payments helps you spot where they're shortchanging you. Here's the process they follow:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 1 — Determine Coverage:</strong> The adjuster reviews your policy to confirm the loss is covered and identifies which coverage sections apply. They look for exclusions or limitations that could reduce or deny your claim.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 2 — Estimate Repair Costs:</strong> The adjuster creates a line-item estimate using pricing software (usually Xactimate). They often use outdated pricing, omit necessary work, and apply aggressive depreciation to reduce the payout.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 3 — Apply Deductible:</strong> Your deductible is subtracted from the total estimate. Make sure they're using the correct deductible amount from your policy declarations page.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 4 — Calculate Depreciation:</strong> For Replacement Cost Value (RCV) policies, they pay Actual Cash Value (ACV) up front and hold back depreciation until repairs are done. Many policyholders never recover this holdback because they don't know how to claim it.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Step 5 — Issue Payment:</strong> The insurer issues a check for the ACV amount. This is almost always less than what repairs actually cost. You need to identify the gaps and submit a supplement request to recover the difference.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">The Most Common Ways Insurers Underpay Claims</div>
+            <p class="section-text">Insurance companies use predictable tactics to reduce payouts. Knowing these tactics helps you catch them before you accept a lowball offer.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Missing Scope Items:</strong> The adjuster "misses" damaged areas or necessary repairs during the inspection. They claim they didn't see it or it wasn't part of the loss. This is why thorough documentation before the inspection is critical.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Undervalued Line Items:</strong> The estimate includes the work but prices it below market rates. They use outdated pricing databases or apply arbitrary reductions to labor rates and material costs.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Aggressive Depreciation:</strong> They apply excessive depreciation to materials that don't depreciate that much (like lumber, drywall, or roofing materials). This reduces your ACV payment and the RCV holdback.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Denied Coverage Provisions:</strong> They fail to apply coverage you're entitled to under your policy — code upgrade coverage, ordinance and law, overhead and profit on large losses, or additional coverages listed in your endorsements.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Quantity Manipulation:</strong> They reduce quantities of materials needed (square footage of flooring, linear feet of trim, number of outlets) to lower the total cost without it being obvious.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Contents Denials:</strong> They deny personal property items claiming you didn't prove ownership or the item wasn't damaged. This is why a complete contents inventory with photos and receipts is essential.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">Your Complete Tool Arsenal: What Claim Command Pro Provides</div>
+            <p class="section-text">Claim Command Pro gives you professional-grade tools at every stage of your claim. Here's what you have access to and when you'll use each tool.</p>
+
+            <div class="section-label" style="margin-top: 24px; font-size: 15px;">Phase 1 Tools (Establish)</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>AI Policy Analyzer:</strong> Upload your policy and get a plain-language breakdown of your coverage limits, deductibles, settlement type, and special provisions. No insurance expertise required.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Loss Notification Template Generator:</strong> Generates the exact language to use when reporting your loss. Protects your full claim rights from day one.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 24px; font-size: 15px;">Phase 2 Tools (Document)</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Damage Documentation Tool:</strong> Organize photos by room and damage type. Includes a checklist to ensure you capture everything before repairs begin.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Contractor Scope Checklist:</strong> Ensure contractor estimates are complete and include all necessary work. Prevents incomplete bids that hurt your negotiating position.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Carrier Request Logger:</strong> Document everything the adjuster says and requests during the inspection. Creates a paper trail of what the adjuster saw and acknowledged.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Contents Inventory Tool:</strong> List every damaged item with room-by-room organization. Includes a valuation calculator that estimates replacement costs.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 24px; font-size: 15px;">Phase 3 Tools (Analyze)</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>AI Estimate Review Tool:</strong> Upload insurance and contractor estimates. Our AI identifies line-by-line discrepancies, missing scope items, and pricing gaps automatically. Shows exactly how much you're being underpaid.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Pricing Deviation Analyzer:</strong> Compares the insurer's line item prices against current market rates in your area. Documents every item priced below market with justification for corrections.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Coverage Gap Detector:</strong> Identifies policy provisions the insurer didn't apply (code upgrade, ordinance and law, overhead and profit). Provides policy language citations to support your arguments.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Scope Omission Detector:</strong> Finds repair work that should be covered but wasn't included in the estimate. Cross-references contractor estimates with insurer estimate.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 24px; font-size: 15px;">Phase 4 Tools (Recover)</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Supplement Calculation Tool:</strong> Totals all identified gaps, missing items, and coverage issues. Calculates the exact dollar amount you should request in your supplement.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Supplement Cover Letter Generator:</strong> Creates a professional supplement request letter with policy citations and line-item breakdown. Presents your case clearly and demands a specific amount.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Response Letter Generator:</strong> Creates formal dispute letters addressing denials or shortfalls. Includes templates for common disputes with proper escalation language.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Estimate Revision Request Generator:</strong> Challenges specific line items with supporting documentation and market rate evidence.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>RCV Recovery Submitter:</strong> Calculates your depreciation holdback amount and generates the claim for final payment after repairs are complete. Includes required documentation checklist.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Depreciation Calculator:</strong> Shows ACV vs RCV breakdown for every line item. Helps you understand how much you're owed after repairs are done.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 24px; font-size: 15px;">Phase 5 Tools (Resolve)</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Negotiation Strategy Generator:</strong> Develops a negotiation plan tailored to your claim situation. Provides tactical guidance based on the insurer's behavior and your leverage points.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Negotiation Language Generator:</strong> Provides proven response templates for common adjuster tactics. Helps you apply pressure without burning bridges.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Escalation Readiness Checker:</strong> Assesses whether you should invoke appraisal or mediation. Evaluates your documentation strength and likelihood of success.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Appraisal Demand Letter Generator:</strong> Creates formal demand to invoke your policy's appraisal clause. Includes proper legal language and deadline requirements.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Payment Tracker:</strong> Shows all payments received vs total claim value. Tracks ACV payments, RCV holdbacks, supplement payments, and contents reimbursements.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Settlement Adequacy Calculator:</strong> Determines if the settlement offer covers all your documented losses. Warns you before you accept an inadequate offer.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Release Language Reviewer:</strong> Analyzes release documents for problematic terms that waive your rights. Identifies overly broad language and suggests revisions.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Claim Archive Generator:</strong> Compiles all documentation into a final claim file organized by category. Creates a permanent record you can reference if you need to reopen the claim.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Claim Package Assembly Tool:</strong> Organizes all documents, estimates, photos, correspondence, and payments into a structured package for final closeout.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">Critical Deadlines You Must Know</div>
+            <p class="section-text">Missing these deadlines can forfeit your rights permanently. Mark these dates on your calendar as soon as you discover the loss.</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Notice of Loss:</strong> Most policies require you to report the loss "promptly" or within 60 days. Late reporting can result in denial. Report as soon as you discover damage.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Proof of Loss:</strong> You typically have 60-90 days from the date of loss to submit a sworn Proof of Loss statement. Some policies require this before they'll pay anything.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Appraisal Invocation:</strong> If your policy has an appraisal clause, you usually have 1-2 years from the date of loss to invoke it. Check your policy for the exact deadline.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Lawsuit Filing:</strong> Most states have a statute of limitations of 2-5 years for insurance disputes. If you're considering litigation, don't wait until the last minute to consult an attorney.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>RCV Recovery:</strong> You typically have 180-365 days after the ACV payment to complete repairs and claim the depreciation holdback. If you miss this deadline, you forfeit the holdback permanently.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">What to Do If You've Already Started Your Claim</div>
+            <p class="section-text">If you've already reported your loss or received an estimate from your insurer, don't panic. You can still use this system to improve your position. Here's what to do based on where you are:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>If you've only reported the loss:</strong> Start at Step 2 (Policy Review) and continue through the process. You haven't lost any rights yet.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>If the adjuster has already inspected:</strong> Start at Step 4 (Document Damage) and photograph everything now before repairs begin. Then jump to Step 8 when you receive the estimate.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>If you've received an estimate:</strong> Jump to Step 8 (Review Insurance Estimate) and use our tools to identify gaps. You can still submit a supplement request even if you initially accepted the estimate.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>If you've already cashed the check:</strong> You can still request additional payment if you discover the estimate was incomplete. Start at Step 8 and build your supplement case.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>If you've signed a release:</strong> Review what you signed carefully. Some releases are limited to specific payments and don't prevent future claims. If you signed a broad release, consult an attorney about your options.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">Common Mistakes That Cost Policyholders Thousands</div>
+            <p class="section-text">Avoid these mistakes that weaken your claim and reduce your payout:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Starting repairs before documenting damage:</strong> Once you repair or replace something, you can't prove it was damaged. Always photograph first, repair later.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Accepting the first offer without review:</strong> The insurer's first estimate is almost always incomplete. Never accept it without comparing against contractor estimates and checking for gaps.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Signing documents without reading them:</strong> Releases, proof of loss statements, and sworn statements can limit your rights. Read everything before you sign and never sign under pressure.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Letting the adjuster rush the inspection:</strong> If the adjuster tries to speed through the inspection, slow them down. Make them look at every damaged area. What they don't see, they won't pay for.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Failing to get contractor estimates:</strong> Without contractor estimates, you have no leverage to challenge the insurer's pricing. Get at least two estimates before you negotiate.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Not tracking all expenses:</strong> Additional living expenses, emergency repairs, and professional fees are all recoverable. Track every dollar you spend related to the loss.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Missing the RCV recovery deadline:</strong> If you don't claim the depreciation holdback within the policy deadline (usually 180-365 days), you forfeit it permanently. Set a calendar reminder.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">Key Insurance Terms You Need to Know</div>
+            <p class="section-text">Understanding these terms helps you read your policy and communicate effectively with your insurer:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Actual Cash Value (ACV):</strong> The depreciated value of damaged property. This is what insurers pay up front on RCV policies. It's the replacement cost minus depreciation.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Replacement Cost Value (RCV):</strong> The cost to replace damaged property with new materials of like kind and quality. Most policies pay ACV first, then RCV after repairs are complete.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Depreciation Holdback:</strong> The difference between RCV and ACV. The insurer holds this back until you complete repairs and submit proof. This is often 20-40% of the total claim value.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Overhead and Profit (O&P):</strong> Contractor markup for managing the job. Typically 10% overhead + 10% profit = 20% total. Required when the loss involves three or more trades (plumber, electrician, carpenter, etc.).</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Ordinance and Law Coverage:</strong> Pays for upgrades required by current building codes. If your roof was built in 1985 and current code requires different materials or methods, this coverage pays the difference.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Code Upgrade Coverage:</strong> Similar to ordinance and law. Covers the cost difference between repairing to original condition vs upgrading to meet current codes.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Additional Living Expenses (ALE):</strong> Covers hotel, meals, and other expenses if your home is uninhabitable during repairs. Usually limited to 12-24 months or a percentage of your dwelling coverage.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Supplement:</strong> A request for additional payment after the initial estimate. Used when you discover the insurer's estimate was incomplete or undervalued.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Appraisal:</strong> A dispute resolution process in your policy. Each side hires an appraiser, and if they can't agree, an umpire decides. Faster and cheaper than litigation but binding.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Public Adjuster (PA):</strong> A licensed professional who represents policyholders in claims. They work on contingency (typically 10-20% of settlement). Consider hiring one for complex or high-value claims.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">When to Consider Hiring a Professional</div>
+            <p class="section-text">Claim Command Pro gives you the tools to handle most claims yourself, but some situations benefit from professional help:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Hire a Public Adjuster if:</strong> Your claim is over $100,000, involves complex damage (structural, mold, code compliance), the insurer has denied major portions of your claim, or you don't have time to manage the process yourself.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Hire an Attorney if:</strong> The insurer has acted in bad faith (unreasonable delays, false statements, refusing to investigate), denied your entire claim, or you're considering litigation. Most insurance attorneys work on contingency.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Hire an Engineer if:</strong> There's a dispute about causation (what caused the damage), structural integrity, or code compliance requirements. Engineers provide expert reports that carry significant weight.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>Hire a Restoration Company if:</strong> You have water damage, mold, fire damage, or any loss requiring emergency mitigation. They document the damage professionally and their reports support your claim.</div>
+              </li>
+            </ul>
+
+            <div class="section-label" style="margin-top: 40px;">What Happens Next</div>
+            <p class="section-text">Now that you understand the process, here's what to do immediately:</p>
+            
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>1. Click "Mark Complete" below</strong> to move to Step 2. Don't skip ahead — each step builds on the previous one.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>2. Gather your policy documents</strong> (declarations page, policy booklet, endorsements) so you're ready for Step 2's AI Policy Analyzer.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>3. If you haven't reported the loss yet,</strong> wait until you complete Step 3 before contacting your insurer. What you say in your first contact matters more than most people realize.</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text"><strong>4. Bookmark this page</strong> and return to it daily to track your progress. The roadmap bar at the top shows exactly where you are in the process.</div>
+              </li>
+            </ul>
+
+            <div class="ai-banner" style="margin-top: 32px;">
+              <div class="ai-chip">PRO TIP</div>
+              <div class="ai-text">The single biggest mistake policyholders make is accepting the insurer's first offer without analysis. Steps 8-10 will show you exactly how much you're being underpaid — but only if you complete the documentation steps first. Follow the process in order.</div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -1523,6 +2531,8 @@
               <div class="ai-chip">AI</div>
               <div class="ai-text">Upload your policy documents and the AI Policy Analyzer reads them for you. You'll get a clear, plain-language breakdown of your coverage in minutes — no insurance expertise required.</div>
             </div>
+
+            <a href="app/tools/policy-analyzer-working.html" class="expand-button" style="text-decoration: none; display: block; margin-top: 20px;">Open AI Policy Analyzer →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -1569,6 +2579,8 @@
                 <div class="provides-text">A checklist to confirm your loss report was filed correctly and completely</div>
               </li>
             </ul>
+
+            <a href="app/tools/written-notice-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Written Notice Generator →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -1788,7 +2800,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/estimate-review.html" class="expand-button" style="text-decoration: none; display: block;">Open Estimate Review Tool →</a>
+            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Estimate Review Tool →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -1920,7 +2932,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/supplement-calculation-tool.html" class="expand-button" style="text-decoration: none; display: block;">Open Supplement Calculator →</a>
+            <a href="app/tools/supplement-letter-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Supplement Letter Generator →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -1964,7 +2976,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/response-letter-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Response Letter Generator →</a>
+            <a href="app/tools/demand-letter-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Demand Letter Generator →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2052,7 +3064,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/negotiation-strategy-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Negotiation Strategy Tool →</a>
+            <a href="app/tools/negotiation-strategy-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Negotiation Strategy Tool →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2096,7 +3108,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/escalation-readiness-checker.html" class="expand-button" style="text-decoration: none; display: block;">Open Escalation Readiness Checker →</a>
+            <a href="app/tools/escalation-evaluator-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Escalation Evaluator →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2140,7 +3152,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/payment-tracker.html" class="expand-button" style="text-decoration: none; display: block;">Open Payment Tracker →</a>
+            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Settlement Review Tool →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2228,7 +3240,7 @@
               </li>
             </ul>
 
-            <a href="app/tools/claim-package-assembly.html" class="expand-button" style="text-decoration: none; display: block;">Open Claim Package Assembly →</a>
+            <a href="app/tools/release-reviewer-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Release Reviewer →</a>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2243,6 +3255,111 @@
 
     </main>
 
+  </div>
+
+  <!-- Claim Process Guide Modal -->
+  <div class="modal-overlay hidden" id="guideModal">
+    <div class="modal guide-modal">
+      <div class="modal-header">
+        <div class="modal-title">Claim Process <span class="pro">Guide</span></div>
+        <button onclick="closeGuideModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 32px; height: 32px;">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-eyebrow">Your Complete Roadmap</div>
+        <h2 class="modal-heading">How Insurance Claims Really Work</h2>
+        
+        <p style="font-size: 15px; line-height: 1.7; color: var(--gray-600); margin-bottom: 24px;">
+          An insurance claim is not automatic reimbursement. It's a formal financial review governed by your policy contract. Understanding this process before you act protects your rights and maximizes your recovery.
+        </p>
+
+        <div style="background: var(--teal-dim); border-left: 4px solid var(--teal); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+          <strong style="color: var(--gray-900); display: block; margin-bottom: 8px;">The 5 Phases of Your Claim</strong>
+          <p style="font-size: 14px; color: var(--gray-600); margin: 0;">
+            Your claim follows a predictable 5-phase sequence over 60-120 days. Each phase builds on the previous one. Skipping steps or rushing ahead costs you money.
+          </p>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--teal); margin-bottom: 12px;">Phase 1: Establish (Days 1-14)</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--gray-600); margin-bottom: 12px;">
+            <strong>Goal:</strong> Understand your rights, review your policy, and report the loss properly.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 1: Understand the claim process</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 2: Review your policy with AI</li>
+            <li style="padding: 8px 0;">✓ Step 3: Report the loss properly</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--emerald); margin-bottom: 12px;">Phase 2: Document (Days 7-45)</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--gray-600); margin-bottom: 12px;">
+            <strong>Goal:</strong> Create a complete record of all damage before repairs begin.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 4: Document all damage with photos</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 5: Get contractor estimates</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 6: Prepare for adjuster inspection</li>
+            <li style="padding: 8px 0;">✓ Step 7: Complete contents inventory</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--orange); margin-bottom: 12px;">Phase 3: Analyze (Days 30-60)</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--gray-600); margin-bottom: 12px;">
+            <strong>Goal:</strong> Compare estimates and identify every gap, missing item, and undervalued line.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 8: Review insurance estimate with AI</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 9: Analyze pricing deviations</li>
+            <li style="padding: 8px 0;">✓ Step 10: Identify coverage gaps</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--amber); margin-bottom: 12px;">Phase 4: Recover (Days 45-90)</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--gray-600); margin-bottom: 12px;">
+            <strong>Goal:</strong> Submit supplements, dispute denials, and recover depreciation holdbacks.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 11: Submit supplement request</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 12: Send dispute letters</li>
+            <li style="padding: 8px 0;">✓ Step 13: Recover ACV vs RCV difference</li>
+          </ul>
+        </div>
+
+        <div style="margin-bottom: 32px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: var(--red); margin-bottom: 12px;">Phase 5: Resolve (Days 60-120)</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: var(--gray-600); margin-bottom: 12px;">
+            <strong>Goal:</strong> Negotiate final settlement and close the claim.
+          </p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 14: Negotiate settlement</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 15: Consider appraisal/mediation</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 16: Review settlement offer</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 17: Execute final recovery</li>
+            <li style="padding: 8px 0;">✓ Step 18: Close the claim</li>
+          </ul>
+        </div>
+
+        <div style="background: #fffbeb; border: 2px solid var(--amber); border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+          <strong style="color: #78350f; display: block; margin-bottom: 8px;">⚠️ Critical: Don't Skip Steps</strong>
+          <p style="font-size: 14px; color: #78350f; margin: 0;">
+            Each step builds on the previous one. Skipping documentation (Phase 2) means you can't prove gaps in Phase 3. Skipping analysis (Phase 3) means you don't know what to request in Phase 4. Follow the sequence.
+          </p>
+        </div>
+
+        <div style="background: var(--gray-50); border-radius: 10px; padding: 16px;">
+          <strong style="color: var(--gray-900); display: block; margin-bottom: 8px;">What Happens Next</strong>
+          <p style="font-size: 14px; color: var(--gray-600); margin: 0;">
+            When you close this guide, you'll mark Step 1 as complete and move to Step 2: Policy Review. You'll upload your policy and our AI will extract your coverage details automatically.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button" onclick="completeGuideAndContinue()">I Understand — Continue to Step 2 →</button>
+      </div>
+    </div>
   </div>
 
   <!-- Dynamic Next Steps Popup -->
@@ -2262,6 +3379,298 @@
     // State tracking
     let completedSteps = [];
     let currentStep = 1;
+    let claimJournal = [];
+    let claimData = {
+      policyUploaded: false,
+      estimateUploaded: false,
+      insuranceEstimate: 18200,
+      yourEstimate: 36750,
+      claimGap: 18550,
+      dwellingCoverage: null,
+      deductible: null,
+      settlementType: null
+    };
+
+    // Load state from localStorage
+    function loadState() {
+      const savedSteps = localStorage.getItem('ccc_completed_steps');
+      const savedJournal = localStorage.getItem('ccc_journal');
+      const savedData = localStorage.getItem('ccc_claim_data');
+      
+      if (savedSteps) {
+        completedSteps = JSON.parse(savedSteps);
+      }
+      if (savedJournal) {
+        claimJournal = JSON.parse(savedJournal);
+        renderJournal();
+      }
+      if (savedData) {
+        claimData = { ...claimData, ...JSON.parse(savedData) };
+        updateSummary();
+      }
+    }
+
+    // Save state to localStorage
+    function saveState() {
+      localStorage.setItem('ccc_completed_steps', JSON.stringify(completedSteps));
+      localStorage.setItem('ccc_journal', JSON.stringify(claimJournal));
+      localStorage.setItem('ccc_claim_data', JSON.stringify(claimData));
+    }
+
+    // Add journal entry
+    function addJournalEntry(actionType, description, amount = null, relatedStep = null) {
+      const entry = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        actionType,
+        description,
+        amount,
+        relatedStep
+      };
+      
+      claimJournal.unshift(entry); // Add to beginning
+      saveState();
+      renderJournal();
+      updateSummary();
+    }
+
+    // Render journal entries
+    function renderJournal() {
+      const container = document.getElementById('journalEntries');
+      
+      if (claimJournal.length === 0) {
+        container.innerHTML = '<div class="journal-empty">No activity yet. Your actions will be tracked here automatically.</div>';
+        return;
+      }
+
+      container.innerHTML = claimJournal.slice(0, 10).map(entry => {
+        const date = new Date(entry.timestamp);
+        const timeStr = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        
+        return `
+          <div class="journal-entry">
+            <div class="journal-timestamp">${dateStr}<br>${timeStr}</div>
+            <div class="journal-content">
+              <div class="journal-description">${entry.description}</div>
+              <div class="journal-meta">
+                ${entry.relatedStep ? `Step ${entry.relatedStep}` : ''}
+                ${entry.amount ? `<span class="journal-amount">$${entry.amount.toLocaleString()}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Update claim summary panel
+    function updateSummary() {
+      // Update policy info
+      if (claimData.dwellingCoverage) {
+        document.getElementById('dwellingCoverage').textContent = `$${claimData.dwellingCoverage.toLocaleString()}`;
+      }
+      if (claimData.deductible) {
+        document.getElementById('deductible').textContent = `$${claimData.deductible.toLocaleString()}`;
+      }
+      if (claimData.settlementType) {
+        document.getElementById('settlementType').textContent = claimData.settlementType;
+      }
+
+      // Update estimates
+      document.getElementById('insuranceEstimate').textContent = `$${claimData.insuranceEstimate.toLocaleString()}`;
+      document.getElementById('yourEstimate').textContent = `$${claimData.yourEstimate.toLocaleString()}`;
+      document.getElementById('claimGap').textContent = `$${claimData.claimGap.toLocaleString()}`;
+
+      // Update action summary
+      updateActionSummary();
+
+      // Update progress tracker
+      updateProgressTracker();
+    }
+
+    // Update action summary text
+    function updateActionSummary() {
+      const summary = document.getElementById('actionSummary');
+      let text = '';
+
+      if (completedSteps.length === 0) {
+        text = "You're just getting started. Complete Step 1 to understand the claim process, then upload your policy to see your coverage details here.";
+      } else if (completedSteps.includes(1) && !claimData.policyUploaded) {
+        text = "You've reviewed the claim process. Next, upload your policy in Step 2 so we can extract your coverage limits and identify what you're entitled to.";
+      } else if (claimData.policyUploaded && !claimData.estimateUploaded) {
+        text = `Your policy shows ${claimData.dwellingCoverage ? '$' + claimData.dwellingCoverage.toLocaleString() : ''} dwelling coverage with a ${claimData.deductible ? '$' + claimData.deductible.toLocaleString() : ''} deductible. Continue documenting damage and getting contractor estimates.`;
+      } else if (claimData.estimateUploaded) {
+        text = `You uploaded your policy and estimate. Your insurance company estimated $${claimData.insuranceEstimate.toLocaleString()}. Your true loss is estimated at $${claimData.yourEstimate.toLocaleString()}. A gap of $${claimData.claimGap.toLocaleString()} has been identified. Next step: Submit supporting documentation and claim letter.`;
+      }
+
+      summary.textContent = text;
+    }
+
+    // Update progress tracker
+    function updateProgressTracker() {
+      const tracker = document.getElementById('progressTracker');
+      const steps = [
+        { num: 1, title: 'Understand the Process' },
+        { num: 2, title: 'Review Your Policy' },
+        { num: 3, title: 'Report the Loss' }
+      ];
+
+      tracker.innerHTML = steps.map(step => {
+        let status = 'locked';
+        let statusText = 'Locked';
+        let icon = step.num;
+
+        if (completedSteps.includes(step.num)) {
+          status = 'completed';
+          statusText = 'Completed';
+          icon = '✓';
+        } else if (currentStep === step.num) {
+          status = 'in-progress';
+          statusText = 'In Progress';
+        } else if (step.num < currentStep) {
+          status = 'in-progress';
+          statusText = 'Available';
+        }
+
+        return `
+          <li class="summary-progress-item">
+            <div class="progress-icon ${status}">${icon}</div>
+            <div class="progress-text">${step.title}</div>
+            <div class="progress-status">${statusText}</div>
+          </li>
+        `;
+      }).join('');
+    }
+
+    // Open guide modal
+    function openGuideModal() {
+      document.getElementById('guideModal').classList.remove('hidden');
+      addJournalEntry('guide_view', 'Claim Process Guide viewed', null, 1);
+    }
+
+    // Close guide modal
+    function closeGuideModal() {
+      document.getElementById('guideModal').classList.add('hidden');
+    }
+
+    // Complete guide and continue
+    function completeGuideAndContinue() {
+      closeGuideModal();
+      completeStep(1);
+    }
+
+    // Skip to setup (Step 2)
+    function skipToSetup() {
+      addJournalEntry('step_skip', 'Step 1 skipped — moved to claim setup', null, 1);
+      completeStep(1);
+    }
+
+    // Show next step banner
+    function showNextStepBanner(stepNum) {
+      const banner = document.getElementById('nextStepBanner');
+      const title = document.getElementById('nextStepTitle');
+      const desc = document.getElementById('nextStepDesc');
+      const button = document.getElementById('nextStepButton');
+
+      const nextStep = stepNum + 1;
+      const stepTitles = {
+        2: 'Review Your Policy with AI',
+        3: 'Report the Loss Properly',
+        4: 'Document Damage Thoroughly',
+        5: 'Get Contractor Estimates',
+        6: 'Prepare for Adjuster Inspection',
+        7: 'Complete Contents Inventory',
+        8: 'Review Insurance Estimate',
+        9: 'Analyze Pricing Deviations',
+        10: 'Identify Coverage Gaps',
+        11: 'Submit Supplement Request',
+        12: 'Send Dispute Letters',
+        13: 'Recover ACV vs RCV Difference',
+        14: 'Negotiate Settlement',
+        15: 'Consider Appraisal or Mediation',
+        16: 'Review Settlement Offer',
+        17: 'Execute Final Recovery',
+        18: 'Close the Claim'
+      };
+
+      title.textContent = `Step ${stepNum} Complete!`;
+      desc.textContent = `Great work! Let's move to Step ${nextStep}: ${stepTitles[nextStep] || 'Next Step'}`;
+      button.textContent = `Continue to Step ${nextStep} →`;
+      button.onclick = () => {
+        goToStep(nextStep);
+        banner.classList.add('hidden');
+      };
+
+      banner.classList.remove('hidden');
+      
+      // Scroll banner into view
+      setTimeout(() => {
+        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+
+    // Continue to next step
+    function continueToNextStep() {
+      const nextStep = currentStep + 1;
+      goToStep(nextStep);
+      document.getElementById('nextStepBanner').classList.add('hidden');
+    }
+
+    // Simulate policy upload (for Step 2)
+    function simulatePolicyUpload() {
+      claimData.policyUploaded = true;
+      claimData.dwellingCoverage = 350000;
+      claimData.deductible = 2500;
+      claimData.settlementType = 'RCV';
+      
+      addJournalEntry('policy_upload', 'Policy uploaded — Coverage extracted', null, 2);
+      saveState();
+      updateSummary();
+    }
+
+    // Simulate estimate upload (for Step 8)
+    function simulateEstimateUpload() {
+      claimData.estimateUploaded = true;
+      claimData.insuranceEstimate = 18200;
+      claimData.yourEstimate = 36750;
+      claimData.claimGap = 18550;
+      
+      addJournalEntry('estimate_analysis', 'Estimate analyzed — $18,550 gap identified', 18550, 8);
+      saveState();
+      updateSummary();
+    }
+
+    // Simulate supplement generation (for Step 11)
+    function simulateSupplementGeneration() {
+      addJournalEntry('letter_generation', 'Supplement letter generated — Ready for submission', claimData.claimGap, 11);
+      saveState();
+    }
+
+    // Simulate demand letter generation (for Step 12)
+    function simulateDemandLetter() {
+      addJournalEntry('letter_generation', 'Demand letter generated — Ready for submission', null, 12);
+      saveState();
+    }
+
+    // Toggle summary panel
+    function toggleSummary() {
+      const panel = document.getElementById('claimSummary');
+      panel.classList.toggle('minimized');
+    }
+
+    // Add close button to summary panel
+    function addSummaryCloseButton() {
+      const header = document.querySelector('.summary-header');
+      if (header && !header.querySelector('.summary-close')) {
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'summary-close';
+        closeBtn.innerHTML = '×';
+        closeBtn.style.cssText = 'position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 0; width: 32px; height: 32px; line-height: 1;';
+        closeBtn.onclick = toggleSummary;
+        header.style.position = 'relative';
+        header.appendChild(closeBtn);
+      }
+    }
 
     function closeModal() {
       document.getElementById('welcomeModal').classList.add('hidden');
@@ -2413,6 +3822,30 @@
         completedSteps.push(num);
       }
 
+      // Add journal entry
+      const stepTitles = {
+        1: 'Claim process reviewed',
+        2: 'Policy reviewed with AI',
+        3: 'Loss reported properly',
+        4: 'Damage documented',
+        5: 'Contractor estimates obtained',
+        6: 'Adjuster inspection completed',
+        7: 'Contents inventory completed',
+        8: 'Insurance estimate reviewed',
+        9: 'Pricing deviations analyzed',
+        10: 'Coverage gaps identified',
+        11: 'Supplement request submitted',
+        12: 'Dispute letters sent',
+        13: 'ACV vs RCV recovery initiated',
+        14: 'Settlement negotiation started',
+        15: 'Escalation options evaluated',
+        16: 'Settlement offer reviewed',
+        17: 'Final recovery executed',
+        18: 'Claim closed'
+      };
+      
+      addJournalEntry('step_complete', `Step ${num} completed — ${stepTitles[num]}`, null, num);
+
       // Update sidebar
       const sidebarSteps = document.querySelectorAll('.step-item');
       sidebarSteps.forEach(item => {
@@ -2429,6 +3862,7 @@
       // Activate next step if exists
       const nextCard = document.getElementById('step-' + (num + 1));
       if (nextCard) {
+        currentStep = num + 1;
         nextCard.classList.add('active-card');
         nextCard.classList.remove('collapsed');
         
@@ -2447,8 +3881,6 @@
 
         // Unlock next phase if needed
         unlockNextPhase(num + 1);
-
-        nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
       // Update counter
@@ -2457,10 +3889,11 @@
       // Update phase bar
       updatePhaseBar();
 
-      // Show next steps popup after 1 second
-      setTimeout(() => {
-        showNextStepsPopup(num + 1);
-      }, 1000);
+      // Save state
+      saveState();
+
+      // Show next step banner
+      showNextStepBanner(num);
     }
 
     function updatePhaseCounts() {
@@ -2563,8 +3996,19 @@
 
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
-      // Show modal on load
-      document.getElementById('welcomeModal').classList.remove('hidden');
+      // Load saved state
+      loadState();
+      
+      // Show modal on load (only if no steps completed)
+      if (completedSteps.length === 0) {
+        document.getElementById('welcomeModal').classList.remove('hidden');
+      }
+      
+      // Initialize summary
+      updateSummary();
+      
+      // Add close button to summary
+      addSummaryCloseButton();
     });
   </script>
 

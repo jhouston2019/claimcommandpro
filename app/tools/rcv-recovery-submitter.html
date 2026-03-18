@@ -3,337 +3,592 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RCV Depreciation Recovery Submitter - Claim Command Pro</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/tool-visual-alignment.css">
-  <script src="../../storage/claimStorage.js"></script>
-  <script src="../assets/js/tool-registry.js"></script>
-  <script src="../assets/js/form-autosave.js"></script>
-</head>
-<body class="tool-page">
-  
-  <!-- Tool Header -->
-  <div class="tool-page-header">
-    <h1 class="tool-page-title">RCV Depreciation Recovery Submitter</h1>
-    <p class="tool-page-subtitle">Submit proof of repairs to recover withheld depreciation</p>
-  </div>
+  <title>RCV Recovery Submitter | Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  <!-- Main Content Area -->
-  <div class="tool-content-area">
-    
-    <!-- Tool Content -->
-    <div class="tool-card">
-      <div class="tool-card-header">
-        <h2 class="tool-card-title">Step 13 Tool</h2>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #0f7c6f 0%, #2a9d8f 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 1.1em;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .info-box {
+      background: #d1f2eb;
+      border-left: 4px solid #0f7c6f;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+    }
+
+    .info-box h3 {
+      color: #0f7c6f;
+      margin-bottom: 10px;
+    }
+
+    .info-box p {
+      color: #495057;
+      line-height: 1.6;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h3 {
+      color: #1e3c72;
+      margin-bottom: 15px;
+      font-size: 1.2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #2a9d8f;
+    }
+
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .file-upload {
+      border: 2px dashed #dee2e6;
+      padding: 30px;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .file-upload:hover {
+      border-color: #2a9d8f;
+      background: #f8f9fa;
+    }
+
+    .file-upload.dragover {
+      border-color: #0f7c6f;
+      background: #d1f2eb;
+    }
+
+    .file-list {
+      margin-top: 15px;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .file-item button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #2a9d8f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #0f7c6f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(42, 157, 143, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #adb5bd;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #2a9d8f;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      display: none;
+      padding: 20px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .error.active {
+      display: block;
+    }
+
+    .success {
+      display: none;
+      padding: 30px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+
+    .success.active {
+      display: block;
+    }
+
+    .success h3 {
+      color: #155724;
+      margin-bottom: 15px;
+    }
+
+    .success p {
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .success .highlight {
+      font-size: 1.3em;
+      color: #0f7c6f;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: #2a9d8f;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💰 RCV Recovery Submitter</h1>
+      <p>Submit proof of repairs to recover withheld depreciation</p>
+    </div>
+
+    <div class="content">
+      <div class="info-box">
+        <h3>What is RCV Recovery?</h3>
+        <p>
+          If your policy has Replacement Cost Value (RCV) coverage, your insurer initially pays only the 
+          Actual Cash Value (ACV) — which is RCV minus depreciation. Once you complete repairs, you can 
+          submit proof to recover the withheld depreciation amount.
+        </p>
       </div>
-      <div class="tool-card-body">
-        <p>This tool is part of Step 13 of the Step-by-Step Claim Guide.</p>
-        
-        <!-- Educational Section -->
-        <div style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 1rem; margin-bottom: 2rem; border-radius: 4px;">
-          <strong>ℹ️ What is Depreciation Holdback?</strong>
-          <p style="margin: 0.5rem 0 0 0; color: #0c4a6e;">
-            Most policies pay claims in two stages: (1) Actual Cash Value (ACV) first, then (2) Replacement Cost Value (RCV) after repairs are completed. The difference between RCV and ACV is called "depreciation holdback." You must submit proof of completed repairs to recover this withheld amount.
-          </p>
+
+      <div class="error" id="error"></div>
+
+      <form id="rcvForm">
+        <div class="form-section">
+          <h3>Claim Information</h3>
+          
+          <div class="form-group">
+            <label for="claimNumber">Claim Number *</label>
+            <input type="text" id="claimNumber" required>
+          </div>
+
+          <div class="form-group">
+            <label for="policyNumber">Policy Number</label>
+            <input type="text" id="policyNumber">
+          </div>
+
+          <div class="form-group">
+            <label for="adjusterName">Adjuster Name</label>
+            <input type="text" id="adjusterName">
+          </div>
+
+          <div class="form-group">
+            <label for="adjusterEmail">Adjuster Email</label>
+            <input type="email" id="adjusterEmail">
+          </div>
         </div>
 
-        <!-- RCV Recovery Form -->
-        <form data-tool-form class="tool-form">
-          <div class="tool-form-group">
-            <label for="claimNumber" class="tool-label">Claim Number</label>
-            <input 
-              type="text" 
-              id="claimNumber" 
-              name="claimNumber" 
-              class="tool-input" 
-              placeholder="Your claim number"
-              required
-            />
+        <div class="form-section">
+          <h3>Financial Details</h3>
+          
+          <div class="form-group">
+            <label for="acvPaid">ACV Already Paid *</label>
+            <input type="number" id="acvPaid" required placeholder="18200">
           </div>
 
-          <div class="tool-form-group">
-            <label for="categoryType" class="tool-label">Category</label>
-            <select id="categoryType" name="categoryType" class="tool-input" required>
-              <option value="">Select category...</option>
-              <option value="dwelling">Dwelling / Structure</option>
-              <option value="contents">Personal Property / Contents</option>
-              <option value="both">Both Dwelling & Contents</option>
-            </select>
+          <div class="form-group">
+            <label for="depreciationWithheld">Depreciation Withheld *</label>
+            <input type="number" id="depreciationWithheld" required placeholder="8550">
           </div>
 
-          <div class="tool-form-group">
-            <label for="acvReceived" class="tool-label">ACV Payment Already Received ($)</label>
-            <input 
-              type="number" 
-              id="acvReceived" 
-              name="acvReceived" 
-              class="tool-input" 
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              required
-            />
-            <small>The initial Actual Cash Value payment you already received</small>
+          <div class="form-group">
+            <label for="totalRepairCost">Total Repair Cost *</label>
+            <input type="number" id="totalRepairCost" required placeholder="36750">
           </div>
+        </div>
 
-          <div class="tool-form-group">
-            <label for="rcvEstimate" class="tool-label">Full RCV Estimate Amount ($)</label>
-            <input 
-              type="number" 
-              id="rcvEstimate" 
-              name="rcvEstimate" 
-              class="tool-input" 
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              required
-            />
-            <small>The full Replacement Cost Value from the adjuster's estimate</small>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="repairsCost" class="tool-label">Actual Repair Cost Incurred ($)</label>
-            <input 
-              type="number" 
-              id="repairsCost" 
-              name="repairsCost" 
-              class="tool-input" 
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              required
-            />
-            <small>What you actually spent on repairs/replacements</small>
-          </div>
-
-          <div class="tool-form-group">
-            <label for="repairCompletionDate" class="tool-label">Repair Completion Date</label>
-            <input 
-              type="date" 
-              id="repairCompletionDate" 
-              name="repairCompletionDate" 
-              class="tool-input" 
-              required
-            />
-          </div>
-
-          <div class="tool-form-group">
-            <label for="contractorName" class="tool-label">Contractor / Vendor Name</label>
-            <input 
-              type="text" 
-              id="contractorName" 
-              name="contractorName" 
-              class="tool-input" 
-              placeholder="Who performed the repairs?"
-              required
-            />
-          </div>
-
-          <div class="tool-form-group">
-            <label class="tool-label">Required Documentation (Upload separately)</label>
-            <div style="background: #f7f9fc; padding: 1rem; border: 1px dashed #d1d5db; border-radius: 8px;">
-              <p style="margin: 0 0 0.5rem 0; font-weight: 600; color: #0B2545;">You must provide:</p>
-              <ul style="margin: 0; padding-left: 1.5rem; color: #4b5563;">
-                <li>Paid contractor invoices (with "PAID" stamp or proof of payment)</li>
-                <li>Itemized receipts for all materials purchased</li>
-                <li>"After repair" photos showing completed work</li>
-                <li>Proof of payment (canceled checks, bank statements, credit card statements)</li>
-                <li>Lien waivers from contractors (if applicable)</li>
-              </ul>
-              <p style="margin: 0.75rem 0 0 0; font-size: 0.875rem; color: #6b7280;">
-                <strong>Note:</strong> Use the Evidence Organizer tool to upload and organize these documents before submitting.
+        <div class="form-section">
+          <h3>Proof of Repairs</h3>
+          
+          <div class="form-group">
+            <label>Upload Documentation *</label>
+            <div class="file-upload" id="fileUpload">
+              <p>📎 Click or drag files here</p>
+              <p style="font-size: 0.9em; color: #6c757d; margin-top: 10px;">
+                Invoices, receipts, completion certificates, photos
               </p>
             </div>
+            <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+            <div class="file-list" id="fileList"></div>
           </div>
 
-          <div class="tool-form-group">
-            <label for="submissionMethod" class="tool-label">Submission Method</label>
-            <select id="submissionMethod" name="submissionMethod" class="tool-input" required>
-              <option value="">Select method...</option>
-              <option value="email">Email to Claims Department</option>
-              <option value="portal">Upload to Insurance Portal</option>
-              <option value="mail">Certified Mail</option>
-              <option value="fax">Fax</option>
-            </select>
+          <div class="form-group">
+            <label for="repairsSummary">Repairs Summary *</label>
+            <textarea id="repairsSummary" required placeholder="Describe all repairs completed (e.g., 'Replaced 28 squares of architectural shingles, repaired fascia boards, installed new gutters...')"></textarea>
           </div>
 
-          <div class="tool-form-group">
-            <label for="submissionNotes" class="tool-label">Submission Notes (Optional, max 500 chars)</label>
-            <textarea 
-              id="submissionNotes" 
-              name="submissionNotes" 
-              class="tool-input" 
-              rows="3" 
-              maxlength="500"
-              placeholder="Additional context about the repairs or submission..."
-            ></textarea>
+          <div class="form-group">
+            <label for="contractorName">Contractor Name</label>
+            <input type="text" id="contractorName" placeholder="ABC Roofing & Restoration">
           </div>
 
-          <div class="tool-form-actions">
-            <button type="submit" data-calculate-btn class="tool-btn tool-btn-primary">
-              Calculate Recoverable Amount
-            </button>
+          <div class="form-group">
+            <label for="contractorLicense">Contractor License Number</label>
+            <input type="text" id="contractorLicense">
           </div>
-        </form>
 
-        <!-- Output Area -->
-        <div data-tool-output id="output" class="tool-output" style="display: none;">
-          <h3 class="tool-section-title">Depreciation Recovery Calculation</h3>
-          <div class="tool-output-content" id="calculationResult"></div>
-          
-          <div class="tool-form-actions" style="margin-top: 1.5rem;">
-            <button data-export-pdf class="tool-btn tool-btn-secondary">
-              Export Calculation as PDF
-            </button>
-            <button data-copy-clipboard class="tool-btn tool-btn-secondary">
-              Copy to Clipboard
-            </button>
-            <button onclick="generateCoverLetter()" class="tool-btn tool-btn-primary">
-              Generate Submission Cover Letter
-            </button>
+          <div class="form-group">
+            <label for="completionDate">Completion Date *</label>
+            <input type="date" id="completionDate" required>
           </div>
         </div>
 
-        <div class="tool-section">
-          <h3 class="tool-section-title">What This Tool Does</h3>
-          <p>Calculates the depreciation holdback amount you can recover and generates a professional submission package to request payment from your insurance company.</p>
-          
-          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; margin-top: 1rem; border-radius: 4px;">
-            <strong>⏰ Time Limit:</strong> Most policies require RCV recovery claims within 180-365 days of the loss date. Check your policy's deadline and submit well before it expires!
-          </div>
-        </div>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          📤 Submit RCV Recovery Request
+        </button>
+      </form>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Preparing your RCV recovery submission...</p>
       </div>
-    </div>
 
-    <!-- Action Buttons -->
-    <div class="tool-section">
-      <button class="tool-btn tool-btn-secondary" onclick="goBack()">
-        ← Back to Claim Guide
-      </button>
-      <button class="tool-btn tool-btn-primary" onclick="markComplete()">
-        Mark as Complete →
-      </button>
-    </div>
+      <div class="success" id="success">
+        <h3>✅ RCV Recovery Request Prepared</h3>
+        <p id="successMessage"></p>
+        <p class="highlight" id="recoveryAmount"></p>
+        <div id="nextSteps"></div>
+      </div>
 
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+    </div>
   </div>
 
   <script>
-    function goBack() {
-      window.location.href = '../../step-by-step-guide.html?step=13';
+    let uploadedFiles = [];
+
+    // File upload handling
+    const fileUpload = document.getElementById('fileUpload');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+
+    fileUpload.addEventListener('click', () => fileInput.click());
+
+    fileUpload.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUpload.classList.add('dragover');
+    });
+
+    fileUpload.addEventListener('dragleave', () => {
+      fileUpload.classList.remove('dragover');
+    });
+
+    fileUpload.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUpload.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        if (!uploadedFiles.find(f => f.name === file.name)) {
+          uploadedFiles.push(file);
+          addFileToList(file);
+        }
+      });
     }
 
-    function markComplete() {
-      saveClaimData('tool_rcv-recovery-submitter_complete', true);
-      alert('✓ Tool marked as complete!\n\nReturning to Claim Guide...');
-      goBack();
+    function addFileToList(file) {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+      fileItem.innerHTML = `
+        <span>📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+        <button type="button" onclick="removeFile('${file.name}')">Remove</button>
+      `;
+      fileList.appendChild(fileItem);
     }
 
-    function generateCoverLetter() {
-      window.location.href = 'response-letter-generator.html?template=rcv_recovery';
+    function removeFile(filename) {
+      uploadedFiles = uploadedFiles.filter(f => f.name !== filename);
+      renderFileList();
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('Tool loaded: rcv-recovery-submitter');
+    function renderFileList() {
+      fileList.innerHTML = '';
+      uploadedFiles.forEach(file => addFileToList(file));
+    }
+
+    // Form submission
+    document.getElementById('rcvForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
       
-      // Auto-fill from saved data if available
-      const claimData = getClaimData('claimInfo');
-      if (claimData?.claimNumber) {
-        document.getElementById('claimNumber').value = claimData.claimNumber;
+      if (uploadedFiles.length === 0) {
+        alert('Please upload at least one proof of repair document');
+        return;
+      }
+
+      const claimNumber = document.getElementById('claimNumber').value.trim();
+      const policyNumber = document.getElementById('policyNumber').value.trim();
+      const adjusterName = document.getElementById('adjusterName').value.trim();
+      const adjusterEmail = document.getElementById('adjusterEmail').value.trim();
+      const acvPaid = parseFloat(document.getElementById('acvPaid').value);
+      const depreciationWithheld = parseFloat(document.getElementById('depreciationWithheld').value);
+      const totalRepairCost = parseFloat(document.getElementById('totalRepairCost').value);
+      const repairsSummary = document.getElementById('repairsSummary').value.trim();
+      const contractorName = document.getElementById('contractorName').value.trim();
+      const contractorLicense = document.getElementById('contractorLicense').value.trim();
+      const completionDate = document.getElementById('completionDate').value;
+
+      document.getElementById('error').classList.remove('active');
+      document.getElementById('success').classList.remove('active');
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('submitBtn').disabled = true;
+
+      try {
+        // Convert files to base64
+        const filesData = await Promise.all(
+          uploadedFiles.map(async file => ({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            data: await fileToBase64(file)
+          }))
+        );
+
+        const submissionData = {
+          claim_number: claimNumber,
+          policy_number: policyNumber,
+          adjuster_name: adjusterName,
+          adjuster_email: adjusterEmail,
+          acv_paid: acvPaid,
+          depreciation_withheld: depreciationWithheld,
+          total_repair_cost: totalRepairCost,
+          repairs_summary: repairsSummary,
+          contractor_name: contractorName,
+          contractor_license: contractorLicense,
+          completion_date: completionDate,
+          proof_files: filesData
+        };
+
+        await submitRCVRecovery(submissionData);
+
+        document.getElementById('successMessage').textContent = 
+          `Your RCV recovery submission for claim ${claimNumber} has been prepared and logged.`;
+        document.getElementById('recoveryAmount').textContent = 
+          `Recovery Amount: $${depreciationWithheld.toLocaleString()}`;
+        
+        const nextStepsHtml = `
+          <p><strong>Next Steps:</strong></p>
+          <p>1. Submit this package to your adjuster (${adjusterName || 'your adjuster'})</p>
+          <p>2. Follow up in 5-7 business days if no response</p>
+          <p>3. Track the recovery in your Claim Journal</p>
+          <p>4. If denied, review policy provisions and escalate if needed</p>
+        `;
+        document.getElementById('nextSteps').innerHTML = nextStepsHtml;
+        document.getElementById('success').classList.add('active');
+
+        saveToLocalStorage(claimNumber, submissionData, depreciationWithheld);
+        logToJournal(claimNumber, depreciationWithheld, completionDate);
+
+      } catch (error) {
+        console.error('Submission error:', error);
+        document.getElementById('error').textContent = error.message || 'Submission failed. Please try again.';
+        document.getElementById('error').classList.add('active');
+      } finally {
+        document.getElementById('loading').classList.remove('active');
+        document.getElementById('submitBtn').disabled = false;
       }
     });
 
-    // Form submission handler
-    document.querySelector('[data-tool-form]')?.addEventListener('submit', function(e) {
-      e.preventDefault();
+    async function submitRCVRecovery(data) {
+      const token = localStorage.getItem('supabase_token');
       
-      const formData = new FormData(e.target);
-      
-      // Get values
-      const acv = parseFloat(formData.get('acvReceived')) || 0;
-      const rcv = parseFloat(formData.get('rcvEstimate')) || 0;
-      const repairCost = parseFloat(formData.get('repairsCost')) || 0;
-      
-      // Calculate depreciation holdback
-      const depreciationHoldback = rcv - acv;
-      
-      // Calculate recoverable amount (lesser of holdback or actual repair cost minus ACV)
-      const recoverableAmount = Math.min(depreciationHoldback, repairCost - acv);
-      
-      // Show results
-      const output = document.getElementById('output');
-      const result = document.getElementById('calculationResult');
-      
-      const percentage = rcv > 0 ? ((recoverableAmount / rcv) * 100).toFixed(1) : 0;
-      
-      result.innerHTML = `
-        <div style="background: #f7f9fc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e5e7eb;">
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
-            <div>
-              <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">ACV Already Received</div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: #0B2545;">$${acv.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Full RCV Estimate</div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: #0B2545;">$${rcv.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Depreciation Holdback</div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: #f59e0b;">$${depreciationHoldback.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-            </div>
-            <div>
-              <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem;">Actual Repair Cost</div>
-              <div style="font-size: 1.25rem; font-weight: 700; color: #0B2545;">$${repairCost.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-            </div>
-          </div>
-          
-          <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #059669;">
-            <div style="text-align: center;">
-              <div style="font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">💰 RECOVERABLE DEPRECIATION AMOUNT</div>
-              <div style="font-size: 2.5rem; font-weight: 700; color: #059669;">$${recoverableAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
-              <div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">${percentage}% of total RCV estimate</div>
-            </div>
-          </div>
-          
-          <div style="margin-top: 1.5rem; padding: 1rem; background: #e0f2fe; border-radius: 8px; border-left: 4px solid #0284c7;">
-            <strong>📋 Next Steps:</strong>
-            <ol style="margin: 0.5rem 0 0 1.25rem; padding-left: 0.5rem;">
-              <li>Upload all required documentation to Evidence Organizer</li>
-              <li>Generate submission cover letter using the button below</li>
-              <li>Submit via ${formData.get('submissionMethod') || 'your preferred method'}</li>
-              <li>Follow up after 10-14 business days if no response</li>
-              <li>Log payment when received in Payment Tracker</li>
-            </ol>
-          </div>
-        </div>
-      `;
-      
-      output.style.display = 'block';
-      output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      
-      // Save calculation
-      saveClaimData('rcv_recovery_calculation', {
-        timestamp: new Date().toISOString(),
-        acv,
-        rcv,
-        repairCost,
-        depreciationHoldback,
-        recoverableAmount,
-        category: formData.get('categoryType'),
-        completionDate: formData.get('repairCompletionDate'),
-        contractor: formData.get('contractorName')
+      if (token) {
+        try {
+          const response = await fetch('/.netlify/functions/submit-rcv-recovery', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+          });
+
+          if (response.ok) {
+            return await response.json();
+          }
+        } catch (error) {
+          console.warn('Backend submission failed, using local storage fallback:', error);
+        }
+      }
+
+      return { success: true, stored_locally: true };
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
       });
+    }
+
+    function saveToLocalStorage(claimNumber, data, amount) {
+      const key = `rcv_recovery_${claimNumber}`;
+      localStorage.setItem(key, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        data,
+        amount
+      }));
+    }
+
+    function logToJournal(claimNumber, amount, completionDate) {
+      const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+      journal.push({
+        timestamp: new Date().toISOString(),
+        action_type: 'rcv_recovery_submission',
+        description: `RCV recovery submission prepared — $${amount.toLocaleString()} depreciation recovery requested`,
+        amount: amount,
+        related_step: 'Step 13',
+        reference_id: claimNumber
+      });
+      localStorage.setItem('claimJournal', JSON.stringify(journal));
+    }
+
+    // Load saved data
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const claimNumber = urlParams.get('claim');
+      
+      if (claimNumber) {
+        document.getElementById('claimNumber').value = claimNumber;
+      }
     });
   </script>
-
-  <script type="module">
-    import { AIToolController } from '/app/assets/js/controllers/index.js';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // Note: This tool uses client-side calculation, not AI backend
-      console.log('[RCV Recovery] Tool initialized');
-    });
-  </script>
-
 </body>
 </html>

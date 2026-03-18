@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escalation Evaluator - Claim Command Pro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #d63384 0%, #e85d04 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .content {
+      padding: 40px;
+    }
+
+    .mode-selector {
+      background: #f8f9fa;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .mode-selector h3 {
+      margin-bottom: 15px;
+      color: #d63384;
+    }
+
+    .mode-options {
+      display: flex;
+      gap: 15px;
+    }
+
+    .mode-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mode-option:hover {
+      border-color: #d63384;
+      background: #fff5f8;
+    }
+
+    .mode-option.active {
+      border-color: #d63384;
+      background: #ffe4f1;
+      box-shadow: 0 4px 12px rgba(214, 51, 132, 0.2);
+    }
+
+    .mode-option h4 {
+      margin-bottom: 5px;
+      color: #d63384;
+    }
+
+    .mode-option p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .input-section {
+      margin-bottom: 30px;
+    }
+
+    .input-section h3 {
+      margin-bottom: 15px;
+      color: #d63384;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #d63384;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(250, 112, 154, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .results {
+      margin-top: 40px;
+      display: none;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results h3 {
+      margin-bottom: 20px;
+      color: #d63384;
+    }
+
+    .recommendation-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .recommendation-banner h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: white;
+    }
+
+    .recommendation-banner p {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .evaluation-card {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #d63384;
+    }
+
+    .evaluation-card h4 {
+      margin-bottom: 15px;
+      color: #d63384;
+    }
+
+    .evaluation-card ul {
+      list-style-position: inside;
+      line-height: 1.8;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .score-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #dee2e6;
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .score-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #d63384;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+
+    .loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #d63384;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .info-box {
+      background: #d1ecf1;
+      border-left: 4px solid #0c5460;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .api-key-input {
+      display: none;
+    }
+
+    .api-key-input.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
+      <h1>⚖️ Escalation Evaluator</h1>
+      <p>Determine if appraisal or mediation is right for your claim</p>
+    </div>
+
+    <div class="content">
+      <div class="info-box">
+        <strong>What This Tool Does:</strong> Evaluates your claim's readiness for escalation (appraisal, mediation, or litigation), analyzes success probability, and recommends the best path forward.
+      </div>
+
+      <div class="mode-selector">
+        <h3>Choose Mode</h3>
+        <div class="mode-options">
+          <div class="mode-option active" data-mode="backend" onclick="selectMode('backend')">
+            <h4>🔒 Backend Mode</h4>
+            <p>Uses Netlify backend with OpenAI (requires login)</p>
+          </div>
+          <div class="mode-option" data-mode="client" onclick="selectMode('client')">
+            <h4>🔑 Client Mode</h4>
+            <p>Direct OpenAI API (requires your API key)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="api-key-input" id="apiKeySection">
+        <div class="form-group">
+          <label>OpenAI API Key</label>
+          <input type="password" id="apiKey" placeholder="sk-...">
+          <small style="display: block; margin-top: 5px; color: #666;">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com/api-keys</a></small>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <h3>Claim Situation</h3>
+        
+        <div class="form-group">
+          <label>Dispute Amount ($)</label>
+          <input type="number" id="disputeAmount" placeholder="e.g., 18550">
+        </div>
+
+        <div class="form-group">
+          <label>Type of Dispute</label>
+          <select id="disputeType">
+            <option value="scope">Scope Disagreement (missing items)</option>
+            <option value="pricing">Pricing/Valuation Dispute</option>
+            <option value="coverage">Coverage Interpretation</option>
+            <option value="depreciation">Depreciation/ACV vs RCV</option>
+            <option value="code_upgrade">Code Upgrade/Ordinance & Law</option>
+            <option value="delay">Unreasonable Delay</option>
+            <option value="bad_faith">Potential Bad Faith</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Negotiation History</label>
+          <textarea id="negotiationHistory" placeholder="Describe your negotiation attempts:
+- Initial offer: $X
+- Supplement submitted: $Y
+- Counter-offer: $Z
+- Current status"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Evidence Strength</label>
+          <select id="evidenceStrength">
+            <option value="strong">Strong (expert opinions, detailed estimates, photos)</option>
+            <option value="moderate">Moderate (contractor estimate, some documentation)</option>
+            <option value="weak">Weak (limited documentation)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Policy Language</label>
+          <select id="policyLanguage">
+            <option value="clear">Clear - supports your position</option>
+            <option value="ambiguous">Ambiguous - could go either way</option>
+            <option value="unfavorable">Unfavorable - supports carrier</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>State</label>
+          <input type="text" id="state" placeholder="e.g., Texas">
+          <small style="display: block; margin-top: 5px; color: #666;">Some states have better appraisal/mediation laws</small>
+        </div>
+
+        <div class="form-group">
+          <label>Time Since Loss (days)</label>
+          <input type="number" id="daysSinceLoss" placeholder="e.g., 120">
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="evaluateEscalation()" id="evaluateBtn">
+        Evaluate Escalation Options
+      </button>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Evaluating your escalation options...</p>
+      </div>
+
+      <div class="error" id="error"></div>
+
+      <div class="results" id="results">
+        <h3>Escalation Evaluation</h3>
+        <div id="evaluationContent"></div>
+        <button class="btn btn-primary" onclick="exportEvaluation()">Export Evaluation</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedMode = 'backend';
+    let evaluationData = null;
+
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.querySelectorAll('.mode-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      event.target.closest('.mode-option').classList.add('active');
+
+      const apiKeySection = document.getElementById('apiKeySection');
+      if (mode === 'client') {
+        apiKeySection.classList.add('show');
+        const savedKey = localStorage.getItem('openai_api_key');
+        if (savedKey) {
+          document.getElementById('apiKey').value = savedKey;
+        }
+      } else {
+        apiKeySection.classList.remove('show');
+      }
+    }
+
+    async function evaluateEscalation() {
+      const disputeAmount = parseFloat(document.getElementById('disputeAmount').value);
+      const disputeType = document.getElementById('disputeType').value;
+      const negotiationHistory = document.getElementById('negotiationHistory').value.trim();
+      const evidenceStrength = document.getElementById('evidenceStrength').value;
+      const policyLanguage = document.getElementById('policyLanguage').value;
+      const state = document.getElementById('state').value.trim();
+      const daysSinceLoss = parseInt(document.getElementById('daysSinceLoss').value);
+
+      if (!disputeAmount || !negotiationHistory || !state || !daysSinceLoss) {
+        showError('Please fill in all required fields');
+        return;
+      }
+
+      if (selectedMode === 'client') {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        if (!apiKey) {
+          showError('Please enter your OpenAI API key');
+          return;
+        }
+        localStorage.setItem('openai_api_key', apiKey);
+      }
+
+      showLoading();
+      hideError();
+      hideResults();
+
+      try {
+        let result;
+        if (selectedMode === 'backend') {
+          result = await evaluateWithBackend(disputeAmount, disputeType, negotiationHistory, evidenceStrength, policyLanguage, state, daysSinceLoss);
+        } else {
+          result = await evaluateWithClient(disputeAmount, disputeType, negotiationHistory, evidenceStrength, policyLanguage, state, daysSinceLoss);
+        }
+
+        displayResults(result, disputeAmount);
+      } catch (error) {
+        console.error('Evaluation error:', error);
+        if (selectedMode === 'backend') {
+          showError('Backend unavailable. Try Client Mode instead. Error: ' + error.message);
+        } else {
+          showError('Evaluation failed: ' + error.message);
+        }
+      } finally {
+        hideLoading();
+      }
+    }
+
+    async function evaluateWithBackend(disputeAmount, disputeType, negotiationHistory, evidenceStrength, policyLanguage, state, daysSinceLoss) {
+      const claimId = localStorage.getItem('current_claim_id') || 'demo-claim';
+      
+      const response = await fetch('/.netlify/functions/evaluate-escalation-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getAuthToken()}`
+        },
+        body: JSON.stringify({
+          claim_id: claimId,
+          dispute_amount: disputeAmount,
+          dispute_type: disputeType,
+          negotiation_history: negotiationHistory,
+          evidence_strength: evidenceStrength,
+          policy_language: policyLanguage,
+          state: state,
+          days_since_loss: daysSinceLoss
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Backend request failed');
+      }
+
+      const data = await response.json();
+      return data.data;
+    }
+
+    async function evaluateWithClient(disputeAmount, disputeType, negotiationHistory, evidenceStrength, policyLanguage, state, daysSinceLoss) {
+      const apiKey = document.getElementById('apiKey').value.trim();
+
+      const prompt = `You are an expert insurance dispute resolution advisor. Evaluate this claim for escalation readiness.
+
+CLAIM DETAILS:
+- Dispute Amount: $${disputeAmount.toLocaleString()}
+- Dispute Type: ${disputeType}
+- Evidence Strength: ${evidenceStrength}
+- Policy Language: ${policyLanguage}
+- State: ${state}
+- Days Since Loss: ${daysSinceLoss}
+
+NEGOTIATION HISTORY:
+${negotiationHistory}
+
+Provide a comprehensive escalation evaluation in JSON format:
+{
+  "recommendation": "<appraisal|mediation|litigation|continue_negotiating>",
+  "confidence": <1-10>,
+  "reasoning": "<2-3 sentences>",
+  "readiness_scores": {
+    "appraisal": <1-10>,
+    "mediation": <1-10>,
+    "litigation": <1-10>
+  },
+  "pros_and_cons": {
+    "appraisal": {
+      "pros": ["<pro>"],
+      "cons": ["<con>"]
+    },
+    "mediation": {
+      "pros": ["<pro>"],
+      "cons": ["<con>"]
+    },
+    "litigation": {
+      "pros": ["<pro>"],
+      "cons": ["<con>"]
+    }
+  },
+  "cost_estimates": {
+    "appraisal": "<cost range>",
+    "mediation": "<cost range>",
+    "litigation": "<cost range>"
+  },
+  "timeline_estimates": {
+    "appraisal": "<time range>",
+    "mediation": "<time range>",
+    "litigation": "<time range>"
+  },
+  "success_probability": {
+    "appraisal": <percentage>,
+    "mediation": <percentage>,
+    "litigation": <percentage>
+  },
+  "preparation_steps": [
+    "<step>"
+  ],
+  "risks": [
+    "<risk>"
+  ],
+  "state_specific_notes": "<notes about ${state} laws>"
+}`;
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert insurance dispute resolution advisor with expertise in appraisal, mediation, and litigation. Return only valid JSON.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          response_format: { type: 'json_object' }
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error?.message || 'OpenAI API call failed');
+      }
+
+      const data = await response.json();
+      return JSON.parse(data.choices[0].message.content);
+    }
+
+    async function getAuthToken() {
+      if (window.supabaseClient) {
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
+        return session?.access_token;
+      }
+      return null;
+    }
+
+    function displayResults(result, disputeAmount) {
+      evaluationData = result;
+
+      const bannerHTML = `
+        <h3>Recommended Path: ${result.recommendation.toUpperCase().replace('_', ' ')}</h3>
+        <p>${result.reasoning}</p>
+        <p style="margin-top: 10px;"><strong>Confidence:</strong> ${result.confidence}/10</p>
+      `;
+      document.getElementById('evaluationContent').innerHTML = `
+        <div class="recommendation-banner">${bannerHTML}</div>
+      `;
+
+      if (result.readiness_scores) {
+        const scoresHTML = `
+          <div class="score-grid">
+            <div class="score-card">
+              <div class="score-label">Appraisal Readiness</div>
+              <div class="score-value">${result.readiness_scores.appraisal}/10</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">Mediation Readiness</div>
+              <div class="score-value">${result.readiness_scores.mediation}/10</div>
+            </div>
+            <div class="score-card">
+              <div class="score-label">Litigation Readiness</div>
+              <div class="score-value">${result.readiness_scores.litigation}/10</div>
+            </div>
+          </div>
+        `;
+        document.getElementById('evaluationContent').innerHTML += scoresHTML;
+      }
+
+      if (result.pros_and_cons) {
+        let prosConsHTML = '';
+        for (const [method, data] of Object.entries(result.pros_and_cons)) {
+          prosConsHTML += `
+            <div class="evaluation-card">
+              <h4>${method.toUpperCase()}</h4>
+              <div style="margin-bottom: 15px;">
+                <strong style="color: #28a745;">✅ Pros:</strong>
+                <ul style="margin-top: 8px;">
+                  ${data.pros.map(pro => `<li>${pro}</li>`).join('')}
+                </ul>
+              </div>
+              <div>
+                <strong style="color: #dc3545;">❌ Cons:</strong>
+                <ul style="margin-top: 8px;">
+                  ${data.cons.map(con => `<li>${con}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          `;
+        }
+        document.getElementById('evaluationContent').innerHTML += prosConsHTML;
+      }
+
+      if (result.cost_estimates && result.timeline_estimates && result.success_probability) {
+        const comparisonHTML = `
+          <div class="evaluation-card">
+            <h4>📊 Comparison Matrix</h4>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+              <thead>
+                <tr style="background: #f8f9fa;">
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Method</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Cost</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Timeline</th>
+                  <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Success %</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;"><strong>Appraisal</strong></td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.cost_estimates.appraisal}</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.timeline_estimates.appraisal}</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.success_probability.appraisal}%</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;"><strong>Mediation</strong></td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.cost_estimates.mediation}</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.timeline_estimates.mediation}</td>
+                  <td style="padding: 12px; border-bottom: 1px solid #dee2e6;">${result.success_probability.mediation}%</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px;"><strong>Litigation</strong></td>
+                  <td style="padding: 12px;">${result.cost_estimates.litigation}</td>
+                  <td style="padding: 12px;">${result.timeline_estimates.litigation}</td>
+                  <td style="padding: 12px;">${result.success_probability.litigation}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+        document.getElementById('evaluationContent').innerHTML += comparisonHTML;
+      }
+
+      if (result.preparation_steps && result.preparation_steps.length > 0) {
+        const stepsHTML = `
+          <div class="evaluation-card" style="border-left-color: #28a745;">
+            <h4>✅ Preparation Steps</h4>
+            <ul>
+              ${result.preparation_steps.map(step => `<li>${step}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        document.getElementById('evaluationContent').innerHTML += stepsHTML;
+      }
+
+      if (result.risks && result.risks.length > 0) {
+        const risksHTML = `
+          <div class="evaluation-card" style="border-left-color: #ffc107;">
+            <h4>⚠️ Risks to Consider</h4>
+            <ul>
+              ${result.risks.map(risk => `<li>${risk}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+        document.getElementById('evaluationContent').innerHTML += risksHTML;
+      }
+
+      if (result.state_specific_notes) {
+        const stateHTML = `
+          <div class="evaluation-card" style="border-left-color: #17a2b8;">
+            <h4>📍 State-Specific Notes</h4>
+            <p>${result.state_specific_notes}</p>
+          </div>
+        `;
+        document.getElementById('evaluationContent').innerHTML += stateHTML;
+      }
+
+      document.getElementById('results').classList.add('show');
+
+      saveToLocalStorage(result, disputeAmount);
+      logToJournal('escalation_evaluated', `Escalation evaluated: ${result.recommendation} recommended`);
+    }
+
+    function exportEvaluation() {
+      if (!evaluationData) return;
+
+      const text = `ESCALATION EVALUATION REPORT
+Generated: ${new Date().toLocaleString()}
+
+RECOMMENDATION: ${evaluationData.recommendation.toUpperCase()}
+Confidence: ${evaluationData.confidence}/10
+Reasoning: ${evaluationData.reasoning}
+
+READINESS SCORES
+${evaluationData.readiness_scores ? `
+Appraisal: ${evaluationData.readiness_scores.appraisal}/10
+Mediation: ${evaluationData.readiness_scores.mediation}/10
+Litigation: ${evaluationData.readiness_scores.litigation}/10
+` : ''}
+
+COMPARISON MATRIX
+${evaluationData.cost_estimates ? `
+Appraisal:
+  Cost: ${evaluationData.cost_estimates.appraisal}
+  Timeline: ${evaluationData.timeline_estimates.appraisal}
+  Success Probability: ${evaluationData.success_probability.appraisal}%
+
+Mediation:
+  Cost: ${evaluationData.cost_estimates.mediation}
+  Timeline: ${evaluationData.timeline_estimates.mediation}
+  Success Probability: ${evaluationData.success_probability.mediation}%
+
+Litigation:
+  Cost: ${evaluationData.cost_estimates.litigation}
+  Timeline: ${evaluationData.timeline_estimates.litigation}
+  Success Probability: ${evaluationData.success_probability.litigation}%
+` : ''}
+
+PREPARATION STEPS
+${evaluationData.preparation_steps ? evaluationData.preparation_steps.map((step, i) => `${i + 1}. ${step}`).join('\n') : 'N/A'}
+
+RISKS
+${evaluationData.risks ? evaluationData.risks.map((risk, i) => `${i + 1}. ${risk}`).join('\n') : 'N/A'}
+
+STATE-SPECIFIC NOTES
+${evaluationData.state_specific_notes || 'N/A'}
+`;
+
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `escalation-evaluation-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveToLocalStorage(result, disputeAmount) {
+      const saved = JSON.parse(localStorage.getItem('escalation_evaluations') || '[]');
+      saved.push({
+        timestamp: new Date().toISOString(),
+        result: result,
+        dispute_amount: disputeAmount
+      });
+      localStorage.setItem('escalation_evaluations', JSON.stringify(saved));
+    }
+
+    function logToJournal(actionType, description) {
+      try {
+        const journal = JSON.parse(localStorage.getItem('claimJournal') || '[]');
+        journal.push({
+          timestamp: new Date().toISOString(),
+          action_type: actionType,
+          description: description,
+          related_step: 'Step 15'
+        });
+        localStorage.setItem('claimJournal', JSON.stringify(journal));
+      } catch (e) {
+        console.warn('Failed to log to journal:', e);
+      }
+    }
+
+    function showLoading() {
+      document.getElementById('loading').classList.add('show');
+      document.getElementById('evaluateBtn').disabled = true;
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').classList.remove('show');
+      document.getElementById('evaluateBtn').disabled = false;
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+    }
+
+    function hideError() {
+      document.getElementById('error').classList.remove('show');
+    }
+
+    function hideResults() {
+      document.getElementById('results').classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      selectMode('backend');
+    });
+  </script>
+</body>
+</html>
