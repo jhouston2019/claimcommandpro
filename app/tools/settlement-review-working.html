@@ -622,9 +622,8 @@ Be precise with dollar amounts. If any value is not found, use 0.`;
       if (result.document_header) {
         const h = result.document_header;
         headerHTML = `
-          <div style="background: linear-gradient(135deg, #0B2545 0%, #123A63 100%); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px;">
-            <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">CLAIM COMMAND PRO</div>
-            <div style="font-size: 11px; opacity: 0.9;">
+          <div style="padding: 12px 15px; border-bottom: 2px solid #e3f2fd; margin-bottom: 20px; background: #f8f9fa;">
+            <div style="font-size: 11px; color: #666;">
               ${h.claim_number ? `Claim #: ${h.claim_number}` : ''} • 
               ${h.document_type || 'Analysis'} • 
               Generated: ${new Date(h.generated_date).toLocaleDateString()}

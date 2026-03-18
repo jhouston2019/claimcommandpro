@@ -71,70 +71,63 @@ exports.handler = async (event) => {
     
     let yPosition = height - 50;
 
-    // Add Claim Command Pro header
-    page.drawText('Claim Command Pro', {
-      x: 50,
-      y: yPosition,
-      size: 14,
-      color: rgb(0.07, 0.24, 0.27)
-    });
-    yPosition -= 20;
-
     // Add claim information header if provided
-    if (metadata.claim_number) {
-      page.drawText(`Claim #: ${metadata.claim_number}`, {
-        x: 50,
-        y: yPosition,
-        size: 9,
-        color: rgb(0.3, 0.3, 0.3)
-      });
-      yPosition -= 12;
-    }
-    if (metadata.policyholder_name) {
-      page.drawText(`Policyholder: ${metadata.policyholder_name}`, {
-        x: 50,
-        y: yPosition,
-        size: 9,
-        color: rgb(0.3, 0.3, 0.3)
-      });
-      yPosition -= 12;
-    }
-    if (metadata.policy_number) {
-      page.drawText(`Policy #: ${metadata.policy_number}`, {
-        x: 50,
-        y: yPosition,
-        size: 9,
-        color: rgb(0.3, 0.3, 0.3)
-      });
-      yPosition -= 12;
-    }
-    if (metadata.date_of_loss) {
-      page.drawText(`Date of Loss: ${metadata.date_of_loss}`, {
-        x: 50,
-        y: yPosition,
-        size: 9,
-        color: rgb(0.3, 0.3, 0.3)
-      });
-      yPosition -= 12;
-    }
+    if (metadata.claim_number || metadata.policyholder_name || metadata.policy_number || metadata.date_of_loss) {
+      if (metadata.claim_number) {
+        page.drawText(`Claim #: ${metadata.claim_number}`, {
+          x: 50,
+          y: yPosition,
+          size: 10,
+          color: rgb(0.2, 0.2, 0.2)
+        });
+        yPosition -= 14;
+      }
+      if (metadata.policyholder_name) {
+        page.drawText(`Policyholder: ${metadata.policyholder_name}`, {
+          x: 50,
+          y: yPosition,
+          size: 10,
+          color: rgb(0.2, 0.2, 0.2)
+        });
+        yPosition -= 14;
+      }
+      if (metadata.policy_number) {
+        page.drawText(`Policy #: ${metadata.policy_number}`, {
+          x: 50,
+          y: yPosition,
+          size: 10,
+          color: rgb(0.2, 0.2, 0.2)
+        });
+        yPosition -= 14;
+      }
+      if (metadata.date_of_loss) {
+        page.drawText(`Date of Loss: ${metadata.date_of_loss}`, {
+          x: 50,
+          y: yPosition,
+          size: 10,
+          color: rgb(0.2, 0.2, 0.2)
+        });
+        yPosition -= 14;
+      }
 
-    // Add generated date
-    page.drawText(`Generated: ${new Date().toLocaleDateString()}`, {
-      x: 50,
-      y: yPosition,
-      size: 9,
-      color: rgb(0.3, 0.3, 0.3)
-    });
-    yPosition -= 25;
+      // Add generated date
+      page.drawText(`Generated: ${new Date().toLocaleDateString()}`, {
+        x: 50,
+        y: yPosition,
+        size: 9,
+        color: rgb(0.4, 0.4, 0.4)
+      });
+      yPosition -= 25;
 
-    // Add separator line
-    page.drawLine({
-      start: { x: 50, y: yPosition },
-      end: { x: width - 50, y: yPosition },
-      thickness: 1,
-      color: rgb(0.8, 0.8, 0.8)
-    });
-    yPosition -= 20;
+      // Add separator line
+      page.drawLine({
+        start: { x: 50, y: yPosition },
+        end: { x: width - 50, y: yPosition },
+        thickness: 1,
+        color: rgb(0.8, 0.8, 0.8)
+      });
+      yPosition -= 20;
+    }
     
     // Add title if provided
     if (metadata.title) {

@@ -43,21 +43,6 @@ exports.handler = async (event, context) => {
     const lines = content.split('\n').filter(line => line.trim() !== '');
     const children = [];
 
-    // Add Claim Command Pro header
-    children.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: 'Claim Command Pro',
-            bold: true,
-            size: 28,
-            color: '123A63'
-          })
-        ],
-        spacing: { after: 100 }
-      })
-    );
-
     // Add claim information header if provided
     if (metadata.claim_number || metadata.policyholder_name || metadata.policy_number || metadata.date_of_loss) {
       const headerLines = [];
@@ -72,11 +57,11 @@ exports.handler = async (event, context) => {
           children: [
             new TextRun({
               text: headerLines.join(' | '),
-              size: 18,
-              color: '666666'
+              size: 20,
+              color: '333333'
             })
           ],
-          spacing: { after: 200 }
+          spacing: { after: 300 }
         })
       );
     }

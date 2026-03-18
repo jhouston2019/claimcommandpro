@@ -131,11 +131,6 @@ Return ONLY the letter text, properly formatted with line breaks and proper spac
 
     // Add professional header and footer
     const formattedNotice = `
-═══════════════════════════════════════════════════════════════
-                        CLAIM COMMAND PRO
-        Professional Insurance Claim Management & Advocacy
-═══════════════════════════════════════════════════════════════
-
 CLAIM INFORMATION:
 Policyholder: ${policyholder_name}
 Policy #: ${policy_number}

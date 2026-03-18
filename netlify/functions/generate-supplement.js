@@ -138,11 +138,6 @@ exports.handler = async (event) => {
       // Add professional header and footer to the letter
       const headerFooter = {
         header: `
-═══════════════════════════════════════════════════════════════
-                        CLAIM COMMAND PRO
-        Professional Insurance Claim Management & Advocacy
-═══════════════════════════════════════════════════════════════
-
 CLAIM INFORMATION:
 Claim #: ${claim.claim_number}
 Policyholder: ${claim.insured_name}

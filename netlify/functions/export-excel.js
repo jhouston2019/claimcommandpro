@@ -44,15 +44,6 @@ exports.handler = async (event) => {
 
     let currentRow = 1;
 
-    // Add Claim Command Pro header
-    worksheet.mergeCells(`A${currentRow}`, `${String.fromCharCode(65 + (columns?.length || Object.keys(data[0]).length) - 1)}${currentRow}`);
-    const brandCell = worksheet.getCell(`A${currentRow}`);
-    brandCell.value = 'Claim Command Pro';
-    brandCell.font = { size: 18, bold: true, color: { argb: 'FF123A63' } };
-    brandCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    worksheet.getRow(currentRow).height = 25;
-    currentRow++;
-
     // Add claim information header if provided
     if (metadata.claim_number || metadata.policyholder_name || metadata.policy_number) {
       const headerParts = [];
@@ -65,9 +56,9 @@ exports.handler = async (event) => {
       worksheet.mergeCells(`A${currentRow}`, `${String.fromCharCode(65 + (columns?.length || Object.keys(data[0]).length) - 1)}${currentRow}`);
       const infoCell = worksheet.getCell(`A${currentRow}`);
       infoCell.value = headerParts.join(' | ');
-      infoCell.font = { size: 9, color: { argb: 'FF666666' } };
+      infoCell.font = { size: 10, bold: true, color: { argb: 'FF333333' } };
       infoCell.alignment = { vertical: 'middle', horizontal: 'center' };
-      worksheet.getRow(currentRow).height = 18;
+      worksheet.getRow(currentRow).height = 22;
       currentRow++;
     }
 
