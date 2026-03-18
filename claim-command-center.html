@@ -254,6 +254,37 @@
       font-size: 13px;
     }
 
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .nav-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-400);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-pill:hover {
+      color: white;
+      background: rgba(255,255,255,0.05);
+      border-color: var(--navy-border);
+    }
+
+    .nav-pill.active {
+      background: var(--teal-dim);
+      color: var(--teal);
+      border-color: var(--teal);
+    }
+
     /* Claim Summary Panel */
     .claim-summary-panel {
       position: fixed;
@@ -1637,6 +1668,14 @@
         <div class="nav-claim-num">Claim #CLM-2024-0847</div>
         <div class="nav-divider"></div>
         <div class="nav-claim-num">Day 85 • Active</div>
+      </div>
+      <div class="nav-pills">
+        <button class="nav-pill active" onclick="showClaimSummary()">Claim Summary</button>
+        <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
+        <button class="nav-pill" onclick="showClaimJournal()">Claim Journal</button>
+        <button class="nav-pill" onclick="showMessages()">Messages</button>
+        <button class="nav-pill" onclick="showDocuments()">Documents</button>
+        <button class="nav-pill" onclick="showDeadlines()">Deadlines</button>
       </div>
     </div>
   </nav>
@@ -3661,6 +3700,53 @@
     function toggleSummary() {
       const panel = document.getElementById('claimSummary');
       panel.classList.toggle('minimized');
+    }
+
+    // Navigation pill functions
+    function showClaimSummary() {
+      toggleSummary();
+      setActiveNavPill(0);
+    }
+
+    function showFinancialSummary() {
+      // Scroll to financial metrics at top
+      document.querySelector('.metric-strip').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveNavPill(1);
+    }
+
+    function showClaimJournal() {
+      // Scroll to claim journal
+      document.querySelector('.claim-journal-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setActiveNavPill(2);
+    }
+
+    function showMessages() {
+      // Placeholder - could open a messages modal or panel
+      alert('Messages feature coming soon. All claim communications will be tracked here.');
+      setActiveNavPill(3);
+    }
+
+    function showDocuments() {
+      // Placeholder - could open documents panel
+      alert('Documents feature coming soon. All uploaded documents will be accessible here.');
+      setActiveNavPill(4);
+    }
+
+    function showDeadlines() {
+      // Placeholder - could open deadlines panel
+      alert('Deadlines feature coming soon. All claim deadlines and timelines will be tracked here.');
+      setActiveNavPill(5);
+    }
+
+    function setActiveNavPill(index) {
+      const pills = document.querySelectorAll('.nav-pill');
+      pills.forEach((pill, i) => {
+        if (i === index) {
+          pill.classList.add('active');
+        } else {
+          pill.classList.remove('active');
+        }
+      });
     }
 
     // Add close button to summary panel
