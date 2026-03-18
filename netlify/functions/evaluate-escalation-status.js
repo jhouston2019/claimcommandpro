@@ -305,6 +305,15 @@ State: Texas`
       });
 
       escalationAnalysis = JSON.parse(completion.choices[0].message.content);
+
+      // Add metadata for display
+      escalationAnalysis.document_header = {
+        brand: 'Claim Command Pro',
+        claim_number: claim_id,
+        generated_date: new Date().toISOString(),
+        document_type: 'Escalation Evaluation'
+      };
+
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);
       return {

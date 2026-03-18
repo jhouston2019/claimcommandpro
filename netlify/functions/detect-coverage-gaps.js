@@ -166,6 +166,14 @@ Provide a comprehensive coverage gap analysis in JSON format:
 
     const gapAnalysis = JSON.parse(completion.choices[0].message.content);
 
+    // Add metadata for display
+    gapAnalysis.document_header = {
+      brand: 'Claim Command Pro',
+      claim_number: claim_number,
+      generated_date: new Date().toISOString(),
+      document_type: 'Coverage Gap Analysis'
+    };
+
     // Store in Supabase
     if (claim) {
       await supabase

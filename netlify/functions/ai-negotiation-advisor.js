@@ -300,6 +300,12 @@ Format as professional HTML with clear headings and bullet points. Be specific w
         legal_leverage: badFaithAnalysis.triggers.length,
         carrier_tactics: carrierTactics.detected_tactics.length,
         recommended_frameworks: positionAnalysis.recommended_frameworks.map(f => f.description)
+      },
+      document_header: {
+        brand: 'Claim Command Pro',
+        claim_id: claimInfo.claim_id,
+        generated_date: new Date().toISOString(),
+        document_type: 'Negotiation Strategy'
       }
     };
 

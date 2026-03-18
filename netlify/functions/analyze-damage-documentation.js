@@ -145,6 +145,14 @@ Consider best practices:
 
     const documentationAnalysis = JSON.parse(completion.choices[0].message.content);
 
+    // Add metadata for display
+    documentationAnalysis.document_header = {
+      brand: 'Claim Command Pro',
+      claim_id: claim_id,
+      generated_date: new Date().toISOString(),
+      document_type: 'Damage Documentation Analysis'
+    };
+
     // Store photos in Supabase Storage
     const uploadedUrls = [];
     if (claim) {

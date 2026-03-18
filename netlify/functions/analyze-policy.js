@@ -112,6 +112,15 @@ exports.handler = async (event) => {
 
       const responseText = completion.choices[0].message.content;
       analysisResult = JSON.parse(responseText);
+
+      // Add metadata for display
+      analysisResult.document_header = {
+        brand: 'Claim Command Pro',
+        claim_id: body.claim_id,
+        generated_date: new Date().toISOString(),
+        document_type: 'Policy Analysis'
+      };
+
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);
       return sendError('AI analysis failed', 'AI-001', 500, {

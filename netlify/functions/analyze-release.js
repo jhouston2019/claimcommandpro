@@ -145,6 +145,15 @@ Settlement amount: $25,000`
       });
 
       releaseAnalysis = JSON.parse(completion.choices[0].message.content);
+
+      // Add metadata for display
+      releaseAnalysis.document_header = {
+        brand: 'Claim Command Pro',
+        claim_number: claim_id,
+        generated_date: new Date().toISOString(),
+        document_type: 'Release Form Analysis'
+      };
+
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);
       return {

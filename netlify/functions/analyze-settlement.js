@@ -145,6 +145,15 @@ Policy: HO3 with RCV coverage`
       });
 
       settlementAnalysis = JSON.parse(completion.choices[0].message.content);
+
+      // Add metadata for display
+      settlementAnalysis.document_header = {
+        brand: 'Claim Command Pro',
+        claim_number: claim_id,
+        generated_date: new Date().toISOString(),
+        document_type: 'Settlement Analysis'
+      };
+
     } catch (aiError) {
       console.error('OpenAI API error:', aiError);
       return {

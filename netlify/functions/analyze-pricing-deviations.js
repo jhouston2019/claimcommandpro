@@ -157,6 +157,14 @@ Consider:
 
     const pricingAnalysis = JSON.parse(completion.choices[0].message.content);
 
+    // Add metadata for display
+    pricingAnalysis.document_header = {
+      brand: 'Claim Command Pro',
+      claim_number: claim_number,
+      generated_date: new Date().toISOString(),
+      document_type: 'Pricing Deviation Analysis'
+    };
+
     // Store in Supabase
     if (claim) {
       await supabase

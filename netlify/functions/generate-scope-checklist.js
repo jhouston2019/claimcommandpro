@@ -145,6 +145,14 @@ Focus on:
 
     const scopeChecklist = JSON.parse(completion.choices[0].message.content);
 
+    // Add metadata for display
+    scopeChecklist.document_header = {
+      brand: 'Claim Command Pro',
+      claim_id: claim?.id || claim_id,
+      generated_date: new Date().toISOString(),
+      document_type: 'Contractor Scope Checklist'
+    };
+
     // Store in Supabase
     if (claim) {
       await supabase
