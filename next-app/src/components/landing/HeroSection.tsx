@@ -1,16 +1,77 @@
 'use client'
 
+import Link from 'next/link'
+
 export default function HeroSection() {
   return (
     <section className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
       <div className="section-container py-20">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-12 leading-tight text-center">
-            Why You as a Policyholder Need Claim Command Pro
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
+            Find out if your insurance claim is underpaid — in minutes.
           </h1>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-8 md:p-12">
-            <ul className="space-y-4 text-lg md:text-xl text-white">
+          <p className="text-2xl md:text-3xl text-primary-100 text-center mb-12 max-w-4xl mx-auto leading-relaxed">
+            Most claims are missing money. We show you what's missing — and guide you step-by-step through the exact process to recover it.
+          </p>
+          
+          {/* Proof Block */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-8 mb-8 max-w-2xl mx-auto">
+            <div className="space-y-4 text-center">
+              <div>
+                <p className="text-lg text-primary-200 mb-1">Your insurer's estimate:</p>
+                <p className="text-5xl font-bold text-white">$18,200</p>
+              </div>
+              <div>
+                <p className="text-lg text-primary-200 mb-1">Actual claim value:</p>
+                <p className="text-5xl font-bold text-green-400">$36,750</p>
+              </div>
+              <div className="border-t-2 border-white/30 pt-4">
+                <p className="text-lg text-red-300 mb-1">Missing:</p>
+                <p className="text-6xl font-bold text-red-400">$18,550</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Reinforcement */}
+          <p className="text-2xl text-yellow-300 font-bold text-center mb-12">
+            8 out of 10 claim estimates are incomplete or underpaid.
+          </p>
+          
+          {/* Process Bridge */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/20 p-6 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-white text-center leading-relaxed">
+              Finding the gap is step one. Knowing exactly what to do next is what gets you paid.
+            </p>
+          </div>
+          
+          {/* Process Clarity */}
+          <p className="text-xl text-primary-100 text-center mb-12 max-w-3xl mx-auto">
+            Claim Command Pro walks you through every step — from reviewing your policy to maximizing your final settlement.
+          </p>
+          
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <Link
+              href="/estimate-scan"
+              className="inline-flex items-center justify-center gap-2 bg-white text-primary-700 hover:bg-gray-100 font-bold text-xl py-4 px-10 rounded-lg shadow-2xl transition-all hover:scale-105"
+            >
+              Check My Claim →
+            </Link>
+          </div>
+          
+          {/* Lower Hero Line */}
+          <p className="text-xl text-primary-200 text-center font-medium">
+            Don't leave the money you're owed sitting in their pocket.
+          </p>
+          
+          {/* Original Content (Collapsed) */}
+          <details className="mt-12">
+            <summary className="text-center text-primary-200 cursor-pointer hover:text-white transition-colors text-lg font-semibold mb-4">
+              Why This Matters (Click to Expand)
+            </summary>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-8 md:p-12">
+              <ul className="space-y-4 text-lg md:text-xl text-white">
               <li className="flex items-start gap-3">
                 <span className="text-yellow-400 font-bold mt-1 flex-shrink-0">•</span>
                 <span>Insurance estimates are often <strong className="text-yellow-300">$12,000–$47,000</strong> below the real cost of repair</span>
@@ -45,6 +106,10 @@ export default function HeroSection() {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-yellow-400 font-bold mt-1 flex-shrink-0">•</span>
+                <span>Most policyholders rely on their insurer or guess their way through the process — and miss critical steps that directly impact what they get paid</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-yellow-400 font-bold mt-1 flex-shrink-0">•</span>
                 <span>Denials frequently rely on phrases like "wear and tear" or "maintenance related"</span>
               </li>
               <li className="flex items-start gap-3">
@@ -69,6 +134,7 @@ export default function HeroSection() {
               </li>
             </ul>
           </div>
+          </details>
         </div>
       </div>
     </section>

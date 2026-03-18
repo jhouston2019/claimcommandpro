@@ -7,8 +7,9 @@ export default function StepByStepProcess() {
     {
       number: 1,
       icon: Upload,
-      title: 'Upload Documents',
-      description: 'Policy, estimates, denial letters and claim correspondence.',
+      title: 'Enter Your Claim Details & Start Your Analysis',
+      description: 'This is where your claim begins. Enter your policy and claim details so Claim Command Pro can analyze your coverage, estimate, and identify missing money.',
+      actionLine: 'Takes about 10 minutes. This step unlocks your full claim analysis.',
     },
     {
       number: 2,
@@ -34,9 +35,13 @@ export default function StepByStepProcess() {
     <section className="bg-white py-16">
       <div className="section-container">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Step-by-Step Claim Process
           </h2>
+          
+          <p className="text-center text-gray-900 font-semibold mb-16 text-lg">
+            Most gaps are never pointed out to policyholders.
+          </p>
 
           {/* Desktop: Horizontal Layout */}
           <div className="hidden lg:grid lg:grid-cols-7 gap-4 items-start">
@@ -60,6 +65,11 @@ export default function StepByStepProcess() {
                       <p className="text-gray-700 text-center text-lg">
                         {step.description}
                       </p>
+                      {step.actionLine && (
+                        <p className="text-primary-700 text-center text-base font-semibold mt-4">
+                          {step.actionLine}
+                        </p>
+                      )}
                     </div>
                   </div>
                   {index < steps.length - 1 && (
@@ -92,9 +102,51 @@ export default function StepByStepProcess() {
                   <p className="text-gray-700 text-center text-lg">
                     {step.description}
                   </p>
+                  {step.actionLine && (
+                    <p className="text-primary-700 text-center text-base font-semibold mt-4">
+                      {step.actionLine}
+                    </p>
+                  )}
                 </div>
               )
             })}
+          </div>
+          
+          {/* Objection Handler: Complexity */}
+          <div className="bg-green-50 border-2 border-green-400 rounded-lg p-8 mt-12 max-w-3xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Is this complicated to use?
+            </h3>
+            <p className="text-3xl text-gray-900 font-bold mb-6">
+              No.
+            </p>
+            <p className="text-lg text-gray-800 mb-6">
+              You answer a few guided questions about your claim and upload your estimate (if available).
+            </p>
+            <div className="bg-white rounded-lg p-6 mb-6">
+              <p className="text-lg text-gray-900 font-semibold mb-4">Claim Command Pro handles:</p>
+              <ul className="space-y-2 text-gray-800">
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 font-bold flex-shrink-0">✓</span>
+                  <span>Policy interpretation</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 font-bold flex-shrink-0">✓</span>
+                  <span>Estimate analysis</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 font-bold flex-shrink-0">✓</span>
+                  <span>Gap detection</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-green-600 font-bold flex-shrink-0">✓</span>
+                  <span>Claim letter generation</span>
+                </li>
+              </ul>
+            </div>
+            <p className="text-xl text-primary-700 font-bold text-center">
+              Most users receive their first analysis in under 10 minutes.
+            </p>
           </div>
         </div>
       </div>

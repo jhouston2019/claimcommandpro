@@ -39,9 +39,25 @@ export default function SocialProofSection() {
     <section className="bg-gradient-to-br from-gray-50 to-gray-100 py-16">
       <div className="section-container">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Real Claim Recoveries
           </h2>
+          
+          <p className="text-center text-gray-600 mb-4 max-w-3xl mx-auto">
+            Used by policyholders across all 50 states to identify missing claim money
+          </p>
+          
+          <p className="text-center text-gray-900 font-semibold mb-4 text-lg">
+            Insurance estimates are not final valuations.
+          </p>
+          
+          {/* Probability Frame */}
+          <div className="bg-red-50 border-2 border-red-400 rounded-lg p-6 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-900 font-bold text-center leading-relaxed">
+              Statistically, most policyholders are underpaid.<br />
+              <span className="text-red-600">The only question is whether yours is one of them.</span>
+            </p>
+          </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {examples.map((example, index) => (
@@ -121,6 +137,10 @@ export default function SocialProofSection() {
               </div>
             ))}
           </div>
+          
+          <p className="text-center text-gray-600 mt-12 text-sm max-w-3xl mx-auto">
+            Based on analysis of real claim estimates and industry-standard pricing data.
+          </p>
         </div>
       </div>
     </section>

@@ -93,9 +93,21 @@ export default function PricingPage() {
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Unlock the Command Center
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-600 mb-8">
               Professional insurance claim documentation tools
             </p>
+            
+            {/* Value Reframe */}
+            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6 max-w-3xl mx-auto">
+              <p className="text-2xl text-gray-900 font-bold mb-3">
+                If your claim is missing even 5%,<br />
+                this pays for itself immediately.
+              </p>
+              <p className="text-xl text-gray-700">
+                The average identified gap is <strong className="text-red-600">$18,400</strong>.<br />
+                The cost to find it is <strong className="text-green-600">$299</strong>.
+              </p>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-12">
@@ -182,6 +194,36 @@ export default function PricingPage() {
                   <span>Limited control</span>
                 </li>
               </ul>
+            </div>
+          </div>
+
+          {/* Binary Decision Collapse */}
+          <div className="card bg-gray-900 text-white mb-8">
+            <div className="text-center">
+              <p className="text-2xl font-bold mb-6">
+                This comes down to one decision:
+              </p>
+              <div className="space-y-4 text-lg max-w-2xl mx-auto">
+                <p className="text-yellow-300 font-bold">
+                  Run the analysis and know for sure
+                </p>
+                <p className="text-gray-400">—or—</p>
+                <p className="text-gray-300">
+                  Accept the estimate without verification
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing Reframe */}
+          <div className="card bg-gray-900 text-white mb-8">
+            <div className="text-center">
+              <p className="text-2xl font-bold mb-6">
+                Hiring help can cost thousands or a percentage of your claim.
+              </p>
+              <p className="text-xl text-gray-300">
+                This gives you the same guidance — without the cost or complexity.
+              </p>
             </div>
           </div>
 

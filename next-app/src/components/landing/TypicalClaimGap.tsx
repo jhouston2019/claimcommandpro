@@ -60,8 +60,12 @@ export default function TypicalClaimGap() {
               Not because coverage doesn't exist.
             </p>
             
-            <p className="text-xl md:text-2xl font-semibold text-white">
+            <p className="text-xl md:text-2xl font-semibold text-white mb-6">
               Because most policyholders do not know how to prove what they are owed.
+            </p>
+            
+            <p className="text-lg text-yellow-300 font-bold border-t-2 border-white/30 pt-6">
+              You only get one opportunity to settle your claim correctly.
             </p>
           </div>
         </div>

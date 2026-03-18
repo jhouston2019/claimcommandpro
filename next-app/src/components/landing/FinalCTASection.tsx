@@ -26,7 +26,14 @@ export default function FinalCTASection() {
               Most users identify a documentation gap in under 10 minutes
             </p>
             <p className="text-sm">
-              Built on the documentation standards used in $3B+ in settled claims
+              Built on licensed public adjuster methodology and real-world claim handling standards
+            </p>
+          </div>
+          
+          {/* Authority Reinforcement */}
+          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/20 p-6 mb-12 max-w-3xl mx-auto">
+            <p className="text-base text-gray-300 text-center leading-relaxed">
+              This process is based on how licensed public adjusters handle claims — simplified so you can use it yourself.
             </p>
           </div>
 

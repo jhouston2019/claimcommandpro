@@ -40,7 +40,7 @@ export default function ClaimUnderpaymentEstimator() {
               </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Estimate Your Potential Claim Underpayment
+              Check What Your Claim Is Missing
             </h2>
           </div>
 
@@ -125,8 +125,47 @@ export default function ClaimUnderpaymentEstimator() {
               </div>
             )}
 
+            {/* Pre-CTA Reality Check */}
+            <div className="bg-primary-50 border-2 border-primary-300 rounded-lg p-6 mb-8">
+              <p className="text-xl text-gray-900 font-semibold text-center leading-relaxed">
+                If you haven't had your estimate reviewed line-by-line,<br />
+                you don't know if anything was missed.
+              </p>
+            </div>
+            
+            {/* Self-Identification Checkpoint */}
+            <div className="bg-gray-900 rounded-lg p-8 mb-8">
+              <p className="text-xl text-white font-bold mb-6 text-center">
+                Before you continue, ask yourself:
+              </p>
+              <ul className="space-y-4 text-white text-lg mb-6">
+                <li className="flex items-start gap-3">
+                  <span className="text-yellow-400 font-bold flex-shrink-0">•</span>
+                  <span>Has my estimate been independently reviewed?</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-yellow-400 font-bold flex-shrink-0">•</span>
+                  <span>Do I know if anything was left out?</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-yellow-400 font-bold flex-shrink-0">•</span>
+                  <span>Has every coverage in my policy actually been applied?</span>
+                </li>
+              </ul>
+              <p className="text-xl text-yellow-300 font-bold text-center">
+                If the answer is no — there is a reason to run this analysis.
+              </p>
+            </div>
+
             {/* CTA and Explanation */}
             <div className="text-center">
+              <p className="text-xl text-gray-900 font-bold mb-2">
+                Takes about 10 minutes.
+              </p>
+              <p className="text-lg text-gray-700 mb-6">
+                Shows you exactly what's missing — if anything.
+              </p>
+              
               <Link
                 href="/estimate-scan"
                 className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold text-xl py-4 px-10 rounded-lg shadow-xl transition-all hover:scale-105 mb-6"
@@ -134,8 +173,31 @@ export default function ClaimUnderpaymentEstimator() {
                 Analyze My Claim
               </Link>
               
-              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-4">
                 Claim Command Pro analyzes your claim documents and shows exactly where this gap comes from.
+              </p>
+              
+              <p className="text-base text-gray-600 max-w-2xl mx-auto">
+                Detects missing scope, pricing gaps, and coverage issues — and shows you exactly where your claim may be underpaid.
+              </p>
+            </div>
+            
+            {/* Objection Handler: I Don't Need This */}
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-8 mt-12 max-w-3xl mx-auto">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                What if my claim is already correct?
+              </h3>
+              <p className="text-lg text-gray-800 mb-4">
+                That's exactly what the free analysis is designed to determine.
+              </p>
+              <p className="text-lg text-gray-800 mb-4">
+                If your claim is complete and fairly paid, the system will show no meaningful gap — and you don't need to upgrade.
+              </p>
+              <p className="text-lg text-gray-800 mb-4">
+                If it's not, you'll see exactly where money is being left behind.
+              </p>
+              <p className="text-xl text-primary-700 font-bold text-center">
+                There is no guesswork — only documented findings.
               </p>
             </div>
           </div>

@@ -14,6 +14,9 @@ export default function FreePolicyAnalysis() {
                 <Shield className="w-10 h-10 text-white" />
               </div>
             </div>
+            <p className="text-lg text-primary-100 font-semibold mb-4">
+              Start free. Only upgrade if the analysis shows missing money.
+            </p>
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Free Policy Analysis
             </h2>
@@ -47,6 +50,20 @@ export default function FreePolicyAnalysis() {
             </ul>
           </div>
 
+          {/* Low-Risk Decision Frame */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-6 mb-8">
+            <p className="text-xl text-white font-bold text-center mb-6">
+              You're not committing to anything.
+            </p>
+            <p className="text-lg text-primary-100 text-center mb-4">
+              You're checking if money was missed.
+            </p>
+            <p className="text-xl text-white font-bold text-center leading-relaxed">
+              If nothing is missing, you'll know.<br />
+              If something is — you'll see it clearly.
+            </p>
+          </div>
+          
           <div className="text-center">
             <Link
               href="/policy-analysis"
@@ -57,6 +74,31 @@ export default function FreePolicyAnalysis() {
             </Link>
             <p className="text-sm text-primary-200 mt-4">
               No credit card required • Results in 60 seconds
+            </p>
+          </div>
+          
+          {/* Deadline Pressure Block */}
+          <div className="bg-red-900/30 backdrop-blur-sm rounded-lg border-2 border-red-400 p-8 mt-12">
+            <p className="text-xl text-white font-bold mb-6 text-center">
+              Every claim operates on deadlines:
+            </p>
+            <ul className="space-y-3 text-white text-lg mb-6">
+              <li className="flex items-start gap-3">
+                <span className="text-red-400 font-bold flex-shrink-0">•</span>
+                <span>Proof of loss deadlines can be as short as 60 days</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-red-400 font-bold flex-shrink-0">•</span>
+                <span>Depreciation recovery windows can expire in months</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-red-400 font-bold flex-shrink-0">•</span>
+                <span>Once a release is signed, the claim is closed permanently</span>
+              </li>
+            </ul>
+            <p className="text-xl text-white text-center leading-relaxed">
+              Your insurer knows this.<br />
+              <strong className="text-yellow-300">Most policyholders don't.</strong>
             </p>
           </div>
         </div>

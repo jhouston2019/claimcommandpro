@@ -95,6 +95,39 @@ export default function FourRequirements() {
               Claim Command Pro ensures your claim meets all four requirements before submission.
             </p>
           </div>
+          
+          {/* Objection Handler: Insurance Company */}
+          <div className="mt-12 bg-red-900/30 backdrop-blur-sm rounded-lg border-2 border-red-400 p-8">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Will my insurance company handle this for me?
+            </h3>
+            <p className="text-xl text-white mb-6 font-semibold">
+              Your insurance company processes your claim — they do not maximize it.
+            </p>
+            <p className="text-lg text-primary-100 mb-6">
+              Their role is to evaluate and pay what they believe is owed based on their estimate.
+            </p>
+            <div className="bg-white/10 rounded-lg p-6 mb-6">
+              <p className="text-lg text-white font-semibold mb-4">They do not:</p>
+              <ul className="space-y-3 text-white">
+                <li className="flex items-start gap-3">
+                  <span className="text-red-400 font-bold flex-shrink-0">✗</span>
+                  <span>Identify missing scope beyond what was included</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-400 font-bold flex-shrink-0">✗</span>
+                  <span>Adjust pricing to contractor-level market rates unless challenged</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-400 font-bold flex-shrink-0">✗</span>
+                  <span>Proactively apply every coverage or endorsement available</span>
+                </li>
+              </ul>
+            </div>
+            <p className="text-xl text-yellow-300 font-bold text-center">
+              Claim Command Pro ensures nothing is missed, underpaid, or left unclaimed.
+            </p>
+          </div>
         </div>
       </div>
     </section>

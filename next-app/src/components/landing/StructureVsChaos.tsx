@@ -92,6 +92,9 @@ export default function StructureVsChaos() {
             <p className="text-base text-gray-700 text-center mt-4">
               Claim Command Pro provides a structured system to guide you through the process — ensuring nothing is missed and your claim is fully supported.
             </p>
+            <p className="text-base text-gray-900 font-semibold text-center mt-4">
+              Documentation is what drives claim payments — not assumptions.
+            </p>
           </div>
 
           {/* Gap Preview Block */}
@@ -122,6 +125,19 @@ export default function StructureVsChaos() {
                 Clear understanding of what is missing and how to pursue it
               </p>
             </div>
+          </div>
+          
+          {/* Hero Reinforcement */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-8 mt-8">
+            <p className="text-xl text-white text-center leading-relaxed">
+              Most policyholders assume their insurance company's number is final.<br />
+              <strong className="text-yellow-300">It isn't.</strong><br />
+              It's a starting point — and it's often incomplete.
+            </p>
+            <p className="text-lg text-primary-100 text-center mt-6">
+              This isn't uncommon.<br />
+              Most estimates are not independently reviewed.
+            </p>
           </div>
         </div>
       </div>

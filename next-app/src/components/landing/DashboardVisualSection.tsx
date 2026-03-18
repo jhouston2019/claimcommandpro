@@ -7,9 +7,14 @@ export default function DashboardVisualSection() {
     <section className="bg-white py-16">
       <div className="section-container">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-4">
             Claim Command Center
           </h2>
+          
+          {/* Control Frame */}
+          <p className="text-xl text-primary-700 font-bold text-center mb-12">
+            This puts you in control of your claim — not just responding to it.
+          </p>
 
           <div className="bg-white rounded-lg shadow-2xl overflow-hidden border-4 border-gray-300">
             {/* Browser Chrome */}
@@ -27,6 +32,9 @@ export default function DashboardVisualSection() {
             {/* Dashboard Content */}
             <div className="p-8 md:p-12 bg-gradient-to-br from-slate-50 to-slate-100">
               <div className="mb-8">
+                <p className="text-primary-600 font-semibold text-lg mb-4">
+                  Start here. This is where your claim process begins.
+                </p>
                 <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
                   Claim Command Center
                 </h3>
@@ -108,6 +116,35 @@ export default function DashboardVisualSection() {
 
           <p className="text-center text-gray-600 mt-8 text-lg">
             This is the actual interface you'll use to analyze and recover your claim.
+          </p>
+          
+          {/* Output Reframe */}
+          <div className="bg-primary-50 border-2 border-primary-300 rounded-lg p-8 mt-8 max-w-3xl mx-auto">
+            <p className="text-2xl text-gray-900 font-bold text-center mb-6">
+              You don't need to interpret anything.
+            </p>
+            <div className="space-y-4 text-lg text-gray-800">
+              <div className="flex items-start gap-3">
+                <span className="text-primary-600 font-bold text-2xl">→</span>
+                <p><strong>What was missed</strong></p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary-600 font-bold text-2xl">→</span>
+                <p><strong>Why it matters</strong></p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-primary-600 font-bold text-2xl">→</span>
+                <p><strong>What to do next</strong></p>
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-center text-gray-900 font-semibold mt-8 text-lg">
+            What isn't documented doesn't get paid.
+          </p>
+          
+          <p className="text-center text-gray-700 mt-4 text-base">
+            What you don't question doesn't get reviewed.
           </p>
         </div>
       </div>
