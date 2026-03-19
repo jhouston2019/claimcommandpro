@@ -8,26 +8,30 @@ export default function HeroSection() {
       <div className="section-container py-20">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
-            Find out if your insurance claim is underpaid — in minutes.
+            Handle your insurance claim the right way and get paid what you're owed.
           </h1>
           
-          <p className="text-2xl md:text-3xl text-primary-100 text-center mb-12 max-w-4xl mx-auto leading-relaxed">
-            Most claims are missing money. We show you what's missing — and guide you step-by-step through the exact process to recover it.
+          <p className="text-2xl md:text-3xl text-primary-100 text-center mb-8 max-w-4xl mx-auto leading-relaxed">
+            Most policyholders don't know how to prove their loss correctly and it costs them. We show you exactly what to do, what to document, and how to recover the full value of your claim.
+          </p>
+          
+          <p className="text-xl text-primary-100 text-center mb-12 max-w-4xl mx-auto leading-relaxed">
+            Insurance companies pay based on what's properly proven. Claim Command Pro gives you an expert step-by-step system to prove your claim and get paid what you're owed.
           </p>
           
           {/* Proof Block */}
           <div className="bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/30 p-8 mb-8 max-w-2xl mx-auto">
             <div className="space-y-4 text-center">
               <div>
-                <p className="text-lg text-primary-200 mb-1">Your insurer's estimate:</p>
+                <p className="text-lg text-primary-200 mb-1">What the insurance company offered:</p>
                 <p className="text-5xl font-bold text-white">$18,200</p>
               </div>
               <div>
-                <p className="text-lg text-primary-200 mb-1">Actual claim value:</p>
+                <p className="text-lg text-primary-200 mb-1">What a properly proven claim supports:</p>
                 <p className="text-5xl font-bold text-green-400">$36,750</p>
               </div>
               <div className="border-t-2 border-white/30 pt-4">
-                <p className="text-lg text-red-300 mb-1">Missing:</p>
+                <p className="text-lg text-red-300 mb-1">Difference caused by incomplete claim handling:</p>
                 <p className="text-6xl font-bold text-red-400">$18,550</p>
               </div>
             </div>
@@ -38,17 +42,6 @@ export default function HeroSection() {
             8 out of 10 claim estimates are incomplete or underpaid.
           </p>
           
-          {/* Process Bridge */}
-          <div className="bg-white/5 backdrop-blur-sm rounded-lg border border-white/20 p-6 mb-8 max-w-3xl mx-auto">
-            <p className="text-xl text-white text-center leading-relaxed">
-              Finding the gap is step one. Knowing exactly what to do next is what gets you paid.
-            </p>
-          </div>
-          
-          {/* Process Clarity */}
-          <p className="text-xl text-primary-100 text-center mb-12 max-w-3xl mx-auto">
-            Claim Command Pro walks you through every step — from reviewing your policy to maximizing your final settlement.
-          </p>
           
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
