@@ -1070,6 +1070,16 @@
       box-shadow: 0 0 0 2px var(--teal-dim);
     }
 
+    .roadmap-tile.completed {
+      background: rgba(16,185,129,0.1);
+      border-color: var(--emerald);
+    }
+
+    .roadmap-tile.completed .tile-number {
+      background: var(--emerald);
+      color: white;
+    }
+
     .tile-number {
       font-size: 11px;
       color: var(--gray-400);
@@ -1892,63 +1902,63 @@
             <div class="tile-number">03</div>
             <div class="tile-label">Report the Loss</div>
           </div>
-          <div class="roadmap-tile phase-document">
+          <div class="roadmap-tile phase-document" onclick="goToStep(4)">
             <div class="tile-number">04</div>
             <div class="tile-label">Document Damage</div>
           </div>
-          <div class="roadmap-tile phase-document">
+          <div class="roadmap-tile phase-document" onclick="goToStep(5)">
             <div class="tile-number">05</div>
             <div class="tile-label">Contractor Estimates</div>
           </div>
-          <div class="roadmap-tile phase-document">
+          <div class="roadmap-tile phase-document" onclick="goToStep(6)">
             <div class="tile-number">06</div>
             <div class="tile-label">Adjuster Prep</div>
           </div>
-          <div class="roadmap-tile phase-document">
+          <div class="roadmap-tile phase-document" onclick="goToStep(7)">
             <div class="tile-number">07</div>
             <div class="tile-label">Contents Inventory</div>
           </div>
-          <div class="roadmap-tile phase-analyze">
+          <div class="roadmap-tile phase-analyze" onclick="goToStep(8)">
             <div class="tile-number">08</div>
             <div class="tile-label">Review Estimate</div>
           </div>
-          <div class="roadmap-tile phase-analyze">
+          <div class="roadmap-tile phase-analyze" onclick="goToStep(9)">
             <div class="tile-number">09</div>
             <div class="tile-label">Pricing Analysis</div>
           </div>
-          <div class="roadmap-tile phase-analyze">
+          <div class="roadmap-tile phase-analyze" onclick="goToStep(10)">
             <div class="tile-number">10</div>
             <div class="tile-label">Coverage Gaps</div>
           </div>
-          <div class="roadmap-tile phase-recover">
+          <div class="roadmap-tile phase-recover" onclick="goToStep(11)">
             <div class="tile-number">11</div>
             <div class="tile-label">Supplement Request</div>
           </div>
-          <div class="roadmap-tile phase-recover">
+          <div class="roadmap-tile phase-recover" onclick="goToStep(12)">
             <div class="tile-number">12</div>
             <div class="tile-label">Dispute Letters</div>
           </div>
-          <div class="roadmap-tile phase-recover">
+          <div class="roadmap-tile phase-recover" onclick="goToStep(13)">
             <div class="tile-number">13</div>
             <div class="tile-label">ACV vs RCV</div>
           </div>
-          <div class="roadmap-tile phase-resolve">
+          <div class="roadmap-tile phase-resolve" onclick="goToStep(14)">
             <div class="tile-number">14</div>
             <div class="tile-label">Negotiation</div>
           </div>
-          <div class="roadmap-tile phase-resolve">
+          <div class="roadmap-tile phase-resolve" onclick="goToStep(15)">
             <div class="tile-number">15</div>
             <div class="tile-label">Appraisal/Mediation</div>
           </div>
-          <div class="roadmap-tile phase-resolve">
+          <div class="roadmap-tile phase-resolve" onclick="goToStep(16)">
             <div class="tile-number">16</div>
             <div class="tile-label">Settlement Review</div>
           </div>
-          <div class="roadmap-tile phase-resolve">
+          <div class="roadmap-tile phase-resolve" onclick="goToStep(17)">
             <div class="tile-number">17</div>
             <div class="tile-label">Final Recovery</div>
           </div>
-          <div class="roadmap-tile phase-resolve">
+          <div class="roadmap-tile phase-resolve" onclick="goToStep(18)">
             <div class="tile-number">18</div>
             <div class="tile-label">Close the Claim</div>
           </div>
@@ -3872,16 +3882,40 @@
     }
 
     function goToStep(num) {
-      // Collapse all cards
+      // Collapse all cards and remove active state
       document.querySelectorAll('.step-card').forEach(card => {
         card.classList.add('collapsed');
+        card.classList.remove('active-card');
       });
 
-      // Expand target card
+      // Expand target card and mark as active
       const targetCard = document.getElementById('step-' + num);
       if (targetCard) {
         targetCard.classList.remove('collapsed');
+        targetCard.classList.add('active-card');
         targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      // Update roadmap tiles - remove all active states
+      document.querySelectorAll('.roadmap-tile').forEach(tile => {
+        tile.classList.remove('active');
+      });
+
+      // Add active state to current roadmap tile (tiles are in order 1-18)
+      const roadmapTiles = document.querySelectorAll('.roadmap-tile');
+      if (roadmapTiles[num - 1]) {
+        roadmapTiles[num - 1].classList.add('active');
+      }
+
+      // Update sidebar step items - remove all active states
+      document.querySelectorAll('.step-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Add active state to current sidebar step item
+      const sidebarSteps = document.querySelectorAll('.step-item');
+      if (sidebarSteps[num - 1]) {
+        sidebarSteps[num - 1].classList.add('active');
       }
     }
 
@@ -3945,6 +3979,14 @@
         }
       });
 
+      // Update roadmap tile for completed step
+      const roadmapTiles = document.querySelectorAll('.roadmap-tile');
+      if (roadmapTiles[num - 1]) {
+        roadmapTiles[num - 1].classList.remove('active');
+        roadmapTiles[num - 1].classList.add('completed');
+        roadmapTiles[num - 1].style.opacity = '0.7';
+      }
+
       // Update phase counters
       updatePhaseCounts();
 
@@ -3967,6 +4009,11 @@
             item.classList.add('active');
           }
         });
+
+        // Update roadmap tile for next step
+        if (roadmapTiles[num]) {
+          roadmapTiles[num].classList.add('active');
+        }
 
         // Unlock next phase if needed
         unlockNextPhase(num + 1);
