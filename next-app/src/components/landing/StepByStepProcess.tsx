@@ -7,27 +7,27 @@ export default function StepByStepProcess() {
     {
       number: 1,
       icon: Upload,
-      title: 'Enter Your Claim Details & Start Your Analysis',
-      description: 'This is where your claim begins. Enter your policy and claim details so Claim Command Pro can analyze your coverage, estimate, and identify missing money.',
-      actionLine: 'Takes about 10 minutes. This step unlocks your full claim analysis.',
+      title: 'Enter Your Claim Details',
+      description: 'Add your claim and policy details so we can analyze your estimate and identify what may be missing.',
+      actionLine: 'Takes about 10 minutes. This is how you find out if your claim is underpaid.',
     },
     {
       number: 2,
       icon: Search,
-      title: 'Identify Claim Gap',
-      description: 'Detect missing scope, suppressed pricing and coverage triggers.',
+      title: 'We Analyze Your Policy and Estimate',
+      description: 'Our system reviews your policy coverage and compares your estimate against real-world pricing.',
     },
     {
       number: 3,
       icon: FileCheck,
-      title: 'Generate Proof Packet',
-      description: 'Create supplement requests, Proof of Loss and documentation checklist.',
+      title: 'We Identify Missing Money',
+      description: 'See exactly what\'s missing, underpaid, or incorrect — with specific dollar amounts.',
     },
     {
       number: 4,
       icon: Send,
-      title: 'Submit and Correct the Claim',
-      description: 'Use structured documentation to challenge the insurer estimate.',
+      title: 'You Recover What You\'re Owed',
+      description: 'Get ready-to-send claim letters and step-by-step guidance to request the money.',
     },
   ]
 
