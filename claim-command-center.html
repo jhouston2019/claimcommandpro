@@ -1342,7 +1342,6 @@
     }
 
     .dtn-content {
-      flex: 1;
       text-align: center;
     }
 
@@ -1814,11 +1813,6 @@
           <div class="dtn-instruction" id="dtnInstruction">Enter your claim details and review the process guide</div>
           <div class="dtn-sub" id="dtnSub">Start by understanding how insurance claims work</div>
         </div>
-        <div class="dtn-counter">
-          <div class="dtn-count" id="dtnStepCount">0/18</div>
-          <div class="dtn-count-label">Steps done</div>
-        </div>
-        <button class="dtn-cta" id="dtnCta" onclick="scrollToActiveStep()">Go to Step 1 →</button>
       </div>
 
       <!-- Step Cards -->
@@ -3512,122 +3506,91 @@
     }
 
     // Scroll to active step
-    function scrollToActiveStep() {
-      const activeCard = document.querySelector('.step-card.active-card');
-      if (activeCard) {
-        activeCard.classList.remove('collapsed');
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-
     // Update Do This Now banner
     function updateDoThisNow(stepNum) {
       const instruction = document.getElementById('dtnInstruction');
       const sub = document.getElementById('dtnSub');
-      const cta = document.getElementById('dtnCta');
-      const count = document.getElementById('dtnStepCount');
 
-      if (!instruction || !sub || !cta || !count) return;
+      if (!instruction || !sub) return;
 
       const instructions = {
         1: {
           instruction: 'Read Step 1 — understand the process before you take any action',
-          sub: 'Don\'t contact your insurer until you\'ve finished this step.',
-          cta: 'Go to Step 1 →'
+          sub: 'Don\'t contact your insurer until you\'ve finished this step.'
         },
         2: {
           instruction: 'Upload your policy and see what coverage you have',
-          sub: 'Know exactly what your policy includes before you file',
-          cta: 'Go to Step 2 →'
+          sub: 'Know exactly what your policy includes before you file'
         },
         3: {
           instruction: 'Report your loss and set up your claim correctly',
-          sub: 'Structure your claim the right way from the start',
-          cta: 'Go to Step 3 →'
+          sub: 'Structure your claim the right way from the start'
         },
         4: {
           instruction: 'Document all damage with photos and videos',
-          sub: 'Missed damage means missed money — capture everything',
-          cta: 'Go to Step 4 →'
+          sub: 'Missed damage means missed money — capture everything'
         },
         5: {
           instruction: 'Get contractor estimates for accurate repair costs',
-          sub: 'Real-world pricing protects you from lowball offers',
-          cta: 'Go to Step 5 →'
+          sub: 'Real-world pricing protects you from lowball offers'
         },
         6: {
           instruction: 'Prepare for the adjuster inspection',
-          sub: 'Make sure nothing is overlooked or minimized',
-          cta: 'Go to Step 6 →'
+          sub: 'Make sure nothing is overlooked or minimized'
         },
         7: {
           instruction: 'Create a complete contents inventory',
-          sub: 'Account for every item you lost',
-          cta: 'Go to Step 7 →'
+          sub: 'Account for every item you lost'
         },
         8: {
           instruction: 'Review the insurance estimate line by line',
-          sub: 'See exactly what they included and what they didn\'t',
-          cta: 'Go to Step 8 →'
+          sub: 'See exactly what they included and what they didn\'t'
         },
         9: {
           instruction: 'Analyze pricing and find underpaid items',
-          sub: 'Identify where pricing is below market',
-          cta: 'Go to Step 9 →'
+          sub: 'Identify where pricing is below market'
         },
         10: {
           instruction: 'Identify missing coverage and policy benefits',
-          sub: 'Uncover benefits your insurer may not point out',
-          cta: 'Go to Step 10 →'
+          sub: 'Uncover benefits your insurer may not point out'
         },
         11: {
           instruction: 'Submit a supplement for missed items',
-          sub: 'Request additional payment for what was left out',
-          cta: 'Go to Step 11 →'
+          sub: 'Request additional payment for what was left out'
         },
         12: {
           instruction: 'Send dispute letters and formal requests',
-          sub: 'Use clear communication your insurer will respond to',
-          cta: 'Go to Step 12 →'
+          sub: 'Use clear communication your insurer will respond to'
         },
         13: {
           instruction: 'Recover withheld depreciation (ACV vs RCV)',
-          sub: 'Claim the depreciation held back from your initial payment',
-          cta: 'Go to Step 13 →'
+          sub: 'Claim the depreciation held back from your initial payment'
         },
         14: {
           instruction: 'Negotiate your settlement amount',
-          sub: 'Get to the correct value, not the initial estimate',
-          cta: 'Go to Step 14 →'
+          sub: 'Get to the correct value, not the initial estimate'
         },
         15: {
           instruction: 'Escalate to appraisal or mediation if needed',
-          sub: 'Use formal dispute resolution when negotiation stalls',
-          cta: 'Go to Step 15 →'
+          sub: 'Use formal dispute resolution when negotiation stalls'
         },
         16: {
           instruction: 'Review the final settlement offer carefully',
-          sub: 'Make sure all items and coverage are included',
-          cta: 'Go to Step 16 →'
+          sub: 'Make sure all items and coverage are included'
         },
         17: {
           instruction: 'Execute final recovery and confirm payment',
-          sub: 'Verify all payments before closing',
-          cta: 'Go to Step 17 →'
+          sub: 'Verify all payments before closing'
         },
         18: {
           instruction: 'Close your claim correctly',
-          sub: 'Finalize everything and protect your rights',
-          cta: 'Go to Step 18 →'
+          sub: 'Finalize everything and protect your rights'
         }
       };
 
       const data = instructions[stepNum] || instructions[1];
       instruction.textContent = data.instruction;
       sub.textContent = data.sub;
-      cta.textContent = data.cta;
-      cta.onclick = scrollToActiveStep;
-      count.textContent = `${completedSteps.length}/18`;
     }
 
     // Show next step banner
