@@ -757,64 +757,6 @@
       overflow-y: auto;
     }
 
-    /* Phase Bar */
-    .phase-bar {
-      height: 48px;
-      background: var(--navy-light);
-      border-bottom: 1px solid var(--navy-border);
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      flex-shrink: 0;
-    }
-
-    .phase-items {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-
-    .phase-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--gray-400);
-      font-size: 13px;
-    }
-
-    .phase-item.active {
-      color: var(--teal);
-    }
-
-    .phase-item.done {
-      color: var(--emerald);
-    }
-
-    .phase-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .phase-arrow {
-      color: var(--navy-border);
-      font-size: 16px;
-    }
-
-    .phase-counter {
-      border-left: 1px solid var(--navy-border);
-      padding-left: 20px;
-      font-size: 13px;
-      color: var(--gray-400);
-    }
-
-    .phase-counter strong {
-      color: white;
-      font-weight: 600;
-    }
-
     /* Main Layout */
     .main-layout {
       display: flex;
@@ -1933,42 +1875,6 @@
       </div>
     </div>
   </nav>
-
-  <!-- Phase Bar -->
-  <div class="phase-bar">
-    <div class="phase-items">
-      <div class="phase-item active">
-        <div class="phase-dot"></div>
-        <span>Set Up Your Claim</span>
-        <span style="opacity: 0.6;">0/3</span>
-      </div>
-      <div class="phase-arrow">→</div>
-      <div class="phase-item">
-        <div class="phase-dot"></div>
-        <span>Document Your Damage</span>
-        <span style="opacity: 0.6;">0/4</span>
-      </div>
-      <div class="phase-arrow">→</div>
-      <div class="phase-item">
-        <div class="phase-dot"></div>
-        <span>Find What's Missing</span>
-        <span style="opacity: 0.6;">0/3</span>
-      </div>
-      <div class="phase-arrow">→</div>
-      <div class="phase-item">
-        <div class="phase-dot"></div>
-        <span>Request the Money</span>
-        <span style="opacity: 0.6;">0/3</span>
-      </div>
-      <div class="phase-arrow">→</div>
-      <div class="phase-item">
-        <div class="phase-dot"></div>
-        <span>Finish & Get Paid</span>
-        <span style="opacity: 0.6;">0/5</span>
-      </div>
-    </div>
-    <div class="phase-counter">Steps completed: <strong>0/18</strong></div>
-  </div>
 
   <!-- Main Layout -->
   <div class="main-layout">
