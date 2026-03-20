@@ -3215,7 +3215,41 @@
     </div>
   </div>
 
+  <!-- Supabase Integration -->
+  <script src="app/assets/js/supabase-client.js"></script>
+  <script src="app/assets/js/claim-command-center-data.js"></script>
+
   <script>
+    // Tool path resolver - handles relative paths based on deployment environment
+    function resolveToolPath(relativePath) {
+      // If path is already absolute (starts with http/https), return as-is
+      if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+        return relativePath;
+      }
+      
+      // Get base path from current location
+      const currentPath = window.location.pathname;
+      const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+      
+      // If we're already in the root or the path starts with /, use it directly
+      if (relativePath.startsWith('/')) {
+        return relativePath;
+      }
+      
+      // Otherwise, resolve relative to current directory
+      // Remove 'app/tools/' prefix if present and add base path
+      const cleanPath = relativePath.replace(/^app\/tools\//, '');
+      return `${basePath}app/tools/${cleanPath}`;
+    }
+
+    // Update all tool links on page load
+    function updateToolLinks() {
+      document.querySelectorAll('a[href^="app/tools/"]').forEach(link => {
+        const originalHref = link.getAttribute('href');
+        link.setAttribute('href', resolveToolPath(originalHref));
+      });
+    }
+
     // State tracking
     let completedSteps = [];
     let currentStep = 1;
@@ -3936,6 +3970,9 @@
 
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
+      // Update tool links to resolve paths correctly
+      updateToolLinks();
+
       // Load saved state
       loadState();
 
