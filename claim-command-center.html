@@ -768,8 +768,41 @@
       border-bottom: 1px solid var(--navy-border);
     }
 
+    /* Phase color accents */
+    .phase-group:nth-child(2) { border-left: 3px solid #14b8a6; }
+    .phase-group:nth-child(3) { border-left: 3px solid #10b981; }
+    .phase-group:nth-child(4) { border-left: 3px solid #f97316; }
+    .phase-group:nth-child(5) { border-left: 3px solid #f59e0b; }
+    .phase-group:nth-child(6) { border-left: 3px solid #ef4444; }
+
+    .phase-group:nth-child(2) .phase-name { color: #14b8a6; }
+    .phase-group:nth-child(3) .phase-name { color: #10b981; }
+    .phase-group:nth-child(4) .phase-name { color: #f97316; }
+    .phase-group:nth-child(5) .phase-name { color: #f59e0b; }
+    .phase-group:nth-child(6) .phase-name { color: #ef4444; }
+
+    .phase-group:nth-child(2) .step-item.active { background: rgba(20,184,166,0.12); }
+    .phase-group:nth-child(2) .step-item.active .step-number { border-color: #14b8a6; color: #14b8a6; }
+    .phase-group:nth-child(2) .step-item.active .step-title { color: #14b8a6; }
+
+    .phase-group:nth-child(3) .step-item.active { background: rgba(16,185,129,0.12); }
+    .phase-group:nth-child(3) .step-item.active .step-number { border-color: #10b981; color: #10b981; }
+    .phase-group:nth-child(3) .step-item.active .step-title { color: #10b981; }
+
+    .phase-group:nth-child(4) .step-item.active { background: rgba(249,115,22,0.12); }
+    .phase-group:nth-child(4) .step-item.active .step-number { border-color: #f97316; color: #f97316; }
+    .phase-group:nth-child(4) .step-item.active .step-title { color: #f97316; }
+
+    .phase-group:nth-child(5) .step-item.active { background: rgba(245,158,11,0.12); }
+    .phase-group:nth-child(5) .step-item.active .step-number { border-color: #f59e0b; color: #f59e0b; }
+    .phase-group:nth-child(5) .step-item.active .step-title { color: #f59e0b; }
+
+    .phase-group:nth-child(6) .step-item.active { background: rgba(239,68,68,0.12); }
+    .phase-group:nth-child(6) .step-item.active .step-number { border-color: #ef4444; color: #ef4444; }
+    .phase-group:nth-child(6) .step-item.active .step-title { color: #ef4444; }
+
     .phase-header {
-      padding: 14px 20px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -782,19 +815,14 @@
     }
 
     .phase-name {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-      color: var(--gray-400);
-    }
-
-    .phase-group.active .phase-name {
-      color: var(--teal);
+      letter-spacing: 1px;
+      font-weight: 700;
     }
 
     .phase-count {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--gray-400);
     }
 
@@ -922,108 +950,6 @@
     .metric-sublabel { display: none; }
 
     /* Roadmap Strip */
-    .roadmap-strip {
-      background: var(--navy-light);
-      padding: 8px 24px;
-      border-bottom: 1px solid var(--navy-border);
-    }
-
-    .roadmap-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--gray-400);
-      margin-bottom: 6px;
-    }
-
-    .roadmap-tiles {
-      display: flex;
-      gap: 1px;
-      overflow-x: auto;
-      margin-bottom: 6px;
-      scrollbar-width: none;
-    }
-
-    .roadmap-tiles::-webkit-scrollbar { display: none; }
-
-    .roadmap-tile {
-      min-width: 90px;
-      padding: 5px 8px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-    }
-
-    .roadmap-tile:hover { background: rgba(255,255,255,0.06); }
-
-    .roadmap-tile.active {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 2px var(--teal-dim);
-    }
-
-    .roadmap-tile.completed {
-      background: rgba(16,185,129,0.1);
-      border-color: var(--emerald);
-    }
-
-    .roadmap-tile.completed .tile-number {
-      background: var(--emerald);
-      color: white;
-    }
-
-    .tile-number {
-      font-size: 9px;
-      color: var(--gray-400);
-      margin-bottom: 2px;
-    }
-
-    .tile-label {
-      font-size: 11px;
-      color: white;
-      line-height: 1.2;
-    }
-
-    .roadmap-tile.phase-establish {
-      border-left: 3px solid var(--teal);
-    }
-
-    .roadmap-tile.phase-document {
-      border-left: 3px solid var(--emerald);
-    }
-
-    .roadmap-tile.phase-analyze {
-      border-left: 3px solid var(--orange);
-    }
-
-    .roadmap-tile.phase-recover {
-      border-left: 3px solid var(--amber);
-    }
-
-    .roadmap-tile.phase-resolve {
-      border-left: 3px solid var(--red);
-    }
-
-    .phase-legend {
-      display: flex;
-      gap: 16px;
-      font-size: 10px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      color: var(--gray-400);
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-    }
-
     /* Content Header */
     .content-header {
       background: white;
@@ -1854,106 +1780,6 @@
     <main class="content-area">
 
       <!-- Roadmap Strip -->
-      <div class="roadmap-strip">
-        <div class="roadmap-label">The 18-Step Claim System — So Nothing Gets Missed</div>
-        <div class="roadmap-tiles">
-          <div class="roadmap-tile phase-establish active" onclick="goToStep(1)">
-            <div class="tile-number">01</div>
-            <div class="tile-label">Claim Process Guide</div>
-          </div>
-          <div class="roadmap-tile phase-establish" onclick="goToStep(2)">
-            <div class="tile-number">02</div>
-            <div class="tile-label">Review Your Policy</div>
-          </div>
-          <div class="roadmap-tile phase-establish" onclick="goToStep(3)">
-            <div class="tile-number">03</div>
-            <div class="tile-label">Report the Loss</div>
-          </div>
-          <div class="roadmap-tile phase-document" onclick="goToStep(4)">
-            <div class="tile-number">04</div>
-            <div class="tile-label">Document Damage</div>
-          </div>
-          <div class="roadmap-tile phase-document" onclick="goToStep(5)">
-            <div class="tile-number">05</div>
-            <div class="tile-label">Contractor Estimates</div>
-          </div>
-          <div class="roadmap-tile phase-document" onclick="goToStep(6)">
-            <div class="tile-number">06</div>
-            <div class="tile-label">Adjuster Prep</div>
-          </div>
-          <div class="roadmap-tile phase-document" onclick="goToStep(7)">
-            <div class="tile-number">07</div>
-            <div class="tile-label">Contents Inventory</div>
-          </div>
-          <div class="roadmap-tile phase-analyze" onclick="goToStep(8)">
-            <div class="tile-number">08</div>
-            <div class="tile-label">Review Estimate</div>
-          </div>
-          <div class="roadmap-tile phase-analyze" onclick="goToStep(9)">
-            <div class="tile-number">09</div>
-            <div class="tile-label">Pricing Analysis</div>
-          </div>
-          <div class="roadmap-tile phase-analyze" onclick="goToStep(10)">
-            <div class="tile-number">10</div>
-            <div class="tile-label">Coverage Gaps</div>
-          </div>
-          <div class="roadmap-tile phase-recover" onclick="goToStep(11)">
-            <div class="tile-number">11</div>
-            <div class="tile-label">Supplement Request</div>
-          </div>
-          <div class="roadmap-tile phase-recover" onclick="goToStep(12)">
-            <div class="tile-number">12</div>
-            <div class="tile-label">Dispute Letters</div>
-          </div>
-          <div class="roadmap-tile phase-recover" onclick="goToStep(13)">
-            <div class="tile-number">13</div>
-            <div class="tile-label">ACV vs RCV</div>
-          </div>
-          <div class="roadmap-tile phase-resolve" onclick="goToStep(14)">
-            <div class="tile-number">14</div>
-            <div class="tile-label">Negotiation</div>
-          </div>
-          <div class="roadmap-tile phase-resolve" onclick="goToStep(15)">
-            <div class="tile-number">15</div>
-            <div class="tile-label">Appraisal/Mediation</div>
-          </div>
-          <div class="roadmap-tile phase-resolve" onclick="goToStep(16)">
-            <div class="tile-number">16</div>
-            <div class="tile-label">Settlement Review</div>
-          </div>
-          <div class="roadmap-tile phase-resolve" onclick="goToStep(17)">
-            <div class="tile-number">17</div>
-            <div class="tile-label">Final Recovery</div>
-          </div>
-          <div class="roadmap-tile phase-resolve" onclick="goToStep(18)">
-            <div class="tile-number">18</div>
-            <div class="tile-label">Close the Claim</div>
-          </div>
-        </div>
-        <div class="phase-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--teal);"></div>
-            <span>Set Up Your Claim</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--emerald);"></div>
-            <span>Document Your Damage</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--orange);"></div>
-            <span>Find What's Missing</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--amber);"></div>
-            <span>Request the Money</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background: var(--red);"></div>
-            <span>Finish & Get Paid</span>
-          </div>
-        </div>
-      </div>
-
       <!-- Metric Strip -->
       <div class="metric-strip">
         <div class="metric-block">
@@ -2002,7 +1828,7 @@
         <!-- Phase 1 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: var(--teal);">PHASE 1 OF 5 — BEFORE YOU CALL YOUR INSURER</div>
+          <div class="phase-divider-label" style="color: #14b8a6;">PHASE 1 OF 5 — BEFORE YOU CALL YOUR INSURER</div>
           <div class="phase-divider-line"></div>
         </div>
 
@@ -2624,7 +2450,7 @@
         <!-- Phase 2 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: var(--emerald);">PHASE 2 OF 5 — PROVE WHAT WAS DAMAGED</div>
+          <div class="phase-divider-label" style="color: #10b981;">PHASE 2 OF 5 — PROVE WHAT WAS DAMAGED</div>
           <div class="phase-divider-line"></div>
         </div>
 
@@ -2823,7 +2649,7 @@
         <!-- Phase 3 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: var(--orange);">PHASE 3 OF 5 — FIND WHAT THEY GOT WRONG</div>
+          <div class="phase-divider-label" style="color: #f97316;">PHASE 3 OF 5 — FIND WHAT THEY GOT WRONG</div>
           <div class="phase-divider-line"></div>
         </div>
 
@@ -2974,7 +2800,7 @@
         <!-- Phase 4 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: var(--amber);">PHASE 4 OF 5 — DEMAND WHAT THEY MISSED</div>
+          <div class="phase-divider-label" style="color: #f59e0b;">PHASE 4 OF 5 — DEMAND WHAT THEY MISSED</div>
           <div class="phase-divider-line"></div>
         </div>
 
@@ -3125,7 +2951,7 @@
         <!-- Phase 5 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: var(--red);">PHASE 5 OF 5 — SETTLE AND GET PAID</div>
+          <div class="phase-divider-label" style="color: #ef4444;">PHASE 5 OF 5 — SETTLE AND GET PAID</div>
           <div class="phase-divider-line"></div>
         </div>
 
@@ -4000,17 +3826,6 @@
         targetCard.classList.remove('collapsed');
         targetCard.classList.add('active-card');
         targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
-      // Update roadmap tiles - remove all active states
-      document.querySelectorAll('.roadmap-tile').forEach(tile => {
-        tile.classList.remove('active');
-      });
-
-      // Add active state to current roadmap tile (tiles are in order 1-18)
-      const roadmapTiles = document.querySelectorAll('.roadmap-tile');
-      if (roadmapTiles[num - 1]) {
-        roadmapTiles[num - 1].classList.add('active');
       }
 
       // Update sidebar step items - remove all active states
