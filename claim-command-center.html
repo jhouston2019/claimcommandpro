@@ -2005,7 +2005,7 @@
 
     /* Step System Header */
     .step-system-header {
-      margin: 24px 40px 16px 40px;
+      margin: 32px 40px 12px 40px;
       text-align: center;
     }
 
@@ -2267,84 +2267,6 @@
     .metric-sublabel { display: none; }
 
     /* Roadmap strip — clickable step tiles (synced with goToStep / completeStep) */
-    .roadmap-strip {
-      background: var(--navy-light);
-      border-bottom: 1px solid var(--navy-border);
-      padding: 10px 0 12px;
-    }
-
-    .roadmap-strip-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray-400);
-      padding: 0 32px 8px;
-    }
-
-    .roadmap-strip-inner {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 0 28px 4px;
-      scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .roadmap-tile {
-      flex: 0 0 auto;
-      min-width: 56px;
-      padding: 8px 6px 10px;
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.04);
-      cursor: pointer;
-      text-align: center;
-      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-    }
-
-    .roadmap-tile:hover {
-      border-color: rgba(20, 184, 166, 0.5);
-      background: rgba(255, 255, 255, 0.07);
-    }
-
-    .roadmap-tile:focus {
-      outline: 2px solid var(--teal);
-      outline-offset: 2px;
-    }
-
-    .roadmap-tile.active {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.35);
-      background: rgba(20, 184, 166, 0.12);
-    }
-
-    .roadmap-tile.completed {
-      border-color: rgba(16, 185, 129, 0.45);
-      background: rgba(16, 185, 129, 0.1);
-    }
-
-    .roadmap-tile.completed .tile-number {
-      background: var(--emerald);
-      color: #fff;
-    }
-
-    .roadmap-tile .tile-number {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--teal);
-      margin-bottom: 4px;
-    }
-
-    .roadmap-tile .tile-label {
-      font-size: 9px;
-      font-weight: 600;
-      line-height: 1.2;
-      color: rgba(255, 255, 255, 0.82);
-      max-width: 72px;
-    }
-
-    /* Roadmap Strip */
     /* Content Header */
     .content-header {
       background: white;
@@ -3373,32 +3295,6 @@
         </div>
       </div>
 
-      <div class="roadmap-strip" role="navigation" aria-label="All claim steps">
-        <div class="roadmap-strip-label"><span id="metricStepPosition">Step 1 of 19</span> — click a tile to open that step</div>
-        <div class="roadmap-strip-inner">
-          <div class="roadmap-tile active" role="button" tabindex="0" data-step="1" aria-label="Step 1, Claim guide" onclick="goToStep(1)"><div class="tile-number">01</div><div class="tile-label">Guide</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="2" aria-label="Step 2, Policy" onclick="goToStep(2)"><div class="tile-number">02</div><div class="tile-label">Policy</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="3" aria-label="Step 3, Notice" onclick="goToStep(3)"><div class="tile-number">03</div><div class="tile-label">Notice</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="4" aria-label="Step 4, Document" onclick="goToStep(4)"><div class="tile-number">04</div><div class="tile-label">Document</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="5" aria-label="Step 5, Estimates" onclick="goToStep(5)"><div class="tile-number">05</div><div class="tile-label">Estimates</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="6" aria-label="Step 6, Adjuster" onclick="goToStep(6)"><div class="tile-number">06</div><div class="tile-label">Adjuster</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="7" aria-label="Step 7, Contents" onclick="goToStep(7)"><div class="tile-number">07</div><div class="tile-label">Contents</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="8" aria-label="Step 8, ALE" onclick="goToStep(8)"><div class="tile-number">08</div><div class="tile-label">ALE</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="9" aria-label="Step 9, Review estimate" onclick="goToStep(9)"><div class="tile-number">09</div><div class="tile-label">Review</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="10" aria-label="Step 10, Pricing" onclick="goToStep(10)"><div class="tile-number">10</div><div class="tile-label">Pricing</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="11" aria-label="Step 11, Coverage" onclick="goToStep(11)"><div class="tile-number">11</div><div class="tile-label">Coverage</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="12" aria-label="Step 12, Supplement" onclick="goToStep(12)"><div class="tile-number">12</div><div class="tile-label">Supplement</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="13" aria-label="Step 13, Letters" onclick="goToStep(13)"><div class="tile-number">13</div><div class="tile-label">Letters</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="14" aria-label="Step 14, RCV" onclick="goToStep(14)"><div class="tile-number">14</div><div class="tile-label">RCV</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="15" aria-label="Step 15, Negotiate" onclick="goToStep(15)"><div class="tile-number">15</div><div class="tile-label">Negotiate</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="16" aria-label="Step 16, Escalate" onclick="goToStep(16)"><div class="tile-number">16</div><div class="tile-label">Escalate</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="17" aria-label="Step 17, Settlement review" onclick="goToStep(17)"><div class="tile-number">17</div><div class="tile-label">Settlement</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="18" aria-label="Step 18, Final recovery" onclick="goToStep(18)"><div class="tile-number">18</div><div class="tile-label">Recovery</div></div>
-          <div class="roadmap-tile" role="button" tabindex="0" data-step="19" aria-label="Step 19, Close claim" onclick="goToStep(19)"><div class="tile-number">19</div><div class="tile-label">Close</div></div>
-        </div>
-      </div>
-
-      <!-- Do This Now Banner -->
       <!-- Step System Title -->
       <div class="step-system-header">
         <h1 class="step-system-title">THE STEP-BY-STEP CLAIM PROCESS</h1>
@@ -3427,8 +3323,8 @@
           <div class="step-card-header" onclick="toggleStep('step-1')">
             <div class="card-number">01</div>
             <div class="card-text">
-              <div class="card-title">Understand the Claim Process</div>
-              <div class="card-subtitle">Read This First — Before You Call Anyone</div>
+              <div class="card-title">Initialize Your Claim</div>
+              <div class="card-subtitle">Enter Basic Claim Information</div>
             </div>
             <div class="card-right">
               <div class="card-status in-progress">In Progress</div>
@@ -3440,46 +3336,109 @@
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
-              <div class="step-dtn-text">Read this guide to understand the full claim process before taking action</div>
+              <div class="step-dtn-text">Enter your claim details to initialize the system</div>
             </div>
-            
-            <div class="modal-alert" style="margin-bottom: 24px;">
-              <div class="alert-icon">!</div>
-              <div class="alert-text">
-                <strong>Most policyholders make mistakes in the first 48 hours that cost them thousands.</strong><br>
-                This step shows you exactly how the claim process works — and what you must do next.
+
+            <!-- Claim Initialization Form -->
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">Enter Your Claim Details</div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Claim Type</label>
+                  <select class="step-input" id="claimType">
+                    <option value="">Select claim type...</option>
+                    <option value="property-damage">Property Damage</option>
+                    <option value="water-loss">Water Loss</option>
+                    <option value="fire">Fire</option>
+                    <option value="storm">Storm</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Date of Loss</label>
+                  <input type="date" class="step-input" id="dateOfLoss">
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Property Type</label>
+                  <select class="step-input" id="propertyType">
+                    <option value="">Select property type...</option>
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                  </select>
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Brief Description</label>
+                  <input type="text" class="step-input" id="claimDescription" placeholder="e.g., Roof damage from hail storm">
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Has your insurer provided an estimate?</label>
+                  <div style="display: flex; gap: 12px; margin-top: 8px;">
+                    <button class="step-action-button secondary" id="insurerEstimateYes" onclick="toggleInsurerEstimate(true)" style="flex: 1;">Yes</button>
+                    <button class="step-action-button secondary" id="insurerEstimateNo" onclick="toggleInsurerEstimate(false)" style="flex: 1;">No</button>
+                  </div>
+                </div>
+
+                <div class="step-input-group hidden" id="insurerEstimateField">
+                  <label class="step-input-label">Insurer Estimate Amount</label>
+                  <div style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-500); font-weight: 600;">$</span>
+                    <input type="number" class="step-input" id="insurerEstimateAmount" placeholder="0" style="padding-left: 28px;">
+                  </div>
+                </div>
+
+                <button class="step-action-button" onclick="initializeClaim()" style="margin-top: 24px; width: 100%;">Initialize Claim →</button>
+              </div>
+
+              <!-- Confirmation Display (hidden until initialized) -->
+              <div class="step-output-box success hidden" id="claimInitializedOutput">
+                <div class="output-summary">✔ Claim Initialized</div>
+                <div class="output-detail">We're now building your claim file and identifying recoverable value.</div>
+                
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(20,184,166,0.2);">
+                  <div style="font-weight: 600; color: var(--gray-900); margin-bottom: 12px;">Next: Upload your policy to identify your coverage and limits</div>
+                  <button class="step-action-button" onclick="goToStep(2)" style="width: 100%;">Go to Step 2 →</button>
+                </div>
               </div>
             </div>
 
             <div class="section-label">Why This Matters</div>
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Most policyholders lose money early in the claim because key steps are missed or handled incorrectly. An insurance claim is not automatic reimbursement — it is a formal financial review governed by your policy contract. Understanding what to expect before you act protects your rights and gives you the best chance at a full recovery.</p>
+            <p class="section-text">Starting with accurate claim details ensures the system can calculate your true recovery potential and guide you through the correct process for your specific situation.</p>
 
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Read this guide from start to finish before you contact your insurer or sign anything. It explains what the insurance company is looking for, what your responsibilities are as a policyholder, and exactly what Claim Command Pro will help you do at each step.</p>
+            <div class="section-label">What Happens Next</div>
+            <p class="section-text">Once initialized, the system will track your progress across all 19 steps, calculate your total recoverable value across structure, contents, and living expenses, and show you exactly what to do at each stage.</p>
+          </div>
 
-            <div class="section-label">The Complete Claim Process: What to Expect</div>
-            <p class="section-text">An insurance claim follows a predictable sequence. Understanding this sequence helps you prepare for each stage and avoid common mistakes. Here's what happens from the moment you discover damage until you receive final payment.</p>
+          <!-- Step Results Display -->
+          <div class="step-results hidden" id="step-1-results">
+            <div class="results-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Step Results</div>
+              </div>
+              <button class="results-close" onclick="clearStepResults(1)">✕</button>
+            </div>
+            <div class="results-body" id="step-1-results-body"></div>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" disabled style="opacity: 0.4;">← Step 0</button>
+              <button class="nav-button" onclick="goToStep(2)">Step 2 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(1)">Mark Complete →</button>
+          </div>
+        </div>
 
-            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--teal);">Phase 1: Set Up Your Claim (Days 1-14)</div>
-            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Start your claim correctly so nothing gets limited or denied later.</p>
-            
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 1 — Understand the Claim Process:</strong> Read this guide to understand how claims work and what to expect.</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 2 — Review & Understand Your Policy:</strong> Upload your policy and let AI analyze what you're actually owed.</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 3 — Report the Loss the Right Way:</strong> Use the right language to protect your full claim rights.</div>
-              </li>
-            </ul>
-
-            <div class="section-label" style="margin-top: 32px; font-size: 18px; color: var(--emerald);">Phase 2: Document Your Damage (Days 7-45)</div>
+        <!-- Step 2 -->
+        <div class="step-card collapsed step-locked" id="step-2">
+          <div class="step-card-header" onclick="toggleStep('step-2')">
+            <div class="card-number">02</div>
+            <div class="card-text">
+              <div class="card-title">Review & Understand Your Policy</div>
             <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Capture the evidence needed to support full payment.</p>
             
             <ul class="provides-list">
@@ -5472,6 +5431,7 @@
     let claimData = {
       policyUploaded: false,
       estimateUploaded: false,
+      initial: null,
       policy: {},
       lossNotice: null,
       damagePhotos: [],
@@ -5691,16 +5651,11 @@
     }
 
     function syncRoadmapActiveStep(stepNum) {
-      document.querySelectorAll('.roadmap-tile').forEach((tile, i) => {
-        tile.classList.toggle('active', i + 1 === stepNum);
-      });
+      // Roadmap tiles removed - navigation now via sidebar and step buttons
     }
 
     function updateStepPositionLabel(stepNum) {
-      const el = document.getElementById('metricStepPosition');
-      if (el) {
-        el.textContent = `Step ${stepNum} of 19`;
-      }
+      // Roadmap strip removed - no position label to update
     }
 
     function applyCompletedVisualForStep(num) {
@@ -5728,11 +5683,7 @@
           const oc = item.getAttribute('onclick') || '';
           if (oc.includes(`goToStep(${n})`)) item.classList.add('done');
         });
-        const tile = document.querySelectorAll('.roadmap-tile')[n - 1];
-        if (tile) {
-          tile.classList.add('completed');
-          tile.style.opacity = '0.7';
-        }
+        // Roadmap tiles removed
       });
 
       document.querySelectorAll('.step-card').forEach((card, index) => {
@@ -5883,6 +5834,83 @@
       
       trackActivity('file_upload', { stepNum: 2, fileName: file.name, fileType: 'policy' });
     }
+
+    // ===== STEP 1: CLAIM INITIALIZATION =====
+    
+    let insurerEstimateProvided = false;
+
+    function toggleInsurerEstimate(hasEstimate) {
+      insurerEstimateProvided = hasEstimate;
+      const yesBtn = document.getElementById('insurerEstimateYes');
+      const noBtn = document.getElementById('insurerEstimateNo');
+      const field = document.getElementById('insurerEstimateField');
+
+      if (hasEstimate) {
+        yesBtn.classList.remove('secondary');
+        yesBtn.style.background = 'var(--teal)';
+        yesBtn.style.color = 'white';
+        noBtn.classList.add('secondary');
+        noBtn.style.background = '';
+        noBtn.style.color = '';
+        field.classList.remove('hidden');
+      } else {
+        noBtn.classList.remove('secondary');
+        noBtn.style.background = 'var(--teal)';
+        noBtn.style.color = 'white';
+        yesBtn.classList.add('secondary');
+        yesBtn.style.background = '';
+        yesBtn.style.color = '';
+        field.classList.add('hidden');
+      }
+    }
+
+    function initializeClaim() {
+      const claimType = document.getElementById('claimType').value;
+      const dateOfLoss = document.getElementById('dateOfLoss').value;
+      const propertyType = document.getElementById('propertyType').value;
+      const description = document.getElementById('claimDescription').value;
+      const insurerEstimate = insurerEstimateProvided ? 
+        parseFloat(document.getElementById('insurerEstimateAmount').value) || 0 : 0;
+
+      if (!claimType || !dateOfLoss || !propertyType || !description) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      // Save to claimData
+      claimData.initial = {
+        claimType,
+        dateOfLoss,
+        propertyType,
+        description,
+        insurerEstimate
+      };
+
+      // Update money bar if insurer estimate provided
+      if (insurerEstimate > 0) {
+        claimData.structure.insurerEstimate = insurerEstimate;
+        updateMoneyBar();
+      }
+
+      // Log to journal
+      addJournalEntry('claim_initialized', `Claim initialized: ${claimType} on ${dateOfLoss}`, null, 1);
+      trackActivity('claim_initialized', { 
+        claimType, 
+        dateOfLoss, 
+        propertyType, 
+        insurerEstimate 
+      });
+
+      // Show confirmation
+      document.querySelector('#step-1 .step-workspace').style.display = 'none';
+      document.getElementById('claimInitializedOutput').classList.remove('hidden');
+
+      // Update asset builder
+      claimData.meta.documentsGenerated++;
+      updateAssetBuilder();
+    }
+
+    // ===== STEP 2: POLICY ANALYZER =====
 
     async function analyzePolicyAI() {
       if (!policyFile) return;
@@ -7875,13 +7903,7 @@ Generated using expert claim methodology and structured for carrier review`;
         }
       });
 
-      // Update roadmap tile for completed step
-      const roadmapTiles = document.querySelectorAll('.roadmap-tile');
-      if (roadmapTiles[num - 1]) {
-        roadmapTiles[num - 1].classList.remove('active');
-        roadmapTiles[num - 1].classList.add('completed');
-        roadmapTiles[num - 1].style.opacity = '0.7';
-      }
+      // Roadmap tiles removed
 
       // Update phase counters
       updatePhaseCounts();
@@ -8053,15 +8075,7 @@ Generated using expert claim methodology and structured for carrier review`;
         document.getElementById('claimSummaryPage').classList.add('hidden');
       }
 
-      document.querySelector('.roadmap-strip-inner')?.addEventListener('keydown', (e) => {
-        const tile = e.target.closest('.roadmap-tile');
-        if (!tile) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const n = parseInt(tile.getAttribute('data-step'), 10);
-          if (n >= 1 && n <= 18) goToStep(n);
-        }
-      });
+      // Roadmap strip removed - navigation via sidebar and step buttons only
 
       // Show modal on load (only if no steps completed)
       if (completedSteps.length === 0) {
