@@ -1879,25 +1879,27 @@
     }
 
     .claim-asset-builder {
-      margin: 0 40px 24px 40px;
-      padding: 20px 24px;
+      margin: 16px 16px 20px 16px;
+      padding: 16px;
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid var(--teal);
       border-radius: 8px;
     }
 
     .asset-builder-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       color: white;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .asset-builder-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
     }
 
     .asset-stat {
@@ -1905,17 +1907,17 @@
     }
 
     .asset-stat-value {
-      font-size: 28px;
+      font-size: 18px;
       font-weight: 900;
       color: var(--teal);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .asset-stat-label {
-      font-size: 11px;
-      color: var(--gray-400);
+      font-size: 10px;
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     .money-found-toast {
@@ -1980,7 +1982,7 @@
     }
 
     .daily-ale-reminder {
-      margin: 0 40px 24px 40px;
+      margin: 24px 28px;
       padding: 20px 24px;
       background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
       border: 2px solid var(--amber);
@@ -1999,6 +2001,70 @@
       font-size: 20px;
       font-weight: 700;
       color: var(--red);
+    }
+
+    /* Step System Header */
+    .step-system-header {
+      margin: 24px 40px 16px 40px;
+      text-align: center;
+    }
+
+    .step-system-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--gray-900);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .step-system-subtitle {
+      font-size: 15px;
+      color: var(--gray-600);
+      margin: 0;
+      font-weight: 400;
+    }
+
+    /* Start Here Block */
+    .start-here-block {
+      margin: 32px 40px 40px 40px;
+      padding: 24px 32px;
+      background: white;
+      border: 2px solid var(--teal);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .start-here-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .start-here-text {
+      font-size: 15px;
+      color: var(--gray-700);
+      margin-bottom: 16px;
+    }
+
+    .start-here-button {
+      padding: 14px 32px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .start-here-button:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(20,184,166,0.3);
     }
 
     .sidebar-title {
@@ -3126,6 +3192,30 @@
         </div>
       </div>
 
+      <!-- Claim Asset Builder -->
+      <div class="claim-asset-builder">
+        <div class="asset-builder-title">Your Claim File</div>
+        <div class="asset-builder-grid">
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetDocsGenerated">0</div>
+            <div class="asset-stat-label">Documents</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetContentsItems">0</div>
+            <div class="asset-stat-label">Contents Items</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetALEEntries">0</div>
+            <div class="asset-stat-label">ALE Entries</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetTotalValue">$0</div>
+            <div class="asset-stat-label">Total Value</div>
+          </div>
+        </div>
+        <button class="step-action-button" style="margin-top: 16px; width: 100%; font-size: 13px; padding: 10px 16px;" onclick="generateFullClaimPackage()">Generate Full Package</button>
+      </div>
+
       <div class="sidebar-title">The 19 Step System</div>
 
       <div class="phase-group active expanded" onclick="togglePhase(this)">
@@ -3309,46 +3399,17 @@
       </div>
 
       <!-- Do This Now Banner -->
-      <div class="do-this-now-banner">
-        <div class="dtn-live">
-          <div class="dtn-pulse"></div>
-          <div class="dtn-live-label">LIVE</div>
-        </div>
-        <div class="dtn-content">
-          <div class="dtn-eyebrow">YOUR NEXT ACTION RIGHT NOW</div>
-          <div class="dtn-instruction" id="dtnInstruction">Enter your claim details and review the process guide</div>
-          <div class="dtn-sub" id="dtnSub">Start by understanding how insurance claims work</div>
-        </div>
+      <!-- Step System Title -->
+      <div class="step-system-header">
+        <h1 class="step-system-title">THE STEP-BY-STEP CLAIM PROCESS</h1>
+        <p class="step-system-subtitle">Follow this system to document, prove, and recover your full claim value</p>
       </div>
 
-      <!-- Daily ALE Reminder (shows if no entry today) -->
-      <div class="daily-ale-reminder hidden" id="dailyALEReminder">
-        <div class="ale-reminder-text">⚠️ You have not logged expenses today</div>
-        <div class="ale-reminder-value">Estimated missed claim value: <span id="missedALEValue">$132</span></div>
-      </div>
-
-      <!-- Claim Asset Builder -->
-      <div class="claim-asset-builder">
-        <div class="asset-builder-title">Your Claim File Is Being Built</div>
-        <div class="asset-builder-grid">
-          <div class="asset-stat">
-            <div class="asset-stat-value" id="assetDocsGenerated">0</div>
-            <div class="asset-stat-label">Documents Generated</div>
-          </div>
-          <div class="asset-stat">
-            <div class="asset-stat-value" id="assetContentsItems">0</div>
-            <div class="asset-stat-label">Contents Items Logged</div>
-          </div>
-          <div class="asset-stat">
-            <div class="asset-stat-value" id="assetALEEntries">0</div>
-            <div class="asset-stat-label">ALE Entries</div>
-          </div>
-          <div class="asset-stat">
-            <div class="asset-stat-value" id="assetTotalValue">$0</div>
-            <div class="asset-stat-label">Total Claim Value</div>
-          </div>
-        </div>
-        <button class="step-action-button" style="margin-top: 20px; width: 100%;" onclick="generateFullClaimPackage()">📦 Generate Full Claim Package</button>
+      <!-- Start Here Block -->
+      <div class="start-here-block">
+        <div class="start-here-label">START HERE</div>
+        <div class="start-here-text">Begin by entering your claim details and reviewing your policy.</div>
+        <button class="start-here-button" onclick="goToStep(1)">Start Step 1 →</button>
       </div>
 
       <!-- Step Cards -->
@@ -4401,6 +4462,12 @@
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Log today's expenses to capture claimable ALE</div>
+            </div>
+
+            <!-- Daily ALE Reminder (shows if no entry today) -->
+            <div class="daily-ale-reminder hidden" id="dailyALEReminder">
+              <div class="ale-reminder-text">⚠️ You have not logged expenses today</div>
+              <div class="ale-reminder-value">Estimated missed claim value: <span id="missedALEValue">$132</span></div>
             </div>
             
             <div class="section-label">Why This Matters</div>
