@@ -1284,6 +1284,492 @@
       line-height: 1.4;
     }
 
+    /* Step Execution Framework */
+    .step-workspace {
+      margin: 24px 28px;
+      padding: 24px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+    }
+
+    .workspace-section {
+      margin-bottom: 24px;
+    }
+
+    .workspace-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .workspace-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .step-input-group {
+      margin-bottom: 16px;
+    }
+
+    .step-input-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .step-input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-family: inherit;
+    }
+
+    .step-input:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
+    }
+
+    .step-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .step-textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.1);
+    }
+
+    .step-file-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      border: 2px dashed var(--gray-300);
+      border-radius: 8px;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-file-upload:hover {
+      border-color: var(--teal);
+      background: rgba(20,184,166,0.05);
+    }
+
+    .upload-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      color: var(--gray-400);
+    }
+
+    .upload-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 4px;
+    }
+
+    .upload-hint {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .step-output-box {
+      padding: 20px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+
+    .step-output-box.success {
+      background: #ecfdf5;
+      border-color: var(--emerald);
+    }
+
+    .step-output-box.warning {
+      background: #fef3c7;
+      border-color: var(--amber);
+    }
+
+    .output-summary {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+    }
+
+    .output-detail {
+      font-size: 13px;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+
+    .output-detail:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-action-button {
+      padding: 12px 24px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .step-action-button:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    .step-action-button:disabled {
+      background: var(--gray-300);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .step-action-button.secondary {
+      background: white;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+    }
+
+    .step-action-button.secondary:hover {
+      background: rgba(20,184,166,0.05);
+    }
+
+    .processing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(20,184,166,0.05);
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--gray-700);
+    }
+
+    .processing-spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(20,184,166,0.2);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px 12px;
+      background: var(--gray-100);
+      border-bottom: 2px solid var(--gray-300);
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-600);
+    }
+
+    .data-table tr:hover {
+      background: var(--gray-50);
+    }
+
+    .value-display {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--teal);
+      margin: 16px 0;
+    }
+
+    /* ALE Tracker Specific Styles */
+    .ale-tracker-container {
+      margin: 24px 28px;
+    }
+
+    .ale-live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid var(--amber);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .ale-pulse {
+      width: 12px;
+      height: 12px;
+      background: var(--amber);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .ale-live-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .ale-baseline-config {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .ale-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+
+    .ale-baseline-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ale-baseline-input-group input {
+      width: 100px;
+      padding: 8px 12px;
+      font-size: 18px;
+      font-weight: 700;
+      border: 2px solid var(--teal);
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .ale-currency, .ale-helper {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--gray-600);
+    }
+
+    .ale-help-text {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 8px;
+    }
+
+    .ale-entry-form {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .ale-form-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+
+    .ale-form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ale-form-field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ale-form-field.ale-field-full {
+      grid-column: span 3;
+    }
+
+    .ale-form-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      margin-bottom: 4px;
+    }
+
+    .ale-form-field input,
+    .ale-form-field select {
+      padding: 8px 10px;
+      font-size: 13px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+    }
+
+    .ale-add-button {
+      width: 100%;
+      padding: 10px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .ale-add-button:hover {
+      background: var(--teal-dark);
+    }
+
+    .ale-totals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .ale-total-card {
+      padding: 16px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .ale-total-card.highlight {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border-color: var(--emerald);
+    }
+
+    .ale-total-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .ale-total-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .ale-entries-list {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .ale-entries-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+
+    .ale-empty-state {
+      padding: 32px;
+      text-align: center;
+      color: var(--gray-500);
+      font-size: 13px;
+    }
+
+    .ale-entry-item {
+      display: grid;
+      grid-template-columns: 100px 120px 1fr 100px 40px;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid var(--gray-200);
+      align-items: center;
+    }
+
+    .ale-entry-date {
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .ale-entry-category {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+      text-transform: capitalize;
+    }
+
+    .ale-entry-notes {
+      font-size: 12px;
+      color: var(--gray-600);
+    }
+
+    .ale-entry-amount {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      text-align: right;
+    }
+
+    .ale-entry-delete {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .ale-export-section {
+      text-align: center;
+    }
+
+    .ale-export-button {
+      padding: 12px 24px;
+      background: white;
+      color: var(--teal);
+      border: 2px solid var(--teal);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .ale-export-button:hover {
+      background: rgba(20,184,166,0.05);
+    }
+
     .sidebar-title {
       padding: 16px 20px;
       font-size: 13px;
@@ -3142,49 +3628,49 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Your insurer knows your policy better than you do — and they use that to their advantage. Most policyholders have coverage they don't know about and rights they never exercise. Before your insurer tells you what they'll pay, you need to know what your policy actually says you're owed.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Upload your declarations page and policy documents. Claim Command Pro's AI Policy Analyzer will read every page, extract your coverage limits, deductibles, and endorsements, and flag every coverage trigger that applies to your specific type of loss. You don't need to understand insurance language — we translate it for you.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">A plain-language summary of exactly what your policy covers for this type of loss</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Your exact deductible amounts and coverage limits — clearly labeled</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Additional coverages attached to your policy that you may not know you have</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">A list of areas where your coverage may fall short and what to do about it</div>
-              </li>
-            </ul>
-
-            <div class="ai-banner">
-              <div class="ai-chip">AI</div>
-              <div class="ai-text">Upload your policy documents and the AI Policy Analyzer reads them for you. You'll get a clear, plain-language breakdown of your coverage in minutes — no insurance expertise required.</div>
-            </div>
-
-            <a href="app/tools/policy-analyzer-working.html" class="expand-button" style="text-decoration: none; display: block; margin-top: 20px;" onclick="trackToolOpen(2, 'Policy Analyzer')">Open AI Policy Analyzer →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-2-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Analysis Complete</div>
-                <button class="results-close" onclick="clearStepResults(2)">×</button>
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📄 Upload Your Policy</div>
+                <div class="step-file-upload" id="policyUpload" onclick="document.getElementById('policyFileInput').click()">
+                  <div class="upload-icon">📤</div>
+                  <div class="upload-text">Click to upload policy PDF</div>
+                  <div class="upload-hint">Declarations page + full policy document</div>
+                  <input type="file" id="policyFileInput" accept=".pdf" style="display: none;" onchange="handlePolicyUpload(event)">
+                </div>
+                <div id="policyFileName" style="margin-top: 8px; font-size: 12px; color: var(--gray-600);"></div>
               </div>
-              <div class="results-body" id="step-2-results-body">
-                <!-- Results will be populated here via postMessage -->
+
+              <!-- PROCESSING INDICATOR -->
+              <div class="processing-indicator hidden" id="policyProcessing">
+                <div class="processing-spinner"></div>
+                <span>Analyzing your policy...</span>
               </div>
+
+              <!-- OUTPUT SECTION -->
+              <div class="workspace-section hidden" id="policyOutput">
+                <div class="workspace-label">✓ Policy Analysis Results</div>
+                <div class="step-output-box success">
+                  <div class="output-summary" id="policySummary">Your policy has been analyzed</div>
+                  
+                  <div style="margin-top: 16px;">
+                    <div class="output-detail"><strong>Dwelling Coverage:</strong> <span id="dwellingCoverage">—</span></div>
+                    <div class="output-detail"><strong>Deductible:</strong> <span id="deductible">—</span></div>
+                    <div class="output-detail"><strong>Settlement Type:</strong> <span id="settlementType">—</span></div>
+                    <div class="output-detail"><strong>Contents Coverage:</strong> <span id="contentsCoverage">—</span></div>
+                    <div class="output-detail"><strong>ALE Coverage:</strong> <span id="aleCoverage">—</span></div>
+                    <div class="output-detail"><strong>Key Endorsements:</strong> <span id="endorsements">—</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="workspace-section">
+                <button class="step-action-button" id="analyzePolicyBtn" onclick="analyzePolicyAI()" disabled>Analyze Policy with AI</button>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3211,42 +3697,59 @@
             </div>
           </div>
           <div class="step-body">
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">What you say when you first report the loss can limit what you're paid — permanently. Vague or poorly worded reports give the insurer grounds to restrict your coverage before the adjuster even arrives. The right notification language locks in your full rights under the policy from day one.</p>
+            
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📝 Loss Details</div>
+                
+                <div class="step-input-group">
+                  <label class="step-input-label">Date of Loss</label>
+                  <input type="date" class="step-input" id="lossDate" onchange="updateLossReportBtn()">
+                </div>
 
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use the loss notification template we provide to report your claim. Do not admit fault, guess at dollar amounts, or describe damage in detail until a full professional inspection is done. We tell you exactly what to say — and exactly what not to say.</p>
+                <div class="step-input-group">
+                  <label class="step-input-label">Cause of Loss</label>
+                  <select class="step-input" id="lossCause" onchange="updateLossReportBtn()">
+                    <option value="">Select cause...</option>
+                    <option value="fire">Fire</option>
+                    <option value="water">Water Damage</option>
+                    <option value="wind">Wind / Storm</option>
+                    <option value="hail">Hail</option>
+                    <option value="theft">Theft / Vandalism</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
 
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">A ready-to-use letter template with the right language to protect your full claim rights</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">What to say and what to avoid when communicating with your insurer</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">The most common statements that limit coverage — and how to avoid making them</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">A checklist to confirm your loss report was filed correctly and completely</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/written-notice-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(3, 'Written Notice Generator')">Open Written Notice Generator →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-3-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Notice Generated</div>
-                <button class="results-close" onclick="clearStepResults(3)">×</button>
+                <div class="step-input-group">
+                  <label class="step-input-label">Brief Description (what happened)</label>
+                  <textarea class="step-textarea" id="lossDescription" placeholder="Example: Pipe burst in upstairs bathroom causing water damage to ceiling, walls, and flooring in multiple rooms." onchange="updateLossReportBtn()"></textarea>
+                </div>
               </div>
-              <div class="results-body" id="step-3-results-body"></div>
+
+              <!-- PROCESSING INDICATOR -->
+              <div class="processing-indicator hidden" id="lossReportProcessing">
+                <div class="processing-spinner"></div>
+                <span>Generating your loss notification...</span>
+              </div>
+
+              <!-- OUTPUT SECTION -->
+              <div class="workspace-section hidden" id="lossReportOutput">
+                <div class="workspace-label">✓ Generated Loss Notification</div>
+                <div class="step-output-box success">
+                  <div class="output-summary">Copy-ready claim notification</div>
+                  <div style="margin-top: 16px; padding: 16px; background: white; border: 1px solid var(--gray-200); border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap;" id="generatedNotice"></div>
+                  <button class="step-action-button secondary" style="margin-top: 12px;" onclick="copyLossNotice()">Copy to Clipboard</button>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="workspace-section">
+                <button class="step-action-button" id="generateLossReportBtn" onclick="generateLossReport()" disabled>Generate Loss Notification</button>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3280,38 +3783,43 @@
             </div>
           </div>
           <div class="step-body">
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Your photos and documentation are the only proof you have of what was damaged. Without thorough documentation, the insurer can deny items they claim weren't damaged or weren't part of the loss. Once repairs begin, you lose the ability to prove what was there.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Photograph every damaged area from multiple angles. Include wide shots showing the full room or area, medium shots showing specific damage, and close-ups of details. Use our damage documentation tool to organize photos by room and damage type.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Photo upload organizer that categorizes images by room and damage type</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Damage documentation checklist to ensure you capture everything</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Room-by-room documentation guide with specific photo requirements</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/damage-documentation-tool.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(4, 'Damage Documentation Tool')">Open Damage Documentation Tool →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-4-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Documentation Complete</div>
-                <button class="results-close" onclick="clearStepResults(4)">×</button>
+            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📸 Upload Damage Photos</div>
+                <div class="step-file-upload" onclick="document.getElementById('damagePhotosInput').click()">
+                  <div class="upload-icon">📷</div>
+                  <div class="upload-text">Click to upload photos</div>
+                  <div class="upload-hint">Select multiple photos (JPG, PNG)</div>
+                  <input type="file" id="damagePhotosInput" accept="image/*" multiple style="display: none;" onchange="handleDamagePhotos(event)">
+                </div>
+                <div id="photoCount" style="margin-top: 8px; font-size: 12px; color: var(--gray-600);"></div>
               </div>
-              <div class="results-body" id="step-4-results-body"></div>
+
+              <!-- PHOTO GALLERY -->
+              <div class="workspace-section hidden" id="photoGallery">
+                <div class="workspace-label">📂 Organized by Room</div>
+                <div id="photoGalleryContent" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px;"></div>
+              </div>
+
+              <!-- OUTPUT SECTION -->
+              <div class="workspace-section hidden" id="damageDocOutput">
+                <div class="workspace-label">✓ Documentation Summary</div>
+                <div class="step-output-box success">
+                  <div class="output-summary" id="damageDocSummary">Photos organized and ready</div>
+                  <div class="output-detail" id="damageDocDetails"></div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="workspace-section">
+                <button class="step-action-button" id="organizeDamageBtn" onclick="organizeDamagePhotos()" disabled>Organize & Save Photos</button>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3341,38 +3849,47 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">The insurance company's estimate is often incomplete or underpriced. A licensed contractor's estimate gives you leverage to challenge lowball offers and proves the true cost of repairs. Without it, you have no basis to dispute what the insurer says the work costs.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Get at least two written estimates from licensed contractors who specialize in your type of damage. Use our contractor scope checklist to make sure their estimates include everything that was damaged. Don't let contractors talk to your adjuster directly until you review their estimate first.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Contractor scope checklist to ensure estimates are complete</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Questions to ask contractors before hiring them</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Red flags that indicate a contractor estimate may be inflated or incomplete</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/contractor-scope-checklist.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(5, 'Contractor Scope Checklist')">Open Contractor Scope Checklist →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-5-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Scope Verified</div>
-                <button class="results-close" onclick="clearStepResults(5)">×</button>
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📋 Upload Contractor Estimate</div>
+                <div class="step-file-upload" onclick="document.getElementById('contractorEstimateInput').click()">
+                  <div class="upload-icon">📄</div>
+                  <div class="upload-text">Click to upload estimate PDF</div>
+                  <div class="upload-hint">Detailed line-item estimate from licensed contractor</div>
+                  <input type="file" id="contractorEstimateInput" accept=".pdf" style="display: none;" onchange="handleContractorEstimate(event)">
+                </div>
+                <div id="contractorFileName" style="margin-top: 8px; font-size: 12px; color: var(--gray-600);"></div>
               </div>
-              <div class="results-body" id="step-5-results-body"></div>
+
+              <!-- PROCESSING INDICATOR -->
+              <div class="processing-indicator hidden" id="contractorProcessing">
+                <div class="processing-spinner"></div>
+                <span>Analyzing contractor estimate...</span>
+              </div>
+
+              <!-- OUTPUT SECTION -->
+              <div class="workspace-section hidden" id="contractorOutput">
+                <div class="workspace-label">✓ Estimate Analysis</div>
+                <div class="step-output-box success">
+                  <div class="output-summary">Contractor estimate validated</div>
+                  
+                  <div style="margin-top: 16px;">
+                    <div class="value-display" id="contractorTotal">$0</div>
+                    <div class="output-detail"><strong>Line Items:</strong> <span id="lineItemCount">—</span></div>
+                    <div class="output-detail"><strong>Scope Status:</strong> <span id="scopeStatus">—</span></div>
+                    <div class="output-detail" id="missingItems"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="workspace-section">
+                <button class="step-action-button" id="analyzeContractorBtn" onclick="analyzeContractorEstimate()" disabled>Validate Estimate with AI</button>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3399,38 +3916,39 @@
             </div>
           </div>
           <div class="step-body">
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">The adjuster's inspection determines what the insurance company will pay. What you say and show during the inspection can either strengthen or weaken your claim. Most policyholders unknowingly hurt their claims by volunteering information the adjuster didn't ask for or failing to point out damage the adjuster missed.</p>
+            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📋 Log Adjuster Requests</div>
+                
+                <div class="step-input-group">
+                  <label class="step-input-label">Inspection Date</label>
+                  <input type="date" class="step-input" id="inspectionDate">
+                </div>
 
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Walk the adjuster through every damaged area using your documentation as a guide. Point out damage the adjuster may miss. Answer questions directly but don't volunteer extra information. Use our carrier request logger to document everything the adjuster says and requests.</p>
+                <div class="step-input-group">
+                  <label class="step-input-label">Adjuster Name</label>
+                  <input type="text" class="step-input" id="adjusterName" placeholder="e.g. John Smith">
+                </div>
 
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Adjuster inspection checklist with what to show and what to say</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Carrier request logger to document all adjuster requests and statements</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Common adjuster tactics and how to respond to them</div>
-              </li>
-            </ul>
+                <div class="step-input-group">
+                  <label class="step-input-label">What the Adjuster Requested or Said</label>
+                  <textarea class="step-textarea" id="adjusterRequest" placeholder="Document everything the adjuster says, requests, or acknowledges during the inspection..."></textarea>
+                </div>
 
-            <a href="app/tools/carrier-request-logger.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(6, 'Carrier Request Logger')">Open Carrier Request Logger →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-6-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Requests Logged</div>
-                <button class="results-close" onclick="clearStepResults(6)">×</button>
+                <button class="step-action-button" onclick="logAdjusterRequest()">Log Request</button>
               </div>
-              <div class="results-body" id="step-6-results-body"></div>
+
+              <!-- LOGGED REQUESTS -->
+              <div class="workspace-section hidden" id="adjusterRequestsLog">
+                <div class="workspace-label">📝 Inspection Log</div>
+                <div id="adjusterRequestsList"></div>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3460,38 +3978,68 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Personal property claims are where insurers push back hardest. Without proof of ownership and accurate values, the insurer will deny items or pay pennies on the dollar. A complete inventory with supporting documentation is the only way to recover full value for your belongings.</p>
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">🏠 Add Contents Item</div>
+                
+                <div class="step-input-group">
+                  <label class="step-input-label">Room</label>
+                  <input type="text" class="step-input" id="contentsRoom" placeholder="e.g. Living Room">
+                </div>
 
-            <div class="section-label">What You Do</div>
-            <p class="section-text">List every damaged item with its description, age, purchase price, and replacement cost. Include receipts, photos, or other proof of ownership where possible. Use our contents inventory tool to organize items by room and category.</p>
+                <div class="step-input-group">
+                  <label class="step-input-label">Item Name</label>
+                  <input type="text" class="step-input" id="contentsItemName" placeholder="e.g. Samsung 55-inch TV">
+                </div>
 
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Contents inventory tool with room-by-room organization</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Contents valuation calculator that estimates replacement costs</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Acceptable proof of ownership alternatives when you don't have receipts</div>
-              </li>
-            </ul>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div class="step-input-group">
+                    <label class="step-input-label">Quantity</label>
+                    <input type="number" class="step-input" id="contentsQuantity" value="1" min="1">
+                  </div>
 
-            <a href="app/tools/contents-inventory.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(7, 'Contents Inventory Tool')">Open Contents Inventory Tool →</a>
+                  <div class="step-input-group">
+                    <label class="step-input-label">Condition</label>
+                    <select class="step-input" id="contentsCondition">
+                      <option value="new">New</option>
+                      <option value="excellent">Excellent</option>
+                      <option value="good">Good</option>
+                      <option value="fair">Fair</option>
+                    </select>
+                  </div>
+                </div>
 
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-7-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Inventory Complete</div>
-                <button class="results-close" onclick="clearStepResults(7)">×</button>
+                <div class="step-input-group">
+                  <label class="step-input-label">Estimated Replacement Cost</label>
+                  <input type="number" class="step-input" id="contentsValue" placeholder="0" min="0">
+                </div>
+
+                <button class="step-action-button" onclick="addContentsItem()">Add Item to Inventory</button>
               </div>
-              <div class="results-body" id="step-7-results-body"></div>
+
+              <!-- INVENTORY TABLE -->
+              <div class="workspace-section hidden" id="contentsInventoryTable">
+                <div class="workspace-label">📦 Your Contents Inventory</div>
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Room</th>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Value</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="contentsTableBody"></tbody>
+                </table>
+                <div class="value-display" style="text-align: right; margin-top: 16px;">
+                  Total: <span id="contentsTotalValue">$0</span>
+                </div>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3669,38 +4217,48 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">The insurance company's estimate is almost always lower than what repairs actually cost. They use outdated pricing, omit necessary work, and apply aggressive depreciation. If you accept their first estimate without review, you leave thousands of dollars on the table.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Upload both the insurance estimate and your contractor estimates to our estimate review tool. We'll identify line-by-line discrepancies, missing scope items, and pricing gaps. Use this analysis to build your case for a supplement.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Estimate comparison tool that highlights discrepancies line by line</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Missing scope detector that identifies work the insurer left out</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Total gap calculation showing exactly how much you're being underpaid</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(9, 'AI Estimate Review Tool')">Open AI Estimate Review Tool →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-9-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Estimate Reviewed</div>
-                <button class="results-close" onclick="clearStepResults(9)">×</button>
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📋 Upload Insurance Estimate</div>
+                <div class="step-file-upload" onclick="document.getElementById('insurerEstimateInput').click()">
+                  <div class="upload-icon">📄</div>
+                  <div class="upload-text">Click to upload insurer estimate PDF</div>
+                  <div class="upload-hint">The estimate from your insurance adjuster</div>
+                  <input type="file" id="insurerEstimateInput" accept=".pdf" style="display: none;" onchange="handleInsurerEstimate(event)">
+                </div>
+                <div id="insurerFileName" style="margin-top: 8px; font-size: 12px; color: var(--gray-600);"></div>
               </div>
-              <div class="results-body" id="step-9-results-body"></div>
+
+              <!-- PROCESSING INDICATOR -->
+              <div class="processing-indicator hidden" id="estimateReviewProcessing">
+                <div class="processing-spinner"></div>
+                <span>Comparing estimates and identifying gaps...</span>
+              </div>
+
+              <!-- OUTPUT SECTION -->
+              <div class="workspace-section hidden" id="estimateReviewOutput">
+                <div class="workspace-label">⚠️ Gap Analysis Results</div>
+                <div class="step-output-box warning">
+                  <div class="output-summary">Underpayment detected</div>
+                  
+                  <div style="margin-top: 16px;">
+                    <div class="output-detail"><strong>Insurer Estimate:</strong> <span id="insurerEstimateAmount">—</span></div>
+                    <div class="output-detail"><strong>Contractor Estimate:</strong> <span id="contractorEstimateAmount">—</span></div>
+                    <div class="value-display" style="color: var(--red);">Gap: <span id="estimateGap">$0</span></div>
+                    <div class="output-detail" id="missingScope"></div>
+                    <div class="output-detail" id="pricingGaps"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ACTION BUTTON -->
+              <div class="workspace-section">
+                <button class="step-action-button" id="reviewEstimateBtn" onclick="reviewInsurerEstimate()" disabled>Compare Estimates with AI</button>
+              </div>
+
             </div>
           </div>
           <div class="step-footer">
@@ -3730,38 +4288,13 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Insurance companies often use pricing software that's 6-12 months out of date or doesn't reflect your local market. They also apply arbitrary reductions to labor rates and material costs. These pricing games can reduce your settlement by 20-30 percent or more.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our pricing deviation analyzer to compare the insurer's line item prices against current market rates in your area. Document every item priced below market and calculate the total impact on your claim.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Pricing deviation analyzer with local market rate comparisons</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Line item discrepancy finder that flags underpriced materials and labor</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Pricing justification documentation to support your supplement request</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/pricing-deviation-analyzer.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(10, 'Pricing Deviation Analyzer')">Open Pricing Deviation Analyzer →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-10-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Analysis Complete</div>
-                <button class="results-close" onclick="clearStepResults(10)">×</button>
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">🔍 Analyze Line Item Pricing</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Uses your existing estimates to identify below-market pricing</p>
+                <button class="step-action-button" onclick="runStepAction(10, 'Pricing Deviation Analysis')">Run Pricing Deviation Analysis</button>
               </div>
-              <div class="results-body" id="step-10-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -3791,38 +4324,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Insurance companies routinely fail to apply coverage provisions that would increase your payout. Code upgrade coverage, ordinance and law, overhead and profit, and additional coverages are frequently overlooked or denied even when your policy clearly provides them.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Run our coverage gap detector to identify policy provisions the insurer didn't apply. Use our scope omission detector to find repair work that should be covered but wasn't included in the estimate.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Coverage gap detector that identifies unapplied policy provisions</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Scope omission detector that finds missing repair work</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Policy language citations to support your coverage arguments</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/coverage-gap-detector.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(11, 'Coverage Gap Detector')">Open Coverage Gap Detector →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-11-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Gaps Identified</div>
-                <button class="results-close" onclick="clearStepResults(11)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">🔎 Detect Coverage Gaps</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Compares your policy against your claim to find unclaimed benefits</p>
+                <button class="step-action-button" onclick="runStepAction(11, 'Coverage Gap Detection')">Run Coverage Gap Detection</button>
               </div>
-              <div class="results-body" id="step-11-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -3859,38 +4366,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">A supplement request is your formal demand for the insurer to pay what they owe. Without a properly documented supplement, the insurer will simply ignore your complaints about their low estimate. A strong supplement backed by evidence forces them to respond and negotiate.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our supplement calculation tool to total all gaps, missing items, and coverage issues. Generate a professional supplement cover letter that presents your case clearly and demands a specific dollar amount.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Supplement calculation tool that totals all identified gaps</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Supplement cover letter generator with professional formatting</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Supporting documentation package to back up your request</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/supplement-letter-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(12, 'AI Supplement Letter Generator')">Open AI Supplement Letter Generator →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-12-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Letter Generated</div>
-                <button class="results-close" onclick="clearStepResults(12)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">📝 Generate Supplement Request</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Compiles all identified gaps into a formal supplement document</p>
+                <button class="step-action-button" onclick="runStepAction(12, 'Generate Supplement')">Run Generate Supplement</button>
               </div>
-              <div class="results-body" id="step-12-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -3920,38 +4401,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">When the insurer denies coverage or refuses to increase their offer, a formal dispute letter creates a paper trail and puts them on notice that you're serious. It also preserves your right to escalate to appraisal, mediation, or litigation if needed.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our response letter generator to create a formal dispute letter addressing each denial or shortfall. Reference specific policy language and attach supporting evidence. Send via certified mail to create a documented record.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Response letter generator with templates for common disputes</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Estimate revision request generator for specific line item challenges</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Escalation language that signals you're prepared to take further action</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/demand-letter-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(13, 'AI Demand Letter Generator')">Open AI Demand Letter Generator →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-13-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Demand Letter Generated</div>
-                <button class="results-close" onclick="clearStepResults(13)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">✉️ Generate Dispute Letter</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Creates formal demand letter with legal backing</p>
+                <button class="step-action-button" onclick="runStepAction(13, 'Generate Dispute Letter')">Run Generate Dispute Letter</button>
               </div>
-              <div class="results-body" id="step-13-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -3978,38 +4433,12 @@
             </div>
           </div>
           <div class="step-body">
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Most policies pay Actual Cash Value (depreciated amount) up front and hold back Replacement Cost Value until repairs are done. Many policyholders never recover this holdback because they don't know how to claim it or don't have proper documentation of completed repairs.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Once repairs are complete, use our RCV recovery submitter to generate a claim for the depreciation holdback. Include invoices, photos of completed work, and proof of payment to contractors.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">RCV recovery submitter that calculates your holdback amount</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Depreciation calculator showing ACV vs RCV breakdown</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Required documentation checklist for RCV recovery</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/rcv-recovery-submitter.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(14, 'RCV Recovery Tool')">Open RCV Recovery Tool →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-14-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Recovery Submitted</div>
-                <button class="results-close" onclick="clearStepResults(14)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">💰 Submit RCV Recovery Request</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Automates depreciation recovery documentation</p>
+                <button class="step-action-button" onclick="runStepAction(14, 'Submit RCV Recovery')">Run Submit RCV Recovery</button>
               </div>
-              <div class="results-body" id="step-14-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4046,38 +4475,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Insurance adjusters are trained negotiators working to minimize payouts. Without a clear strategy and knowledge of negotiation tactics, you'll accept less than you're owed. Strategic negotiation can increase your settlement by 15-40 percent beyond the insurer's initial offer.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our negotiation strategy generator to develop a plan based on your specific situation. Employ our negotiation language generator to craft responses that apply pressure without burning bridges.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Negotiation strategy generator tailored to your claim situation</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Negotiation language generator with proven response templates</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Common adjuster tactics and how to counter them effectively</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/negotiation-strategy-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(15, 'AI Negotiation Strategy Tool')">Open AI Negotiation Strategy Tool →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-15-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Strategy Generated</div>
-                <button class="results-close" onclick="clearStepResults(15)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">🤝 Generate Negotiation Strategy</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Analyzes leverage points and creates negotiation tactics</p>
+                <button class="step-action-button" onclick="runStepAction(15, 'Generate Negotiation Strategy')">Run Generate Negotiation Strategy</button>
               </div>
-              <div class="results-body" id="step-15-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4107,38 +4510,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">When the insurer refuses to negotiate in good faith, appraisal or mediation may be your only option short of litigation. These processes are faster and cheaper than lawsuits but still require preparation and understanding of the rules.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our escalation readiness checker to determine if you're ready for appraisal or mediation. Review the process requirements and costs before invoking your policy's dispute resolution clause.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Escalation readiness checker to assess if you should proceed</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Appraisal vs mediation comparison guide</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Demand letter templates to invoke policy dispute resolution clauses</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/escalation-evaluator-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(16, 'AI Escalation Evaluator')">Open AI Escalation Evaluator →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-16-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Evaluation Complete</div>
-                <button class="results-close" onclick="clearStepResults(16)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">⚖️ Evaluate Escalation Options</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Determines when and how to escalate to appraisal or mediation</p>
+                <button class="step-action-button" onclick="runStepAction(16, 'Evaluate Escalation')">Run Evaluate Escalation</button>
               </div>
-              <div class="results-body" id="step-16-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4168,38 +4545,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Once you accept a settlement and sign a release, you give up all rights to additional payment. If the settlement doesn't cover your actual losses, you're stuck. You need to carefully evaluate whether the offer is fair before signing anything.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Compare the settlement offer against your documented losses using our payment tracker. Calculate whether the offer covers all repairs, contents, and additional expenses. Don't sign a release until you're certain the amount is adequate.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Payment tracker showing all payments received vs total claim value</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Settlement adequacy calculator to determine if the offer is fair</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Release language review to identify problematic terms</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(17, 'AI Settlement Review Tool')">Open AI Settlement Review Tool →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-17-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Settlement Reviewed</div>
-                <button class="results-close" onclick="clearStepResults(17)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">✅ Validate Final Settlement</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Compares final offer against your total documented claim value</p>
+                <button class="step-action-button" onclick="runStepAction(17, 'Validate Settlement')">Run Validate Settlement</button>
               </div>
-              <div class="results-body" id="step-17-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4226,38 +4577,12 @@
             </div>
           </div>
           <div class="step-body">
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">Even after accepting a settlement, you need to ensure the check arrives, clears, and covers what was promised. Insurers sometimes issue partial payments or include unexpected deductions. You need to verify you received every dollar you're owed.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Track all final payments and verify they match the settlement agreement. Use our claim archive generator to create a complete record of your claim for future reference or potential reopening.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Final payment verification checklist</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Claim archive generator to preserve all documentation</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">What to do if final payment doesn't match the settlement agreement</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(18, 'Claim Archive Generator')">Open Claim Archive Generator →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-18-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Archive Generated</div>
-                <button class="results-close" onclick="clearStepResults(18)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">💵 Track Final Payment</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Confirms all payments received and documented</p>
+                <button class="step-action-button" onclick="runStepAction(18, 'Track Payment')">Run Track Payment</button>
               </div>
-              <div class="results-body" id="step-18-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4287,38 +4612,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
-            <div class="section-label">Why This Matters</div>
-            <p class="section-text">A properly closed claim ensures you have no lingering obligations and preserves your ability to reopen if additional damage appears later. It also creates a complete record you can reference if you ever need to file another claim.</p>
-
-            <div class="section-label">What You Do</div>
-            <p class="section-text">Use our claim package assembly tool to compile all documentation into a final claim file. Store this package securely for at least 7 years. Confirm with your insurer that the claim is officially closed.</p>
-
-            <div class="section-label">What Claim Command Pro Provides</div>
-            <ul class="provides-list">
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Claim package assembly tool that organizes all documents</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Claim closure checklist to ensure nothing is missed</div>
-              </li>
-              <li class="provides-item">
-                <div class="provides-bullet"></div>
-                <div class="provides-text">Document retention guidelines for future reference</div>
-              </li>
-            </ul>
-
-            <a href="app/tools/release-reviewer-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(19, 'AI Release Reviewer')">Open AI Release Reviewer →</a>
-
-            <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-19-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Release Reviewed</div>
-                <button class="results-close" onclick="clearStepResults(19)">×</button>
+            <div class="step-workspace">
+              <div class="workspace-section">
+                <div class="workspace-label">📦 Generate Claim Archive</div>
+                <p style="font-size: 13px; color: var(--gray-600); margin-bottom: 16px;">Creates comprehensive documentation package for your records</p>
+                <button class="step-action-button" onclick="runStepAction(19, 'Generate Archive')">Run Generate Archive</button>
               </div>
-              <div class="results-body" id="step-19-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
@@ -4685,10 +4984,16 @@
     let claimData = {
       policyUploaded: false,
       estimateUploaded: false,
+      policy: {},
+      lossNotice: null,
+      damagePhotos: [],
+      contractorEstimate: null,
+      estimateReview: null,
+      adjusterRequests: [],
       structure: {
-        insurerEstimate: 18200,
-        userEstimate: 36750,
-        gap: 18550
+        insurerEstimate: 0,
+        userEstimate: 0,
+        gap: 0
       },
       contents: {
         items: [],
@@ -4696,17 +5001,12 @@
         submitted: 0,
         recovered: 0
       },
-      ale: {
+      ALE: {
         entries: [],
-        dailyBaseline: 75,
-        totalLogged: 0,
-        totalClaimable: 0,
-        daysDisplaced: 0,
-        avgDailyOverage: 0
+        baseline: 75,
+        total: 0,
+        dailyRate: 0
       },
-      dwellingCoverage: null,
-      deductible: null,
-      settlementType: null,
       messages: [],
       documents: [],
       deadlines: []
@@ -4722,7 +5022,7 @@
     function calculateTotalRecoverable() {
       const structureGap = claimData.structure.userEstimate - claimData.structure.insurerEstimate;
       const contentsValue = claimData.contents.totalValue;
-      const aleValue = claimData.ale.totalClaimable;
+      const aleValue = claimData.ALE.total;
       return structureGap + contentsValue + aleValue;
     }
 
@@ -4737,9 +5037,9 @@
       document.getElementById('summaryContentsValue').textContent = '$' + claimData.contents.totalValue.toLocaleString();
       
       // ALE display logic
-      const aleDisplay = claimData.ale.entries.length === 0 
-        ? '$' + claimData.ale.avgDailyOverage + '/day'
-        : '$' + claimData.ale.totalClaimable.toLocaleString();
+      const aleDisplay = claimData.ALE.entries.length === 0
+        ? '$' + Math.round(claimData.ALE.dailyRate || 132) + '/day'
+        : '$' + claimData.ALE.total.toLocaleString();
       document.getElementById('summaryALEValue').textContent = aleDisplay;
       
       document.getElementById('summaryInsurerValue').textContent = '$' + claimData.structure.insurerEstimate.toLocaleString();
@@ -4755,10 +5055,10 @@
       document.getElementById('bucketContentsRecovered').textContent = '$' + claimData.contents.recovered.toLocaleString();
       document.getElementById('bucketContentsRemaining').textContent = '$' + (claimData.contents.totalValue - claimData.contents.recovered).toLocaleString();
 
-      document.getElementById('bucketALEDays').textContent = claimData.ale.daysDisplaced || claimData.ale.entries.length;
-      document.getElementById('bucketALEDaily').textContent = '$' + (claimData.ale.avgDailyOverage || 0) + '/day';
-      document.getElementById('bucketALETotal').textContent = '$' + claimData.ale.totalClaimable.toLocaleString();
-      document.getElementById('bucketALERecovered').textContent = '$' + (claimData.ale.submitted || 0).toLocaleString() + ' / $' + (claimData.ale.recovered || 0).toLocaleString();
+      document.getElementById('bucketALEDays').textContent = claimData.ALE.entries.length || 0;
+      document.getElementById('bucketALEDaily').textContent = '$' + Math.round(claimData.ALE.dailyRate || 0) + '/day';
+      document.getElementById('bucketALETotal').textContent = '$' + claimData.ALE.total.toLocaleString();
+      document.getElementById('bucketALERecovered').textContent = '$0 / $0';
 
       // Claim number
       const claimNum = document.getElementById('claimNumber')?.textContent || 'CLM-2024-0847';
@@ -4780,7 +5080,7 @@
       
       if (completedCount === 0) {
         actionText = "You're just getting started. Begin Step 1 to set up your claim correctly.";
-      } else if (claimData.ale.entries.length === 0 && currentStep > 3) {
+      } else if (claimData.ALE.entries.length === 0 && currentStep > 3) {
         actionText = "Start tracking your living expenses — this accrues daily and can add thousands to your claim.";
       } else if (claimData.contents.items.length === 0 && currentStep >= 7) {
         actionText = "Begin your contents inventory — often 20-40% of total claim value.";
@@ -5072,6 +5372,682 @@
       }
     }
 
+    // ============================================
+    // STEP EXECUTION FUNCTIONS
+    // ============================================
+
+    // STEP 2 — AI Policy Analyzer
+    let policyFile = null;
+
+    function handlePolicyUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      policyFile = file;
+      document.getElementById('policyFileName').textContent = `Selected: ${file.name}`;
+      document.getElementById('analyzePolicyBtn').disabled = false;
+      
+      trackActivity('file_upload', { stepNum: 2, fileName: file.name, fileType: 'policy' });
+    }
+
+    async function analyzePolicyAI() {
+      if (!policyFile) return;
+
+      const processingEl = document.getElementById('policyProcessing');
+      const outputEl = document.getElementById('policyOutput');
+      const btn = document.getElementById('analyzePolicyBtn');
+
+      btn.disabled = true;
+      processingEl.classList.remove('hidden');
+      outputEl.classList.add('hidden');
+
+      // Simulate AI processing (replace with actual API call)
+      setTimeout(() => {
+        // Mock parsed data - replace with actual AI extraction
+        const parsedPolicy = {
+          dwellingCoverage: '$350,000',
+          deductible: '$2,500',
+          settlementType: 'Replacement Cost Value (RCV)',
+          contentsCoverage: '$262,500 (75% of dwelling)',
+          aleCoverage: '$70,000 (20% of dwelling)',
+          endorsements: 'Ordinance & Law, Water Backup, Equipment Breakdown'
+        };
+
+        // Update UI
+        document.getElementById('dwellingCoverage').textContent = parsedPolicy.dwellingCoverage;
+        document.getElementById('deductible').textContent = parsedPolicy.deductible;
+        document.getElementById('settlementType').textContent = parsedPolicy.settlementType;
+        document.getElementById('contentsCoverage').textContent = parsedPolicy.contentsCoverage;
+        document.getElementById('aleCoverage').textContent = parsedPolicy.aleCoverage;
+        document.getElementById('endorsements').textContent = parsedPolicy.endorsements;
+        document.getElementById('policySummary').textContent = `You have ${parsedPolicy.dwellingCoverage} dwelling coverage, ${parsedPolicy.deductible} deductible, ${parsedPolicy.settlementType} policy`;
+
+        // Save to claimData
+        claimData.policy = parsedPolicy;
+        claimData.policyUploaded = true;
+
+        // Update journal
+        addJournalEntry('Policy analyzed', `Uploaded and analyzed policy: ${policyFile.name}. Coverage: ${parsedPolicy.dwellingCoverage} dwelling, ${parsedPolicy.deductible} deductible.`);
+
+        // Update UI
+        processingEl.classList.add('hidden');
+        outputEl.classList.remove('hidden');
+        btn.textContent = 'Re-analyze Policy';
+        btn.disabled = false;
+
+        // Update global state
+        updateMoneyBar();
+        updateSummaryPage();
+        saveState();
+
+        trackActivity('ai_analysis_complete', { stepNum: 2, tool: 'Policy Analyzer' });
+      }, 2500);
+    }
+
+    // STEP 3 — Loss Report Generator
+    function updateLossReportBtn() {
+      const date = document.getElementById('lossDate').value;
+      const cause = document.getElementById('lossCause').value;
+      const desc = document.getElementById('lossDescription').value;
+      
+      const btn = document.getElementById('generateLossReportBtn');
+      btn.disabled = !(date && cause && desc);
+    }
+
+    async function generateLossReport() {
+      const date = document.getElementById('lossDate').value;
+      const cause = document.getElementById('lossCause').value;
+      const desc = document.getElementById('lossDescription').value;
+
+      if (!date || !cause || !desc) return;
+
+      const processingEl = document.getElementById('lossReportProcessing');
+      const outputEl = document.getElementById('lossReportOutput');
+      const btn = document.getElementById('generateLossReportBtn');
+
+      btn.disabled = true;
+      processingEl.classList.remove('hidden');
+      outputEl.classList.add('hidden');
+
+      // Simulate AI generation (replace with actual API call)
+      setTimeout(() => {
+        const policyholderName = claimData.policy?.policyholderName || '[Your Name]';
+        const insurerName = claimData.policy?.carrier || '[Insurance Company]';
+        const policyNumber = claimData.policy?.policyNumber || '[Policy Number]';
+
+        const notice = `Date: ${new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+
+To: ${insurerName}
+Re: Notice of Loss — Policy ${policyNumber}
+
+Dear Claims Department,
+
+I am writing to provide formal notice of a loss that occurred on ${new Date(date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at the property insured under the above-referenced policy.
+
+Nature of Loss: ${cause.charAt(0).toUpperCase() + cause.slice(1)}
+
+Description: ${desc}
+
+I am invoking all coverage provisions under my policy that may apply to this loss, including but not limited to dwelling coverage, personal property coverage, additional living expenses, and all applicable endorsements.
+
+I request that you promptly assign an adjuster and schedule an inspection. I will provide additional documentation and information as the claim progresses.
+
+Please confirm receipt of this notice and provide the claim number and adjuster contact information.
+
+Sincerely,
+${policyholderName}`;
+
+        document.getElementById('generatedNotice').textContent = notice;
+
+        // Save to claimData
+        claimData.lossNotice = {
+          date,
+          cause,
+          description: desc,
+          generatedText: notice
+        };
+
+        // Update journal
+        addJournalEntry('Loss reported', `Generated and saved loss notification for ${cause} on ${date}.`);
+
+        // Update UI
+        processingEl.classList.add('hidden');
+        outputEl.classList.remove('hidden');
+        btn.textContent = 'Regenerate Notice';
+        btn.disabled = false;
+
+        saveState();
+        trackActivity('loss_report_generated', { stepNum: 3, cause, date });
+      }, 2000);
+    }
+
+    function copyLossNotice() {
+      const notice = document.getElementById('generatedNotice').textContent;
+      navigator.clipboard.writeText(notice).then(() => {
+        alert('Loss notification copied to clipboard!');
+        trackActivity('copy_to_clipboard', { stepNum: 3, content: 'loss_notice' });
+      });
+    }
+
+    // STEP 4 — Damage Documentation
+    let damagePhotos = [];
+
+    function handleDamagePhotos(event) {
+      const files = Array.from(event.target.files);
+      if (files.length === 0) return;
+
+      damagePhotos = damagePhotos.concat(files);
+      document.getElementById('photoCount').textContent = `${damagePhotos.length} photo(s) selected`;
+      document.getElementById('organizeDamageBtn').disabled = false;
+
+      trackActivity('photos_uploaded', { stepNum: 4, count: files.length });
+    }
+
+    function organizeDamagePhotos() {
+      if (damagePhotos.length === 0) return;
+
+      const galleryEl = document.getElementById('photoGallery');
+      const galleryContent = document.getElementById('photoGalleryContent');
+      const outputEl = document.getElementById('damageDocOutput');
+      const btn = document.getElementById('organizeDamageBtn');
+
+      // Show gallery with thumbnails
+      galleryContent.innerHTML = '';
+      damagePhotos.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.cssText = 'width: 100%; height: 120px; object-fit: cover; border-radius: 4px; border: 1px solid var(--gray-200);';
+          galleryContent.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      galleryEl.classList.remove('hidden');
+
+      // Save to claimData
+      claimData.damagePhotos = damagePhotos.map(f => ({ name: f.name, size: f.size, type: f.type }));
+
+      // Update output
+      document.getElementById('damageDocSummary').textContent = `${damagePhotos.length} photos organized and saved`;
+      document.getElementById('damageDocDetails').textContent = `Total documentation: ${damagePhotos.length} images ready for adjuster review`;
+      outputEl.classList.remove('hidden');
+
+      // Update journal
+      addJournalEntry('Damage documented', `Uploaded and organized ${damagePhotos.length} damage photos.`);
+
+      btn.textContent = 'Add More Photos';
+      saveState();
+      trackActivity('damage_doc_complete', { stepNum: 4, photoCount: damagePhotos.length });
+    }
+
+    // STEP 5 — Contractor Scope Validation
+    let contractorEstimateFile = null;
+
+    function handleContractorEstimate(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      contractorEstimateFile = file;
+      document.getElementById('contractorFileName').textContent = `Selected: ${file.name}`;
+      document.getElementById('analyzeContractorBtn').disabled = false;
+
+      trackActivity('file_upload', { stepNum: 5, fileName: file.name, fileType: 'contractor_estimate' });
+    }
+
+    async function analyzeContractorEstimate() {
+      if (!contractorEstimateFile) return;
+
+      const processingEl = document.getElementById('contractorProcessing');
+      const outputEl = document.getElementById('contractorOutput');
+      const btn = document.getElementById('analyzeContractorBtn');
+
+      btn.disabled = true;
+      processingEl.classList.remove('hidden');
+      outputEl.classList.add('hidden');
+
+      // Simulate AI processing (replace with actual API call)
+      setTimeout(() => {
+        // Mock parsed data
+        const estimateData = {
+          total: 36750,
+          lineItems: 47,
+          scopeComplete: true,
+          missingItems: []
+        };
+
+        // Update UI
+        document.getElementById('contractorTotal').textContent = `$${estimateData.total.toLocaleString()}`;
+        document.getElementById('lineItemCount').textContent = `${estimateData.lineItems} items`;
+        document.getElementById('scopeStatus').textContent = estimateData.scopeComplete ? '✓ Complete scope' : '⚠ Missing items detected';
+        
+        if (estimateData.missingItems.length > 0) {
+          document.getElementById('missingItems').innerHTML = `<strong>Missing:</strong> ${estimateData.missingItems.join(', ')}`;
+        }
+
+        // Save to claimData
+        claimData.structure.userEstimate = estimateData.total;
+        claimData.structure.gap = estimateData.total - (claimData.structure.insurerEstimate || 0);
+        claimData.contractorEstimate = {
+          file: contractorEstimateFile.name,
+          total: estimateData.total,
+          lineItems: estimateData.lineItems
+        };
+
+        // Update journal
+        addJournalEntry('Contractor estimate added', `Uploaded contractor estimate: $${estimateData.total.toLocaleString()} for ${estimateData.lineItems} line items.`);
+
+        // Update UI
+        processingEl.classList.add('hidden');
+        outputEl.classList.remove('hidden');
+        btn.textContent = 'Upload Different Estimate';
+        btn.disabled = false;
+
+        // Update global state
+        updateMoneyBar();
+        updateSummaryPage();
+        saveState();
+
+        trackActivity('contractor_estimate_analyzed', { stepNum: 5, total: estimateData.total });
+      }, 2500);
+    }
+
+    // STEP 7 — Contents Inventory
+    function addContentsItem() {
+      const room = document.getElementById('contentsRoom').value;
+      const itemName = document.getElementById('contentsItemName').value;
+      const quantity = parseInt(document.getElementById('contentsQuantity').value) || 1;
+      const condition = document.getElementById('contentsCondition').value;
+      const value = parseFloat(document.getElementById('contentsValue').value) || 0;
+
+      if (!room || !itemName || value === 0) {
+        alert('Please fill in all required fields');
+        return;
+      }
+
+      const item = {
+        id: Date.now(),
+        room,
+        itemName,
+        quantity,
+        condition,
+        replacementCost: value,
+        totalValue: value * quantity,
+        status: 'identified'
+      };
+
+      // Add to claimData
+      claimData.contents.items.push(item);
+      claimData.contents.totalValue += item.totalValue;
+
+      // Update table
+      renderContentsTable();
+
+      // Update journal
+      addJournalEntry('Contents item added', `Added ${itemName} — $${item.totalValue.toLocaleString()}`);
+
+      // Clear form
+      document.getElementById('contentsRoom').value = '';
+      document.getElementById('contentsItemName').value = '';
+      document.getElementById('contentsQuantity').value = '1';
+      document.getElementById('contentsValue').value = '';
+
+      // Update global state
+      updateMoneyBar();
+      updateSummaryPage();
+      saveState();
+
+      trackActivity('contents_item_added', { stepNum: 7, item: itemName, value: item.totalValue });
+    }
+
+    function renderContentsTable() {
+      const tableBody = document.getElementById('contentsTableBody');
+      const tableSection = document.getElementById('contentsInventoryTable');
+      const totalEl = document.getElementById('contentsTotalValue');
+
+      if (claimData.contents.items.length === 0) {
+        tableSection.classList.add('hidden');
+        return;
+      }
+
+      tableSection.classList.remove('hidden');
+      tableBody.innerHTML = '';
+
+      claimData.contents.items.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.room}</td>
+          <td>${item.itemName}</td>
+          <td>${item.quantity}</td>
+          <td>$${item.totalValue.toLocaleString()}</td>
+          <td><button onclick="removeContentsItem(${item.id})" style="color: var(--red); cursor: pointer; background: none; border: none; font-size: 16px;">×</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      totalEl.textContent = `$${claimData.contents.totalValue.toLocaleString()}`;
+    }
+
+    function removeContentsItem(itemId) {
+      const item = claimData.contents.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      claimData.contents.totalValue -= item.totalValue;
+      claimData.contents.items = claimData.contents.items.filter(i => i.id !== itemId);
+
+      renderContentsTable();
+      updateMoneyBar();
+      updateSummaryPage();
+      saveState();
+
+      trackActivity('contents_item_removed', { stepNum: 7, item: item.itemName });
+    }
+
+    // STEP 8 — ALE Tracking System
+    function updateALEBaseline() {
+      const baseline = parseFloat(document.getElementById('aleBaseline').value) || 75;
+      claimData.ALE.baseline = baseline;
+      
+      // Recalculate daily rate
+      const totalDays = claimData.ALE.entries.length > 0 ? 
+        Math.ceil((Date.now() - new Date(claimData.lossNotice?.date || Date.now()).getTime()) / (1000 * 60 * 60 * 24)) : 1;
+      
+      claimData.ALE.dailyRate = claimData.ALE.total / totalDays;
+      document.getElementById('aleAccrualRate').textContent = `~$${Math.round(claimData.ALE.dailyRate)}/day`;
+      
+      saveState();
+    }
+
+    function addALEEntry() {
+      const date = document.getElementById('aleDate').value;
+      const category = document.getElementById('aleCategory').value;
+      const amount = parseFloat(document.getElementById('aleAmount').value);
+      const notes = document.getElementById('aleNotes').value;
+      const receipt = document.getElementById('aleReceipt').files[0];
+
+      if (!date || !category || !amount) {
+        alert('Please fill in date, category, and amount');
+        return;
+      }
+
+      const baseline = claimData.ALE.baseline || 75;
+      const claimableAmount = Math.max(0, amount - baseline);
+
+      const entry = {
+        id: Date.now(),
+        date,
+        category,
+        amount,
+        notes,
+        receipt: receipt ? receipt.name : null,
+        baseline,
+        claimable: claimableAmount
+      };
+
+      // Add to claimData
+      claimData.ALE.entries.push(entry);
+      claimData.ALE.total += claimableAmount;
+
+      // Update totals
+      const totalLogged = claimData.ALE.entries.reduce((sum, e) => sum + e.amount, 0);
+      document.getElementById('aleTotalLogged').textContent = `$${totalLogged.toLocaleString()}`;
+      document.getElementById('aleTotalClaimable').textContent = `$${claimData.ALE.total.toLocaleString()}`;
+
+      // Calculate daily estimate
+      const totalDays = claimData.ALE.entries.length > 0 ? 
+        Math.ceil((Date.now() - new Date(claimData.lossNotice?.date || Date.now()).getTime()) / (1000 * 60 * 60 * 24)) : 1;
+      claimData.ALE.dailyRate = claimData.ALE.total / totalDays;
+      document.getElementById('aleDailyEstimate').textContent = `$${Math.round(claimData.ALE.dailyRate)}/day`;
+      document.getElementById('aleAccrualRate').textContent = `~$${Math.round(claimData.ALE.dailyRate)}/day`;
+
+      // Render entries list
+      renderALEEntries();
+
+      // Update journal
+      addJournalEntry('ALE expense added', `Added ALE expense: $${amount.toLocaleString()} (${category}). Claimable: $${claimableAmount.toLocaleString()}`);
+
+      // Clear form
+      document.getElementById('aleDate').value = '';
+      document.getElementById('aleCategory').value = '';
+      document.getElementById('aleAmount').value = '';
+      document.getElementById('aleNotes').value = '';
+      document.getElementById('aleReceipt').value = '';
+
+      // Update global state
+      updateMoneyBar();
+      updateSummaryPage();
+      saveState();
+
+      trackActivity('ale_entry_added', { stepNum: 8, category, amount, claimable: claimableAmount });
+    }
+
+    function renderALEEntries() {
+      const listEl = document.getElementById('aleEntriesList');
+      
+      if (claimData.ALE.entries.length === 0) {
+        listEl.innerHTML = `
+          <div class="ale-entries-header">Your Expense Entries</div>
+          <div class="ale-empty-state">No expenses logged yet. Add your first expense above.</div>
+        `;
+        return;
+      }
+
+      let html = '<div class="ale-entries-header">Your Expense Entries</div>';
+      
+      claimData.ALE.entries.slice().reverse().forEach(entry => {
+        html += `
+          <div class="ale-entry-item">
+            <div class="ale-entry-date">${new Date(entry.date).toLocaleDateString()}</div>
+            <div class="ale-entry-category">${entry.category.replace('_', ' ')}</div>
+            <div class="ale-entry-notes">${entry.notes || '—'}</div>
+            <div class="ale-entry-amount">$${entry.amount.toLocaleString()}</div>
+            <button class="ale-entry-delete" onclick="removeALEEntry(${entry.id})">×</button>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
+    function removeALEEntry(entryId) {
+      const entry = claimData.ALE.entries.find(e => e.id === entryId);
+      if (!entry) return;
+
+      claimData.ALE.total -= entry.claimable;
+      claimData.ALE.entries = claimData.ALE.entries.filter(e => e.id !== entryId);
+
+      // Update totals
+      const totalLogged = claimData.ALE.entries.reduce((sum, e) => sum + e.amount, 0);
+      document.getElementById('aleTotalLogged').textContent = `$${totalLogged.toLocaleString()}`;
+      document.getElementById('aleTotalClaimable').textContent = `$${claimData.ALE.total.toLocaleString()}`;
+
+      // Recalculate daily rate
+      const totalDays = claimData.ALE.entries.length > 0 ? 
+        Math.ceil((Date.now() - new Date(claimData.lossNotice?.date || Date.now()).getTime()) / (1000 * 60 * 60 * 24)) : 1;
+      claimData.ALE.dailyRate = claimData.ALE.total / totalDays;
+      document.getElementById('aleDailyEstimate').textContent = `$${Math.round(claimData.ALE.dailyRate)}/day`;
+
+      renderALEEntries();
+      updateMoneyBar();
+      updateSummaryPage();
+      saveState();
+
+      trackActivity('ale_entry_removed', { stepNum: 8, entryId });
+    }
+
+    function exportALEReport() {
+      if (claimData.ALE.entries.length === 0) {
+        alert('No ALE entries to export');
+        return;
+      }
+
+      // Generate CSV content
+      let csv = 'Date,Category,Amount,Notes,Baseline,Claimable\n';
+      claimData.ALE.entries.forEach(entry => {
+        csv += `${entry.date},${entry.category},${entry.amount},"${entry.notes || ''}",${entry.baseline},${entry.claimable}\n`;
+      });
+
+      // Create download
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ALE_Report_${Date.now()}.csv`;
+      a.click();
+
+      trackActivity('ale_report_exported', { stepNum: 8, entryCount: claimData.ALE.entries.length });
+    }
+
+    // STEP 9 — AI Estimate Review Engine
+    let insurerEstimateFile = null;
+
+    function handleInsurerEstimate(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      insurerEstimateFile = file;
+      document.getElementById('insurerFileName').textContent = `Selected: ${file.name}`;
+      document.getElementById('reviewEstimateBtn').disabled = false;
+
+      trackActivity('file_upload', { stepNum: 9, fileName: file.name, fileType: 'insurer_estimate' });
+    }
+
+    async function reviewInsurerEstimate() {
+      if (!insurerEstimateFile) return;
+
+      const processingEl = document.getElementById('estimateReviewProcessing');
+      const outputEl = document.getElementById('estimateReviewOutput');
+      const btn = document.getElementById('reviewEstimateBtn');
+
+      btn.disabled = true;
+      processingEl.classList.remove('hidden');
+      outputEl.classList.add('hidden');
+
+      // Simulate AI processing (replace with actual API call)
+      setTimeout(() => {
+        // Mock parsed data
+        const insurerTotal = 18200;
+        const contractorTotal = claimData.structure.userEstimate || 36750;
+        const gap = contractorTotal - insurerTotal;
+
+        const analysis = {
+          insurerTotal,
+          contractorTotal,
+          gap,
+          missingScope: ['Drywall replacement in bedroom', 'Insulation repair', 'Paint (2 coats)'],
+          pricingGaps: ['Flooring underpriced by $4,200', 'Labor rate 30% below market']
+        };
+
+        // Update UI
+        document.getElementById('insurerEstimateAmount').textContent = `$${insurerTotal.toLocaleString()}`;
+        document.getElementById('contractorEstimateAmount').textContent = `$${contractorTotal.toLocaleString()}`;
+        document.getElementById('estimateGap').textContent = `$${gap.toLocaleString()}`;
+        document.getElementById('missingScope').innerHTML = `<strong>Missing Scope:</strong> ${analysis.missingScope.join(', ')}`;
+        document.getElementById('pricingGaps').innerHTML = `<strong>Pricing Issues:</strong> ${analysis.pricingGaps.join(', ')}`;
+
+        // Save to claimData
+        claimData.structure.insurerEstimate = insurerTotal;
+        claimData.structure.gap = gap;
+        claimData.estimateReview = analysis;
+
+        // Update journal
+        addJournalEntry('Insurance estimate reviewed', `Insurer estimate: $${insurerTotal.toLocaleString()}. Gap identified: $${gap.toLocaleString()}.`);
+
+        // Update UI
+        processingEl.classList.add('hidden');
+        outputEl.classList.remove('hidden');
+        btn.textContent = 'Re-analyze Estimates';
+        btn.disabled = false;
+
+        // Update global state
+        updateMoneyBar();
+        updateSummaryPage();
+        saveState();
+
+        trackActivity('estimate_review_complete', { stepNum: 9, gap });
+      }, 3000);
+    }
+
+    // STEPS 10-19 — Simplified execution handlers
+    // These steps use existing data and generate outputs without complex input forms
+
+    function runStepAction(stepNum, actionName) {
+      trackActivity('step_action_triggered', { stepNum, actionName });
+      
+      // Show processing
+      alert(`Running ${actionName}... (This will integrate with AI backend)`);
+      
+      // Update journal
+      addJournalEntry(`${actionName} executed`, `Completed action for Step ${stepNum}`);
+      
+      saveState();
+    }
+
+    // STEP 6 — Adjuster Inspection Prep
+    function logAdjusterRequest() {
+      const date = document.getElementById('inspectionDate').value;
+      const adjusterName = document.getElementById('adjusterName').value;
+      const request = document.getElementById('adjusterRequest').value;
+
+      if (!date || !adjusterName || !request) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      const entry = {
+        id: Date.now(),
+        date,
+        adjusterName,
+        request
+      };
+
+      // Initialize array if needed
+      if (!claimData.adjusterRequests) {
+        claimData.adjusterRequests = [];
+      }
+
+      claimData.adjusterRequests.push(entry);
+
+      // Render log
+      renderAdjusterRequests();
+
+      // Update journal
+      addJournalEntry('Adjuster request logged', `${adjusterName} on ${date}: ${request.substring(0, 50)}...`);
+
+      // Clear form
+      document.getElementById('inspectionDate').value = '';
+      document.getElementById('adjusterName').value = '';
+      document.getElementById('adjusterRequest').value = '';
+
+      saveState();
+      trackActivity('adjuster_request_logged', { stepNum: 6, adjusterName });
+    }
+
+    function renderAdjusterRequests() {
+      const logSection = document.getElementById('adjusterRequestsLog');
+      const listEl = document.getElementById('adjusterRequestsList');
+
+      if (!claimData.adjusterRequests || claimData.adjusterRequests.length === 0) {
+        logSection.classList.add('hidden');
+        return;
+      }
+
+      logSection.classList.remove('hidden');
+      
+      let html = '';
+      claimData.adjusterRequests.slice().reverse().forEach(entry => {
+        html += `
+          <div style="padding: 12px; border: 1px solid var(--gray-200); border-radius: 6px; margin-bottom: 12px; background: white;">
+            <div style="font-size: 11px; color: var(--gray-500); margin-bottom: 4px;">${new Date(entry.date).toLocaleDateString()} — ${entry.adjusterName}</div>
+            <div style="font-size: 13px; color: var(--gray-700);">${entry.request}</div>
+          </div>
+        `;
+      });
+
+      listEl.innerHTML = html;
+    }
+
     // PostMessage listener for tool results
     window.addEventListener('message', (event) => {
       // Security: validate origin in production
@@ -5116,49 +6092,34 @@
     function calculateTotalGap() {
       const structureGap = claimData.structure.userEstimate - claimData.structure.insurerEstimate;
       const contentsGap = claimData.contents.totalValue - claimData.contents.recovered;
-      const aleGap = claimData.ale.totalClaimable - claimData.ale.recovered || 0;
+      const aleGap = claimData.ALE.total;
       return structureGap + contentsGap + aleGap;
     }
 
     function updateMoneyBar() {
       // Update insurer offered
-      document.getElementById('metricInsurerOffered').textContent = 
+      document.getElementById('metricInsurerOffered').textContent =
         `$${claimData.structure.insurerEstimate.toLocaleString()}`;
 
       // Update structure value
-      document.getElementById('metricStructureValue').textContent = 
+      document.getElementById('metricStructureValue').textContent =
         `$${claimData.structure.userEstimate.toLocaleString()}`;
 
       // Update contents value
-      document.getElementById('metricContentsValue').textContent = 
+      document.getElementById('metricContentsValue').textContent =
         `$${claimData.contents.totalValue.toLocaleString()}`;
 
       // Update ALE - show daily rate if early, total if data exists
-      const aleDisplay = claimData.ale.entries.length > 0 
-        ? `$${claimData.ale.totalClaimable.toLocaleString()}`
-        : `$${claimData.ale.avgDailyOverage || 132}/day`;
+      const aleDisplay = claimData.ALE.entries.length > 0
+        ? `$${claimData.ALE.total.toLocaleString()}`
+        : `$${Math.round(claimData.ALE.dailyRate) || 132}/day`;
       document.getElementById('metricALEValue').textContent = aleDisplay;
 
       // Update total gap
-      const totalGap = calculateTotalGap();
+      const totalGap = (claimData.structure.userEstimate - claimData.structure.insurerEstimate) + 
+                       claimData.contents.totalValue + 
+                       claimData.ALE.total;
       document.getElementById('metricTotalGap').textContent = `$${totalGap.toLocaleString()}`;
-    }
-
-    // Update money bar with 3-bucket data
-    function updateMoneyBar() {
-      const totalRecoverable = calculateTotalRecoverable();
-      
-      document.getElementById('metricInsurerOffered').textContent = '$' + claimData.structure.insurerEstimate.toLocaleString();
-      document.getElementById('metricStructureValue').textContent = '$' + claimData.structure.userEstimate.toLocaleString();
-      document.getElementById('metricContentsValue').textContent = '$' + claimData.contents.totalValue.toLocaleString();
-      
-      // ALE display logic
-      const aleDisplay = claimData.ale.entries.length === 0 
-        ? '$' + (claimData.ale.avgDailyOverage || 132) + '/day'
-        : '$' + claimData.ale.totalClaimable.toLocaleString();
-      document.getElementById('metricALEValue').textContent = aleDisplay;
-      
-      document.getElementById('metricTotalGap').textContent = '$' + totalRecoverable.toLocaleString();
     }
 
     function updateSummary() {
@@ -5341,7 +6302,7 @@
       let data = instructions[stepNum] || instructions[1];
       
       // If past step 3 and no ALE entries, prioritize ALE
-      if (stepNum > 3 && claimData.ale.entries.length === 0) {
+      if (stepNum > 3 && claimData.ALE.entries.length === 0) {
         data = {
           instruction: 'Start tracking your living expenses — this accrues daily',
           sub: 'Every day without tracking costs you money. ALE can add $5,000-$20,000 to your claim.'
@@ -5513,7 +6474,7 @@
         <div class="ccc-fin-row"><span>Contents (total)</span><strong>${formatMoneyNav(claimData.contents.totalValue)}</strong></div>
         <div class="ccc-fin-row"><span>Contents recovered</span><strong>${formatMoneyNav(claimData.contents.recovered)}</strong></div>
         <div class="ccc-fin-row gap-row"><span>Contents remaining</span><strong>${formatMoneyNav(contentsRem)}</strong></div>
-        <div class="ccc-fin-row"><span>ALE (claimable)</span><strong>${formatMoneyNav(claimData.ale.totalClaimable)}</strong></div>
+        <div class="ccc-fin-row"><span>ALE (claimable)</span><strong>${formatMoneyNav(claimData.ALE.total)}</strong></div>
         <div class="ccc-fin-row gap-row"><span>Total recoverable (estimate)</span><strong>${formatMoneyNav(totalR)}</strong></div>
         <div class="ccc-fin-row"><span>Deductible (if set)</span><strong>${ded}</strong></div>
         <div class="ccc-fin-row"><span>Settlement type</span><strong>${escapeHtml(st)}</strong></div>
@@ -5563,7 +6524,7 @@
         `Your structure: ${formatMoneyNav(claimData.structure.userEstimate)}`,
         `Structure gap: ${formatMoneyNav(gap)}`,
         `Contents total: ${formatMoneyNav(claimData.contents.totalValue)}`,
-        `ALE claimable: ${formatMoneyNav(claimData.ale.totalClaimable)}`,
+        `ALE claimable: ${formatMoneyNav(claimData.ALE.total)}`,
         `Total recoverable (est.): ${formatMoneyNav(calculateTotalRecoverable())}`
       ].join('\n');
       if (navigator.clipboard && navigator.clipboard.writeText) {
