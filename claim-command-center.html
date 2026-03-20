@@ -23,6 +23,7 @@
       --gray-100: #f3f4f6;
       --gray-200: #e5e7eb;
       --gray-400: #9ca3af;
+      --gray-500: #6b7280;
       --gray-600: #4b5563;
       --gray-900: #111827;
     }
@@ -1163,21 +1164,92 @@
 
     /* Step Cards */
     .step-cards {
-      padding: 32px 40px;
+      padding: 16px 32px 40px;
     }
 
     .step-card {
       background: white;
       border: 1px solid var(--gray-200);
-      border-radius: 14px;
-      margin-bottom: 20px;
+      border-radius: 8px;
+      margin-bottom: 4px;
       overflow: hidden;
       transition: all 0.2s;
+      border-left: 3px solid transparent;
     }
 
+    /* Active card state */
     .step-card.active-card {
       border-color: var(--teal);
-      box-shadow: 0 0 0 3px var(--teal-dim);
+      border-left-color: var(--teal);
+      box-shadow: 0 2px 16px rgba(20,184,166,0.13);
+    }
+
+    .step-card.active-card .step-card-header {
+      height: 66px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    }
+
+    .step-card.active-card .card-title {
+      color: white;
+    }
+
+    .step-card.active-card .card-subtitle {
+      display: block;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .step-card.active-card .card-number {
+      width: 34px;
+      height: 34px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      font-size: 14px;
+    }
+
+    .step-card.active-card .card-status {
+      background: var(--teal);
+      color: white;
+    }
+
+    /* Done state */
+    .step-card.step-done {
+      opacity: 0.42;
+      border-left-color: var(--emerald);
+      transition: opacity 0.2s;
+    }
+
+    .step-card.step-done:hover {
+      opacity: 0.7;
+    }
+
+    .step-card.step-done .card-number {
+      background: var(--emerald);
+      color: white;
+      border: none;
+    }
+
+    .step-card.step-done .card-title {
+      text-decoration: line-through;
+      color: var(--gray-500);
+    }
+
+    /* Locked state */
+    .step-card.step-locked {
+      opacity: 0.45;
+      transition: opacity 0.2s;
+    }
+
+    .step-card.step-locked:hover {
+      opacity: 0.65;
+    }
+
+    .step-card.step-locked .card-lock {
+      display: inline-block;
+    }
+
+    .step-card.step-locked .card-status {
+      display: none;
     }
 
     .step-card.collapsed .step-body,
@@ -1186,58 +1258,83 @@
     }
 
     .step-card-header {
-      padding: 20px 24px;
+      height: 58px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
-    .step-card-header:hover {
+    .step-card.collapsed .step-card-header:hover {
       background: var(--gray-50);
     }
 
     .card-number {
-      width: 40px;
-      height: 40px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      border: 2px solid var(--navy);
+      border: 2px solid var(--gray-400);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      color: var(--navy);
+      font-size: 12px;
+      color: var(--gray-600);
       flex-shrink: 0;
-    }
-
-    .step-card.active-card .card-number {
-      border-color: var(--teal);
-      color: var(--teal);
     }
 
     .card-text {
       flex: 1;
+      min-width: 0;
     }
 
     .card-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--gray-900);
-      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .card-subtitle {
+      display: none;
       font-size: 13px;
       color: var(--gray-600);
       line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    .card-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .card-lock {
+      display: none;
+      font-size: 14px;
+    }
+
+    .card-chevron {
+      font-size: 12px;
+      color: var(--gray-400);
+      transition: transform 0.2s;
+    }
+
+    .step-card:not(.collapsed) .card-chevron {
+      transform: rotate(180deg);
     }
 
     .card-status {
       padding: 6px 12px;
       border-radius: 12px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
+      white-space: nowrap;
     }
 
     .card-status.in-progress {
@@ -1251,8 +1348,21 @@
     }
 
     .step-body {
-      padding: 0 24px 24px;
+      padding: 24px 28px 20px;
       color: var(--gray-900);
+      border-top: 1px solid var(--gray-100);
+      animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .section-label {
@@ -1348,6 +1458,139 @@
 
     .expand-button:hover {
       background: var(--gray-200);
+    }
+
+    /* Phase Dividers */
+    .phase-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0 10px;
+    }
+
+    .phase-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    .phase-divider-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      white-space: nowrap;
+    }
+
+    /* Do This Now Banner */
+    .do-this-now-banner {
+      background: var(--navy);
+      border-bottom: 3px solid var(--teal);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .dtn-live {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dtn-pulse {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 0 rgba(20,184,166,0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(20,184,166,0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(20,184,166,0);
+      }
+    }
+
+    .dtn-live-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .dtn-content {
+      flex: 1;
+    }
+
+    .dtn-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+
+    .dtn-instruction {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: white;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .dtn-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .dtn-counter {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-right: 20px;
+    }
+
+    .dtn-count {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: white;
+      font-weight: 400;
+    }
+
+    .dtn-count-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .dtn-cta {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .dtn-cta:hover {
+      background: var(--teal-dark);
     }
 
     .step-footer {
@@ -1885,6 +2128,11 @@
         </div>
       </div>
 
+      <!-- Amber Note Bar -->
+      <div style="background:#fffbeb; border-top:2px solid #f59e0b; padding:10px 24px; font-size:13px; color:#92400e; font-weight:500; display:flex; align-items:center; gap:8px;">
+        ⚠️ <strong>That $18,550 gap is real. These 18 steps show you how to get it.</strong>&nbsp; Follow them in order. Every skipped step is money you don't collect.
+      </div>
+
       <!-- Roadmap Strip -->
       <div class="roadmap-strip">
         <div class="roadmap-label">The 18-Step Claim System — So Nothing Gets Missed</div>
@@ -1987,6 +2235,24 @@
         </div>
       </div>
 
+      <!-- Do This Now Banner -->
+      <div class="do-this-now-banner">
+        <div class="dtn-live">
+          <div class="dtn-pulse"></div>
+          <div class="dtn-live-label">LIVE</div>
+        </div>
+        <div class="dtn-content">
+          <div class="dtn-eyebrow">YOUR NEXT ACTION RIGHT NOW</div>
+          <div class="dtn-instruction" id="dtnInstruction">Enter your claim details and review the process guide</div>
+          <div class="dtn-sub" id="dtnSub">Start by understanding how insurance claims work</div>
+        </div>
+        <div class="dtn-counter">
+          <div class="dtn-count" id="dtnStepCount">0/18</div>
+          <div class="dtn-count-label">Steps done</div>
+        </div>
+        <button class="dtn-cta" id="dtnCta" onclick="scrollToActiveStep()">Go to Step 1 →</button>
+      </div>
+
       <!-- Content Header -->
       <div class="content-header">
         <div class="content-eyebrow">Phase 1 — Foundation</div>
@@ -2019,6 +2285,13 @@
       <!-- Step Cards -->
       <div class="step-cards">
         
+        <!-- Phase 1 Divider -->
+        <div class="phase-divider">
+          <div class="phase-divider-line"></div>
+          <div class="phase-divider-label" style="color: var(--teal);">PHASE 1 OF 5 — BEFORE YOU CALL YOUR INSURER</div>
+          <div class="phase-divider-line"></div>
+        </div>
+
         <!-- Step 1 -->
         <div class="step-card active-card" id="step-1">
           <div class="step-card-header" onclick="toggleStep('step-1')">
@@ -2027,7 +2300,11 @@
               <div class="card-title">Enter Your Claim Details</div>
               <div class="card-subtitle">Add your claim and policy details so we can analyze your estimate and identify what may be missing.</div>
             </div>
-            <div class="card-status in-progress">In Progress</div>
+            <div class="card-right">
+              <div class="card-status in-progress">In Progress</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="modal-alert" style="margin-bottom: 24px;">
@@ -2543,14 +2820,18 @@
         </div>
 
         <!-- Step 2 -->
-        <div class="step-card collapsed" id="step-2">
+        <div class="step-card collapsed step-locked" id="step-2">
           <div class="step-card-header" onclick="toggleStep('step-2')">
             <div class="card-number">02</div>
             <div class="card-text">
               <div class="card-title">See What Your Policy Covers</div>
               <div class="card-subtitle">Understand exactly what your policy includes — including coverage your insurer may not point out.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2596,14 +2877,18 @@
         </div>
 
         <!-- Step 3 -->
-        <div class="step-card collapsed" id="step-3">
+        <div class="step-card collapsed step-locked" id="step-3">
           <div class="step-card-header" onclick="toggleStep('step-3')">
             <div class="card-number">03</div>
             <div class="card-text">
               <div class="card-title">Set Up Your Claim the Right Way</div>
               <div class="card-subtitle">Make sure your claim is structured correctly from the start.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2643,15 +2928,26 @@
           </div>
         </div>
 
+        <!-- Phase 2 Divider -->
+        <div class="phase-divider">
+          <div class="phase-divider-line"></div>
+          <div class="phase-divider-label" style="color: var(--emerald);">PHASE 2 OF 5 — PROVE WHAT WAS DAMAGED</div>
+          <div class="phase-divider-line"></div>
+        </div>
+
         <!-- Step 4 -->
-        <div class="step-card collapsed" id="step-4">
+        <div class="step-card collapsed step-locked" id="step-4">
           <div class="step-card-header" onclick="toggleStep('step-4')">
             <div class="card-number">04</div>
             <div class="card-text">
               <div class="card-title">Document All Damage</div>
               <div class="card-subtitle">Capture everything — missed damage means missed money.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2688,14 +2984,18 @@
         </div>
 
         <!-- Step 5 -->
-        <div class="step-card collapsed" id="step-5">
+        <div class="step-card collapsed step-locked" id="step-5">
           <div class="step-card-header" onclick="toggleStep('step-5')">
             <div class="card-number">05</div>
             <div class="card-text">
               <div class="card-title">Get Accurate Repair Estimates</div>
               <div class="card-subtitle">Use real-world pricing so your claim reflects actual repair costs.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2732,14 +3032,18 @@
         </div>
 
         <!-- Step 6 -->
-        <div class="step-card collapsed" id="step-6">
+        <div class="step-card collapsed step-locked" id="step-6">
           <div class="step-card-header" onclick="toggleStep('step-6')">
             <div class="card-number">06</div>
             <div class="card-text">
               <div class="card-title">Prepare for the Adjuster Inspection</div>
               <div class="card-subtitle">Make sure nothing is overlooked or minimized.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2776,14 +3080,18 @@
         </div>
 
         <!-- Step 7 -->
-        <div class="step-card collapsed" id="step-7">
+        <div class="step-card collapsed step-locked" id="step-7">
           <div class="step-card-header" onclick="toggleStep('step-7')">
             <div class="card-number">07</div>
             <div class="card-text">
               <div class="card-title">List Everything You Lost</div>
               <div class="card-subtitle">Account for all contents and items.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2819,15 +3127,26 @@
           </div>
         </div>
 
+        <!-- Phase 3 Divider -->
+        <div class="phase-divider">
+          <div class="phase-divider-line"></div>
+          <div class="phase-divider-label" style="color: var(--orange);">PHASE 3 OF 5 — FIND WHAT THEY GOT WRONG</div>
+          <div class="phase-divider-line"></div>
+        </div>
+
         <!-- Step 8 -->
-        <div class="step-card collapsed" id="step-8">
+        <div class="step-card collapsed step-locked" id="step-8">
           <div class="step-card-header" onclick="toggleStep('step-8')">
             <div class="card-number">08</div>
             <div class="card-text">
               <div class="card-title">Review Your Insurance Estimate</div>
               <div class="card-subtitle">See exactly what your insurer included — and what they didn't.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2864,14 +3183,18 @@
         </div>
 
         <!-- Step 9 -->
-        <div class="step-card collapsed" id="step-9">
+        <div class="step-card collapsed step-locked" id="step-9">
           <div class="step-card-header" onclick="toggleStep('step-9')">
             <div class="card-number">09</div>
             <div class="card-text">
               <div class="card-title">Find Underpaid Items</div>
               <div class="card-subtitle">Identify where pricing is below market.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2908,14 +3231,18 @@
         </div>
 
         <!-- Step 10 -->
-        <div class="step-card collapsed" id="step-10">
+        <div class="step-card collapsed step-locked" id="step-10">
           <div class="step-card-header" onclick="toggleStep('step-10')">
             <div class="card-number">10</div>
             <div class="card-text">
               <div class="card-title">Find Missing Coverage</div>
               <div class="card-subtitle">Uncover policy benefits that were not applied.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2951,15 +3278,26 @@
           </div>
         </div>
 
+        <!-- Phase 4 Divider -->
+        <div class="phase-divider">
+          <div class="phase-divider-line"></div>
+          <div class="phase-divider-label" style="color: var(--amber);">PHASE 4 OF 5 — DEMAND WHAT THEY MISSED</div>
+          <div class="phase-divider-line"></div>
+        </div>
+
         <!-- Step 11 -->
-        <div class="step-card collapsed" id="step-11">
+        <div class="step-card collapsed step-locked" id="step-11">
           <div class="step-card-header" onclick="toggleStep('step-11')">
             <div class="card-number">11</div>
             <div class="card-text">
               <div class="card-title">Request Additional Payment</div>
               <div class="card-subtitle">Submit a supplement for missed or underpaid items.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -2996,14 +3334,18 @@
         </div>
 
         <!-- Step 12 -->
-        <div class="step-card collapsed" id="step-12">
+        <div class="step-card collapsed step-locked" id="step-12">
           <div class="step-card-header" onclick="toggleStep('step-12')">
             <div class="card-number">12</div>
             <div class="card-text">
               <div class="card-title">Send Claim Letters</div>
               <div class="card-subtitle">Use clear communication your insurer will respond to.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3040,14 +3382,18 @@
         </div>
 
         <!-- Step 13 -->
-        <div class="step-card collapsed" id="step-13">
+        <div class="step-card collapsed step-locked" id="step-13">
           <div class="step-card-header" onclick="toggleStep('step-13')">
             <div class="card-number">13</div>
             <div class="card-text">
               <div class="card-title">Recover Depreciation</div>
               <div class="card-subtitle">Claim withheld funds from your initial payment.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3083,15 +3429,26 @@
           </div>
         </div>
 
+        <!-- Phase 5 Divider -->
+        <div class="phase-divider">
+          <div class="phase-divider-line"></div>
+          <div class="phase-divider-label" style="color: var(--red);">PHASE 5 OF 5 — SETTLE AND GET PAID</div>
+          <div class="phase-divider-line"></div>
+        </div>
+
         <!-- Step 14 -->
-        <div class="step-card collapsed" id="step-14">
+        <div class="step-card collapsed step-locked" id="step-14">
           <div class="step-card-header" onclick="toggleStep('step-14')">
             <div class="card-number">14</div>
             <div class="card-text">
               <div class="card-title">Negotiate Your Settlement</div>
               <div class="card-subtitle">Push your claim to the correct value.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3128,14 +3485,18 @@
         </div>
 
         <!-- Step 15 -->
-        <div class="step-card collapsed" id="step-15">
+        <div class="step-card collapsed step-locked" id="step-15">
           <div class="step-card-header" onclick="toggleStep('step-15')">
             <div class="card-number">15</div>
             <div class="card-text">
               <div class="card-title">Escalate If Needed</div>
               <div class="card-subtitle">Use appraisal or mediation if required.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3172,14 +3533,18 @@
         </div>
 
         <!-- Step 16 -->
-        <div class="step-card collapsed" id="step-16">
+        <div class="step-card collapsed step-locked" id="step-16">
           <div class="step-card-header" onclick="toggleStep('step-16')">
             <div class="card-number">16</div>
             <div class="card-text">
               <div class="card-title">Finalize Your Claim</div>
               <div class="card-subtitle">Make sure nothing is left unclaimed.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3216,14 +3581,18 @@
         </div>
 
         <!-- Step 17 -->
-        <div class="step-card collapsed" id="step-17">
+        <div class="step-card collapsed step-locked" id="step-17">
           <div class="step-card-header" onclick="toggleStep('step-17')">
             <div class="card-number">17</div>
             <div class="card-text">
               <div class="card-title">Confirm All Payments</div>
               <div class="card-subtitle">Verify every dollar owed has been paid.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3260,14 +3629,18 @@
         </div>
 
         <!-- Step 18 -->
-        <div class="step-card collapsed" id="step-18">
+        <div class="step-card collapsed step-locked" id="step-18">
           <div class="step-card-header" onclick="toggleStep('step-18')">
             <div class="card-number">18</div>
             <div class="card-text">
               <div class="card-title">Close Your Claim</div>
               <div class="card-subtitle">Finish your claim knowing it was handled correctly.</div>
             </div>
-            <div class="card-status pending">Pending</div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
           </div>
           <div class="step-body">
             <div class="section-label">Why This Matters</div>
@@ -3617,6 +3990,125 @@
       completeStep(1);
     }
 
+    // Scroll to active step
+    function scrollToActiveStep() {
+      const activeCard = document.querySelector('.step-card.active-card');
+      if (activeCard) {
+        activeCard.classList.remove('collapsed');
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Update Do This Now banner
+    function updateDoThisNow(stepNum) {
+      const instruction = document.getElementById('dtnInstruction');
+      const sub = document.getElementById('dtnSub');
+      const cta = document.getElementById('dtnCta');
+      const count = document.getElementById('dtnStepCount');
+
+      if (!instruction || !sub || !cta || !count) return;
+
+      const instructions = {
+        1: {
+          instruction: 'Enter your claim details and review the process guide',
+          sub: 'Start by understanding how insurance claims work',
+          cta: 'Go to Step 1 →'
+        },
+        2: {
+          instruction: 'Upload your policy and see what coverage you have',
+          sub: 'Know exactly what your policy includes before you file',
+          cta: 'Go to Step 2 →'
+        },
+        3: {
+          instruction: 'Report your loss and set up your claim correctly',
+          sub: 'Structure your claim the right way from the start',
+          cta: 'Go to Step 3 →'
+        },
+        4: {
+          instruction: 'Document all damage with photos and videos',
+          sub: 'Missed damage means missed money — capture everything',
+          cta: 'Go to Step 4 →'
+        },
+        5: {
+          instruction: 'Get contractor estimates for accurate repair costs',
+          sub: 'Real-world pricing protects you from lowball offers',
+          cta: 'Go to Step 5 →'
+        },
+        6: {
+          instruction: 'Prepare for the adjuster inspection',
+          sub: 'Make sure nothing is overlooked or minimized',
+          cta: 'Go to Step 6 →'
+        },
+        7: {
+          instruction: 'Create a complete contents inventory',
+          sub: 'Account for every item you lost',
+          cta: 'Go to Step 7 →'
+        },
+        8: {
+          instruction: 'Review the insurance estimate line by line',
+          sub: 'See exactly what they included and what they didn\'t',
+          cta: 'Go to Step 8 →'
+        },
+        9: {
+          instruction: 'Analyze pricing and find underpaid items',
+          sub: 'Identify where pricing is below market',
+          cta: 'Go to Step 9 →'
+        },
+        10: {
+          instruction: 'Identify missing coverage and policy benefits',
+          sub: 'Uncover benefits your insurer may not point out',
+          cta: 'Go to Step 10 →'
+        },
+        11: {
+          instruction: 'Submit a supplement for missed items',
+          sub: 'Request additional payment for what was left out',
+          cta: 'Go to Step 11 →'
+        },
+        12: {
+          instruction: 'Send dispute letters and formal requests',
+          sub: 'Use clear communication your insurer will respond to',
+          cta: 'Go to Step 12 →'
+        },
+        13: {
+          instruction: 'Recover withheld depreciation (ACV vs RCV)',
+          sub: 'Claim the depreciation held back from your initial payment',
+          cta: 'Go to Step 13 →'
+        },
+        14: {
+          instruction: 'Negotiate your settlement amount',
+          sub: 'Get to the correct value, not the initial estimate',
+          cta: 'Go to Step 14 →'
+        },
+        15: {
+          instruction: 'Escalate to appraisal or mediation if needed',
+          sub: 'Use formal dispute resolution when negotiation stalls',
+          cta: 'Go to Step 15 →'
+        },
+        16: {
+          instruction: 'Review the final settlement offer carefully',
+          sub: 'Make sure all items and coverage are included',
+          cta: 'Go to Step 16 →'
+        },
+        17: {
+          instruction: 'Execute final recovery and confirm payment',
+          sub: 'Verify all payments before closing',
+          cta: 'Go to Step 17 →'
+        },
+        18: {
+          instruction: 'Close your claim correctly',
+          sub: 'Finalize everything and protect your rights',
+          cta: 'Go to Step 18 →'
+        }
+      };
+
+      const data = instructions[stepNum] || instructions[1];
+      instruction.textContent = data.instruction;
+      sub.textContent = data.sub;
+      cta.textContent = data.cta;
+      cta.onclick = scrollToActiveStep;
+      count.textContent = `${completedSteps.length}/18`;
+    }
+
     // Show next step banner
     function showNextStepBanner(stepNum) {
       const banner = document.getElementById('nextStepBanner');
@@ -3874,6 +4366,21 @@
 
     function toggleStep(id) {
       const card = document.getElementById(id);
+      
+      // Don't allow collapsing the active card
+      if (card.classList.contains('active-card') && !card.classList.contains('collapsed')) {
+        return;
+      }
+      
+      // If opening this card, collapse all others except active-card and step-done
+      if (card.classList.contains('collapsed')) {
+        document.querySelectorAll('.step-card').forEach(c => {
+          if (!c.classList.contains('active-card') && !c.classList.contains('step-done')) {
+            c.classList.add('collapsed');
+          }
+        });
+      }
+      
       card.classList.toggle('collapsed');
     }
 
@@ -3924,21 +4431,27 @@
       if (!card) return;
 
       // Mark current step as complete
-      card.classList.remove('active-card');
-      card.classList.add('collapsed');
-      card.style.opacity = '0.7';
+      card.classList.remove('active-card', 'step-locked');
+      card.classList.add('collapsed', 'step-done');
+      card.style.opacity = '';
       
       const status = card.querySelector('.card-status');
-      status.textContent = 'Complete';
-      status.classList.remove('in-progress', 'pending');
-      status.style.background = 'rgba(16,185,129,0.15)';
-      status.style.color = 'var(--emerald)';
+      if (status) {
+        status.textContent = 'Complete';
+        status.classList.remove('in-progress', 'pending');
+        status.style.background = 'rgba(16,185,129,0.15)';
+        status.style.color = 'var(--emerald)';
+      }
 
       const cardNumber = card.querySelector('.card-number');
-      cardNumber.style.border = 'none';
-      cardNumber.style.background = 'var(--emerald)';
-      cardNumber.style.color = 'white';
-      cardNumber.textContent = '✓';
+      if (cardNumber) {
+        cardNumber.textContent = '✓';
+      }
+
+      const cardLock = card.querySelector('.card-lock');
+      if (cardLock) {
+        cardLock.style.display = 'none';
+      }
 
       // Track completion
       if (!completedSteps.includes(num)) {
@@ -3995,12 +4508,19 @@
       if (nextCard) {
         currentStep = num + 1;
         nextCard.classList.add('active-card');
-        nextCard.classList.remove('collapsed');
+        nextCard.classList.remove('collapsed', 'step-locked');
         
         const nextStatus = nextCard.querySelector('.card-status');
-        nextStatus.textContent = 'In Progress';
-        nextStatus.classList.remove('pending');
-        nextStatus.classList.add('in-progress');
+        if (nextStatus) {
+          nextStatus.textContent = 'In Progress';
+          nextStatus.classList.remove('pending');
+          nextStatus.classList.add('in-progress');
+        }
+
+        const nextLock = nextCard.querySelector('.card-lock');
+        if (nextLock) {
+          nextLock.style.display = 'none';
+        }
 
         // Update sidebar for next step
         sidebarSteps.forEach(item => {
@@ -4017,6 +4537,14 @@
 
         // Unlock next phase if needed
         unlockNextPhase(num + 1);
+
+        // Update Do This Now banner
+        updateDoThisNow(num + 1);
+
+        // Scroll to next card after delay
+        setTimeout(() => {
+          nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
       }
 
       // Update counter
@@ -4134,15 +4662,26 @@
     window.addEventListener('DOMContentLoaded', () => {
       // Load saved state
       loadState();
-      
+
+      // Initialize Do This Now banner
+      updateDoThisNow(currentStep);
+
+      // Set locked state on future steps
+      document.querySelectorAll('.step-card').forEach((card, index) => {
+        const stepNum = index + 1;
+        if (stepNum > currentStep && !completedSteps.includes(stepNum)) {
+          card.classList.add('step-locked');
+        }
+      });
+
       // Show modal on load (only if no steps completed)
       if (completedSteps.length === 0) {
         document.getElementById('welcomeModal').classList.remove('hidden');
       }
-      
+
       // Initialize summary
       updateSummary();
-      
+
       // Add close button to summary
       addSummaryCloseButton();
     });
