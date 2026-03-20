@@ -988,7 +988,7 @@
       align-items: center;
       height: 36px;
       padding: 0 24px;
-      gap: 24px;
+      gap: 0;
       overflow: hidden;
     }
 
@@ -996,11 +996,16 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 0;
-      border-right: none;
+      padding: 0 24px;
+      border-right: 1px solid var(--navy-border);
       background: none !important;
       border-top: none !important;
+      height: 100%;
       white-space: nowrap;
+    }
+
+    .metric-block:last-child {
+      border-right: none;
     }
 
     .metric-label {
@@ -1024,13 +1029,6 @@
     .metric-block.teal-value .metric-value { color: var(--teal); font-family: 'DM Sans', sans-serif; }
 
     .metric-sublabel { display: none; }
-
-    .metric-divider {
-      width: 1px;
-      height: 16px;
-      background: var(--navy-border);
-      flex-shrink: 0;
-    }
 
     /* Roadmap Strip */
     .roadmap-strip {
@@ -2106,33 +2104,6 @@
 
     <!-- Content Area -->
     <main class="content-area">
-      
-      <!-- Metric Strip -->
-      <div class="metric-strip">
-        <div class="metric-block">
-          <div class="metric-label">What your insurer offered</div>
-          <div class="metric-value">$18,200</div>
-          <div class="metric-sublabel">Initial estimate</div>
-        </div>
-        <div class="metric-divider"></div>
-        <div class="metric-block highlight-emerald">
-          <div class="metric-label">What your loss is actually worth</div>
-          <div class="metric-value">$36,750</div>
-          <div class="metric-sublabel">Verified claim value</div>
-        </div>
-        <div class="metric-divider"></div>
-        <div class="metric-block highlight-red">
-          <div class="metric-label">Money you may be leaving behind</div>
-          <div class="metric-value">$18,550</div>
-          <div class="metric-sublabel">Gap identified</div>
-        </div>
-        <div class="metric-divider"></div>
-        <div class="metric-block teal-value">
-          <div class="metric-label">Where you are in the process</div>
-          <div class="metric-value">Step 1 of 18</div>
-          <div class="metric-sublabel">Each step moves your claim closer to full payout</div>
-        </div>
-      </div>
 
       <!-- Roadmap Strip -->
       <div class="roadmap-strip">
@@ -2233,6 +2204,30 @@
             <div class="legend-dot" style="background: var(--red);"></div>
             <span>Finish & Get Paid</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Metric Strip -->
+      <div class="metric-strip">
+        <div class="metric-block">
+          <div class="metric-label">What your insurer offered</div>
+          <div class="metric-value">$18,200</div>
+          <div class="metric-sublabel">Initial estimate</div>
+        </div>
+        <div class="metric-block highlight-emerald">
+          <div class="metric-label">What your loss is actually worth</div>
+          <div class="metric-value">$36,750</div>
+          <div class="metric-sublabel">Verified claim value</div>
+        </div>
+        <div class="metric-block highlight-red">
+          <div class="metric-label">Money you may be leaving behind</div>
+          <div class="metric-value">$18,550</div>
+          <div class="metric-sublabel">Gap identified</div>
+        </div>
+        <div class="metric-block teal-value">
+          <div class="metric-label">Where you are in the process</div>
+          <div class="metric-value">Step 1 of 18</div>
+          <div class="metric-sublabel">Each step moves your claim closer to full payout</div>
         </div>
       </div>
 
