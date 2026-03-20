@@ -500,11 +500,22 @@
 
     /* Claim Journal Panel */
     .claim-journal-panel {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 420px;
+      height: 100vh;
       background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: 14px;
-      margin: 20px 40px;
+      border-left: 1px solid var(--gray-200);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+      z-index: 500;
+      flex-direction: column;
       overflow: hidden;
+    }
+
+    .claim-journal-panel.journal-open {
+      display: flex;
     }
 
     .journal-header {
@@ -575,7 +586,7 @@
       border: 2px solid var(--teal);
       border-radius: 14px;
       padding: 20px 24px;
-      margin: 20px 40px;
+      margin: 0 0 16px 0;
       display: flex;
       align-items: center;
       gap: 20px;
@@ -1925,7 +1936,7 @@
       <div class="nav-pills">
         <button class="nav-pill active" onclick="showClaimSummary()">Claim Summary</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
-        <button class="nav-pill" onclick="showClaimJournal()">Claim Journal</button>
+        <button class="nav-pill" onclick="showClaimJournal()">Activity Log</button>
         <button class="nav-pill" onclick="showMessages()">Messages</button>
         <button class="nav-pill" onclick="showDocuments()">Documents</button>
         <button class="nav-pill" onclick="showDeadlines()">Deadlines</button>
@@ -2253,37 +2264,19 @@
         <button class="dtn-cta" id="dtnCta" onclick="scrollToActiveStep()">Go to Step 1 →</button>
       </div>
 
-      <!-- Content Header -->
-      <div class="content-header">
-        <div class="content-eyebrow">Phase 1 — Foundation</div>
-        <h1 class="content-title">Set Up Your Claim</h1>
-        <p class="content-desc">Start here. Understand your rights and the claim process before you take any action.</p>
-      </div>
-
-      <!-- Claim Activity Log -->
-      <div class="claim-journal-panel">
-        <div class="journal-header">
-          <div class="journal-title">📋 Claim Activity Log</div>
-          <div style="font-size: 12px; color: var(--gray-600); margin-top: 4px;">Every action is tracked automatically</div>
-        </div>
-        <div class="journal-entries" id="journalEntries">
-          <div class="journal-empty">No activity yet. Your actions will be tracked here automatically.</div>
-        </div>
-      </div>
-
-      <!-- Next Step Banner (Hidden initially) -->
-      <div class="next-step-banner hidden" id="nextStepBanner">
-        <div class="next-step-icon">✓</div>
-        <div class="next-step-content">
-          <div class="next-step-label">Completed</div>
-          <div class="next-step-title" id="nextStepTitle">Step 1 Complete</div>
-          <div class="next-step-desc" id="nextStepDesc">Great work! Let's move to the next step.</div>
-        </div>
-        <button class="next-step-button" id="nextStepButton" onclick="continueToNextStep()">Continue to Step 2 →</button>
-      </div>
-
       <!-- Step Cards -->
       <div class="step-cards">
+        
+        <!-- Next Step Banner (Hidden initially) -->
+        <div class="next-step-banner hidden" id="nextStepBanner">
+          <div class="next-step-icon">✓</div>
+          <div class="next-step-content">
+            <div class="next-step-label">Completed</div>
+            <div class="next-step-title" id="nextStepTitle">Step 1 Complete</div>
+            <div class="next-step-desc" id="nextStepDesc">Great work! Let's move to the next step.</div>
+          </div>
+          <button class="next-step-button" id="nextStepButton" onclick="continueToNextStep()">Continue to Step 2 →</button>
+        </div>
         
         <!-- Phase 1 Divider -->
         <div class="phase-divider">
@@ -3680,6 +3673,22 @@
 
     </main>
 
+    <!-- Claim Activity Log Panel (Overlay) -->
+    <div class="claim-journal-panel">
+      <div class="journal-header">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div class="journal-title">📋 Claim Activity Log</div>
+            <div style="font-size: 12px; color: var(--gray-600); margin-top: 4px;">Every action is tracked automatically</div>
+          </div>
+          <button onclick="closeJournal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-600);padding:0;line-height:1;">×</button>
+        </div>
+      </div>
+      <div class="journal-entries" id="journalEntries">
+        <div class="journal-empty">No activity yet. Your actions will be tracked here automatically.</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Claim Process Guide Modal -->
@@ -4215,9 +4224,13 @@
     }
 
     function showClaimJournal() {
-      // Scroll to claim journal
-      document.querySelector('.claim-journal-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Toggle journal panel overlay
+      document.querySelector('.claim-journal-panel').classList.add('journal-open');
       setActiveNavPill(2);
+    }
+
+    function closeJournal() {
+      document.querySelector('.claim-journal-panel').classList.remove('journal-open');
     }
 
     function showMessages() {
