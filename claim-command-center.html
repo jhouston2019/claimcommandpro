@@ -4367,15 +4367,10 @@
     function toggleStep(id) {
       const card = document.getElementById(id);
       
-      // Don't allow collapsing the active card
-      if (card.classList.contains('active-card') && !card.classList.contains('collapsed')) {
-        return;
-      }
-      
-      // If opening this card, collapse all others except active-card and step-done
+      // If opening this card, collapse all others except step-done
       if (card.classList.contains('collapsed')) {
         document.querySelectorAll('.step-card').forEach(c => {
-          if (!c.classList.contains('active-card') && !c.classList.contains('step-done')) {
+          if (!c.classList.contains('step-done')) {
             c.classList.add('collapsed');
           }
         });
