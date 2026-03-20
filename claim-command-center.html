@@ -288,73 +288,22 @@
 
     /* Claim Summary Panel */
     .claim-summary-panel {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 360px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-      z-index: 1000;
-      max-height: calc(100vh - 40px);
-      overflow-y: auto;
-      transition: transform 0.3s ease;
-    }
-
-    .claim-summary-panel.minimized {
-      transform: translateX(calc(100% + 20px));
-    }
-
-    .summary-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      background: var(--teal);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      cursor: pointer;
       display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      z-index: 999;
-      transition: all 0.3s ease;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 380px;
+      height: 100vh;
+      background: white;
+      border-left: 1px solid var(--gray-200);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+      z-index: 800;
+      overflow-y: auto;
+      flex-direction: column;
     }
 
-    .summary-toggle:hover {
-      background: var(--teal-dark);
-      transform: scale(1.1);
-    }
-
-    .claim-summary-panel.minimized ~ .summary-toggle {
+    .claim-summary-panel.summary-open {
       display: flex;
-    }
-
-    @media (max-width: 1400px) {
-      .claim-summary-panel {
-        width: 320px;
-      }
-    }
-
-    @media (max-width: 1200px) {
-      .claim-summary-panel {
-        top: auto;
-        bottom: 20px;
-        right: 20px;
-        max-height: 50vh;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .claim-summary-panel {
-        width: calc(100% - 40px);
-        left: 20px;
-        right: 20px;
-      }
     }
 
     .summary-header {
@@ -1615,127 +1564,20 @@
       margin: 0 auto;
     }
 
-    /* Next Steps Popup */
-    .next-steps-popup {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 400px;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 10px 10px -5px rgba(0,0,0,0.2);
-      z-index: 1000;
-      animation: slideUp 0.3s ease-out;
-    }
-
-    .next-steps-popup.hidden {
-      display: none;
-    }
-
-    @keyframes slideUp {
-      from {
-        transform: translateY(100px);
-        opacity: 0;
-      }
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
-    }
-
-    .popup-header {
-      background: var(--teal);
-      color: white;
-      padding: 16px 20px;
-      border-radius: 16px 16px 0 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .popup-title {
-      font-weight: 700;
-      font-size: 16px;
-    }
-
-    .popup-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-    }
-
-    .popup-close:hover {
-      opacity: 1;
-    }
-
-    .popup-body {
-      padding: 20px;
-      color: var(--gray-900);
-    }
-
-    .popup-message {
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--gray-600);
-      margin-bottom: 16px;
-    }
-
-    .popup-action {
-      background: var(--teal);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s;
-    }
-
-    .popup-action:hover {
-      background: var(--teal-dark);
-    }
-
-    .popup-secondary {
-      background: var(--gray-100);
-      color: var(--gray-700);
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 8px;
-      transition: background 0.2s;
-    }
-
-    .popup-secondary:hover {
-      background: var(--gray-200);
-    }
   </style>
 </head>
 <body>
 
-  <!-- Summary Toggle Button -->
-  <button class="summary-toggle" id="summaryToggle" onclick="toggleSummary()">📊</button>
-
   <!-- Claim Summary Panel -->
   <div class="claim-summary-panel" id="claimSummary">
     <div class="summary-header">
-      <div class="summary-title">Your Claim Snapshot</div>
-      <div class="summary-subtitle">Real-time tracking of your claim progress</div>
+      <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+        <div>
+          <div class="summary-title">Your Claim Snapshot</div>
+          <div class="summary-subtitle">Real-time tracking of your claim progress</div>
+        </div>
+        <button onclick="closeSummary()" style="background:none;border:none;color:var(--gray-400);font-size:22px;cursor:pointer;padding:0;line-height:1;margin-left:auto;">×</button>
+      </div>
     </div>
 
     <div class="summary-section">
@@ -1866,7 +1708,7 @@
         <div class="nav-claim-num">Day 85 • Active</div>
       </div>
       <div class="nav-pills">
-        <button class="nav-pill active" onclick="showClaimSummary()">Claim Summary</button>
+        <button class="nav-pill" onclick="showClaimSummary()">Claim Snapshot</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
         <button class="nav-pill" onclick="showClaimJournal()">Activity Log</button>
         <button class="nav-pill" onclick="showMessages()">Messages</button>
@@ -3654,19 +3496,6 @@
     </div>
   </div>
 
-  <!-- Dynamic Next Steps Popup -->
-  <div class="next-steps-popup hidden" id="nextStepsPopup">
-    <div class="popup-header">
-      <div class="popup-title" id="popupTitle">What to do next</div>
-      <button class="popup-close" onclick="closePopup()">×</button>
-    </div>
-    <div class="popup-body">
-      <p class="popup-message" id="popupMessage"></p>
-      <button class="popup-action" id="popupAction" onclick="handlePopupAction()"></button>
-      <button class="popup-secondary" onclick="closePopup()">I'll do this later</button>
-    </div>
-  </div>
-
   <script>
     // State tracking
     let completedSteps = [];
@@ -4064,15 +3893,14 @@
     }
 
     // Toggle summary panel
-    function toggleSummary() {
-      const panel = document.getElementById('claimSummary');
-      panel.classList.toggle('minimized');
-    }
-
     // Navigation pill functions
     function showClaimSummary() {
-      toggleSummary();
+      document.getElementById('claimSummary').classList.add('summary-open');
       setActiveNavPill(0);
+    }
+
+    function closeSummary() {
+      document.getElementById('claimSummary').classList.remove('summary-open');
     }
 
     function showFinancialSummary() {
@@ -4138,101 +3966,6 @@
       document.getElementById('welcomeModal').classList.add('hidden');
       document.getElementById('step-1').scrollIntoView({ behavior: 'smooth', block: 'start' });
       
-      // Show next steps popup after 3 seconds
-      setTimeout(() => {
-        showNextStepsPopup(1);
-      }, 3000);
-    }
-
-    function closePopup() {
-      document.getElementById('nextStepsPopup').classList.add('hidden');
-    }
-
-    function showNextStepsPopup(stepNum) {
-      currentStep = stepNum;
-      const popup = document.getElementById('nextStepsPopup');
-      const title = document.getElementById('popupTitle');
-      const message = document.getElementById('popupMessage');
-      const action = document.getElementById('popupAction');
-
-      // Define next step guidance
-      const guidance = {
-        1: {
-          title: 'Start with Step 1',
-          message: 'Read the Claim Process Guide to understand how insurance claims work. This takes about 10 minutes and will save you from making costly mistakes later.',
-          action: 'Read Step 1 Now',
-          tool: null
-        },
-        2: {
-          title: 'See What Your Policy Covers',
-          message: 'Upload your insurance policy so our AI can analyze your coverage and tell you exactly what you\'re entitled to — including coverage your insurer may not point out.',
-          action: 'Open Policy Analyzer',
-          tool: 'app/tools/policy-analyzer-complete.html'
-        },
-        3: {
-          title: 'Set Up Your Claim the Right Way',
-          message: 'Use our loss notification template to report your claim to the insurance company. Make sure your claim is structured correctly from the start.',
-          action: 'Generate Loss Notice',
-          tool: 'app/tools/written-notice-generator.html'
-        },
-        4: {
-          title: 'Document All Damage',
-          message: 'Take photos of every damaged area before any repairs begin. Capture everything — missed damage means missed money.',
-          action: 'Open Documentation Tool',
-          tool: 'app/tools/damage-documentation-tool.html'
-        },
-        5: {
-          title: 'Get Accurate Repair Estimates',
-          message: 'Get written estimates from licensed contractors. Use real-world pricing so your claim reflects actual repair costs.',
-          action: 'Open Contractor Checklist',
-          tool: 'app/tools/contractor-scope-checklist.html'
-        },
-        8: {
-          title: 'Review Your Insurance Estimate',
-          message: 'Compare the insurer\'s estimate against your contractor bids. See exactly what your insurer included — and what they didn\'t.',
-          action: 'Open Estimate Review',
-          tool: 'app/tools/estimate-review.html'
-        },
-        11: {
-          title: 'Request Additional Payment',
-          message: 'Submit a supplement for missed or underpaid items. Use our supplement calculator to total all gaps and generate a professional request letter.',
-          action: 'Calculate Supplement',
-          tool: 'app/tools/supplement-calculation-tool.html'
-        },
-        14: {
-          title: 'Negotiate Your Settlement',
-          message: 'Push your claim to the correct value. Use our negotiation strategy tool to develop a plan and get the language you need.',
-          action: 'Build Negotiation Strategy',
-          tool: 'app/tools/negotiation-strategy-generator.html'
-        }
-      };
-
-      const stepGuidance = guidance[stepNum] || {
-        title: 'Continue to Next Step',
-        message: 'You\'re making progress. Click the button below to move to the next step in your claim roadmap.',
-        action: 'Go to Next Step',
-        tool: null
-      };
-
-      title.textContent = stepGuidance.title;
-      message.textContent = stepGuidance.message;
-      action.textContent = stepGuidance.action;
-      action.setAttribute('data-tool', stepGuidance.tool || '');
-
-      popup.classList.remove('hidden');
-    }
-
-    function handlePopupAction() {
-      const action = document.getElementById('popupAction');
-      const tool = action.getAttribute('data-tool');
-      
-      if (tool) {
-        window.open(tool, '_blank');
-      } else {
-        goToStep(currentStep);
-      }
-      
-      closePopup();
     }
 
     function toggleStep(id) {
