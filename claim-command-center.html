@@ -1531,6 +1531,29 @@
       letter-spacing: 0.5px;
     }
 
+    .ai-badge {
+      display: inline-block;
+      background: var(--teal);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+
+    .ai-powered-note {
+      background: rgba(20,184,166,0.08);
+      border-left: 3px solid var(--teal);
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--gray-700);
+      font-style: italic;
+    }
+
     .card-right {
       display: flex;
       align-items: center;
@@ -3324,13 +3347,14 @@
           <div class="phase-divider-line"></div>
         </div>
 
-        <!-- Step 9 (was Step 8) -->
-        <div class="step-card collapsed step-locked" id="step-8">
-          <div class="step-card-header" onclick="toggleStep('step-8')">
-            <div class="card-number">08</div>
+        <!-- Step 9 -->
+        <div class="step-card collapsed step-locked" id="step-9">
+          <div class="step-card-header" onclick="toggleStep('step-9')">
+            <div class="card-number">09</div>
             <div class="card-text">
-              <div class="card-title">Estimate Review</div>
-              <div class="card-subtitle">Upload Their Estimate — Find Out What They Got Wrong</div>
+              <div class="card-title">Analyze Your Insurance Estimate</div>
+              <div class="card-subtitle">AI ESTIMATE REVIEW ENGINE</div>
+              <div class="ai-badge">AI Estimate Review Engine</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -3339,6 +3363,8 @@
             </div>
           </div>
           <div class="step-body">
+            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
             <div class="section-label">Why This Matters</div>
             <p class="section-text">The insurance company's estimate is almost always lower than what repairs actually cost. They use outdated pricing, omit necessary work, and apply aggressive depreciation. If you accept their first estimate without review, you leave thousands of dollars on the table.</p>
 
@@ -3361,34 +3387,35 @@
               </li>
             </ul>
 
-            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(8, 'AI Estimate Review Tool')">Open AI Estimate Review Tool →</a>
+            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(9, 'AI Estimate Review Tool')">Open AI Estimate Review Tool →</a>
 
             <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-8-results">
+            <div class="step-results hidden" id="step-9-results">
               <div class="results-header">
                 <div class="results-icon">✓</div>
                 <div class="results-title">Estimate Reviewed</div>
-                <button class="results-close" onclick="clearStepResults(8)">×</button>
+                <button class="results-close" onclick="clearStepResults(9)">×</button>
               </div>
-              <div class="results-body" id="step-8-results-body"></div>
+              <div class="results-body" id="step-9-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
-              <button class="nav-button" onclick="goToStep(7)">← Step 7</button>
-              <button class="nav-button" onclick="goToStep(9)">Step 9 →</button>
+              <button class="nav-button" onclick="goToStep(8)">← Step 8</button>
+              <button class="nav-button" onclick="goToStep(10)">Step 10 →</button>
             </div>
-            <button class="complete-button" onclick="completeStep(8)">Mark Complete →</button>
+            <button class="complete-button" onclick="completeStep(9)">Mark Complete →</button>
           </div>
         </div>
 
-        <!-- Step 9 -->
-        <div class="step-card collapsed step-locked" id="step-9">
-          <div class="step-card-header" onclick="toggleStep('step-9')">
-            <div class="card-number">09</div>
+        <!-- Step 10 -->
+        <div class="step-card collapsed step-locked" id="step-10">
+          <div class="step-card-header" onclick="toggleStep('step-10')">
+            <div class="card-number">10</div>
             <div class="card-text">
-              <div class="card-title">Pricing Analysis</div>
-              <div class="card-subtitle">Check If They Used the Right Prices — Most Don't</div>
+              <div class="card-title">Identify Pricing Gaps & Underpayment</div>
+              <div class="card-subtitle">AI PRICING DEVIATION ANALYZER</div>
+              <div class="ai-badge">AI Pricing Deviation Analyzer</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
