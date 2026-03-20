@@ -982,62 +982,54 @@
 
     /* Metric Strip */
     .metric-strip {
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      background: var(--navy-light);
+      border-bottom: 1px solid var(--navy-border);
+      display: flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 24px;
+      gap: 24px;
+      overflow: hidden;
     }
 
     .metric-block {
-      padding: 20px 24px;
-      border-right: 1px solid var(--gray-200);
-    }
-
-    .metric-block:last-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
       border-right: none;
-    }
-
-    .metric-block.highlight-emerald {
-      border-top: 2px solid var(--emerald);
-    }
-
-    .metric-block.highlight-red {
-      border-top: 2px solid var(--red);
-      background: #fef2f2;
+      background: none !important;
+      border-top: none !important;
+      white-space: nowrap;
     }
 
     .metric-label {
       font-size: 11px;
+      color: var(--gray-400);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--gray-600);
-      margin-bottom: 8px;
+      letter-spacing: 0.4px;
+      margin: 0;
     }
 
     .metric-value {
-      font-family: 'DM Serif Display', serif;
-      font-size: 28px;
-      color: var(--gray-900);
-      margin-bottom: 4px;
-    }
-
-    .metric-block.highlight-emerald .metric-value {
-      color: var(--emerald);
-    }
-
-    .metric-block.highlight-red .metric-value {
-      color: var(--red);
-    }
-
-    .metric-block.teal-value .metric-value {
-      color: var(--teal);
       font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
       font-weight: 700;
+      margin: 0;
+      color: white;
     }
 
-    .metric-sublabel {
-      font-size: 12px;
-      color: var(--gray-400);
+    .metric-block.highlight-emerald .metric-value { color: var(--emerald); }
+    .metric-block.highlight-red .metric-value { color: var(--red); }
+    .metric-block.teal-value .metric-value { color: var(--teal); font-family: 'DM Sans', sans-serif; }
+
+    .metric-sublabel { display: none; }
+
+    .metric-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--navy-border);
+      flex-shrink: 0;
     }
 
     /* Roadmap Strip */
@@ -2122,26 +2114,24 @@
           <div class="metric-value">$18,200</div>
           <div class="metric-sublabel">Initial estimate</div>
         </div>
+        <div class="metric-divider"></div>
         <div class="metric-block highlight-emerald">
           <div class="metric-label">What your loss is actually worth</div>
           <div class="metric-value">$36,750</div>
           <div class="metric-sublabel">Verified claim value</div>
         </div>
+        <div class="metric-divider"></div>
         <div class="metric-block highlight-red">
           <div class="metric-label">Money you may be leaving behind</div>
           <div class="metric-value">$18,550</div>
           <div class="metric-sublabel">Gap identified</div>
         </div>
+        <div class="metric-divider"></div>
         <div class="metric-block teal-value">
           <div class="metric-label">Where you are in the process</div>
           <div class="metric-value">Step 1 of 18</div>
           <div class="metric-sublabel">Each step moves your claim closer to full payout</div>
         </div>
-      </div>
-
-      <!-- Amber Note Bar -->
-      <div style="background:#fffbeb; border-top:2px solid #f59e0b; padding:10px 24px; font-size:13px; color:#92400e; font-weight:500; display:flex; align-items:center; gap:8px;">
-        ⚠️ <strong>That $18,550 gap is real. These 18 steps show you how to get it.</strong>&nbsp; Follow them in order. Every skipped step is money you don't collect.
       </div>
 
       <!-- Roadmap Strip -->
