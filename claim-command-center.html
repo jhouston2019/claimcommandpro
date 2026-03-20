@@ -208,82 +208,70 @@
     .top-nav {
       background: var(--navy);
       border-bottom: 1px solid var(--navy-border);
-      padding: 20px 24px;
+      padding: 0 24px;
+      height: 48px;
       flex-shrink: 0;
-      text-align: center;
     }
 
     .nav-header {
-      max-width: 1200px;
-      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 100%;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .nav-brand {
       font-family: 'DM Serif Display', serif;
-      font-size: 28px;
+      font-size: 16px;
       color: white;
-      margin-bottom: 6px;
     }
 
-    .nav-brand .pro {
-      color: var(--teal);
-    }
-
-    .nav-tagline {
-      font-size: 14px;
-      color: var(--gray-400);
-      font-weight: 500;
-      letter-spacing: 0.3px;
-    }
-
-    .nav-meta {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 12px;
-    }
+    .nav-brand .pro { color: var(--teal); }
 
     .nav-divider {
       width: 1px;
-      height: 16px;
+      height: 14px;
       background: var(--navy-border);
     }
 
     .nav-claim-num {
+      font-size: 12px;
       color: var(--gray-400);
-      font-size: 13px;
     }
 
     .nav-pills {
       display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 16px;
+      gap: 0;
     }
 
     .nav-pill {
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 4px 14px;
+      border-radius: 0;
       font-size: 13px;
       font-weight: 500;
       color: var(--gray-400);
       background: transparent;
-      border: 1px solid transparent;
+      border: none;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: color 0.2s;
+      height: 48px;
+      border-bottom: 2px solid transparent;
     }
 
     .nav-pill:hover {
       color: white;
-      background: rgba(255,255,255,0.05);
-      border-color: var(--navy-border);
     }
 
     .nav-pill.active {
-      background: var(--teal-dim);
       color: var(--teal);
-      border-color: var(--teal);
+      border-bottom-color: var(--teal);
     }
 
     /* Claim Summary Panel */
@@ -1018,12 +1006,13 @@
     }
 
     .step-card.active-card .card-title {
-      color: var(--gray-900);
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
     }
 
     .step-card.active-card .card-subtitle {
-      display: block;
-      color: var(--gray-600);
+      font-size: 15px;
+      color: white;
     }
 
     .step-card.active-card .card-number {
@@ -1065,6 +1054,10 @@
       display: none;
     }
 
+    .step-locked .card-subtitle {
+      color: var(--gray-400);
+    }
+
     .step-card.collapsed .step-body,
     .step-card.collapsed .step-footer {
       display: none;
@@ -1104,20 +1097,20 @@
     }
 
     .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--gray-900);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
     }
 
     .card-subtitle {
-      display: none;
-      font-size: 13px;
-      color: var(--gray-600);
-      line-height: 1.4;
-      margin-top: 4px;
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.3;
     }
 
     .card-right {
@@ -1299,7 +1292,7 @@
     .do-this-now-banner {
       background: var(--navy);
       border-bottom: 3px solid var(--teal);
-      padding: 20px 32px;
+      padding: 10px 40px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1356,55 +1349,15 @@
 
     .dtn-instruction {
       font-family: 'DM Serif Display', serif;
-      font-size: 22px;
+      font-size: 18px;
       color: white;
       margin-bottom: 4px;
       line-height: 1.3;
     }
 
     .dtn-sub {
-      font-size: 13px;
+      font-size: 12px;
       color: rgba(255,255,255,0.55);
-    }
-
-    .dtn-counter {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      margin-right: 20px;
-    }
-
-    .dtn-count {
-      font-family: 'DM Serif Display', serif;
-      font-size: 28px;
-      color: white;
-      font-weight: 400;
-    }
-
-    .dtn-count-label {
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .dtn-cta {
-      background: var(--teal);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 14px 24px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-
-    .dtn-cta:hover {
-      background: var(--teal-dark);
     }
 
     .step-footer {
@@ -1620,11 +1573,11 @@
   </div>
 
   <!-- Top Nav -->
-  <nav class="top-nav">
+  <div class="top-nav">
     <div class="nav-header">
-      <div class="nav-brand">Claim Command Center</div>
-      <div class="nav-tagline">Follow each step to identify missing money and recover what you're owed.</div>
-      <div class="nav-meta">
+      <div class="nav-left">
+        <div class="nav-brand">Claim Command <span class="pro">Pro</span></div>
+        <div class="nav-divider"></div>
         <div class="nav-claim-num">Claim #CLM-2024-0847</div>
         <div class="nav-divider"></div>
         <div class="nav-claim-num">Day 85 • Active</div>
@@ -1638,7 +1591,7 @@
         <button class="nav-pill" onclick="showDeadlines()">Deadlines</button>
       </div>
     </div>
-  </nav>
+  </div>
 
   <!-- Main Layout -->
   <div class="main-layout">
@@ -1830,8 +1783,8 @@
           <div class="step-card-header" onclick="toggleStep('step-1')">
             <div class="card-number">01</div>
             <div class="card-text">
-              <div class="card-title">Read This First — Before You Call Anyone</div>
-              <div class="card-subtitle">Understand how the claim process works and what mistakes to avoid in the first 48 hours.</div>
+              <div class="card-title">Claim Process Guide</div>
+              <div class="card-subtitle">Read This First — Before You Call Anyone</div>
             </div>
             <div class="card-right">
               <div class="card-status in-progress">In Progress</div>
@@ -2336,8 +2289,8 @@
           <div class="step-card-header" onclick="toggleStep('step-2')">
             <div class="card-number">02</div>
             <div class="card-text">
-              <div class="card-title">See What Your Policy Covers</div>
-              <div class="card-subtitle">Understand exactly what your policy includes — including coverage your insurer may not point out.</div>
+              <div class="card-title">Policy Analysis</div>
+              <div class="card-subtitle">Upload Your Policy — Find Out What You're Actually Owed</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2393,8 +2346,8 @@
           <div class="step-card-header" onclick="toggleStep('step-3')">
             <div class="card-number">03</div>
             <div class="card-text">
-              <div class="card-title">Set Up Your Claim the Right Way</div>
-              <div class="card-subtitle">Make sure your claim is structured correctly from the start.</div>
+              <div class="card-title">Loss Reporting</div>
+              <div class="card-subtitle">Report the Loss Using These Exact Words</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2452,8 +2405,8 @@
           <div class="step-card-header" onclick="toggleStep('step-4')">
             <div class="card-number">04</div>
             <div class="card-text">
-              <div class="card-title">Document All Damage</div>
-              <div class="card-subtitle">Capture everything — missed damage means missed money.</div>
+              <div class="card-title">Damage Documentation</div>
+              <div class="card-subtitle">Photograph Everything Before You Touch Anything</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2500,8 +2453,8 @@
           <div class="step-card-header" onclick="toggleStep('step-5')">
             <div class="card-number">05</div>
             <div class="card-text">
-              <div class="card-title">Get Accurate Repair Estimates</div>
-              <div class="card-subtitle">Use real-world pricing so your claim reflects actual repair costs.</div>
+              <div class="card-title">Contractor Estimates</div>
+              <div class="card-subtitle">Get 2 Contractors to Give You Written Estimates</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2548,8 +2501,8 @@
           <div class="step-card-header" onclick="toggleStep('step-6')">
             <div class="card-number">06</div>
             <div class="card-text">
-              <div class="card-title">Prepare for the Adjuster Inspection</div>
-              <div class="card-subtitle">Make sure nothing is overlooked or minimized.</div>
+              <div class="card-title">Adjuster Preparation</div>
+              <div class="card-subtitle">Do This Before the Adjuster Shows Up</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2596,8 +2549,8 @@
           <div class="step-card-header" onclick="toggleStep('step-7')">
             <div class="card-number">07</div>
             <div class="card-text">
-              <div class="card-title">List Everything You Lost</div>
-              <div class="card-subtitle">Account for all contents and items.</div>
+              <div class="card-title">Contents Inventory</div>
+              <div class="card-subtitle">Write Down Every Item You Lost or Was Damaged</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2651,8 +2604,8 @@
           <div class="step-card-header" onclick="toggleStep('step-8')">
             <div class="card-number">08</div>
             <div class="card-text">
-              <div class="card-title">Review Your Insurance Estimate</div>
-              <div class="card-subtitle">See exactly what your insurer included — and what they didn't.</div>
+              <div class="card-title">Estimate Review</div>
+              <div class="card-subtitle">Upload Their Estimate — Find Out What They Got Wrong</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2699,8 +2652,8 @@
           <div class="step-card-header" onclick="toggleStep('step-9')">
             <div class="card-number">09</div>
             <div class="card-text">
-              <div class="card-title">Find Underpaid Items</div>
-              <div class="card-subtitle">Identify where pricing is below market.</div>
+              <div class="card-title">Pricing Analysis</div>
+              <div class="card-subtitle">Check If They Used the Right Prices — Most Don't</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2747,8 +2700,8 @@
           <div class="step-card-header" onclick="toggleStep('step-10')">
             <div class="card-number">10</div>
             <div class="card-text">
-              <div class="card-title">Find Missing Coverage</div>
-              <div class="card-subtitle">Uncover policy benefits that were not applied.</div>
+              <div class="card-title">Coverage Gap Analysis</div>
+              <div class="card-subtitle">Find the Money They Should Have Paid But Didn't</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2802,8 +2755,8 @@
           <div class="step-card-header" onclick="toggleStep('step-11')">
             <div class="card-number">11</div>
             <div class="card-text">
-              <div class="card-title">Request Additional Payment</div>
-              <div class="card-subtitle">Submit a supplement for missed or underpaid items.</div>
+              <div class="card-title">Supplement Request</div>
+              <div class="card-subtitle">Send a Written Demand for Everything They Underpaid</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2850,8 +2803,8 @@
           <div class="step-card-header" onclick="toggleStep('step-12')">
             <div class="card-number">12</div>
             <div class="card-text">
-              <div class="card-title">Send Claim Letters</div>
-              <div class="card-subtitle">Use clear communication your insurer will respond to.</div>
+              <div class="card-title">Dispute Letters</div>
+              <div class="card-subtitle">Put Every Denial and Disagreement in Writing</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2898,8 +2851,8 @@
           <div class="step-card-header" onclick="toggleStep('step-13')">
             <div class="card-number">13</div>
             <div class="card-text">
-              <div class="card-title">Recover Depreciation</div>
-              <div class="card-subtitle">Claim withheld funds from your initial payment.</div>
+              <div class="card-title">Depreciation Recovery</div>
+              <div class="card-subtitle">Repairs Done? Now Claim the Money They Held Back</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -2953,8 +2906,8 @@
           <div class="step-card-header" onclick="toggleStep('step-14')">
             <div class="card-number">14</div>
             <div class="card-text">
-              <div class="card-title">Negotiate Your Settlement</div>
-              <div class="card-subtitle">Push your claim to the correct value.</div>
+              <div class="card-title">Settlement Negotiation</div>
+              <div class="card-subtitle">Counter Their Offer With Your Number — In Writing</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -3001,8 +2954,8 @@
           <div class="step-card-header" onclick="toggleStep('step-15')">
             <div class="card-number">15</div>
             <div class="card-text">
-              <div class="card-title">Escalate If Needed</div>
-              <div class="card-subtitle">Use appraisal or mediation if required.</div>
+              <div class="card-title">Appraisal & Mediation</div>
+              <div class="card-subtitle">If They Still Won't Move — Use This to Force a Decision</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -3049,8 +3002,8 @@
           <div class="step-card-header" onclick="toggleStep('step-16')">
             <div class="card-number">16</div>
             <div class="card-text">
-              <div class="card-title">Finalize Your Claim</div>
-              <div class="card-subtitle">Make sure nothing is left unclaimed.</div>
+              <div class="card-title">Settlement Review</div>
+              <div class="card-subtitle">Read Every Word of This Offer Before You Sign Anything</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -3097,8 +3050,8 @@
           <div class="step-card-header" onclick="toggleStep('step-17')">
             <div class="card-number">17</div>
             <div class="card-text">
-              <div class="card-title">Confirm All Payments</div>
-              <div class="card-subtitle">Verify every dollar owed has been paid.</div>
+              <div class="card-title">Final Recovery</div>
+              <div class="card-subtitle">Complete Repairs and Collect Every Dollar You're Owed</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
@@ -3145,8 +3098,8 @@
           <div class="step-card-header" onclick="toggleStep('step-18')">
             <div class="card-number">18</div>
             <div class="card-text">
-              <div class="card-title">Close Your Claim</div>
-              <div class="card-subtitle">Finish your claim knowing it was handled correctly.</div>
+              <div class="card-title">Claim Closure</div>
+              <div class="card-subtitle">Save Your Records — This File Has Legal Value for Years</div>
             </div>
             <div class="card-right">
               <div class="card-status pending">Pending</div>
