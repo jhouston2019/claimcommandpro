@@ -708,6 +708,46 @@
       flex-shrink: 0;
     }
 
+    .current-step-widget {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--navy-border);
+      background: rgba(20,184,166,0.08);
+    }
+
+    .current-step-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .current-step-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .current-step-cta {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .current-step-cta:hover {
+      background: var(--teal-dark);
+    }
+
     .sidebar-title {
       padding: 16px 20px;
       font-size: 13px;
@@ -1554,6 +1594,12 @@
     
     <!-- Sidebar -->
     <aside class="sidebar">
+      <div class="current-step-widget">
+        <div class="current-step-label">CURRENT STEP</div>
+        <div class="current-step-title" id="currentStepTitle">Step 1 — Claim Process Guide</div>
+        <button class="current-step-cta" onclick="scrollToCurrentStep()">Continue →</button>
+      </div>
+
       <div class="sidebar-title">The 18 Step System</div>
 
       <div class="phase-group active expanded" onclick="togglePhase(this)">
@@ -3734,6 +3780,45 @@
       if (sidebarSteps[num - 1]) {
         sidebarSteps[num - 1].classList.add('active');
       }
+
+      // Update current step widget
+      updateCurrentStepWidget(num);
+    }
+
+    function scrollToCurrentStep() {
+      const activeCard = document.querySelector('.step-card.active-card');
+      if (activeCard) {
+        activeCard.classList.remove('collapsed');
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function updateCurrentStepWidget(stepNum) {
+      const stepTitles = {
+        1: 'Step 1 — Claim Process Guide',
+        2: 'Step 2 — Review Your Policy',
+        3: 'Step 3 — Report the Loss',
+        4: 'Step 4 — Document Damage',
+        5: 'Step 5 — Contractor Estimates',
+        6: 'Step 6 — Adjuster Prep',
+        7: 'Step 7 — Contents Inventory',
+        8: 'Step 8 — Review Estimate',
+        9: 'Step 9 — Pricing Analysis',
+        10: 'Step 10 — Coverage Gaps',
+        11: 'Step 11 — Supplement Request',
+        12: 'Step 12 — Dispute Letters',
+        13: 'Step 13 — Depreciation Recovery',
+        14: 'Step 14 — Negotiation',
+        15: 'Step 15 — Appraisal/Mediation',
+        16: 'Step 16 — Settlement Review',
+        17: 'Step 17 — Final Recovery',
+        18: 'Step 18 — Close the Claim'
+      };
+
+      const titleEl = document.getElementById('currentStepTitle');
+      if (titleEl) {
+        titleEl.textContent = stepTitles[stepNum] || `Step ${stepNum}`;
+      }
     }
 
     function completeStep(num) {
@@ -3850,6 +3935,9 @@
 
         // Update Do This Now banner
         updateDoThisNow(num + 1);
+
+        // Update current step widget
+        updateCurrentStepWidget(num + 1);
 
         // Scroll to next card after delay
         setTimeout(() => {
@@ -3978,6 +4066,9 @@
 
       // Initialize Do This Now banner
       updateDoThisNow(currentStep);
+
+      // Initialize current step widget
+      updateCurrentStepWidget(currentStep);
 
       // Set locked state on future steps
       document.querySelectorAll('.step-card').forEach((card, index) => {
