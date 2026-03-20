@@ -272,6 +272,42 @@
       border-bottom-color: var(--teal);
     }
 
+    .nav-current-step {
+      font-size: 12px;
+      color: var(--gray-400);
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .overview-toggle-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--navy-border);
+      border-radius: 6px;
+      color: var(--gray-300);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .overview-toggle-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    .overview-toggle-btn.active {
+      background: var(--teal-dim);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
     /* Full-Page Claim Summary */
     .claim-summary-page {
       position: fixed;
@@ -1180,6 +1216,7 @@
       display: flex;
       flex: 1;
       overflow: hidden;
+      flex-direction: column;
     }
 
     /* Sidebar */
@@ -2171,6 +2208,7 @@
 
     /* Metric Strip */
     .metric-strip {
+      flex-shrink: 0;
       background: var(--navy-light);
       border-bottom: 1px solid var(--navy-border);
       display: flex;
@@ -2817,6 +2855,764 @@
       margin: 0 auto;
     }
 
+    /* Dedicated step / overview views */
+    .view {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .view.hidden {
+      display: none !important;
+    }
+
+    #view-overview {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    #view-overview.hidden {
+      display: none !important;
+    }
+
+    #view-step {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    #view-step.hidden {
+      display: none !important;
+    }
+
+    .step-main {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: var(--gray-50);
+      min-width: 0;
+    }
+
+    .step-main-workspace {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+      background: var(--gray-50);
+    }
+
+    /* Legacy per-card footer nav — superseded by #stepFooterNav */
+    .step-main-workspace .step-footer {
+      display: none !important;
+    }
+
+    .step-workspace-content {
+      display: block;
+    }
+
+    .step-workspace-content.hidden {
+      display: none !important;
+    }
+
+    .step-main .tools-panel {
+      margin: 0 24px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--navy-border);
+      background: var(--navy-light);
+    }
+
+    .step-main .tools-panel-label {
+      color: var(--teal);
+    }
+
+    .step-tile {
+      display: flex;
+      align-items: stretch;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .step-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    .step-tile.current {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    .step-tile.done {
+      opacity: 0.55;
+    }
+
+    .step-tile.done .tile-title {
+      text-decoration: line-through;
+      color: var(--gray-400);
+    }
+
+    .tile-done-check {
+      display: none;
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      width: 18px;
+      height: 18px;
+      background: var(--emerald);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: white;
+      font-weight: 700;
+      z-index: 2;
+    }
+
+    .step-tile.done .tile-done-check {
+      display: flex;
+    }
+
+    .tile-icon {
+      flex-shrink: 0;
+      width: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gray-50);
+      border-right: 1px solid var(--gray-100);
+      font-size: 22px;
+      padding: 16px 0;
+    }
+
+    .tile-body {
+      flex: 1;
+      padding: 12px 14px;
+      min-width: 0;
+    }
+
+    .tile-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .tile-sub {
+      font-size: 11px;
+      color: var(--gray-500);
+      line-height: 1.35;
+    }
+
+    .tile-ai {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--teal);
+    }
+
+    .tile-ai::before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .tile-badge-col {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .tile-badge {
+      width: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      padding: 12px 6px;
+    }
+
+    .tile-badge-word {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .tile-badge-num {
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .tile-arrow {
+      width: 14px;
+      position: relative;
+    }
+
+    .tile-arrow::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 0, 0% 100%, 100% 50%);
+    }
+
+    .p1 .tile-badge,
+    .p1 .tile-arrow::before { background: #14b8a6; }
+    .p2 .tile-badge,
+    .p2 .tile-arrow::before { background: #10b981; }
+    .p3 .tile-badge,
+    .p3 .tile-arrow::before { background: #f97316; }
+    .p4 .tile-badge,
+    .p4 .tile-arrow::before { background: #f59e0b; }
+    .p5 .tile-badge,
+    .p5 .tile-arrow::before { background: #ef4444; }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .phase-section {
+      margin-bottom: 28px;
+    }
+
+    .phase-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .phase-pill {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 12px;
+      border-radius: 999px;
+      color: white;
+    }
+
+    .pill-1 { background: #14b8a6; }
+    .pill-2 { background: #10b981; }
+    .pill-3 { background: #f97316; }
+    .pill-4 { background: #f59e0b; }
+    .pill-5 { background: #ef4444; }
+
+    .phase-section-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .phase-section-timeline {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-left: auto;
+    }
+
+    .phase-section-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-400);
+    }
+
+    .phase-progress-bar {
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 1px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .phase-progress-fill {
+      height: 100%;
+      border-radius: 1px;
+      transition: width 0.4s ease;
+    }
+
+    .resume-banner {
+      background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(20,184,166,0.05));
+      border: 1px solid rgba(20,184,166,0.35);
+      border-radius: 12px;
+      padding: 18px 24px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .resume-banner.hidden {
+      display: none !important;
+    }
+
+    .resume-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .resume-content {
+      flex: 1;
+    }
+
+    .resume-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+      margin-bottom: 3px;
+    }
+
+    .resume-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 2px;
+    }
+
+    .resume-sub {
+      font-size: 13px;
+      color: var(--gray-400);
+    }
+
+    .resume-btn {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .resume-btn:hover {
+      background: var(--teal-dark);
+    }
+
+    .overview-scroll {
+      flex: 1;
+      overflow-y: auto;
+      background: var(--navy);
+    }
+
+    .overview-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 40px 60px;
+    }
+
+    .overview-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
+      margin-bottom: 6px;
+    }
+
+    .overview-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 30px;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .overview-sub {
+      font-size: 14px;
+      color: var(--gray-400);
+      margin-bottom: 32px;
+    }
+
+    .step-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: var(--navy-light);
+      border-right: 1px solid var(--navy-border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-sidebar-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--navy-border);
+    }
+
+    .step-sidebar-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-500);
+      margin-bottom: 4px;
+    }
+
+    .step-sidebar-progress {
+      font-size: 12px;
+      color: white;
+      font-weight: 700;
+    }
+
+    .sidebar-phase-group {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-phase-label {
+      padding: 8px 16px 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .sidebar-step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar-step-item:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    .sidebar-step-item.active {
+      background: var(--teal-dim);
+      border-left-color: var(--teal);
+    }
+
+    .sidebar-step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gray-600);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--gray-500);
+      flex-shrink: 0;
+    }
+
+    .sidebar-step-item.active .sidebar-step-num {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .sidebar-step-item.done .sidebar-step-num {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      color: white;
+      font-size: 11px;
+    }
+
+    .sidebar-step-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      line-height: 1.35;
+    }
+
+    .sidebar-step-item.active .sidebar-step-label {
+      color: var(--teal);
+    }
+
+    .step-topbar {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .step-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .step-breadcrumb a {
+      color: var(--teal);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .step-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .step-breadcrumb-sep {
+      color: var(--gray-300);
+    }
+
+    .step-breadcrumb-phase {
+      font-weight: 700;
+    }
+
+    .step-breadcrumb-current {
+      color: var(--gray-700);
+      font-weight: 600;
+    }
+
+    .step-topbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mini-progress {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .mini-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-200);
+    }
+
+    .mini-dot.done {
+      background: var(--emerald);
+    }
+
+    .mini-dot.active {
+      background: var(--teal);
+      width: 20px;
+      border-radius: 4px;
+    }
+
+    .step-position-text {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .step-position-text strong {
+      color: var(--gray-900);
+    }
+
+    .step-header {
+      background: white;
+      padding: 24px 32px;
+      border-bottom: 1px solid var(--gray-200);
+      flex-shrink: 0;
+    }
+
+    .step-header-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .step-num-badge {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .snb-word {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .snb-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+
+    .step-header-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .step-phase-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .step-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--gray-900);
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    .step-header .step-subtitle {
+      font-size: 14px;
+      color: var(--gray-600);
+      margin-bottom: 10px;
+    }
+
+    .step-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .step-ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--teal-dim);
+      border: 1px solid rgba(20,184,166,0.3);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--teal);
+    }
+
+    .step-ai-badge::before {
+      content: '✦';
+      font-size: 9px;
+    }
+
+    .step-time-badge {
+      font-size: 11px;
+      color: var(--gray-400);
+      background: var(--gray-100);
+      border-radius: 6px;
+      padding: 4px 10px;
+    }
+
+    .step-footer-nav {
+      background: white;
+      border-top: 1px solid var(--gray-200);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .step-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--gray-300);
+      background: white;
+      color: var(--gray-700);
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .step-nav-btn:hover {
+      border-color: var(--gray-400);
+      background: var(--gray-50);
+    }
+
+    .step-nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .step-complete-btn {
+      margin-left: auto;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+      box-shadow: 0 2px 10px rgba(20,184,166,0.25);
+    }
+
+    .step-complete-btn:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+    }
+
+    .step-complete-btn.already-done {
+      background: var(--emerald);
+      cursor: default;
+    }
+
+    .step-complete-btn.already-done:hover {
+      transform: none;
+    }
+
   </style>
 </head>
 <body>
@@ -3040,6 +3836,10 @@
         <div class="nav-claim-num">Claim #CLM-2024-0847</div>
         <div class="nav-divider"></div>
         <div class="nav-claim-num">Day 85 • Active</div>
+        <div class="nav-divider"></div>
+        <span class="nav-current-step" id="currentStepTitle">Step 1 — Claim Process Guide</span>
+        <div class="nav-divider"></div>
+        <button type="button" class="overview-toggle-btn" id="overviewToggleBtn" onclick="toggleOverview()">⊞ All Steps</button>
       </div>
       <div class="nav-pills">
         <button class="nav-pill" onclick="showSummaryPage()">Claim Summary</button>
@@ -3053,26 +3853,528 @@
   </div>
 
   <!-- Main Layout -->
-  <div class="main-layout">
-    
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="current-step-widget">
-        <div class="current-step-label">CURRENT STEP</div>
-        <div class="current-step-title" id="currentStepTitle">Step 1 — Claim Process Guide</div>
-        <button class="current-step-cta" onclick="scrollToCurrentStep()">Continue →</button>
+  <div class="main-layout" id="main-layout">
+    <div class="metric-strip">
+      <div class="metric-block">
+        <div class="metric-label">Insurer Offered</div>
+        <div class="metric-value" id="metricInsurerOffered">$18,200</div>
+        <div class="metric-sublabel">Initial estimate</div>
       </div>
-
-      <!-- Tools for This Step Panel -->
-      <div class="tools-panel hidden" id="toolsPanel">
-        <div class="tools-panel-label">TOOLS FOR THIS STEP</div>
-        <div class="tools-list" id="toolsList">
-          <!-- Tools will be rendered here dynamically -->
+      <div class="metric-block highlight-blue">
+        <div class="metric-label">Structure Value</div>
+        <div class="metric-value" id="metricStructureValue">$36,750</div>
+        <div class="metric-sublabel">Repairs + upgrades</div>
+      </div>
+      <div class="metric-block highlight-purple">
+        <div class="metric-label">Contents Value</div>
+        <div class="metric-value" id="metricContentsValue">$12,400</div>
+        <div class="metric-sublabel">Personal property</div>
+      </div>
+      <div class="metric-block highlight-orange">
+        <div class="metric-label">ALE Accruing</div>
+        <div class="metric-value" id="metricALEValue">$132/day</div>
+        <div class="metric-sublabel">Living expenses</div>
+      </div>
+      <div class="metric-block highlight-red">
+        <div class="metric-label">Total Recoverable Gap</div>
+        <div class="metric-value" id="metricTotalGap">$35,200</div>
+        <div class="metric-sublabel">Your recovery target</div>
+      </div>
+    </div>
+    <div id="view-overview" class="view">
+      <div class="overview-scroll">
+    <div class="overview-inner">
+      <div class="resume-banner hidden" id="resumeBanner">
+        <div class="resume-icon">▶</div>
+        <div class="resume-content">
+          <div class="resume-label">Pick Up Where You Left Off</div>
+          <div class="resume-title" id="resumeStepTitle">Step 8 — Track & Recover Living Expenses</div>
+          <div class="resume-sub" id="resumePhaseSub">Phase 2 · Document Your Damage</div>
         </div>
+        <button type="button" class="resume-btn" id="resumeBtn" onclick="resumeCurrentStep()">Resume →</button>
       </div>
+      <div class="overview-eyebrow">Your roadmap</div>
+      <h2 class="overview-title">All 19 Steps</h2>
+      <p class="overview-sub">Tap a step to open it. Your current step is highlighted.</p>
+      <section class="phase-section" data-phase="1">
+        <div class="phase-progress-bar"><div class="phase-progress-fill" id="phase-bar-1" style="width:0%"></div></div>
+        <div class="phase-section-header">
+          <span class="phase-pill pill-1">Phase 1</span>
+          <span class="phase-section-name">Set Up Your Claim</span>
+          <span class="phase-section-timeline">Days 1–14</span>
+          <span class="phase-section-count" id="overviewPhaseCount1">0/3</span>
+        </div>
+        <div class="step-grid">
+          <div class="step-tile p1" id="tile-1" onclick="goToStep(1)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📋</div>
+            <div class="tile-body">
+              <div class="tile-title">Understand the Claim Process</div>
+              <div class="tile-sub">Read This First — Before You Call Anyone</div>
+              </div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">01</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
 
-      <!-- Claim Asset Builder -->
-      <div class="claim-asset-builder">
+          <div class="step-tile p1" id="tile-2" onclick="goToStep(2)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📄</div>
+            <div class="tile-body">
+              <div class="tile-title">Review & Understand Your Policy</div>
+              <div class="tile-sub">Upload Your Policy — Find Out What You're Owed</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">02</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p1" id="tile-3" onclick="goToStep(3)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📞</div>
+            <div class="tile-body">
+              <div class="tile-title">Report the Loss the Right Way</div>
+              <div class="tile-sub">Report Using These Exact Words</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">03</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="phase-section" data-phase="2">
+        <div class="phase-progress-bar"><div class="phase-progress-fill" id="phase-bar-2" style="width:0%"></div></div>
+        <div class="phase-section-header">
+          <span class="phase-pill pill-2">Phase 2</span>
+          <span class="phase-section-name">Document Your Damage</span>
+          <span class="phase-section-timeline">Days 7–45</span>
+          <span class="phase-section-count" id="overviewPhaseCount2">0/5</span>
+        </div>
+        <div class="step-grid">
+          <div class="step-tile p2" id="tile-4" onclick="goToStep(4)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📸</div>
+            <div class="tile-body">
+              <div class="tile-title">Document All Damage</div>
+              <div class="tile-sub">Photograph Everything Before You Touch Anything</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">04</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p2" id="tile-5" onclick="goToStep(5)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🏗️</div>
+            <div class="tile-body">
+              <div class="tile-title">Get Accurate Contractor Estimates</div>
+              <div class="tile-sub">Get 2 Contractors to Give Written Estimates</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">05</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p2" id="tile-6" onclick="goToStep(6)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🔍</div>
+            <div class="tile-body">
+              <div class="tile-title">Prepare for the Adjuster Inspection</div>
+              <div class="tile-sub">Do This Before the Adjuster Shows Up</div>
+              </div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">06</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p2" id="tile-7" onclick="goToStep(7)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📦</div>
+            <div class="tile-body">
+              <div class="tile-title">Build Your Contents Inventory</div>
+              <div class="tile-sub">Write Down Every Item Lost or Damaged</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">07</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p2" id="tile-8" onclick="goToStep(8)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">💳</div>
+            <div class="tile-body">
+              <div class="tile-title">Track & Recover Living Expenses</div>
+              <div class="tile-sub">Additional Living Expenses Tracker</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">08</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="phase-section" data-phase="3">
+        <div class="phase-progress-bar"><div class="phase-progress-fill" id="phase-bar-3" style="width:0%"></div></div>
+        <div class="phase-section-header">
+          <span class="phase-pill pill-3">Phase 3</span>
+          <span class="phase-section-name">Find What's Missing</span>
+          <span class="phase-section-timeline">Days 30–60</span>
+          <span class="phase-section-count" id="overviewPhaseCount3">0/3</span>
+        </div>
+        <div class="step-grid">
+          <div class="step-tile p3" id="tile-9" onclick="goToStep(9)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🧮</div>
+            <div class="tile-body">
+              <div class="tile-title">Analyze Your Insurance Estimate</div>
+              <div class="tile-sub">AI Estimate Review Engine</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">09</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p3" id="tile-10" onclick="goToStep(10)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">💰</div>
+            <div class="tile-body">
+              <div class="tile-title">Identify Pricing Gaps & Underpayment</div>
+              <div class="tile-sub">AI Pricing Deviation Analyzer</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">10</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p3" id="tile-11" onclick="goToStep(11)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🔎</div>
+            <div class="tile-body">
+              <div class="tile-title">Identify Missing Coverage & Benefits</div>
+              <div class="tile-sub">Find the Money They Should Have Paid</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">11</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="phase-section" data-phase="4">
+        <div class="phase-progress-bar"><div class="phase-progress-fill" id="phase-bar-4" style="width:0%"></div></div>
+        <div class="phase-section-header">
+          <span class="phase-pill pill-4">Phase 4</span>
+          <span class="phase-section-name">Request the Money</span>
+          <span class="phase-section-timeline">Days 45–90</span>
+          <span class="phase-section-count" id="overviewPhaseCount4">0/3</span>
+        </div>
+        <div class="step-grid">
+          <div class="step-tile p4" id="tile-12" onclick="goToStep(12)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">✉️</div>
+            <div class="tile-body">
+              <div class="tile-title">Submit Your Supplement Request</div>
+              <div class="tile-sub">Send a Written Demand for Everything Underpaid</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">12</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p4" id="tile-13" onclick="goToStep(13)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">⚖️</div>
+            <div class="tile-body">
+              <div class="tile-title">Send Claim Dispute Letters</div>
+              <div class="tile-sub">Put Every Denial and Disagreement in Writing</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">13</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p4" id="tile-14" onclick="goToStep(14)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">💲</div>
+            <div class="tile-body">
+              <div class="tile-title">Recover Depreciation (RCV)</div>
+              <div class="tile-sub">Repairs Done? Claim the Money They Held Back</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">14</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="phase-section" data-phase="5">
+        <div class="phase-progress-bar"><div class="phase-progress-fill" id="phase-bar-5" style="width:0%"></div></div>
+        <div class="phase-section-header">
+          <span class="phase-pill pill-5">Phase 5</span>
+          <span class="phase-section-name">Finish & Get Paid</span>
+          <span class="phase-section-timeline">Days 60–120</span>
+          <span class="phase-section-count" id="overviewPhaseCount5">0/5</span>
+        </div>
+        <div class="step-grid">
+          <div class="step-tile p5" id="tile-15" onclick="goToStep(15)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🤝</div>
+            <div class="tile-body">
+              <div class="tile-title">Negotiate Your Settlement</div>
+              <div class="tile-sub">Counter Their Offer With Your Number — In Writing</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">15</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p5" id="tile-16" onclick="goToStep(16)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">⚡</div>
+            <div class="tile-body">
+              <div class="tile-title">Escalate (Appraisal / Mediation)</div>
+              <div class="tile-sub">If They Still Won't Move — Force a Decision</div>
+              </div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">16</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p5" id="tile-17" onclick="goToStep(17)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">📝</div>
+            <div class="tile-body">
+              <div class="tile-title">Review Final Offer</div>
+              <div class="tile-sub">Read Every Word Before You Sign Anything</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">17</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p5" id="tile-18" onclick="goToStep(18)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">✅</div>
+            <div class="tile-body">
+              <div class="tile-title">Execute Final Recovery</div>
+              <div class="tile-sub">Complete Repairs and Collect Every Dollar</div>
+              </div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">18</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+          <div class="step-tile p5" id="tile-19" onclick="goToStep(19)">
+            <div class="tile-done-check">✓</div>
+            <div class="tile-icon">🏆</div>
+            <div class="tile-body">
+              <div class="tile-title">Close Your Claim</div>
+              <div class="tile-sub">Save Your Records — Legal Value for Years</div>
+              </div>
+            <div class="tile-badge-col">
+              <div class="tile-badge">
+                <div class="tile-badge-word">Step</div>
+                <div class="tile-badge-num">19</div>
+              </div>
+              <div class="tile-arrow"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+      </div>
+    </div>
+    <div id="view-step" class="view hidden">
+    <aside class="step-sidebar" id="stepSidebar">
+      <div class="step-sidebar-header">
+        <div class="step-sidebar-eyebrow">Progress</div>
+        <div class="step-sidebar-progress" id="sidebarProgressText">0 of 19 steps complete</div>
+      </div>
+      <div class="sidebar-phase-group">
+        <div class="sidebar-phase-label" style="color:#14b8a6">Phase 1 · Set Up Your Claim</div>
+          <div class="sidebar-step-item" data-step="1" onclick="goToStep(1)">
+            <div class="sidebar-step-num">01</div>
+            <div class="sidebar-step-label">Claim Process Guide</div>
+          </div>
+          <div class="sidebar-step-item" data-step="2" onclick="goToStep(2)">
+            <div class="sidebar-step-num">02</div>
+            <div class="sidebar-step-label">Review Your Policy</div>
+          </div>
+          <div class="sidebar-step-item" data-step="3" onclick="goToStep(3)">
+            <div class="sidebar-step-num">03</div>
+            <div class="sidebar-step-label">Report the Loss</div>
+          </div>
+      </div>
+      <div class="sidebar-phase-group">
+        <div class="sidebar-phase-label" style="color:#10b981">Phase 2 · Document Your Damage</div>
+          <div class="sidebar-step-item" data-step="4" onclick="goToStep(4)">
+            <div class="sidebar-step-num">04</div>
+            <div class="sidebar-step-label">Document Damage</div>
+          </div>
+          <div class="sidebar-step-item" data-step="5" onclick="goToStep(5)">
+            <div class="sidebar-step-num">05</div>
+            <div class="sidebar-step-label">Contractor Estimates</div>
+          </div>
+          <div class="sidebar-step-item" data-step="6" onclick="goToStep(6)">
+            <div class="sidebar-step-num">06</div>
+            <div class="sidebar-step-label">Prepare for Adjuster</div>
+          </div>
+          <div class="sidebar-step-item" data-step="7" onclick="goToStep(7)">
+            <div class="sidebar-step-num">07</div>
+            <div class="sidebar-step-label">Contents Inventory</div>
+          </div>
+          <div class="sidebar-step-item" data-step="8" onclick="goToStep(8)">
+            <div class="sidebar-step-num">08</div>
+            <div class="sidebar-step-label">Track Living Expenses</div>
+          </div>
+      </div>
+      <div class="sidebar-phase-group">
+        <div class="sidebar-phase-label" style="color:#f97316">Phase 3 · Find What's Missing</div>
+          <div class="sidebar-step-item" data-step="9" onclick="goToStep(9)">
+            <div class="sidebar-step-num">09</div>
+            <div class="sidebar-step-label">Analyze Estimate</div>
+          </div>
+          <div class="sidebar-step-item" data-step="10" onclick="goToStep(10)">
+            <div class="sidebar-step-num">10</div>
+            <div class="sidebar-step-label">Identify Pricing Gaps</div>
+          </div>
+          <div class="sidebar-step-item" data-step="11" onclick="goToStep(11)">
+            <div class="sidebar-step-num">11</div>
+            <div class="sidebar-step-label">Coverage Gaps</div>
+          </div>
+      </div>
+      <div class="sidebar-phase-group">
+        <div class="sidebar-phase-label" style="color:#f59e0b">Phase 4 · Request the Money</div>
+          <div class="sidebar-step-item" data-step="12" onclick="goToStep(12)">
+            <div class="sidebar-step-num">12</div>
+            <div class="sidebar-step-label">Submit Supplement</div>
+          </div>
+          <div class="sidebar-step-item" data-step="13" onclick="goToStep(13)">
+            <div class="sidebar-step-num">13</div>
+            <div class="sidebar-step-label">Dispute Letters</div>
+          </div>
+          <div class="sidebar-step-item" data-step="14" onclick="goToStep(14)">
+            <div class="sidebar-step-num">14</div>
+            <div class="sidebar-step-label">Recover Depreciation</div>
+          </div>
+      </div>
+      <div class="sidebar-phase-group">
+        <div class="sidebar-phase-label" style="color:#ef4444">Phase 5 · Finish & Get Paid</div>
+          <div class="sidebar-step-item" data-step="15" onclick="goToStep(15)">
+            <div class="sidebar-step-num">15</div>
+            <div class="sidebar-step-label">Negotiate Settlement</div>
+          </div>
+          <div class="sidebar-step-item" data-step="16" onclick="goToStep(16)">
+            <div class="sidebar-step-num">16</div>
+            <div class="sidebar-step-label">Escalate if Needed</div>
+          </div>
+          <div class="sidebar-step-item" data-step="17" onclick="goToStep(17)">
+            <div class="sidebar-step-num">17</div>
+            <div class="sidebar-step-label">Review Final Offer</div>
+          </div>
+          <div class="sidebar-step-item" data-step="18" onclick="goToStep(18)">
+            <div class="sidebar-step-num">18</div>
+            <div class="sidebar-step-label">Execute Recovery</div>
+          </div>
+          <div class="sidebar-step-item" data-step="19" onclick="goToStep(19)">
+            <div class="sidebar-step-num">19</div>
+            <div class="sidebar-step-label">Close the Claim</div>
+          </div>
+      </div>
+      <div class="claim-asset-builder" style="margin-top: auto; border-top: 1px solid var(--navy-border);">
         <div class="asset-builder-title">Your Claim File</div>
         <div class="asset-builder-grid">
           <div class="asset-stat">
@@ -3092,198 +4394,20 @@
             <div class="asset-stat-label">Total Value</div>
           </div>
         </div>
-        <button class="step-action-button" style="margin-top: 16px; width: 100%; font-size: 13px; padding: 10px 16px;" onclick="generateFullClaimPackage()">Generate Full Package</button>
-      </div>
-
-      <div class="sidebar-title">The 19 Step System</div>
-
-      <div class="phase-group active expanded" onclick="togglePhase(this)">
-        <div class="phase-header">
-          <div class="phase-name">Set Up Your Claim</div>
-          <div class="phase-count">0/3</div>
-        </div>
-        <div class="phase-steps">
-          <div class="step-item active" onclick="goToStep(1)">
-            <div class="step-number">01</div>
-            <div class="step-title">Claim Process Guide</div>
-          </div>
-          <div class="step-item" onclick="goToStep(2)">
-            <div class="step-number">02</div>
-            <div class="step-title">Review Your Policy</div>
-          </div>
-          <div class="step-item" onclick="goToStep(3)">
-            <div class="step-number">03</div>
-            <div class="step-title">Report the Loss</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="phase-group" onclick="togglePhase(this)">
-        <div class="phase-header">
-          <div class="phase-name">Document Your Damage</div>
-          <div class="phase-count">0/5</div>
-        </div>
-        <div class="phase-steps">
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(4)">
-            <div class="step-number">04</div>
-            <div class="step-title">Document Damage</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(5)">
-            <div class="step-number">05</div>
-            <div class="step-title">Get Contractor Estimates</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(6)">
-            <div class="step-number">06</div>
-            <div class="step-title">Prepare for Adjuster</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(7)">
-            <div class="step-number">07</div>
-            <div class="step-title">Contents Inventory</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(8)">
-            <div class="step-number">08</div>
-            <div class="step-title">Track Living Expenses</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="phase-group" onclick="togglePhase(this)">
-        <div class="phase-header">
-          <div class="phase-name">Find What's Missing</div>
-          <div class="phase-count">0/3</div>
-        </div>
-        <div class="phase-steps">
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(9)">
-            <div class="step-number">09</div>
-            <div class="step-title">Analyze Insurance Estimate</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(10)">
-            <div class="step-number">10</div>
-            <div class="step-title">Identify Pricing Gaps</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(11)">
-            <div class="step-number">11</div>
-            <div class="step-title">Identify Coverage Gaps</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="phase-group" onclick="togglePhase(this)">
-        <div class="phase-header">
-          <div class="phase-name">Request the Money</div>
-          <div class="phase-count">0/3</div>
-        </div>
-        <div class="phase-steps">
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(12)">
-            <div class="step-number">12</div>
-            <div class="step-title">Submit Supplement</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(13)">
-            <div class="step-number">13</div>
-            <div class="step-title">Send Dispute Letters</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(14)">
-            <div class="step-number">14</div>
-            <div class="step-title">Recover Depreciation</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="phase-group" onclick="togglePhase(this)">
-        <div class="phase-header">
-          <div class="phase-name">Finish & Get Paid</div>
-          <div class="phase-count">0/5</div>
-        </div>
-        <div class="phase-steps">
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(15)">
-            <div class="step-number">15</div>
-            <div class="step-title">Negotiate Settlement</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(16)">
-            <div class="step-number">16</div>
-            <div class="step-title">Escalate if Needed</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(17)">
-            <div class="step-number">17</div>
-            <div class="step-title">Review Final Offer</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(18)">
-            <div class="step-number">18</div>
-            <div class="step-title">Execute Recovery</div>
-          </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(19)">
-            <div class="step-number">19</div>
-            <div class="step-title">Close the Claim</div>
-          </div>
-        </div>
+        <button type="button" class="step-action-button" style="margin-top: 16px; width: 100%; font-size: 13px; padding: 10px 16px;" onclick="generateFullClaimPackage()">Generate Full Package</button>
       </div>
     </aside>
-
-    <!-- Content Area -->
-    <main class="content-area">
-
-      <!-- Roadmap Strip -->
-      <!-- Metric Strip -->
-      <div class="metric-strip">
-        <div class="metric-block">
-          <div class="metric-label">Insurer Offered</div>
-          <div class="metric-value" id="metricInsurerOffered">$18,200</div>
-          <div class="metric-sublabel">Initial estimate</div>
-        </div>
-        <div class="metric-block highlight-blue">
-          <div class="metric-label">Structure Value</div>
-          <div class="metric-value" id="metricStructureValue">$36,750</div>
-          <div class="metric-sublabel">Repairs + upgrades</div>
-        </div>
-        <div class="metric-block highlight-purple">
-          <div class="metric-label">Contents Value</div>
-          <div class="metric-value" id="metricContentsValue">$12,400</div>
-          <div class="metric-sublabel">Personal property</div>
-        </div>
-        <div class="metric-block highlight-orange">
-          <div class="metric-label">ALE Accruing</div>
-          <div class="metric-value" id="metricALEValue">$132/day</div>
-          <div class="metric-sublabel">Living expenses</div>
-        </div>
-        <div class="metric-block highlight-red">
-          <div class="metric-label">Total Recoverable Gap</div>
-          <div class="metric-value" id="metricTotalGap">$35,200</div>
-          <div class="metric-sublabel">Your recovery target</div>
-        </div>
+    <main class="step-main" id="stepMain">
+      <div class="tools-panel hidden" id="toolsPanel">
+        <div class="tools-panel-label">TOOLS FOR THIS STEP</div>
+        <div class="tools-list" id="toolsList"></div>
       </div>
-
-      <!-- Step System Title -->
-      <div class="step-system-header">
-        <h1 class="step-system-title">THE STEP-BY-STEP CLAIM PROCESS</h1>
-        <p class="step-system-subtitle">Follow this system to document, prove, and recover your full claim value</p>
-      </div>
-
-      <!-- Step Cards -->
-      <div class="step-cards">
-        
-        <!-- Phase 1 Divider -->
-        <div class="phase-divider">
-          <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: #14b8a6;">PHASE 1 OF 5 — SET UP YOUR CLAIM</div>
-          <div class="phase-divider-line"></div>
-        </div>
-
-        <!-- Step 1 -->
-        <div class="step-card active-card collapsed" id="step-1">
-          <div class="step-card-header" onclick="toggleStep('step-1')">
-            <div class="card-number">01</div>
-            <div class="card-text">
-              <div class="card-title">Initialize Your Claim</div>
-              <div class="card-subtitle">Enter Basic Claim Information</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status in-progress">In Progress</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+      <div class="step-topbar" id="stepTopbar"></div>
+      <div class="step-header" id="stepHeader"></div>
+      <div class="step-main-workspace" id="stepWorkspace">
+        <div id="step-workspace-1" class="step-workspace-content hidden">
           <div class="step-body">
-            <!-- DO THIS NOW -->
+<!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Enter your claim details to initialize the system</div>
@@ -3361,35 +4485,9 @@
 
             <div class="section-label">What Happens Next</div>
             <p class="section-text">Once initialized, the system will track your progress across all 19 steps, calculate your total recoverable value across structure, contents, and living expenses, and show you exactly what to do at each stage.</p>
-          </div>
 
-          <!-- Step Results Display -->
-          <div class="step-results hidden" id="step-1-results">
-            <div class="results-header">
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div class="results-icon">✓</div>
-                <div class="results-title">Step Results</div>
-              </div>
-              <button class="results-close" onclick="clearStepResults(1)">✕</button>
-            </div>
-            <div class="results-body" id="step-1-results-body"></div>
-          </div>
-          <div class="step-footer">
-            <div class="footer-nav">
-              <button class="nav-button" disabled style="opacity: 0.4;">← Step 0</button>
-              <button class="nav-button" onclick="goToStep(2)">Step 2 →</button>
-            </div>
-            <button class="complete-button" onclick="completeStep(1)">Mark Complete →</button>
-          </div>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="step-card collapsed step-locked" id="step-2">
-          <div class="step-card-header" onclick="toggleStep('step-2')">
-            <div class="card-number">02</div>
-            <div class="card-text">
-              <div class="card-title">Review & Understand Your Policy</div>
-            <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Capture the evidence needed to support full payment.</p>
+<div class="ccc-step1-orphan">
+<p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Capture the evidence needed to support full payment.</p>
             
             <ul class="provides-list">
               <li class="provides-item">
@@ -3838,6 +4936,18 @@
               <div class="ai-text">The single biggest mistake policyholders make is accepting the insurer's first offer without analysis. Steps 8-10 will show you exactly how much you're being underpaid — but only if you complete the documentation steps first. Follow the process in order.</div>
             </div>
           </div>
+</div>
+          </div>
+          <div class="step-results hidden" id="step-1-results">
+            <div class="results-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Step Results</div>
+              </div>
+              <button class="results-close" onclick="clearStepResults(1)">✕</button>
+            </div>
+            <div class="results-body" id="step-1-results-body"></div>
+          </div>
           <div class="step-footer">
             <div class="footer-nav">
               <button class="nav-button" disabled style="opacity: 0.4;">← Step 0</button>
@@ -3846,24 +4956,9 @@
             <button class="complete-button" onclick="completeStep(1)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 2 -->
-        <div class="step-card collapsed step-locked" id="step-2">
-          <div class="step-card-header" onclick="toggleStep('step-2')">
-            <div class="card-number">02</div>
-            <div class="card-text">
-              <div class="card-title">Review & Understand Your Policy</div>
-              <div class="card-subtitle">Upload Your Policy — Find Out What You're Actually Owed</div>
-              <div class="ai-badge">AI Policy Analyzer</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-2" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -3933,23 +5028,9 @@
             <button class="complete-button" onclick="completeStep(2)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 3 -->
-        <div class="step-card collapsed step-locked" id="step-3">
-          <div class="step-card-header" onclick="toggleStep('step-3')">
-            <div class="card-number">03</div>
-            <div class="card-text">
-              <div class="card-title">Report the Loss the Right Way</div>
-              <div class="card-subtitle">Report the Loss Using These Exact Words</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-3" class="step-workspace-content hidden">
           <div class="step-body">
-            <!-- DO THIS NOW -->
+<!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Generate your loss notification using the exact language that protects your rights</div>
@@ -4025,30 +5106,9 @@
             <button class="complete-button" onclick="completeStep(3)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Phase 2 Divider -->
-        <div class="phase-divider">
-          <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: #10b981;">PHASE 2 OF 5 — DOCUMENT YOUR DAMAGE</div>
-          <div class="phase-divider-line"></div>
-        </div>
-
-        <!-- Step 4 -->
-        <div class="step-card collapsed step-locked" id="step-4">
-          <div class="step-card-header" onclick="toggleStep('step-4')">
-            <div class="card-number">04</div>
-            <div class="card-text">
-              <div class="card-title">Document All Damage</div>
-              <div class="card-subtitle">Photograph Everything Before You Touch Anything</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-4" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4101,24 +5161,9 @@
             <button class="complete-button" onclick="completeStep(4)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 5 -->
-        <div class="step-card collapsed step-locked" id="step-5">
-          <div class="step-card-header" onclick="toggleStep('step-5')">
-            <div class="card-number">05</div>
-            <div class="card-text">
-              <div class="card-title">Get Accurate Contractor Estimates</div>
-              <div class="card-subtitle">Get 2 Contractors to Give You Written Estimates</div>
-              <div class="ai-badge">Contractor Scope Validation AI</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-5" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4186,23 +5231,9 @@
             <button class="complete-button" onclick="completeStep(5)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 6 -->
-        <div class="step-card collapsed step-locked" id="step-6">
-          <div class="step-card-header" onclick="toggleStep('step-6')">
-            <div class="card-number">06</div>
-            <div class="card-text">
-              <div class="card-title">Prepare for the Adjuster Inspection</div>
-              <div class="card-subtitle">Do This Before the Adjuster Shows Up</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-6" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4251,24 +5282,9 @@
             <button class="complete-button" onclick="completeStep(6)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 7 -->
-        <div class="step-card collapsed step-locked" id="step-7">
-          <div class="step-card-header" onclick="toggleStep('step-7')">
-            <div class="card-number">07</div>
-            <div class="card-text">
-              <div class="card-title">Build Your Contents Inventory</div>
-              <div class="card-subtitle">Write Down Every Item You Lost or Was Damaged</div>
-              <div class="ai-badge">AI Contents Valuation Engine</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-7" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4348,24 +5364,9 @@
             <button class="complete-button" onclick="completeStep(7)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 8 (NEW - ALE) -->
-        <div class="step-card collapsed step-locked" id="step-8">
-          <div class="step-card-header" onclick="toggleStep('step-8')">
-            <div class="card-number">08</div>
-            <div class="card-text">
-              <div class="card-title">Track & Recover Living Expenses</div>
-              <div class="card-subtitle">Additional Living Expenses Tracker</div>
-              <div class="ai-badge">AI ALE Tracking System</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-8" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4493,6 +5494,14 @@
               <div class="results-body" id="step-8-results-body"></div>
             </div>
           </div>
+          <div class="step-results hidden" id="step-8-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">ALE Tracked</div>
+                <button class="results-close" onclick="clearStepResults(8)">×</button>
+              </div>
+              <div class="results-body" id="step-8-results-body"></div>
+            </div>
           <div class="step-footer">
             <div class="footer-nav">
               <button class="nav-button" onclick="goToStep(7)">← Step 7</button>
@@ -4501,31 +5510,9 @@
             <button class="complete-button" onclick="completeStep(8)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Phase 3 Divider -->
-        <div class="phase-divider">
-          <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: #f97316;">PHASE 3 OF 5 — FIND WHAT'S MISSING</div>
-          <div class="phase-divider-line"></div>
-        </div>
-
-        <!-- Step 9 -->
-        <div class="step-card collapsed step-locked" id="step-9">
-          <div class="step-card-header" onclick="toggleStep('step-9')">
-            <div class="card-number">09</div>
-            <div class="card-text">
-              <div class="card-title">Analyze Your Insurance Estimate</div>
-              <div class="card-subtitle">AI ESTIMATE REVIEW ENGINE</div>
-              <div class="ai-badge">AI Estimate Review Engine</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-9" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4606,24 +5593,9 @@
             <button class="complete-button" onclick="completeStep(9)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 10 -->
-        <div class="step-card collapsed step-locked" id="step-10">
-          <div class="step-card-header" onclick="toggleStep('step-10')">
-            <div class="card-number">10</div>
-            <div class="card-text">
-              <div class="card-title">Identify Pricing Gaps & Underpayment</div>
-              <div class="card-subtitle">AI PRICING DEVIATION ANALYZER</div>
-              <div class="ai-badge">AI Pricing Deviation Analyzer</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-10" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4648,24 +5620,9 @@
             <button class="complete-button" onclick="completeStep(10)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 11 -->
-        <div class="step-card collapsed step-locked" id="step-11">
-          <div class="step-card-header" onclick="toggleStep('step-11')">
-            <div class="card-number">11</div>
-            <div class="card-text">
-              <div class="card-title">Identify Missing Coverage & Benefits</div>
-              <div class="card-subtitle">Find the Money They Should Have Paid But Didn't</div>
-              <div class="ai-badge">AI Coverage Gap Detector</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-11" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4689,31 +5646,9 @@
             <button class="complete-button" onclick="completeStep(11)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Phase 4 Divider -->
-        <div class="phase-divider">
-          <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: #f59e0b;">PHASE 4 OF 5 — REQUEST THE MONEY</div>
-          <div class="phase-divider-line"></div>
-        </div>
-
-        <!-- Step 12 -->
-        <div class="step-card collapsed step-locked" id="step-12">
-          <div class="step-card-header" onclick="toggleStep('step-12')">
-            <div class="card-number">12</div>
-            <div class="card-text">
-              <div class="card-title">Submit Your Supplement Request</div>
-              <div class="card-subtitle">Send a Written Demand for Everything They Underpaid</div>
-              <div class="ai-badge">AI Supplement Letter Generator</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-12" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4737,24 +5672,9 @@
             <button class="complete-button" onclick="completeStep(12)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 13 -->
-        <div class="step-card collapsed step-locked" id="step-13">
-          <div class="step-card-header" onclick="toggleStep('step-13')">
-            <div class="card-number">13</div>
-            <div class="card-text">
-              <div class="card-title">Send Claim Dispute Letters</div>
-              <div class="card-subtitle">Put Every Denial and Disagreement in Writing</div>
-              <div class="ai-badge">AI Demand Letter Generator</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-13" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4778,23 +5698,9 @@
             <button class="complete-button" onclick="completeStep(13)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 14 -->
-        <div class="step-card collapsed step-locked" id="step-14">
-          <div class="step-card-header" onclick="toggleStep('step-14')">
-            <div class="card-number">14</div>
-            <div class="card-text">
-              <div class="card-title">Recover Depreciation (RCV)</div>
-              <div class="card-subtitle">Repairs Done? Now Claim the Money They Held Back</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-14" class="step-workspace-content hidden">
           <div class="step-body">
-            <!-- DO THIS NOW -->
+<!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Submit RCV recovery request to claim depreciation holdback</div>
@@ -4816,31 +5722,9 @@
             <button class="complete-button" onclick="completeStep(14)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Phase 5 Divider -->
-        <div class="phase-divider">
-          <div class="phase-divider-line"></div>
-          <div class="phase-divider-label" style="color: #ef4444;">PHASE 5 OF 5 — FINISH & GET PAID</div>
-          <div class="phase-divider-line"></div>
-        </div>
-
-        <!-- Step 15 -->
-        <div class="step-card collapsed step-locked" id="step-15">
-          <div class="step-card-header" onclick="toggleStep('step-15')">
-            <div class="card-number">15</div>
-            <div class="card-text">
-              <div class="card-title">Negotiate Your Settlement</div>
-              <div class="card-subtitle">Counter Their Offer With Your Number — In Writing</div>
-              <div class="ai-badge">AI Negotiation Strategy Tool</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-15" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4864,24 +5748,9 @@
             <button class="complete-button" onclick="completeStep(15)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 16 — Settlement review -->
-        <div class="step-card collapsed step-locked" id="step-16">
-          <div class="step-card-header" onclick="toggleStep('step-16')">
-            <div class="card-number">16</div>
-            <div class="card-text">
-              <div class="card-title">Escalate (Appraisal / Mediation)</div>
-              <div class="card-subtitle">If They Still Won't Move — Use This to Force a Decision</div>
-              <div class="ai-badge">AI Escalation Evaluator</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-16" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4905,24 +5774,9 @@
             <button class="complete-button" onclick="completeStep(16)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 17 -->
-        <div class="step-card collapsed step-locked" id="step-17">
-          <div class="step-card-header" onclick="toggleStep('step-17')">
-            <div class="card-number">17</div>
-            <div class="card-text">
-              <div class="card-title">Review Final Offer</div>
-              <div class="card-subtitle">Read Every Word of This Offer Before You Sign Anything</div>
-              <div class="ai-badge">AI Settlement Review Tool</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-17" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -4946,23 +5800,9 @@
             <button class="complete-button" onclick="completeStep(17)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 18 -->
-        <div class="step-card collapsed step-locked" id="step-18">
-          <div class="step-card-header" onclick="toggleStep('step-18')">
-            <div class="card-number">18</div>
-            <div class="card-text">
-              <div class="card-title">Execute Final Recovery</div>
-              <div class="card-subtitle">Complete Repairs and Collect Every Dollar You're Owed</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-18" class="step-workspace-content hidden">
           <div class="step-body">
-            <!-- DO THIS NOW -->
+<!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Track and confirm all payments received</div>
@@ -4984,24 +5824,9 @@
             <button class="complete-button" onclick="completeStep(18)">Mark Complete →</button>
           </div>
         </div>
-
-        <!-- Step 19 -->
-        <div class="step-card collapsed step-locked" id="step-19">
-          <div class="step-card-header" onclick="toggleStep('step-19')">
-            <div class="card-number">19</div>
-            <div class="card-text">
-              <div class="card-title">Close Your Claim</div>
-              <div class="card-subtitle">Save Your Records — This File Has Legal Value for Years</div>
-              <div class="ai-badge">AI Release Reviewer</div>
-            </div>
-            <div class="card-right">
-              <div class="card-status pending">Pending</div>
-              <span class="card-lock">🔒</span>
-              <span class="card-chevron">▼</span>
-            </div>
-          </div>
+        <div id="step-workspace-19" class="step-workspace-content hidden">
           <div class="step-body">
-            <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
@@ -5025,10 +5850,11 @@
             <button class="complete-button" onclick="completeStep(19)">Mark Complete →</button>
           </div>
         </div>
-
       </div>
-
+      <div class="step-footer-nav" id="stepFooterNav"></div>
     </main>
+    </div>
+
 
     <!-- Claim Activity Log Panel (Overlay) -->
     <div class="claim-journal-panel">
@@ -5248,6 +6074,40 @@
     let completedSteps = [];
     let currentStep = 1;
     let claimJournal = [];
+
+    const PHASES = [
+      { num: 1, name: 'Set Up Your Claim', color: '#14b8a6', start: 1, end: 3 },
+      { num: 2, name: 'Document Your Damage', color: '#10b981', start: 4, end: 8 },
+      { num: 3, name: "Find What's Missing", color: '#f97316', start: 9, end: 11 },
+      { num: 4, name: 'Request the Money', color: '#f59e0b', start: 12, end: 14 },
+      { num: 5, name: 'Finish & Get Paid', color: '#ef4444', start: 15, end: 19 }
+    ];
+
+    function getPhaseForStep(n) {
+      return PHASES.find(p => n >= p.start && n <= p.end) || PHASES[0];
+    }
+
+    const STEP_META = {
+      1: { title: 'Understand the Claim Process', subtitle: 'Read This First — Before You Call Anyone', short: 'Claim Guide', time: '5 min read' },
+      2: { title: 'Review & Understand Your Policy', subtitle: "Upload Your Policy — Find Out What You're Owed", short: 'Review Policy', time: '10–15 min' },
+      3: { title: 'Report the Loss the Right Way', subtitle: 'Report Using These Exact Words', short: 'Report the Loss', time: '5 min' },
+      4: { title: 'Document All Damage', subtitle: 'Photograph Everything Before You Touch Anything', short: 'Document Damage', time: '15–20 min' },
+      5: { title: 'Get Accurate Contractor Estimates', subtitle: 'Get 2 Contractors to Give Written Estimates', short: 'Contractor Est.', time: '10–15 min' },
+      6: { title: 'Prepare for the Adjuster Inspection', subtitle: 'Do This Before the Adjuster Shows Up', short: 'Adjuster Prep', time: '10 min' },
+      7: { title: 'Build Your Contents Inventory', subtitle: 'Write Down Every Item Lost or Damaged', short: 'Contents Inventory', time: '20–30 min' },
+      8: { title: 'Track & Recover Living Expenses', subtitle: 'Additional Living Expenses Tracker', short: 'Track ALE', time: '5 min/day' },
+      9: { title: 'Analyze Your Insurance Estimate', subtitle: 'AI Estimate Review Engine', short: 'Analyze Estimate', time: '10–15 min' },
+      10: { title: 'Identify Pricing Gaps & Underpayment', subtitle: 'AI Pricing Deviation Analyzer', short: 'Pricing Gaps', time: '10 min' },
+      11: { title: 'Identify Missing Coverage & Benefits', subtitle: 'Find the Money They Should Have Paid', short: 'Coverage Gaps', time: '10 min' },
+      12: { title: 'Submit Your Supplement Request', subtitle: 'Send a Written Demand for Everything Underpaid', short: 'Submit Supplement', time: '10–15 min' },
+      13: { title: 'Send Claim Dispute Letters', subtitle: 'Put Every Denial and Disagreement in Writing', short: 'Dispute Letters', time: '10 min' },
+      14: { title: 'Recover Depreciation (RCV)', subtitle: "Repairs Done? Claim the Money They Held Back", short: 'Recover RCV', time: '5 min' },
+      15: { title: 'Negotiate Your Settlement', subtitle: 'Counter Their Offer With Your Number — In Writing', short: 'Negotiate', time: '15–20 min' },
+      16: { title: 'Escalate (Appraisal / Mediation)', subtitle: "If They Still Won't Move — Force a Decision", short: 'Escalate', time: '10 min' },
+      17: { title: 'Review Final Offer', subtitle: 'Read Every Word Before You Sign Anything', short: 'Final Offer', time: '15 min' },
+      18: { title: 'Execute Final Recovery', subtitle: 'Complete Repairs and Collect Every Dollar', short: 'Execute Recovery', time: '10 min' },
+      19: { title: 'Close Your Claim', subtitle: 'Save Your Records — Legal Value for Years', short: 'Close Claim', time: '10 min' }
+    };
 
     const stepTools = {
       2: [
@@ -5544,12 +6404,9 @@
       // Mark that user has seen summary
       localStorage.setItem('ccc_summary_viewed', 'true');
       
-      // Scroll to current step
       setTimeout(() => {
-        const targetCard = document.getElementById('step-' + currentStep);
-        if (targetCard) {
-          targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        showStepView();
+        goToStep(currentStep);
       }, 100);
     }
 
@@ -5608,66 +6465,11 @@
       // Roadmap strip removed - no position label to update
     }
 
-    function applyCompletedVisualForStep(num) {
-      const card = document.getElementById('step-' + num);
-      if (!card) return;
-      card.classList.remove('active-card', 'step-locked');
-      card.classList.add('collapsed', 'step-done');
-      const status = card.querySelector('.card-status');
-      if (status) {
-        status.textContent = 'Complete';
-        status.classList.remove('in-progress', 'pending');
-        status.style.background = 'rgba(16,185,129,0.15)';
-        status.style.color = 'var(--emerald)';
-      }
-      const cardNumber = card.querySelector('.card-number');
-      if (cardNumber) cardNumber.textContent = '✓';
-      const cardLock = card.querySelector('.card-lock');
-      if (cardLock) cardLock.style.display = 'none';
-    }
+    function applyCompletedVisualForStep(num) {}
 
     function restoreStepUiFromStorage() {
-      completedSteps.forEach(n => {
-        applyCompletedVisualForStep(n);
-        document.querySelectorAll('.step-item').forEach(item => {
-          const oc = item.getAttribute('onclick') || '';
-          if (oc.includes(`goToStep(${n})`)) item.classList.add('done');
-        });
-        // Roadmap tiles removed
-      });
-
-      document.querySelectorAll('.step-card').forEach((card, index) => {
-        const stepNum = index + 1;
-        if (completedSteps.includes(stepNum)) return;
-        card.classList.add('collapsed');
-        card.classList.remove('active-card');
-        if (stepNum > currentStep) {
-          card.classList.add('step-locked');
-        } else {
-          card.classList.remove('step-locked');
-        }
-      });
-
-      const cur = document.getElementById('step-' + currentStep);
-      if (cur && !completedSteps.includes(currentStep)) {
-        cur.classList.remove('collapsed', 'step-locked');
-        cur.classList.add('active-card');
-        const st = cur.querySelector('.card-status');
-        if (st && st.textContent !== 'Complete') {
-          st.textContent = 'In Progress';
-          st.classList.remove('pending');
-          st.classList.add('in-progress');
-        }
-        const lock = cur.querySelector('.card-lock');
-        if (lock) lock.style.display = 'none';
-      }
-
-      document.querySelectorAll('.step-item').forEach(item => item.classList.remove('active'));
-      const sidebarSteps = document.querySelectorAll('.step-item');
-      if (sidebarSteps[currentStep - 1]) {
-        sidebarSteps[currentStep - 1].classList.add('active');
-      }
-
+      updateOverviewGrid();
+      renderStepPage(currentStep);
       syncRoadmapActiveStep(currentStep);
       updateCurrentStepWidget(currentStep);
       updateDoThisNow(currentStep);
@@ -7049,9 +7851,11 @@ Generated using expert claim methodology and structured for carrier review`;
     // Show next step banner
     function showNextStepBanner(stepNum) {
       const banner = document.getElementById('nextStepBanner');
+      if (!banner) return;
       const title = document.getElementById('nextStepTitle');
       const desc = document.getElementById('nextStepDesc');
       const button = document.getElementById('nextStepButton');
+      if (!title || !desc || !button) return;
 
       const nextStep = stepNum + 1;
       const stepTitles = {
@@ -7085,9 +7889,9 @@ Generated using expert claim methodology and structured for carrier review`;
 
       banner.classList.remove('hidden');
       
-      // Scroll banner into view
       setTimeout(() => {
-        banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const ws = document.getElementById('stepWorkspace');
+        if (ws) ws.scrollTo({ top: ws.scrollHeight, behavior: 'smooth' });
       }, 300);
     }
 
@@ -7095,7 +7899,8 @@ Generated using expert claim methodology and structured for carrier review`;
     function continueToNextStep() {
       const nextStep = currentStep + 1;
       goToStep(nextStep);
-      document.getElementById('nextStepBanner').classList.add('hidden');
+      const nb = document.getElementById('nextStepBanner');
+      if (nb) nb.classList.add('hidden');
     }
 
     // Simulate policy upload (for Step 2)
@@ -7625,45 +8430,176 @@ Generated using expert claim methodology and structured for carrier review`;
 
     function closeModal() {
       document.getElementById('welcomeModal').classList.add('hidden');
-      document.getElementById('step-1').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      
+      currentStep = 1;
+      renderStepPage(1);
+      updateOverviewGrid();
+      showOverviewView();
     }
 
-    function toggleStep(id) {
-      const card = document.getElementById(id);
-      const stepNum = parseInt(id.replace('step-', ''));
-      const isCollapsing = !card.classList.contains('collapsed');
-
-      // If opening this card, collapse all others except step-done
-      if (card.classList.contains('collapsed')) {
-        document.querySelectorAll('.step-card').forEach(c => {
-          if (!c.classList.contains('step-done')) {
-            c.classList.add('collapsed');
-          }
-        });
-      }
-
-      card.classList.toggle('collapsed');
-
-      // If opening, update tools panel
-      if (!isCollapsing) {
-        currentStep = stepNum;
-        renderToolsPanel(stepNum);
-        updateCurrentStepWidget(stepNum);
-      }
-
-      // Track activity
-      const stepTitle = card.querySelector('.card-subtitle')?.textContent || `Step ${stepNum}`;
-      trackActivity(isCollapsing ? 'step_collapse' : 'step_open', { stepNum, stepTitle });
+    function showStepView() {
+      document.getElementById('view-overview').classList.add('hidden');
+      document.getElementById('view-step').classList.remove('hidden');
+      const btn = document.getElementById('overviewToggleBtn');
+      if (btn) btn.classList.remove('active');
     }
 
-    function togglePhase(phaseGroup) {
-      const isExpanding = !phaseGroup.classList.contains('expanded');
-      phaseGroup.classList.toggle('expanded');
-      
-      // Track activity
-      const phaseName = phaseGroup.querySelector('.phase-name')?.textContent || 'Phase';
-      trackActivity(isExpanding ? 'phase_expand' : 'phase_collapse', { phaseName });
+    function showOverviewView() {
+      document.getElementById('view-step').classList.add('hidden');
+      document.getElementById('view-overview').classList.remove('hidden');
+      const btn = document.getElementById('overviewToggleBtn');
+      if (btn) btn.classList.add('active');
+      updateOverviewGrid();
+    }
+
+    function toggleOverview() {
+      const overview = document.getElementById('view-overview');
+      if (overview.classList.contains('hidden')) showOverviewView();
+      else showStepView();
+    }
+
+    function resumeCurrentStep() {
+      goToStep(currentStep);
+    }
+
+    function renderStepPage(stepNum) {
+      renderStepSidebar(stepNum);
+      renderStepTopbar(stepNum);
+      renderStepHeader(stepNum);
+      renderToolsPanel(stepNum);
+      renderStepWorkspace(stepNum);
+      renderStepFooter(stepNum);
+    }
+
+    function renderStepSidebar(stepNum) {
+      document.querySelectorAll('.sidebar-step-item').forEach(item => {
+        const n = parseInt(item.dataset.step, 10);
+        item.classList.remove('active', 'done');
+        if (completedSteps.includes(n)) {
+          item.classList.add('done');
+          const numEl = item.querySelector('.sidebar-step-num');
+          if (numEl) numEl.textContent = '✓';
+        } else {
+          const numEl = item.querySelector('.sidebar-step-num');
+          if (numEl) numEl.textContent = String(n).padStart(2, '0');
+        }
+        if (n === stepNum) item.classList.add('active');
+      });
+      const sp = document.getElementById('sidebarProgressText');
+      if (sp) sp.textContent = completedSteps.length + ' of 19 steps complete';
+    }
+
+    function renderStepTopbar(stepNum) {
+      const phase = getPhaseForStep(stepNum);
+      const topbar = document.getElementById('stepTopbar');
+      let dots = '';
+      for (let i = 1; i <= 19; i++) {
+        const cls = completedSteps.includes(i) ? 'done' : (i === stepNum ? 'active' : '');
+        dots += `<div class="mini-dot ${cls}"></div>`;
+      }
+      topbar.innerHTML = `
+    <div class="step-breadcrumb">
+      <a onclick="showOverviewView()">⊞ All Steps</a>
+      <span class="step-breadcrumb-sep">›</span>
+      <span class="step-breadcrumb-phase" style="color:${phase.color}">Phase ${phase.num}: ${phase.name}</span>
+      <span class="step-breadcrumb-sep">›</span>
+      <span class="step-breadcrumb-current">Step ${String(stepNum).padStart(2, '0')}</span>
+    </div>
+    <div class="step-topbar-right">
+      <div class="mini-progress">${dots}</div>
+      <div class="step-position-text">Step <strong>${stepNum}</strong> of 19</div>
+    </div>
+  `;
+    }
+
+    function renderStepHeader(stepNum) {
+      const step = STEP_META[stepNum];
+      const phase = getPhaseForStep(stepNum);
+      const tools = stepTools[stepNum] || [];
+      const aiBadge = tools.length > 0 ? `<div class="step-ai-badge">${tools[0].name}</div>` : '';
+      const header = document.getElementById('stepHeader');
+      header.innerHTML = `
+    <div class="step-header-top">
+      <div class="step-num-badge" style="background:${phase.color}">
+        <div class="snb-word">Step</div>
+        <div class="snb-num">${String(stepNum).padStart(2, '0')}</div>
+      </div>
+      <div class="step-header-text">
+        <div class="step-phase-eyebrow" style="color:${phase.color}">Phase ${phase.num} · ${phase.name}</div>
+        <div class="step-title">${step.title}</div>
+        <div class="step-subtitle">${step.subtitle}</div>
+        <div class="step-meta-row">
+          ${aiBadge}
+          <div class="step-time-badge">⏱ ${step.time}</div>
+        </div>
+      </div>
+    </div>
+  `;
+    }
+
+    function renderStepWorkspace(stepNum) {
+      document.querySelectorAll('.step-workspace-content').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('step-workspace-' + stepNum);
+      if (target) target.classList.remove('hidden');
+      const ws = document.getElementById('stepWorkspace');
+      if (ws) ws.scrollTop = 0;
+      const sm = document.getElementById('stepMain');
+      if (sm) sm.scrollTop = 0;
+    }
+
+    function renderStepFooter(stepNum) {
+      const footer = document.getElementById('stepFooterNav');
+      const prevStep = STEP_META[stepNum - 1];
+      const nextStep = STEP_META[stepNum + 1];
+      const isDone = completedSteps.includes(stepNum);
+      const prevBtn = stepNum > 1
+        ? `<button type="button" class="step-nav-btn" onclick="goToStep(${stepNum - 1})">← Step ${stepNum - 1}: ${prevStep.short}</button>`
+        : `<button type="button" class="step-nav-btn" disabled>← No previous step</button>`;
+      const nextBtn = stepNum < 19
+        ? `<button type="button" class="step-nav-btn" onclick="goToStep(${stepNum + 1})">Step ${stepNum + 1}: ${nextStep.short} →</button>`
+        : `<button type="button" class="step-nav-btn" disabled>Final step →</button>`;
+      const completeBtn = isDone
+        ? `<button type="button" class="step-complete-btn already-done" disabled>✓ Step ${stepNum} Complete</button>`
+        : `<button type="button" class="step-complete-btn" onclick="completeStep(${stepNum})">Mark Step ${stepNum} Complete ✓</button>`;
+      footer.innerHTML = prevBtn + nextBtn + completeBtn;
+    }
+
+    function updateOverviewGrid() {
+      for (let n = 1; n <= 19; n++) {
+        const tile = document.getElementById('tile-' + n);
+        if (!tile) continue;
+        tile.classList.remove('done', 'current');
+        if (completedSteps.includes(n)) tile.classList.add('done');
+        else if (n === currentStep) tile.classList.add('current');
+      }
+      const phases = [
+        { num: 1, start: 1, end: 3 },
+        { num: 2, start: 4, end: 8 },
+        { num: 3, start: 9, end: 11 },
+        { num: 4, start: 12, end: 14 },
+        { num: 5, start: 15, end: 19 }
+      ];
+      phases.forEach(p => {
+        const total = p.end - p.start + 1;
+        const done = completedSteps.filter(s => s >= p.start && s <= p.end).length;
+        const bar = document.getElementById('phase-bar-' + p.num);
+        if (bar) bar.style.width = (done / total * 100) + '%';
+        const color = getPhaseForStep(p.start).color;
+        if (bar) bar.style.background = color;
+      });
+      const rb = document.getElementById('resumeBanner');
+      if (rb) {
+        if (completedSteps.length > 0) {
+          const step = STEP_META[currentStep];
+          const phase = getPhaseForStep(currentStep);
+          rb.classList.remove('hidden');
+          const rt = document.getElementById('resumeStepTitle');
+          const rs = document.getElementById('resumePhaseSub');
+          if (rt) rt.textContent = `Step ${currentStep} — ${step.title}`;
+          if (rs) rs.textContent = `Phase ${phase.num} · ${phase.name}`;
+        } else {
+          rb.classList.add('hidden');
+        }
+      }
     }
 
     function goToStep(num) {
@@ -7674,54 +8610,22 @@ Generated using expert claim methodology and structured for carrier review`;
 
       currentStep = num;
 
-      // Collapse all cards and remove active state
-      document.querySelectorAll('.step-card').forEach(card => {
-        card.classList.add('collapsed');
-        card.classList.remove('active-card');
-      });
-
-      // Expand target card and mark as active
-      const targetCard = document.getElementById('step-' + num);
-      if (targetCard) {
-        targetCard.classList.remove('collapsed');
-        targetCard.classList.add('active-card');
-        targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        
-        // Track navigation
-        const stepTitle = targetCard.querySelector('.card-subtitle')?.textContent || `Step ${num}`;
-        trackActivity('nav_click', { destination: stepTitle, stepNum: num });
-      }
-
-      // Update sidebar step items - remove all active states
-      document.querySelectorAll('.step-item').forEach(item => {
-        item.classList.remove('active');
-      });
-
-      // Add active state to current sidebar step item
-      const sidebarSteps = document.querySelectorAll('.step-item');
-      if (sidebarSteps[num - 1]) {
-        sidebarSteps[num - 1].classList.add('active');
-      }
+      showStepView();
+      renderStepPage(num);
 
       syncRoadmapActiveStep(num);
       updateCurrentStepWidget(num);
-      renderToolsPanel(num);
       updateDoThisNow(num);
       updateSummary();
       saveState();
-    }
 
-    function scrollToCurrentStep() {
-      const activeCard = document.querySelector('.step-card.active-card');
-      if (activeCard) {
-        activeCard.classList.remove('collapsed');
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      trackActivity('nav_click', { destination: STEP_META[num]?.title, stepNum: num });
     }
 
     function renderToolsPanel(stepNum) {
       const panel = document.getElementById('toolsPanel');
       const toolsList = document.getElementById('toolsList');
+      if (!panel || !toolsList) return;
       const tools = stepTools[stepNum];
 
       if (!tools || tools.length === 0) {
@@ -7750,70 +8654,25 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function updateCurrentStepWidget(stepNum) {
-      const stepTitles = {
-        1: 'Step 1 — Claim Process Guide',
-        2: 'Step 2 — Review Your Policy',
-        3: 'Step 3 — Report the Loss',
-        4: 'Step 4 — Document Damage',
-        5: 'Step 5 — Contractor Estimates',
-        6: 'Step 6 — Adjuster Prep',
-        7: 'Step 7 — Contents Inventory',
-        8: 'Step 8 — Review Estimate',
-        9: 'Step 9 — Pricing Analysis',
-        10: 'Step 10 — Coverage Gaps',
-        11: 'Step 11 — Supplement Request',
-        12: 'Step 12 — Dispute Letters',
-        13: 'Step 13 — Depreciation Recovery',
-        14: 'Step 14 — Negotiation',
-        15: 'Step 15 — Appraisal/Mediation',
-        16: 'Step 16 — Settlement Review',
-        17: 'Step 17 — Final Recovery',
-        18: 'Step 18 — Close the Claim'
-      };
-
+      const meta = STEP_META[stepNum];
       const titleEl = document.getElementById('currentStepTitle');
       if (titleEl) {
-        titleEl.textContent = stepTitles[stepNum] || `Step ${stepNum}`;
+        titleEl.textContent = meta
+          ? `Step ${stepNum} — ${meta.short}`
+          : `Step ${stepNum}`;
       }
       updateStepPositionLabel(stepNum);
     }
 
     function completeStep(num) {
-      const card = document.getElementById('step-' + num);
-      if (!card) return;
+      if (num < 1 || num > 19) return;
 
-      // Mark current step as complete
-      card.classList.remove('active-card', 'step-locked');
-      card.classList.add('collapsed', 'step-done');
-      card.style.opacity = '';
-      
-      const status = card.querySelector('.card-status');
-      if (status) {
-        status.textContent = 'Complete';
-        status.classList.remove('in-progress', 'pending');
-        status.style.background = 'rgba(16,185,129,0.15)';
-        status.style.color = 'var(--emerald)';
-      }
-
-      const cardNumber = card.querySelector('.card-number');
-      if (cardNumber) {
-        cardNumber.textContent = '✓';
-      }
-
-      const cardLock = card.querySelector('.card-lock');
-      if (cardLock) {
-        cardLock.style.display = 'none';
-      }
-
-      // Track completion
       if (!completedSteps.includes(num)) {
         completedSteps.push(num);
       }
 
-      // Calculate value added by this step
       const valueAdded = claimData.meta.stepValueMap[num] || 0;
 
-      // Add journal entry
       const stepTitles = {
         1: 'Claim details entered',
         2: 'Policy coverage reviewed',
@@ -7835,135 +8694,61 @@ Generated using expert claim methodology and structured for carrier review`;
         18: 'Payments confirmed',
         19: 'Claim closed correctly'
       };
-      
+
       addJournalEntry('step_complete', `Step ${num} completed — ${stepTitles[num]}`, null, num);
 
-      // Show completion feedback
       if (valueAdded > 0) {
         showStepCompleteFeedback(num, valueAdded);
       }
 
-      // Update sidebar
-      const sidebarSteps = document.querySelectorAll('.step-item');
-      sidebarSteps.forEach(item => {
-        const onclick = item.getAttribute('onclick');
-        if (onclick && onclick.includes(`goToStep(${num})`)) {
-          item.classList.remove('active');
-          item.classList.add('done');
-        }
-      });
-
-      // Roadmap tiles removed
-
-      // Update phase counters
       updatePhaseCounts();
+      renderStepFooter(num);
+      updateOverviewGrid();
 
-      // Activate next step if exists
-      const nextCard = document.getElementById('step-' + (num + 1));
-      if (nextCard) {
+      if (num < 19) {
         currentStep = num + 1;
-        nextCard.classList.add('active-card');
-        nextCard.classList.remove('collapsed', 'step-locked');
-        
-        const nextStatus = nextCard.querySelector('.card-status');
-        if (nextStatus) {
-          nextStatus.textContent = 'In Progress';
-          nextStatus.classList.remove('pending');
-          nextStatus.classList.add('in-progress');
-        }
-
-        const nextLock = nextCard.querySelector('.card-lock');
-        if (nextLock) {
-          nextLock.style.display = 'none';
-        }
-
-        // Update sidebar for next step
-        sidebarSteps.forEach(item => {
-          const onclick = item.getAttribute('onclick');
-          if (onclick && onclick.includes(`goToStep(${num + 1})`)) {
-            item.classList.add('active');
-          }
-        });
-
         syncRoadmapActiveStep(num + 1);
-
-        // Unlock next phase if needed
         unlockNextPhase(num + 1);
-
-        // Update Do This Now banner
         updateDoThisNow(num + 1);
-
-        // Update current step widget
         updateCurrentStepWidget(num + 1);
-
-        // Scroll to next card after delay
         setTimeout(() => {
-          nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 200);
+          goToStep(num + 1);
+        }, 400);
       } else {
         currentStep = num;
         syncRoadmapActiveStep(num);
         updateDoThisNow(num);
         updateCurrentStepWidget(num);
+        renderStepPage(num);
       }
 
-      // Overall progress (optional element — guard avoids breaking the flow)
       const phaseCounterStrong = document.querySelector('.phase-counter strong');
       if (phaseCounterStrong) {
         phaseCounterStrong.textContent = completedSteps.length + '/19';
       }
 
-      // Update phase bar
       updatePhaseBar();
-
-      // Save state
       saveState();
-
-      // Show next step banner
       showNextStepBanner(num);
     }
 
     function updatePhaseCounts() {
       const phases = [
-        { name: 'Set Up Your Claim', start: 1, end: 3 },
-        { name: 'Document Your Damage', start: 4, end: 7 },
-        { name: 'Find What\'s Missing', start: 8, end: 10 },
-        { name: 'Request the Money', start: 11, end: 13 },
-        { name: 'Finish & Get Paid', start: 14, end: 18 }
+        { num: 1, start: 1, end: 3 },
+        { num: 2, start: 4, end: 8 },
+        { num: 3, start: 9, end: 11 },
+        { num: 4, start: 12, end: 14 },
+        { num: 5, start: 15, end: 19 }
       ];
-
-      phases.forEach(phase => {
-        const completed = completedSteps.filter(s => s >= phase.start && s <= phase.end).length;
-        const total = phase.end - phase.start + 1;
-        
-        const phaseGroups = document.querySelectorAll('.phase-group');
-        phaseGroups.forEach(group => {
-          const nameEl = group.querySelector('.phase-name');
-          if (nameEl && nameEl.textContent === phase.name) {
-            const countEl = group.querySelector('.phase-count');
-            if (countEl) {
-              countEl.textContent = `${completed}/${total}`;
-            }
-          }
-        });
+      phases.forEach(p => {
+        const completed = completedSteps.filter(s => s >= p.start && s <= p.end).length;
+        const total = p.end - p.start + 1;
+        const el = document.getElementById('overviewPhaseCount' + p.num);
+        if (el) el.textContent = `${completed}/${total}`;
       });
     }
 
-    function unlockNextPhase(stepNum) {
-      const map = [
-        { atStep: 4, phaseName: 'Document Your Damage' },
-        { atStep: 8, phaseName: 'Find What\'s Missing' },
-        { atStep: 11, phaseName: 'Request the Money' },
-        { atStep: 14, phaseName: 'Finish & Get Paid' }
-      ];
-      const entry = map.find(m => m.atStep === stepNum);
-      if (!entry) return;
-      const phase = Array.from(document.querySelectorAll('.phase-group')).find(g => {
-        const nameEl = g.querySelector('.phase-name');
-        return nameEl && nameEl.textContent === entry.phaseName;
-      });
-      if (phase) phase.classList.add('expanded');
-    }
+    function unlockNextPhase(stepNum) {}
 
     function updatePhaseBar() {
       const phases = [
@@ -8008,9 +8793,6 @@ Generated using expert claim methodology and structured for carrier review`;
 
       restoreStepUiFromStorage();
 
-      // Render tools panel for current step
-      renderToolsPanel(currentStep);
-
       // Initialize asset builder
       updateAssetBuilder();
 
@@ -8031,6 +8813,10 @@ Generated using expert claim methodology and structured for carrier review`;
       if (completedSteps.length === 0) {
         document.getElementById('welcomeModal').classList.remove('hidden');
       }
+
+      showOverviewView();
+      updateOverviewGrid();
+      renderStepPage(currentStep);
 
       // Add close button to summary
       addSummaryCloseButton();
