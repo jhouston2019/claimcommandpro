@@ -215,9 +215,9 @@
 
     .nav-header {
       height: 100%;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
-      justify-content: space-between;
       max-width: 100%;
     }
 
@@ -225,15 +225,15 @@
       display: flex;
       align-items: center;
       gap: 16px;
+      justify-self: start;
     }
 
     .nav-brand {
       font-family: 'DM Serif Display', serif;
-      font-size: 16px;
+      font-size: 18px;
       color: white;
+      justify-self: center;
     }
-
-    .nav-brand .pro { color: var(--teal); }
 
     .nav-divider {
       width: 1px;
@@ -249,6 +249,7 @@
     .nav-pills {
       display: flex;
       gap: 0;
+      justify-self: end;
     }
 
     .nav-pill {
@@ -1006,13 +1007,13 @@
     }
 
     .step-card.active-card .card-title {
-      color: rgba(255,255,255,0.5);
+      color: var(--gray-600);
       font-size: 11px;
     }
 
     .step-card.active-card .card-subtitle {
       font-size: 15px;
-      color: white;
+      color: var(--gray-900);
     }
 
     .step-card.active-card .card-number {
@@ -1042,7 +1043,7 @@
 
     .step-card.step-done .card-title {
       text-decoration: line-through;
-      color: var(--gray-500);
+      color: var(--gray-600);
     }
 
     /* Locked state */
@@ -1055,7 +1056,7 @@
     }
 
     .step-locked .card-subtitle {
-      color: var(--gray-400);
+      color: var(--gray-700);
     }
 
     .step-card.collapsed .step-body,
@@ -1099,7 +1100,7 @@
     .card-title {
       font-size: 11px;
       font-weight: 600;
-      color: var(--gray-400);
+      color: var(--gray-600);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 3px;
@@ -1576,12 +1577,11 @@
   <div class="top-nav">
     <div class="nav-header">
       <div class="nav-left">
-        <div class="nav-brand">Claim Command <span class="pro">Pro</span></div>
-        <div class="nav-divider"></div>
         <div class="nav-claim-num">Claim #CLM-2024-0847</div>
         <div class="nav-divider"></div>
         <div class="nav-claim-num">Day 85 • Active</div>
       </div>
+      <div class="nav-brand">Claim Command Center</div>
       <div class="nav-pills">
         <button class="nav-pill" onclick="showClaimSummary()">Claim Snapshot</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
