@@ -218,8 +218,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      max-width: 100%;
-      position: relative;
+      width: 100%;
     }
 
     .nav-left {
@@ -232,9 +231,6 @@
       font-family: 'DM Serif Display', serif;
       font-size: 18px;
       color: white;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
     }
 
     .nav-divider {
@@ -1536,11 +1532,12 @@
   <div class="top-nav">
     <div class="nav-header">
       <div class="nav-left">
+        <div class="nav-brand">Claim Command Center</div>
+        <div class="nav-divider"></div>
         <div class="nav-claim-num">Claim #CLM-2024-0847</div>
         <div class="nav-divider"></div>
         <div class="nav-claim-num">Day 85 • Active</div>
       </div>
-      <div class="nav-brand">Claim Command Center</div>
       <div class="nav-pills">
         <button class="nav-pill" onclick="showClaimSummary()">Claim Snapshot</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
