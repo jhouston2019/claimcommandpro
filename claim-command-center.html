@@ -1770,6 +1770,237 @@
       background: rgba(20,184,166,0.05);
     }
 
+    /* Authority & Enhancement Styles */
+    .authority-note {
+      font-size: 11px;
+      color: var(--gray-500);
+      font-style: italic;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .output-action-btn {
+      flex: 1;
+      padding: 10px 16px;
+      background: white;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .output-action-btn:hover {
+      background: rgba(20,184,166,0.05);
+    }
+
+    .output-action-btn.primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .output-action-btn.primary:hover {
+      background: var(--teal-dark);
+    }
+
+    .ready-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--emerald);
+      margin-top: 8px;
+    }
+
+    .money-moment {
+      text-align: center;
+      padding: 32px 24px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 3px solid var(--amber);
+      border-radius: 12px;
+      margin: 24px 0;
+    }
+
+    .money-moment-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .money-moment-value {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--red);
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .money-moment-breakdown {
+      font-size: 14px;
+      color: var(--gray-700);
+      line-height: 1.8;
+    }
+
+    .step-do-this-now {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(20,184,166,0.1) 0%, rgba(20,184,166,0.05) 100%);
+      border-left: 4px solid var(--teal);
+      border-radius: 0 6px 6px 0;
+      margin: 0 28px 24px 28px;
+    }
+
+    .step-dtn-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .step-dtn-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .claim-asset-builder {
+      margin: 0 40px 24px 40px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid var(--teal);
+      border-radius: 8px;
+    }
+
+    .asset-builder-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .asset-builder-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .asset-stat {
+      text-align: center;
+    }
+
+    .asset-stat-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .asset-stat-label {
+      font-size: 11px;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .money-found-toast {
+      position: fixed;
+      top: 80px;
+      right: 40px;
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.4);
+      font-size: 18px;
+      font-weight: 700;
+      z-index: 10000;
+      animation: moneyFoundSlide 3s ease-in-out;
+    }
+
+    @keyframes moneyFoundSlide {
+      0% { transform: translateX(400px); opacity: 0; }
+      10% { transform: translateX(0); opacity: 1; }
+      90% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(400px); opacity: 0; }
+    }
+
+    .step-complete-feedback {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 32px 48px;
+      background: white;
+      border: 3px solid var(--emerald);
+      border-radius: 12px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+      z-index: 10000;
+      text-align: center;
+      animation: fadeInScale 0.3s ease-out;
+    }
+
+    @keyframes fadeInScale {
+      from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+      to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .complete-check {
+      font-size: 64px;
+      color: var(--emerald);
+      margin-bottom: 16px;
+    }
+
+    .complete-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+
+    .complete-value {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--teal);
+    }
+
+    .daily-ale-reminder {
+      margin: 0 40px 24px 40px;
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 2px solid var(--amber);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .ale-reminder-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+
+    .ale-reminder-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--red);
+    }
+
     .sidebar-title {
       padding: 16px 20px;
       font-size: 13px;
@@ -3090,6 +3321,36 @@
         </div>
       </div>
 
+      <!-- Daily ALE Reminder (shows if no entry today) -->
+      <div class="daily-ale-reminder hidden" id="dailyALEReminder">
+        <div class="ale-reminder-text">⚠️ You have not logged expenses today</div>
+        <div class="ale-reminder-value">Estimated missed claim value: <span id="missedALEValue">$132</span></div>
+      </div>
+
+      <!-- Claim Asset Builder -->
+      <div class="claim-asset-builder">
+        <div class="asset-builder-title">Your Claim File Is Being Built</div>
+        <div class="asset-builder-grid">
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetDocsGenerated">0</div>
+            <div class="asset-stat-label">Documents Generated</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetContentsItems">0</div>
+            <div class="asset-stat-label">Contents Items Logged</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetALEEntries">0</div>
+            <div class="asset-stat-label">ALE Entries</div>
+          </div>
+          <div class="asset-stat">
+            <div class="asset-stat-value" id="assetTotalValue">$0</div>
+            <div class="asset-stat-label">Total Claim Value</div>
+          </div>
+        </div>
+        <button class="step-action-button" style="margin-top: 20px; width: 100%;" onclick="generateFullClaimPackage()">📦 Generate Full Claim Package</button>
+      </div>
+
       <!-- Step Cards -->
       <div class="step-cards">
         
@@ -3115,6 +3376,12 @@
             </div>
           </div>
           <div class="step-body">
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Read this guide to understand the full claim process before taking action</div>
+            </div>
+            
             <div class="modal-alert" style="margin-bottom: 24px;">
               <div class="alert-icon">!</div>
               <div class="alert-text">
@@ -3628,6 +3895,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Upload your policy to identify your full coverage and claim rights</div>
+            </div>
+            
             <!-- Step Workspace -->
             <div class="step-workspace">
               
@@ -3663,6 +3936,15 @@
                     <div class="output-detail"><strong>ALE Coverage:</strong> <span id="aleCoverage">—</span></div>
                     <div class="output-detail"><strong>Key Endorsements:</strong> <span id="endorsements">—</span></div>
                   </div>
+
+                  <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
+                  
+                  <div class="ready-badge">✔ Ready to submit to carrier</div>
+
+                  <div class="output-actions">
+                    <button class="output-action-btn" onclick="copyPolicySummary()">📋 Copy</button>
+                    <button class="output-action-btn primary" onclick="downloadPolicySummaryPDF()">📄 Download PDF</button>
+                  </div>
                 </div>
               </div>
 
@@ -3697,6 +3979,11 @@
             </div>
           </div>
           <div class="step-body">
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Generate your loss notification using the exact language that protects your rights</div>
+            </div>
             
             <!-- Step Workspace -->
             <div class="step-workspace">
@@ -3741,7 +4028,15 @@
                 <div class="step-output-box success">
                   <div class="output-summary">Copy-ready claim notification</div>
                   <div style="margin-top: 16px; padding: 16px; background: white; border: 1px solid var(--gray-200); border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap;" id="generatedNotice"></div>
-                  <button class="step-action-button secondary" style="margin-top: 12px;" onclick="copyLossNotice()">Copy to Clipboard</button>
+                  
+                  <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
+                  
+                  <div class="ready-badge">✔ Ready to submit to carrier</div>
+
+                  <div class="output-actions">
+                    <button class="output-action-btn" onclick="copyLossNotice()">📋 Copy</button>
+                    <button class="output-action-btn primary" onclick="downloadLossNoticePDF()">📄 Download PDF</button>
+                  </div>
                 </div>
               </div>
 
@@ -3784,6 +4079,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Upload photos of all damage before any repairs begin</div>
+            </div>
             
             <!-- Step Workspace -->
             <div class="step-workspace">
@@ -3849,6 +4150,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Upload your contractor estimate to establish true repair costs</div>
+            </div>
+            
             <!-- Step Workspace -->
             <div class="step-workspace">
               
@@ -3881,6 +4188,15 @@
                     <div class="output-detail"><strong>Line Items:</strong> <span id="lineItemCount">—</span></div>
                     <div class="output-detail"><strong>Scope Status:</strong> <span id="scopeStatus">—</span></div>
                     <div class="output-detail" id="missingItems"></div>
+                  </div>
+
+                  <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
+                  
+                  <div class="ready-badge">✔ Ready to submit to carrier</div>
+
+                  <div class="output-actions">
+                    <button class="output-action-btn" onclick="copyContractorSummary()">📋 Copy</button>
+                    <button class="output-action-btn primary" onclick="downloadContractorSummaryPDF()">📄 Download PDF</button>
                   </div>
                 </div>
               </div>
@@ -3917,6 +4233,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Document everything the adjuster says and requests during the inspection</div>
+            </div>
             
             <!-- Step Workspace -->
             <div class="step-workspace">
@@ -3977,6 +4299,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Start adding items to build your contents value</div>
+            </div>
             
             <!-- Step Workspace -->
             <div class="step-workspace">
@@ -4068,6 +4396,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Log today's expenses to capture claimable ALE</div>
+            </div>
             
             <div class="section-label">Why This Matters</div>
             <p class="section-text">If your home is uninhabitable, your policy covers the extra costs of living elsewhere — but only the overage above your normal daily expenses. Most policyholders don't track these expenses and forfeit thousands. ALE accrues daily and can represent 15-30% of your total claim value.</p>
@@ -4217,6 +4551,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Upload the insurance estimate to identify underpayment</div>
+            </div>
+            
             <!-- Step Workspace -->
             <div class="step-workspace">
               
@@ -4241,15 +4581,36 @@
               <!-- OUTPUT SECTION -->
               <div class="workspace-section hidden" id="estimateReviewOutput">
                 <div class="workspace-label">⚠️ Gap Analysis Results</div>
+                
+                <!-- MONEY MOMENT -->
+                <div class="money-moment">
+                  <div class="money-moment-label">You are currently underpaid by:</div>
+                  <div class="money-moment-value" id="moneyMomentGap">$18,550</div>
+                  <div class="money-moment-breakdown">
+                    This amount is recoverable through:<br>
+                    • Missing scope<br>
+                    • Pricing corrections<br>
+                    • Coverage application
+                  </div>
+                </div>
+
                 <div class="step-output-box warning">
-                  <div class="output-summary">Underpayment detected</div>
-                  
+                  <div class="output-summary">Detailed gap analysis</div>
+
                   <div style="margin-top: 16px;">
                     <div class="output-detail"><strong>Insurer Estimate:</strong> <span id="insurerEstimateAmount">—</span></div>
                     <div class="output-detail"><strong>Contractor Estimate:</strong> <span id="contractorEstimateAmount">—</span></div>
-                    <div class="value-display" style="color: var(--red);">Gap: <span id="estimateGap">$0</span></div>
                     <div class="output-detail" id="missingScope"></div>
                     <div class="output-detail" id="pricingGaps"></div>
+                  </div>
+
+                  <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
+                  
+                  <div class="ready-badge">✔ Ready to submit to carrier</div>
+
+                  <div class="output-actions">
+                    <button class="output-action-btn" onclick="copyEstimateReview()">📋 Copy</button>
+                    <button class="output-action-btn primary" onclick="downloadEstimateReviewPDF()">📄 Download PDF</button>
                   </div>
                 </div>
               </div>
@@ -4288,6 +4649,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Run pricing analysis to find below-market line items</div>
+            </div>
+            
             <!-- Step Workspace -->
             <div class="step-workspace">
               <div class="workspace-section">
@@ -4323,6 +4690,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Detect missing coverage and unclaimed policy benefits</div>
+            </div>
             
             <div class="step-workspace">
               <div class="workspace-section">
@@ -4366,6 +4739,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Generate your supplement request with all identified gaps</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">📝 Generate Supplement Request</div>
@@ -4401,6 +4780,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Create formal dispute letter with legal backing</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">✉️ Generate Dispute Letter</div>
@@ -4433,6 +4818,12 @@
             </div>
           </div>
           <div class="step-body">
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Submit RCV recovery request to claim depreciation holdback</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">💰 Submit RCV Recovery Request</div>
@@ -4475,6 +4866,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Generate negotiation strategy based on your leverage points</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">🤝 Generate Negotiation Strategy</div>
@@ -4509,6 +4906,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Evaluate whether to escalate to appraisal or mediation</div>
+            </div>
             
             <div class="step-workspace">
               <div class="workspace-section">
@@ -4545,6 +4948,12 @@
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Validate the final offer against your total documented claim</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">✅ Validate Final Settlement</div>
@@ -4577,6 +4986,12 @@
             </div>
           </div>
           <div class="step-body">
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Track and confirm all payments received</div>
+            </div>
+            
             <div class="step-workspace">
               <div class="workspace-section">
                 <div class="workspace-label">💵 Track Final Payment</div>
@@ -4611,6 +5026,12 @@
           </div>
           <div class="step-body">
             <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Generate final claim archive for your permanent records</div>
+            </div>
             
             <div class="step-workspace">
               <div class="workspace-section">
@@ -5006,6 +5427,12 @@
         baseline: 75,
         total: 0,
         dailyRate: 0
+      },
+      meta: {
+        documentsGenerated: 0,
+        valueIdentified: 0,
+        lastALEEntryDate: null,
+        stepValueMap: {}
       },
       messages: [],
       documents: [],
@@ -5425,6 +5852,7 @@
         // Save to claimData
         claimData.policy = parsedPolicy;
         claimData.policyUploaded = true;
+        claimData.meta.documentsGenerated++;
 
         // Update journal
         addJournalEntry('Policy analyzed', `Uploaded and analyzed policy: ${policyFile.name}. Coverage: ${parsedPolicy.dwellingCoverage} dwelling, ${parsedPolicy.deductible} deductible.`);
@@ -5438,6 +5866,7 @@
         // Update global state
         updateMoneyBar();
         updateSummaryPage();
+        updateAssetBuilder();
         saveState();
 
         trackActivity('ai_analysis_complete', { stepNum: 2, tool: 'Policy Analyzer' });
@@ -5506,6 +5935,7 @@ ${policyholderName}`;
           description: desc,
           generatedText: notice
         };
+        claimData.meta.documentsGenerated++;
 
         // Update journal
         addJournalEntry('Loss reported', `Generated and saved loss notification for ${cause} on ${date}.`);
@@ -5516,6 +5946,7 @@ ${policyholderName}`;
         btn.textContent = 'Regenerate Notice';
         btn.disabled = false;
 
+        updateAssetBuilder();
         saveState();
         trackActivity('loss_report_generated', { stepNum: 3, cause, date });
       }, 2000);
@@ -5634,6 +6065,8 @@ ${policyholderName}`;
           total: estimateData.total,
           lineItems: estimateData.lineItems
         };
+        claimData.meta.documentsGenerated++;
+        claimData.meta.stepValueMap[5] = estimateData.total;
 
         // Update journal
         addJournalEntry('Contractor estimate added', `Uploaded contractor estimate: $${estimateData.total.toLocaleString()} for ${estimateData.lineItems} line items.`);
@@ -5647,7 +6080,11 @@ ${policyholderName}`;
         // Update global state
         updateMoneyBar();
         updateSummaryPage();
+        updateAssetBuilder();
         saveState();
+
+        // Show money found animation
+        showMoneyFoundToast(`+$${estimateData.total.toLocaleString()} Structure Value Added`);
 
         trackActivity('contractor_estimate_analyzed', { stepNum: 5, total: estimateData.total });
       }, 2500);
@@ -5696,7 +6133,11 @@ ${policyholderName}`;
       // Update global state
       updateMoneyBar();
       updateSummaryPage();
+      updateAssetBuilder();
       saveState();
+
+      // Show money found animation
+      showMoneyFoundToast(`+$${item.totalValue.toLocaleString()} Added to Claim Value`);
 
       trackActivity('contents_item_added', { stepNum: 7, item: itemName, value: item.totalValue });
     }
@@ -5815,9 +6256,19 @@ ${policyholderName}`;
       document.getElementById('aleReceipt').value = '';
 
       // Update global state
+      claimData.meta.lastALEEntryDate = date;
       updateMoneyBar();
       updateSummaryPage();
+      updateAssetBuilder();
       saveState();
+
+      // Show money found animation
+      if (claimableAmount > 0) {
+        showMoneyFoundToast(`+$${claimableAmount.toLocaleString()} Added to Claim Value`);
+      }
+
+      // Check daily reminder
+      checkDailyALEEntry();
 
       trackActivity('ale_entry_added', { stepNum: 8, category, amount, claimable: claimableAmount });
     }
@@ -5899,6 +6350,230 @@ ${policyholderName}`;
       trackActivity('ale_report_exported', { stepNum: 8, entryCount: claimData.ALE.entries.length });
     }
 
+    // ============================================
+    // AUTHORITY & OUTPUT ENHANCEMENT FUNCTIONS
+    // ============================================
+
+    // Copy functions for outputs
+    function copyPolicySummary() {
+      const summary = `POLICY ANALYSIS SUMMARY
+
+Dwelling Coverage: ${document.getElementById('dwellingCoverage').textContent}
+Deductible: ${document.getElementById('deductible').textContent}
+Settlement Type: ${document.getElementById('settlementType').textContent}
+Contents Coverage: ${document.getElementById('contentsCoverage').textContent}
+ALE Coverage: ${document.getElementById('aleCoverage').textContent}
+Key Endorsements: ${document.getElementById('endorsements').textContent}
+
+Generated using expert claim methodology and structured for carrier review`;
+
+      navigator.clipboard.writeText(summary).then(() => {
+        showMoneyFoundToast('Policy summary copied!');
+        trackActivity('copy_to_clipboard', { stepNum: 2, content: 'policy_summary' });
+      });
+    }
+
+    function copyContractorSummary() {
+      const total = document.getElementById('contractorTotal').textContent;
+      const lineItems = document.getElementById('lineItemCount').textContent;
+      const status = document.getElementById('scopeStatus').textContent;
+      
+      const summary = `CONTRACTOR ESTIMATE SUMMARY
+
+Total Estimate: ${total}
+Line Items: ${lineItems}
+Scope Status: ${status}
+
+Generated using expert claim methodology and structured for carrier review`;
+
+      navigator.clipboard.writeText(summary).then(() => {
+        showMoneyFoundToast('Contractor summary copied!');
+        trackActivity('copy_to_clipboard', { stepNum: 5, content: 'contractor_summary' });
+      });
+    }
+
+    function copyEstimateReview() {
+      const insurerAmt = document.getElementById('insurerEstimateAmount').textContent;
+      const contractorAmt = document.getElementById('contractorEstimateAmount').textContent;
+      const gap = document.getElementById('estimateGap').textContent;
+      const missing = document.getElementById('missingScope').textContent;
+      const pricing = document.getElementById('pricingGaps').textContent;
+      
+      const summary = `ESTIMATE REVIEW ANALYSIS
+
+Insurer Estimate: ${insurerAmt}
+Contractor Estimate: ${contractorAmt}
+Identified Gap: ${gap}
+
+${missing}
+${pricing}
+
+Generated using expert claim methodology and structured for carrier review`;
+
+      navigator.clipboard.writeText(summary).then(() => {
+        showMoneyFoundToast('Estimate review copied!');
+        trackActivity('copy_to_clipboard', { stepNum: 9, content: 'estimate_review' });
+      });
+    }
+
+    // Download PDF functions (simplified HTML to PDF)
+    function downloadPolicySummaryPDF() {
+      const content = document.getElementById('policyOutput').innerHTML;
+      generatePDF('Policy_Analysis', content);
+      trackActivity('pdf_download', { stepNum: 2, document: 'policy_summary' });
+    }
+
+    function downloadLossNoticePDF() {
+      const content = document.getElementById('generatedNotice').textContent;
+      generatePDF('Loss_Notification', `<pre style="font-family: 'Courier New', monospace; font-size: 12px; white-space: pre-wrap;">${content}</pre>`);
+      trackActivity('pdf_download', { stepNum: 3, document: 'loss_notice' });
+    }
+
+    function downloadContractorSummaryPDF() {
+      const content = document.getElementById('contractorOutput').innerHTML;
+      generatePDF('Contractor_Estimate_Summary', content);
+      trackActivity('pdf_download', { stepNum: 5, document: 'contractor_summary' });
+    }
+
+    function downloadEstimateReviewPDF() {
+      const content = document.getElementById('estimateReviewOutput').innerHTML;
+      generatePDF('Estimate_Review_Analysis', content);
+      trackActivity('pdf_download', { stepNum: 9, document: 'estimate_review' });
+    }
+
+    // Generic PDF generator (simple HTML to print)
+    function generatePDF(filename, htmlContent) {
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>${filename}</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+              h1 { color: #14b8a6; }
+              .output-detail { margin: 8px 0; }
+            </style>
+          </head>
+          <body>
+            <h1>Claim Command Pro — ${filename}</h1>
+            ${htmlContent}
+            <p style="margin-top: 40px; font-size: 11px; color: #666; font-style: italic;">
+              Generated using expert claim methodology and structured for carrier review
+            </p>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 250);
+    }
+
+    // Money Found Toast Animation
+    function showMoneyFoundToast(message) {
+      const existing = document.getElementById('moneyFoundToast');
+      if (existing) existing.remove();
+
+      const toast = document.createElement('div');
+      toast.id = 'moneyFoundToast';
+      toast.className = 'money-found-toast';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    // Update Claim Asset Builder
+    function updateAssetBuilder() {
+      const docsGenerated = (claimData.policy ? 1 : 0) + 
+                           (claimData.lossNotice ? 1 : 0) + 
+                           (claimData.contractorEstimate ? 1 : 0) +
+                           (claimData.estimateReview ? 1 : 0);
+      
+      const totalValue = claimData.structure.userEstimate + 
+                        claimData.contents.totalValue + 
+                        claimData.ALE.total;
+
+      document.getElementById('assetDocsGenerated').textContent = docsGenerated;
+      document.getElementById('assetContentsItems').textContent = claimData.contents.items.length;
+      document.getElementById('assetALEEntries').textContent = claimData.ALE.entries.length;
+      document.getElementById('assetTotalValue').textContent = '$' + totalValue.toLocaleString();
+    }
+
+    // Full Claim Package Generator
+    function generateFullClaimPackage() {
+      const packageContent = `
+        <h2>Complete Claim Package</h2>
+        
+        <h3>1. Policy Analysis</h3>
+        ${document.getElementById('policyOutput')?.innerHTML || '<p>Not yet completed</p>'}
+        
+        <h3>2. Loss Notification</h3>
+        <pre>${document.getElementById('generatedNotice')?.textContent || 'Not yet generated'}</pre>
+        
+        <h3>3. Contractor Estimate</h3>
+        ${document.getElementById('contractorOutput')?.innerHTML || '<p>Not yet completed</p>'}
+        
+        <h3>4. Contents Inventory</h3>
+        <p>Total Items: ${claimData.contents.items.length}</p>
+        <p>Total Value: $${claimData.contents.totalValue.toLocaleString()}</p>
+        
+        <h3>5. ALE Report</h3>
+        <p>Total Entries: ${claimData.ALE.entries.length}</p>
+        <p>Total Claimable: $${claimData.ALE.total.toLocaleString()}</p>
+        
+        <h3>6. Estimate Review</h3>
+        ${document.getElementById('estimateReviewOutput')?.innerHTML || '<p>Not yet completed</p>'}
+        
+        <h3>Financial Summary</h3>
+        <p><strong>Structure Gap:</strong> $${claimData.structure.gap.toLocaleString()}</p>
+        <p><strong>Contents Value:</strong> $${claimData.contents.totalValue.toLocaleString()}</p>
+        <p><strong>ALE Total:</strong> $${claimData.ALE.total.toLocaleString()}</p>
+        <p><strong>Total Recoverable:</strong> $${(claimData.structure.gap + claimData.contents.totalValue + claimData.ALE.total).toLocaleString()}</p>
+      `;
+
+      generatePDF('Complete_Claim_Package', packageContent);
+      trackActivity('full_package_generated', { timestamp: Date.now() });
+    }
+
+    // Check Daily ALE Entry
+    function checkDailyALEEntry() {
+      if (currentStep <= 3 || claimData.ALE.entries.length === 0) {
+        document.getElementById('dailyALEReminder').classList.add('hidden');
+        return;
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      const hasEntryToday = claimData.ALE.entries.some(e => e.date === today);
+
+      if (!hasEntryToday) {
+        const estimatedDaily = claimData.ALE.dailyRate || 132;
+        document.getElementById('missedALEValue').textContent = '$' + Math.round(estimatedDaily);
+        document.getElementById('dailyALEReminder').classList.remove('hidden');
+      } else {
+        document.getElementById('dailyALEReminder').classList.add('hidden');
+      }
+    }
+
+    // Show Step Complete Feedback
+    function showStepCompleteFeedback(stepNum, valueAdded) {
+      const feedback = document.createElement('div');
+      feedback.className = 'step-complete-feedback';
+      feedback.innerHTML = `
+        <div class="complete-check">✓</div>
+        <div class="complete-title">Step ${stepNum} Complete</div>
+        <div class="complete-value">$${valueAdded.toLocaleString()} Identified</div>
+      `;
+      document.body.appendChild(feedback);
+
+      setTimeout(() => {
+        feedback.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => feedback.remove(), 300);
+      }, 2000);
+    }
+
     // STEP 9 — AI Estimate Review Engine
     let insurerEstimateFile = null;
 
@@ -5942,7 +6617,7 @@ ${policyholderName}`;
         // Update UI
         document.getElementById('insurerEstimateAmount').textContent = `$${insurerTotal.toLocaleString()}`;
         document.getElementById('contractorEstimateAmount').textContent = `$${contractorTotal.toLocaleString()}`;
-        document.getElementById('estimateGap').textContent = `$${gap.toLocaleString()}`;
+        document.getElementById('moneyMomentGap').textContent = `$${gap.toLocaleString()}`;
         document.getElementById('missingScope').innerHTML = `<strong>Missing Scope:</strong> ${analysis.missingScope.join(', ')}`;
         document.getElementById('pricingGaps').innerHTML = `<strong>Pricing Issues:</strong> ${analysis.pricingGaps.join(', ')}`;
 
@@ -5950,6 +6625,8 @@ ${policyholderName}`;
         claimData.structure.insurerEstimate = insurerTotal;
         claimData.structure.gap = gap;
         claimData.estimateReview = analysis;
+        claimData.meta.documentsGenerated++;
+        claimData.meta.stepValueMap[9] = gap;
 
         // Update journal
         addJournalEntry('Insurance estimate reviewed', `Insurer estimate: $${insurerTotal.toLocaleString()}. Gap identified: $${gap.toLocaleString()}.`);
@@ -5963,7 +6640,11 @@ ${policyholderName}`;
         // Update global state
         updateMoneyBar();
         updateSummaryPage();
+        updateAssetBuilder();
         saveState();
+
+        // Show money found animation
+        showMoneyFoundToast(`+$${gap.toLocaleString()} Gap Identified`);
 
         trackActivity('estimate_review_complete', { stepNum: 9, gap });
       }, 3000);
@@ -7084,6 +7765,9 @@ ${policyholderName}`;
         completedSteps.push(num);
       }
 
+      // Calculate value added by this step
+      const valueAdded = claimData.meta.stepValueMap[num] || 0;
+
       // Add journal entry
       const stepTitles = {
         1: 'Claim details entered',
@@ -7093,20 +7777,26 @@ ${policyholderName}`;
         5: 'Accurate repair estimates obtained',
         6: 'Adjuster inspection prepared',
         7: 'All lost items listed',
-        8: 'Insurance estimate reviewed',
-        9: 'Underpaid items identified',
-        10: 'Missing coverage found',
-        11: 'Additional payment requested',
-        12: 'Claim letters sent',
-        13: 'Depreciation recovered',
-        14: 'Settlement negotiated',
-        15: 'Escalation initiated if needed',
-        16: 'Claim finalized',
-        17: 'All payments confirmed',
-        18: 'Claim closed correctly'
+        8: 'Living expenses tracked',
+        9: 'Insurance estimate reviewed',
+        10: 'Pricing gaps identified',
+        11: 'Missing coverage found',
+        12: 'Supplement request generated',
+        13: 'Dispute letter sent',
+        14: 'RCV recovery submitted',
+        15: 'Settlement negotiated',
+        16: 'Escalation evaluated',
+        17: 'Final offer validated',
+        18: 'Payments confirmed',
+        19: 'Claim closed correctly'
       };
       
       addJournalEntry('step_complete', `Step ${num} completed — ${stepTitles[num]}`, null, num);
+
+      // Show completion feedback
+      if (valueAdded > 0) {
+        showStepCompleteFeedback(num, valueAdded);
+      }
 
       // Update sidebar
       const sidebarSteps = document.querySelectorAll('.step-item');
@@ -7281,6 +7971,12 @@ ${policyholderName}`;
 
       // Render tools panel for current step
       renderToolsPanel(currentStep);
+
+      // Initialize asset builder
+      updateAssetBuilder();
+
+      // Check daily ALE entry
+      checkDailyALEEntry();
 
       // Check if this is first visit - show summary page
       const summaryViewed = localStorage.getItem('ccc_summary_viewed');
