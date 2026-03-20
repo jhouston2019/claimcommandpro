@@ -627,6 +627,28 @@ Return ONLY the letter text, properly formatted.`;
 
       saveToLocalStorage(result);
       logToJournal('demand_letter_generated', `Demand letter generated for $${result.amount.toLocaleString()}`);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 12,
+          toolName: 'Demand Letter Generator',
+          results: {
+            summary: `Generated demand letter for $${result.amount.toLocaleString()}`,
+            details: {
+              'Demand Amount': `$${result.amount.toLocaleString()}`,
+              'Letter Length': `${result.letter.split(' ').length} words`,
+              'Response Deadline': '15 Days'
+            },
+            recommendations: [
+              'Review letter for accuracy',
+              'Send via certified mail',
+              'Keep copy for your records'
+            ]
+          }
+        }, '*');
+      }
     }
 
     function copyLetter() {

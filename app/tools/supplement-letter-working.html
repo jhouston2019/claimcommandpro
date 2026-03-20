@@ -385,11 +385,25 @@ Format as a complete business letter ready to send.`
         };
         localStorage.setItem('supplement_letter_result', JSON.stringify(resultData));
 
-        // Log to parent window
-        if (window.parent !== window) {
-          window.parent.postMessage({
-            type: 'supplement_letter_generated',
-            data: resultData
+        // Send results to command center
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({
+            type: 'TOOL_RESULT',
+            stepNum: 11,
+            toolName: 'Supplement Letter Generator',
+            results: {
+              summary: `Generated supplement letter requesting $${gapAmount}`,
+              details: {
+                'Claim Number': claimNumber,
+                'Supplement Amount': `$${gapAmount}`,
+                'Generated': new Date().toLocaleDateString()
+              },
+              recommendations: [
+                'Review the letter carefully before sending',
+                'Include all supporting documentation',
+                'Send via certified mail for proof of delivery'
+              ]
+            }
           }, '*');
         }
 

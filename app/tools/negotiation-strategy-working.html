@@ -740,6 +740,25 @@ Provide a comprehensive negotiation strategy in JSON format:
 
       saveToLocalStorage(result, documentedLoss, insurerOffer, gap);
       logToJournal('negotiation_strategy_generated', `Negotiation strategy created: $${gap.toLocaleString()} gap`);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 14,
+          toolName: 'Negotiation Strategy Tool',
+          results: {
+            summary: `Strategy generated for $${gap.toLocaleString()} gap. Position strength: ${result.position_analysis?.strength || 'N/A'}`,
+            details: {
+              'Your Documented Loss': `$${documentedLoss.toLocaleString()}`,
+              'Insurer Offer': `$${insurerOffer.toLocaleString()}`,
+              'Gap Amount': `$${gap.toLocaleString()}`,
+              'Leverage Score': result.position_analysis ? `${result.position_analysis.leverage_score}/10` : 'N/A'
+            },
+            recommendations: result.next_steps || []
+          }
+        }, '*');
+      }
     }
 
     function exportStrategy() {

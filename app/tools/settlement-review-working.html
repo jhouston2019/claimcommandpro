@@ -743,6 +743,27 @@ Be precise with dollar amounts. If any value is not found, use 0.`;
 
       saveToLocalStorage(result, documentedLoss, gap);
       logToJournal('settlement_analyzed', `Settlement analyzed: $${result.rcv_total.toLocaleString()} offered, $${gap.toLocaleString()} gap`, gap);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 16,
+          toolName: 'Settlement Review Tool',
+          results: {
+            summary: `Settlement reviewed. ${result.recommendation.toUpperCase()}`,
+            details: {
+              'RCV Total': `$${result.rcv_total.toLocaleString()}`,
+              'ACV Paid': `$${result.acv_paid.toLocaleString()}`,
+              'Depreciation Withheld': `$${result.depreciation_withheld.toLocaleString()}`,
+              'Net Payment': `$${result.net_payment.toLocaleString()}`,
+              'Gap vs Your Loss': `$${gap.toLocaleString()}`,
+              'Recommendation': result.recommendation.toUpperCase()
+            },
+            recommendations: result.next_steps || []
+          }
+        }, '*');
+      }
     }
 
     function exportAnalysis() {

@@ -726,6 +726,24 @@ Focus on:
 
       saveToLocalStorage(result);
       logToJournal('release_reviewed', `Release reviewed: ${result.overall_verdict} - ${result.recommendation}`);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 18,
+          toolName: 'Release Reviewer',
+          results: {
+            summary: `Release reviewed. Verdict: ${result.overall_verdict.toUpperCase()}`,
+            details: {
+              'Overall Verdict': result.overall_verdict.toUpperCase(),
+              'Recommendation': result.recommendation.toUpperCase(),
+              'Risk Level': `${result.risk_level}/10`
+            },
+            recommendations: result.action_items || []
+          }
+        }, '*');
+      }
     }
 
     function exportReview() {

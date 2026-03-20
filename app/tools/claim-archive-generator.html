@@ -389,6 +389,29 @@
         document.getElementById('success').classList.add('active');
         logToJournal(claimNumber);
 
+        // Send results to command center
+        if (window.opener && !window.opener.closed) {
+          const selectedTypes = Array.from(document.querySelectorAll('input[name="documentType"]:checked')).map(cb => cb.value);
+          window.opener.postMessage({
+            type: 'TOOL_RESULT',
+            stepNum: 17,
+            toolName: 'Claim Archive Generator',
+            results: {
+              summary: `Claim archive generated for ${claimNumber}`,
+              details: {
+                'Claim Number': claimNumber,
+                'Document Types': selectedTypes.length,
+                'Generated': new Date().toLocaleDateString()
+              },
+              recommendations: [
+                'Store archive in secure location',
+                'Keep copy for your records',
+                'Archive contains all claim documentation'
+              ]
+            }
+          }, '*');
+        }
+
       } catch (error) {
         console.error('Archive generation error:', error);
         document.getElementById('error').textContent = error.message || 'Archive generation failed. Please try again.';

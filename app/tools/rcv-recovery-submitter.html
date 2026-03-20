@@ -514,6 +514,29 @@
         saveToLocalStorage(claimNumber, submissionData, depreciationWithheld);
         logToJournal(claimNumber, depreciationWithheld, completionDate);
 
+        // Send results to command center
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({
+            type: 'TOOL_RESULT',
+            stepNum: 13,
+            toolName: 'RCV Recovery Tool',
+            results: {
+              summary: `RCV recovery submitted for $${depreciationWithheld.toLocaleString()}`,
+              details: {
+                'Claim Number': claimNumber,
+                'Depreciation Withheld': `$${depreciationWithheld.toLocaleString()}`,
+                'Completion Date': completionDate,
+                'Documents Attached': uploadedDocs.length
+              },
+              recommendations: [
+                'Track submission in Activity Log',
+                'Follow up in 5-7 business days',
+                'Keep copies of all submitted documents'
+              ]
+            }
+          }, '*');
+        }
+
       } catch (error) {
         console.error('Submission error:', error);
         document.getElementById('error').textContent = error.message || 'Submission failed. Please try again.';

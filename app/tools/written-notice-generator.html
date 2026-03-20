@@ -459,6 +459,29 @@
         saveToLocalStorage(policyNumber, notice);
         logToJournal(policyNumber, lossDate);
 
+        // Send results to command center
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({
+            type: 'TOOL_RESULT',
+            stepNum: 3,
+            toolName: 'Written Notice Generator',
+            results: {
+              summary: `Written notice generated for claim ${policyNumber}`,
+              details: {
+                'Policy Number': policyNumber,
+                'Loss Date': lossDate,
+                'Loss Type': lossType,
+                'Estimated Amount': estimatedAmount
+              },
+              recommendations: [
+                'Review notice for accuracy',
+                'Send to insurer via certified mail',
+                'Keep copy for your records'
+              ]
+            }
+          }, '*');
+        }
+
       } catch (error) {
         console.error('Generation error:', error);
         document.getElementById('error').textContent = error.message || 'Generation failed. Please try again.';

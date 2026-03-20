@@ -634,6 +634,26 @@ Provide a comprehensive pricing deviation analysis in JSON format:
       document.getElementById('recommendations').innerHTML = recsHtml + '<br><p><strong>Supporting Data Needed:</strong></p>' + dataHtml + footerHtml;
 
       document.getElementById('results').classList.add('active');
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        const totalDeviation = parseFloat(document.getElementById('contractorTotal').value) - parseFloat(document.getElementById('insurerTotal').value);
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 9,
+          toolName: 'Pricing Deviation Analyzer',
+          results: {
+            summary: `Analysis complete. Total deviation: $${totalDeviation.toLocaleString()}`,
+            details: {
+              'Contractor Total': `$${document.getElementById('contractorTotal').value}`,
+              'Insurer Total': `$${document.getElementById('insurerTotal').value}`,
+              'Deviation': `$${totalDeviation.toLocaleString()}`,
+              'Severity': analysis.severity_assessment?.toUpperCase() || 'N/A'
+            },
+            recommendations: analysis.recommendations
+          }
+        }, '*');
+      }
     }
 
     function saveToLocalStorage(claimNumber, analysis) {

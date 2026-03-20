@@ -720,6 +720,24 @@ Evaluate the documentation quality and provide guidance in JSON format:
       document.getElementById('recommendations').innerHTML = recsHtml;
 
       document.getElementById('results').classList.add('active');
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 4,
+          toolName: 'Damage Documentation Tool',
+          results: {
+            summary: `Documented ${uploadedPhotos.length} photos. Quality score: ${analysis.overall_quality_score}/100`,
+            details: {
+              'Photos Uploaded': uploadedPhotos.length,
+              'Quality Score': `${analysis.overall_quality_score}/100`,
+              'Damage Area': document.getElementById('damageArea').value
+            },
+            recommendations: analysis.recommendations
+          }
+        }, '*');
+      }
     }
 
     function fileToBase64(file) {

@@ -546,6 +546,18 @@ Be specific with dollar amounts and line item references.`
       }
     }
 
+    // Send results back to command center
+    function sendResultsToCommandCenter(stepNum, toolName, results) {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: stepNum,
+          toolName: toolName,
+          results: results
+        }, '*');
+      }
+    }
+
     // Display results
     function displayResults(analysis, gapAmount) {
       document.getElementById('progressSection').style.display = 'none';
@@ -553,6 +565,16 @@ Be specific with dollar amounts and line item references.`
 
       // Update gap amount
       document.getElementById('gapAmount').textContent = '$' + gapAmount;
+
+      // Send results to command center
+      sendResultsToCommandCenter(8, 'Estimate Review Tool', {
+        summary: `Estimate review complete. Identified $${gapAmount} in potential gaps.`,
+        details: {
+          'Potential Recovery': `$${gapAmount}`,
+          'Analysis Date': new Date().toLocaleDateString()
+        },
+        recommendations: ['Review detailed analysis below', 'Consider submitting supplement request']
+      });
 
       const content = document.getElementById('resultsContent');
 

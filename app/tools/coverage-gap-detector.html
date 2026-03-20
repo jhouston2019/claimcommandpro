@@ -774,6 +774,26 @@ Provide a comprehensive coverage gap analysis in JSON format:
       document.getElementById('recommendations').innerHTML = recsHtml + '<br>' + nextStepsHtml + footerHtml;
 
       document.getElementById('results').classList.add('active');
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        const totalGap = parseFloat(document.getElementById('actualLoss').value) - parseFloat(document.getElementById('insurerPayment').value);
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 10,
+          toolName: 'Coverage Gap Detector',
+          results: {
+            summary: `${analysis.identified_gaps?.length || 0} coverage gaps identified. Total gap: $${totalGap.toLocaleString()}`,
+            details: {
+              'Insurer Payment': `$${document.getElementById('insurerPayment').value}`,
+              'Actual Loss': `$${document.getElementById('actualLoss').value}`,
+              'Total Gap': `$${totalGap.toLocaleString()}`,
+              'Gaps Found': analysis.identified_gaps?.length || 0
+            },
+            recommendations: analysis.recommendations
+          }
+        }, '*');
+      }
     }
 
     function saveToLocalStorage(claimNumber, analysis) {

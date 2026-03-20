@@ -631,6 +631,25 @@ Focus on:
         </div>`;
 
       document.getElementById('results').classList.add('active');
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        const criticalCount = checklist.critical_missing_items?.length || 0;
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 5,
+          toolName: 'Contractor Scope Checklist',
+          results: {
+            summary: `Scope checklist generated. ${criticalCount} critical items flagged.`,
+            details: {
+              'Project Type': document.getElementById('projectType').value,
+              'Critical Items': criticalCount,
+              'Total Checklist Items': checklist.checklist_items?.length || 0
+            },
+            recommendations: checklist.cost_considerations || []
+          }
+        }, '*');
+      }
     }
 
     function saveToLocalStorage(claimNumber, projectType, checklist) {

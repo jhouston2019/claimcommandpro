@@ -409,6 +409,25 @@
       document.getElementById('requestedBy').value = '';
 
       logToJournal(claimNumber, requestType);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 6,
+          toolName: 'Carrier Request Logger',
+          results: {
+            summary: `Request logged: ${requestType}`,
+            details: {
+              'Request Type': requestType,
+              'Request Date': requestDate,
+              'Due Date': dueDate || 'Not specified',
+              'Total Pending': requests.filter(r => r.status === 'pending').length
+            },
+            recommendations: ['Track response deadline', 'Follow up if no response received']
+          }
+        }, '*');
+      }
     }
 
     function markReceived(id) {

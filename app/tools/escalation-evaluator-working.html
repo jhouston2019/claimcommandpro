@@ -793,6 +793,27 @@ Provide a comprehensive escalation evaluation in JSON format:
 
       saveToLocalStorage(result, disputeAmount);
       logToJournal('escalation_evaluated', `Escalation evaluated: ${result.recommendation} recommended`);
+
+      // Send results to command center
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 15,
+          toolName: 'Escalation Evaluator',
+          results: {
+            summary: `Evaluation complete. Recommended path: ${result.recommendation.replace('_', ' ')}`,
+            details: {
+              'Recommendation': result.recommendation.toUpperCase().replace('_', ' '),
+              'Confidence': `${result.confidence}/10`,
+              'Dispute Amount': `$${disputeAmount.toLocaleString()}`,
+              'Appraisal Readiness': result.readiness_scores ? `${result.readiness_scores.appraisal}/10` : 'N/A',
+              'Mediation Readiness': result.readiness_scores ? `${result.readiness_scores.mediation}/10` : 'N/A',
+              'Litigation Readiness': result.readiness_scores ? `${result.readiness_scores.litigation}/10` : 'N/A'
+            },
+            recommendations: result.next_steps || []
+          }
+        }, '*');
+      }
     }
 
     function exportEvaluation() {

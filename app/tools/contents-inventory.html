@@ -403,6 +403,25 @@
       document.getElementById('originalCost').value = '';
       document.getElementById('replacementCost').value = '';
       document.getElementById('itemNotes').value = '';
+
+      // Send update to command center
+      if (window.opener && !window.opener.closed && inventory.length > 0) {
+        const totalRCV = inventory.reduce((sum, i) => sum + i.replacement_cost, 0);
+        window.opener.postMessage({
+          type: 'TOOL_RESULT',
+          stepNum: 7,
+          toolName: 'Contents Inventory Tool',
+          results: {
+            summary: `${inventory.length} items inventoried. Total RCV: $${totalRCV.toLocaleString()}`,
+            details: {
+              'Total Items': inventory.length,
+              'Total Replacement Cost': `$${totalRCV.toLocaleString()}`,
+              'Categories': [...new Set(inventory.map(i => i.category))].join(', ')
+            },
+            recommendations: ['Continue adding items', 'Include photos when possible', 'Save receipts for high-value items']
+          }
+        }, '*');
+      }
     }
 
     function removeItem(id) {

@@ -1059,6 +1059,85 @@
       display: none;
     }
 
+    .step-results {
+      margin: 24px 28px;
+      padding: 20px;
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 2px solid var(--emerald);
+      border-radius: 8px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .step-results.hidden {
+      display: none;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(16,185,129,0.2);
+    }
+
+    .results-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--emerald);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .results-title {
+      flex: 1;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .results-close {
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .results-close:hover {
+      color: var(--gray-600);
+    }
+
+    .results-body {
+      color: var(--gray-700);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .results-body h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 16px 0 8px 0;
+    }
+
+    .results-body ul {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+
+    .results-body li {
+      margin-bottom: 6px;
+    }
+
     .step-card-header {
       height: 58px;
       padding: 0 20px;
@@ -2323,7 +2402,19 @@
               <div class="ai-text">Upload your policy documents and the AI Policy Analyzer reads them for you. You'll get a clear, plain-language breakdown of your coverage in minutes — no insurance expertise required.</div>
             </div>
 
-            <a href="app/tools/policy-analyzer-working.html" class="expand-button" style="text-decoration: none; display: block; margin-top: 20px;">Open AI Policy Analyzer →</a>
+            <a href="app/tools/policy-analyzer-working.html" class="expand-button" style="text-decoration: none; display: block; margin-top: 20px;" onclick="trackToolOpen(2, 'Policy Analyzer')">Open AI Policy Analyzer →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-2-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Analysis Complete</div>
+                <button class="results-close" onclick="clearStepResults(2)">×</button>
+              </div>
+              <div class="results-body" id="step-2-results-body">
+                <!-- Results will be populated here via postMessage -->
+              </div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2375,7 +2466,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/written-notice-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Written Notice Generator →</a>
+            <a href="app/tools/written-notice-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(3, 'Written Notice Generator')">Open Written Notice Generator →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-3-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Notice Generated</div>
+                <button class="results-close" onclick="clearStepResults(3)">×</button>
+              </div>
+              <div class="results-body" id="step-3-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2430,7 +2531,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/damage-documentation-tool.html" class="expand-button" style="text-decoration: none; display: block;">Open Damage Documentation Tool →</a>
+            <a href="app/tools/damage-documentation-tool.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(4, 'Damage Documentation Tool')">Open Damage Documentation Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-4-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Documentation Complete</div>
+                <button class="results-close" onclick="clearStepResults(4)">×</button>
+              </div>
+              <div class="results-body" id="step-4-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2478,7 +2589,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/contractor-scope-checklist.html" class="expand-button" style="text-decoration: none; display: block;">Open Contractor Scope Checklist →</a>
+            <a href="app/tools/contractor-scope-checklist.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(5, 'Contractor Scope Checklist')">Open Contractor Scope Checklist →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-5-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Scope Verified</div>
+                <button class="results-close" onclick="clearStepResults(5)">×</button>
+              </div>
+              <div class="results-body" id="step-5-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2526,7 +2647,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/carrier-request-logger.html" class="expand-button" style="text-decoration: none; display: block;">Open Carrier Request Logger →</a>
+            <a href="app/tools/carrier-request-logger.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(6, 'Carrier Request Logger')">Open Carrier Request Logger →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-6-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Requests Logged</div>
+                <button class="results-close" onclick="clearStepResults(6)">×</button>
+              </div>
+              <div class="results-body" id="step-6-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2574,7 +2705,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/contents-inventory.html" class="expand-button" style="text-decoration: none; display: block;">Open Contents Inventory Tool →</a>
+            <a href="app/tools/contents-inventory.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(7, 'Contents Inventory Tool')">Open Contents Inventory Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-7-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Inventory Complete</div>
+                <button class="results-close" onclick="clearStepResults(7)">×</button>
+              </div>
+              <div class="results-body" id="step-7-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2629,7 +2770,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Estimate Review Tool →</a>
+            <a href="app/tools/estimate-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(8, 'AI Estimate Review Tool')">Open AI Estimate Review Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-8-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Estimate Reviewed</div>
+                <button class="results-close" onclick="clearStepResults(8)">×</button>
+              </div>
+              <div class="results-body" id="step-8-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2677,7 +2828,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/pricing-deviation-analyzer.html" class="expand-button" style="text-decoration: none; display: block;">Open Pricing Deviation Analyzer →</a>
+            <a href="app/tools/pricing-deviation-analyzer.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(9, 'Pricing Deviation Analyzer')">Open Pricing Deviation Analyzer →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-9-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Analysis Complete</div>
+                <button class="results-close" onclick="clearStepResults(9)">×</button>
+              </div>
+              <div class="results-body" id="step-9-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2725,7 +2886,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/coverage-gap-detector.html" class="expand-button" style="text-decoration: none; display: block;">Open Coverage Gap Detector →</a>
+            <a href="app/tools/coverage-gap-detector.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(10, 'Coverage Gap Detector')">Open Coverage Gap Detector →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-10-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Gaps Identified</div>
+                <button class="results-close" onclick="clearStepResults(10)">×</button>
+              </div>
+              <div class="results-body" id="step-10-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2780,7 +2951,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/supplement-letter-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Supplement Letter Generator →</a>
+            <a href="app/tools/supplement-letter-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(11, 'AI Supplement Letter Generator')">Open AI Supplement Letter Generator →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-11-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Letter Generated</div>
+                <button class="results-close" onclick="clearStepResults(11)">×</button>
+              </div>
+              <div class="results-body" id="step-11-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2828,7 +3009,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/demand-letter-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Demand Letter Generator →</a>
+            <a href="app/tools/demand-letter-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(12, 'AI Demand Letter Generator')">Open AI Demand Letter Generator →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-12-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Demand Letter Generated</div>
+                <button class="results-close" onclick="clearStepResults(12)">×</button>
+              </div>
+              <div class="results-body" id="step-12-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2876,7 +3067,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/rcv-recovery-submitter.html" class="expand-button" style="text-decoration: none; display: block;">Open RCV Recovery Tool →</a>
+            <a href="app/tools/rcv-recovery-submitter.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(13, 'RCV Recovery Tool')">Open RCV Recovery Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-13-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Recovery Submitted</div>
+                <button class="results-close" onclick="clearStepResults(13)">×</button>
+              </div>
+              <div class="results-body" id="step-13-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2931,7 +3132,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/negotiation-strategy-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Negotiation Strategy Tool →</a>
+            <a href="app/tools/negotiation-strategy-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(14, 'AI Negotiation Strategy Tool')">Open AI Negotiation Strategy Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-14-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Strategy Generated</div>
+                <button class="results-close" onclick="clearStepResults(14)">×</button>
+              </div>
+              <div class="results-body" id="step-14-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -2979,7 +3190,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/escalation-evaluator-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Escalation Evaluator →</a>
+            <a href="app/tools/escalation-evaluator-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(15, 'AI Escalation Evaluator')">Open AI Escalation Evaluator →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-15-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Evaluation Complete</div>
+                <button class="results-close" onclick="clearStepResults(15)">×</button>
+              </div>
+              <div class="results-body" id="step-15-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -3027,7 +3248,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Settlement Review Tool →</a>
+            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(16, 'AI Settlement Review Tool')">Open AI Settlement Review Tool →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-16-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Settlement Reviewed</div>
+                <button class="results-close" onclick="clearStepResults(16)">×</button>
+              </div>
+              <div class="results-body" id="step-16-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -3075,7 +3306,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;">Open Claim Archive Generator →</a>
+            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(17, 'Claim Archive Generator')">Open Claim Archive Generator →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-17-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Archive Generated</div>
+                <button class="results-close" onclick="clearStepResults(17)">×</button>
+              </div>
+              <div class="results-body" id="step-17-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -3123,7 +3364,17 @@
               </li>
             </ul>
 
-            <a href="app/tools/release-reviewer-working.html" class="expand-button" style="text-decoration: none; display: block;">Open AI Release Reviewer →</a>
+            <a href="app/tools/release-reviewer-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(18, 'AI Release Reviewer')">Open AI Release Reviewer →</a>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-18-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">Release Reviewed</div>
+                <button class="results-close" onclick="clearStepResults(18)">×</button>
+              </div>
+              <div class="results-body" id="step-18-results-body"></div>
+            </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
@@ -3347,12 +3598,97 @@
         amount,
         relatedStep
       };
-      
-      claimJournal.unshift(entry); // Add to beginning
+
+      claimJournal.unshift(entry);
       saveState();
       renderJournal();
       updateSummary();
     }
+
+    // Enhanced activity tracking
+    function trackActivity(action, details = {}) {
+      const actionDescriptions = {
+        'step_open': `Opened ${details.stepTitle || 'Step ' + details.stepNum}`,
+        'step_collapse': `Collapsed ${details.stepTitle || 'Step ' + details.stepNum}`,
+        'tool_open': `Opened ${details.toolName} for Step ${details.stepNum}`,
+        'tool_result': `Received results from ${details.toolName}`,
+        'nav_click': `Navigated to ${details.destination}`,
+        'summary_view': 'Viewed Claim Snapshot',
+        'journal_view': 'Viewed Activity Log',
+        'phase_expand': `Expanded ${details.phaseName} phase`,
+        'phase_collapse': `Collapsed ${details.phaseName} phase`
+      };
+
+      const description = actionDescriptions[action] || details.description || action;
+      addJournalEntry(action, description, details.amount || null, details.stepNum || null);
+    }
+
+    // Track tool opens
+    function trackToolOpen(stepNum, toolName) {
+      trackActivity('tool_open', { stepNum, toolName });
+    }
+
+    // Display tool results in step card
+    function displayStepResults(stepNum, results) {
+      const resultsContainer = document.getElementById(`step-${stepNum}-results`);
+      const resultsBody = document.getElementById(`step-${stepNum}-results-body`);
+      
+      if (!resultsContainer || !resultsBody) {
+        console.warn(`Results container not found for step ${stepNum}`);
+        return;
+      }
+
+      // Format results based on type
+      let formattedResults = '';
+      
+      if (typeof results === 'string') {
+        formattedResults = `<p>${results}</p>`;
+      } else if (results.summary) {
+        formattedResults = `
+          <h3>Summary</h3>
+          <p>${results.summary}</p>
+          ${results.details ? `<h3>Details</h3><div>${formatResultDetails(results.details)}</div>` : ''}
+          ${results.recommendations ? `<h3>Recommendations</h3><ul>${results.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>` : ''}
+        `;
+      } else {
+        formattedResults = `<pre>${JSON.stringify(results, null, 2)}</pre>`;
+      }
+
+      resultsBody.innerHTML = formattedResults;
+      resultsContainer.classList.remove('hidden');
+      
+      // Track that results were received
+      trackActivity('tool_result', { stepNum, toolName: results.toolName || 'Tool' });
+    }
+
+    function formatResultDetails(details) {
+      if (typeof details === 'string') return details;
+      if (Array.isArray(details)) return `<ul>${details.map(d => `<li>${d}</li>`).join('')}</ul>`;
+      if (typeof details === 'object') {
+        return Object.entries(details).map(([key, value]) => 
+          `<p><strong>${key}:</strong> ${value}</p>`
+        ).join('');
+      }
+      return details;
+    }
+
+    function clearStepResults(stepNum) {
+      const resultsContainer = document.getElementById(`step-${stepNum}-results`);
+      if (resultsContainer) {
+        resultsContainer.classList.add('hidden');
+      }
+    }
+
+    // PostMessage listener for tool results
+    window.addEventListener('message', (event) => {
+      // Security: validate origin in production
+      // if (event.origin !== 'https://yourdomain.com') return;
+      
+      if (event.data && event.data.type === 'TOOL_RESULT') {
+        const { stepNum, toolName, results } = event.data;
+        displayStepResults(stepNum, { ...results, toolName });
+      }
+    });
 
     // Render journal entries
     function renderJournal() {
@@ -3665,6 +4001,7 @@
     function showClaimSummary() {
       document.getElementById('claimSummary').classList.add('summary-open');
       setActiveNavPill(0);
+      trackActivity('summary_view', { destination: 'Claim Snapshot' });
     }
 
     function closeSummary() {
@@ -3675,12 +4012,14 @@
       // Scroll to financial metrics at top
       document.querySelector('.metric-strip').scrollIntoView({ behavior: 'smooth', block: 'start' });
       setActiveNavPill(1);
+      trackActivity('nav_click', { destination: 'Financial Summary' });
     }
 
     function showClaimJournal() {
       // Toggle journal panel overlay
       document.querySelector('.claim-journal-panel').classList.add('journal-open');
       setActiveNavPill(2);
+      trackActivity('journal_view', { destination: 'Activity Log' });
     }
 
     function closeJournal() {
@@ -3691,12 +4030,14 @@
       // Placeholder - could open a messages modal or panel
       alert('Messages feature coming soon. All claim communications will be tracked here.');
       setActiveNavPill(3);
+      trackActivity('nav_click', { destination: 'Messages' });
     }
 
     function showDocuments() {
       // Placeholder - could open documents panel
       alert('Documents feature coming soon. All uploaded documents will be accessible here.');
       setActiveNavPill(4);
+      trackActivity('nav_click', { destination: 'Documents' });
     }
 
     function showDeadlines() {
@@ -3738,7 +4079,9 @@
 
     function toggleStep(id) {
       const card = document.getElementById(id);
-      
+      const stepNum = parseInt(id.replace('step-', ''));
+      const isCollapsing = !card.classList.contains('collapsed');
+
       // If opening this card, collapse all others except step-done
       if (card.classList.contains('collapsed')) {
         document.querySelectorAll('.step-card').forEach(c => {
@@ -3747,12 +4090,21 @@
           }
         });
       }
-      
+
       card.classList.toggle('collapsed');
+
+      // Track activity
+      const stepTitle = card.querySelector('.card-subtitle')?.textContent || `Step ${stepNum}`;
+      trackActivity(isCollapsing ? 'step_collapse' : 'step_open', { stepNum, stepTitle });
     }
 
     function togglePhase(phaseGroup) {
+      const isExpanding = !phaseGroup.classList.contains('expanded');
       phaseGroup.classList.toggle('expanded');
+      
+      // Track activity
+      const phaseName = phaseGroup.querySelector('.phase-name')?.textContent || 'Phase';
+      trackActivity(isExpanding ? 'phase_expand' : 'phase_collapse', { phaseName });
     }
 
     function goToStep(num) {
@@ -3768,6 +4120,10 @@
         targetCard.classList.remove('collapsed');
         targetCard.classList.add('active-card');
         targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Track navigation
+        const stepTitle = targetCard.querySelector('.card-subtitle')?.textContent || `Step ${num}`;
+        trackActivity('nav_click', { destination: stepTitle, stepNum: num });
       }
 
       // Update sidebar step items - remove all active states
