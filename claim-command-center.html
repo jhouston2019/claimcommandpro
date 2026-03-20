@@ -1231,6 +1231,59 @@
       background: var(--teal-dark);
     }
 
+    .tools-panel {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--navy-border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .tools-panel.hidden {
+      display: none;
+    }
+
+    .tools-panel-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .tools-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tool-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tool-item:hover {
+      background: rgba(20,184,166,0.1);
+      border-color: rgba(20,184,166,0.3);
+      transform: translateX(2px);
+    }
+
+    .tool-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+    }
+
+    .tool-description {
+      font-size: 10px;
+      color: var(--gray-400);
+      line-height: 1.4;
+    }
+
     .sidebar-title {
       padding: 16px 20px;
       font-size: 13px;
@@ -2348,7 +2401,15 @@
         <button class="current-step-cta" onclick="scrollToCurrentStep()">Continue →</button>
       </div>
 
-      <div class="sidebar-title">The 18 Step System</div>
+      <!-- Tools for This Step Panel -->
+      <div class="tools-panel hidden" id="toolsPanel">
+        <div class="tools-panel-label">TOOLS FOR THIS STEP</div>
+        <div class="tools-list" id="toolsList">
+          <!-- Tools will be rendered here dynamically -->
+        </div>
+      </div>
+
+      <div class="sidebar-title">The 19 Step System</div>
 
       <div class="phase-group active expanded" onclick="togglePhase(this)">
         <div class="phase-header">
@@ -4491,6 +4552,136 @@
     let completedSteps = [];
     let currentStep = 1;
     let claimJournal = [];
+
+    const stepTools = {
+      2: [
+        {
+          name: "AI Policy Analyzer",
+          description: "Breaks down your coverage, limits, and hidden benefits",
+          url: "app/tools/policy-analyzer-working.html"
+        }
+      ],
+      3: [
+        {
+          name: "AI Notice Generator",
+          description: "Generates legally compliant written notice of loss",
+          url: "app/tools/written-notice-generator.html"
+        }
+      ],
+      4: [
+        {
+          name: "AI Damage Documentation System",
+          description: "Guides photo capture and damage cataloging",
+          url: "app/tools/damage-documentation-tool.html"
+        }
+      ],
+      5: [
+        {
+          name: "Contractor Scope Validation AI",
+          description: "Ensures contractor estimates include all required work",
+          url: "app/tools/contractor-scope-checklist.html"
+        }
+      ],
+      6: [
+        {
+          name: "AI Inspection Prep System",
+          description: "Tracks carrier requests and prepares inspection documentation",
+          url: "app/tools/carrier-request-logger.html"
+        }
+      ],
+      7: [
+        {
+          name: "AI Contents Valuation Engine",
+          description: "Calculates replacement value for all personal property",
+          url: "app/tools/contents-inventory.html"
+        }
+      ],
+      8: [
+        {
+          name: "AI ALE Tracking System",
+          description: "Tracks daily living expenses and calculates claimable totals",
+          url: "app/tools/ale-tracker.html"
+        }
+      ],
+      9: [
+        {
+          name: "AI Estimate Review Engine",
+          description: "Identifies missing scope, pricing gaps, and underpayment",
+          url: "app/tools/estimate-review-working.html"
+        }
+      ],
+      10: [
+        {
+          name: "AI Pricing Deviation Analyzer",
+          description: "Detects below-market pricing and line item discrepancies",
+          url: "app/tools/pricing-deviation-analyzer.html"
+        }
+      ],
+      11: [
+        {
+          name: "AI Coverage Gap Detector",
+          description: "Identifies missing benefits and unclaimed coverage",
+          url: "app/tools/coverage-gap-detector.html"
+        }
+      ],
+      12: [
+        {
+          name: "AI Supplement Letter Generator",
+          description: "Creates professional supplement requests with supporting data",
+          url: "app/tools/supplement-letter-working.html"
+        }
+      ],
+      13: [
+        {
+          name: "AI Demand Letter Generator",
+          description: "Generates formal dispute letters with legal backing",
+          url: "app/tools/demand-letter-working.html"
+        }
+      ],
+      14: [
+        {
+          name: "AI RCV Recovery Submitter",
+          description: "Automates depreciation recovery documentation and submission",
+          url: "app/tools/rcv-recovery-submitter.html"
+        }
+      ],
+      15: [
+        {
+          name: "AI Negotiation Strategy Engine",
+          description: "Analyzes leverage points and generates negotiation tactics",
+          url: "app/tools/negotiation-strategy-working.html"
+        }
+      ],
+      16: [
+        {
+          name: "AI Escalation Evaluator",
+          description: "Determines when and how to escalate to appraisal or mediation",
+          url: "app/tools/escalation-evaluator-working.html"
+        }
+      ],
+      17: [
+        {
+          name: "AI Settlement Review System",
+          description: "Validates final offer against full claim value",
+          url: "app/tools/settlement-review-working.html"
+        }
+      ],
+      18: [
+        {
+          name: "AI Claim Archive Generator",
+          description: "Creates comprehensive claim documentation package",
+          url: "app/tools/claim-archive-generator.html"
+        }
+      ],
+      19: [
+        {
+          name: "AI Release Reviewer",
+          description: "Reviews settlement releases for hidden liabilities",
+          url: "app/tools/release-reviewer-working.html"
+        }
+      ]
+    };
+
     let claimData = {
       policyUploaded: false,
       estimateUploaded: false,
@@ -5767,6 +5958,13 @@
 
       card.classList.toggle('collapsed');
 
+      // If opening, update tools panel
+      if (!isCollapsing) {
+        currentStep = stepNum;
+        renderToolsPanel(stepNum);
+        updateCurrentStepWidget(stepNum);
+      }
+
       // Track activity
       const stepTitle = card.querySelector('.card-subtitle')?.textContent || `Step ${stepNum}`;
       trackActivity(isCollapsing ? 'step_collapse' : 'step_open', { stepNum, stepTitle });
@@ -5820,6 +6018,7 @@
 
       syncRoadmapActiveStep(num);
       updateCurrentStepWidget(num);
+      renderToolsPanel(num);
       updateDoThisNow(num);
       updateSummary();
       saveState();
@@ -5831,6 +6030,36 @@
         activeCard.classList.remove('collapsed');
         activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+    }
+
+    function renderToolsPanel(stepNum) {
+      const panel = document.getElementById('toolsPanel');
+      const toolsList = document.getElementById('toolsList');
+      const tools = stepTools[stepNum];
+
+      if (!tools || tools.length === 0) {
+        panel.classList.add('hidden');
+        return;
+      }
+
+      panel.classList.remove('hidden');
+      toolsList.innerHTML = '';
+
+      tools.forEach(tool => {
+        const toolItem = document.createElement('div');
+        toolItem.className = 'tool-item';
+        toolItem.onclick = () => {
+          trackToolOpen(stepNum, tool.name);
+          window.open(tool.url, '_blank', 'width=1200,height=800');
+        };
+
+        toolItem.innerHTML = `
+          <div class="tool-name">${tool.name}</div>
+          <div class="tool-description">${tool.description}</div>
+        `;
+
+        toolsList.appendChild(toolItem);
+      });
     }
 
     function updateCurrentStepWidget(stepNum) {
@@ -6088,6 +6317,9 @@
       loadState();
 
       restoreStepUiFromStorage();
+
+      // Render tools panel for current step
+      renderToolsPanel(currentStep);
 
       // Check if this is first visit - show summary page
       const summaryViewed = localStorage.getItem('ccc_summary_viewed');
