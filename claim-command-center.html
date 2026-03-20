@@ -1033,39 +1033,39 @@
     /* Roadmap Strip */
     .roadmap-strip {
       background: var(--navy-light);
-      padding: 16px 24px;
+      padding: 8px 24px;
       border-bottom: 1px solid var(--navy-border);
     }
 
     .roadmap-label {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--gray-400);
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
 
     .roadmap-tiles {
       display: flex;
       gap: 1px;
       overflow-x: auto;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
+      scrollbar-width: none;
     }
+
+    .roadmap-tiles::-webkit-scrollbar { display: none; }
 
     .roadmap-tile {
-      min-width: 140px;
-      padding: 10px 12px;
+      min-width: 90px;
+      padding: 5px 8px;
       background: rgba(255,255,255,0.03);
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
-      border: 2px solid transparent;
+      border: 1px solid transparent;
     }
 
-    .roadmap-tile:hover {
-      background: rgba(255,255,255,0.05);
-    }
+    .roadmap-tile:hover { background: rgba(255,255,255,0.06); }
 
     .roadmap-tile.active {
       border-color: var(--teal);
@@ -1083,15 +1083,15 @@
     }
 
     .tile-number {
-      font-size: 11px;
+      font-size: 9px;
       color: var(--gray-400);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .tile-label {
-      font-size: 12px;
+      font-size: 11px;
       color: white;
-      line-height: 1.3;
+      line-height: 1.2;
     }
 
     .roadmap-tile.phase-establish {
@@ -1117,19 +1117,19 @@
     .phase-legend {
       display: flex;
       gap: 16px;
-      font-size: 12px;
+      font-size: 10px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       color: var(--gray-400);
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 2px;
     }
 
@@ -2108,7 +2108,6 @@
       <!-- Roadmap Strip -->
       <div class="roadmap-strip">
         <div class="roadmap-label">The 18-Step Claim System — So Nothing Gets Missed</div>
-        <div style="font-size: 12px; color: rgba(255,255,255,0.7); text-align: center; margin-top: 6px; margin-bottom: 12px;">Insurance claims follow a process — and missing the wrong step can cost you thousands. These 18 steps guide you through exactly what to do so nothing is overlooked, underpaid, or left unclaimed.</div>
         <div class="roadmap-tiles">
           <div class="roadmap-tile phase-establish active" onclick="goToStep(1)">
             <div class="tile-number">01</div>
