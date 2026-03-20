@@ -215,24 +215,26 @@
 
     .nav-header {
       height: 100%;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      display: flex;
       align-items: center;
+      justify-content: space-between;
       max-width: 100%;
+      position: relative;
     }
 
     .nav-left {
       display: flex;
       align-items: center;
       gap: 16px;
-      justify-self: start;
     }
 
     .nav-brand {
       font-family: 'DM Serif Display', serif;
       font-size: 18px;
       color: white;
-      justify-self: center;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     .nav-divider {
@@ -249,7 +251,6 @@
     .nav-pills {
       display: flex;
       gap: 0;
-      justify-self: end;
     }
 
     .nav-pill {
