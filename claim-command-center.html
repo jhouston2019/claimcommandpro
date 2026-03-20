@@ -272,167 +272,428 @@
       border-bottom-color: var(--teal);
     }
 
-    /* Claim Summary Panel */
-    .claim-summary-panel {
-      display: none;
+    /* Full-Page Claim Summary */
+    .claim-summary-page {
       position: fixed;
-      top: 0;
-      right: 0;
-      width: 380px;
-      height: 100vh;
-      background: white;
-      border-left: 1px solid var(--gray-200);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.15);
-      z-index: 800;
+      inset: 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      z-index: 1000;
       overflow-y: auto;
-      flex-direction: column;
-    }
-
-    .claim-summary-panel.summary-open {
-      display: flex;
-    }
-
-    .summary-header {
-      background: var(--navy);
-      color: white;
-      padding: 20px;
-      border-radius: 16px 16px 0 0;
-    }
-
-    .summary-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 20px;
-      margin-bottom: 4px;
-    }
-
-    .summary-subtitle {
-      font-size: 12px;
-      color: var(--gray-400);
-    }
-
-    .summary-section {
-      padding: 20px;
-      border-bottom: 1px solid var(--gray-200);
-    }
-
-    .summary-section:last-child {
-      border-bottom: none;
-    }
-
-    .summary-section-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--gray-600);
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .summary-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-
-    .summary-label {
-      color: var(--gray-600);
-    }
-
-    .summary-value {
-      color: var(--gray-900);
-      font-weight: 600;
-    }
-
-    .summary-gap {
-      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-      border: 2px solid var(--red);
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      margin: 16px 0;
-    }
-
-    .summary-gap-label {
-      font-size: 12px;
-      color: var(--red);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-    }
-
-    .summary-gap-amount {
-      font-family: 'DM Serif Display', serif;
-      font-size: 32px;
-      color: var(--red);
-      font-weight: 700;
-    }
-
-    .summary-synopsis {
-      background: var(--gray-50);
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--gray-900);
-    }
-
-    .summary-progress {
-      list-style: none;
-    }
-
-    .summary-progress-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--gray-100);
-    }
-
-    .summary-progress-item:last-child {
-      border-bottom: none;
-    }
-
-    .progress-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .claim-summary-page.hidden {
+      display: none;
+    }
+
+    .summary-page-container {
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .summary-page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 60px;
+    }
+
+    .summary-page-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+    }
+
+    .summary-page-brand .brand-claim {
+      color: white;
+    }
+
+    .summary-page-brand .brand-command {
+      color: white;
+      margin: 0 8px;
+    }
+
+    .summary-page-brand .brand-pro {
+      color: var(--teal);
+    }
+
+    .summary-page-claim-num {
+      font-size: 16px;
+      color: var(--gray-400);
+      font-weight: 600;
+    }
+
+    .summary-hero {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 48px;
+      text-align: center;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+    }
+
+    .summary-hero-eyebrow {
       font-size: 12px;
       font-weight: 700;
-      flex-shrink: 0;
+      color: var(--teal);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
 
-    .progress-icon.completed {
-      background: var(--emerald);
+    .summary-hero-title {
+      font-size: 18px;
+      color: var(--gray-400);
+      margin-bottom: 40px;
+      font-weight: 500;
+    }
+
+    .summary-total-value {
+      margin-bottom: 32px;
+    }
+
+    .summary-total-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gray-400);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .summary-total-amount {
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--emerald);
+      line-height: 1;
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .summary-breakdown {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .summary-breakdown-item {
+      text-align: center;
+    }
+
+    .breakdown-label {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .breakdown-value {
+      font-size: 24px;
+      font-weight: 700;
       color: white;
     }
 
-    .progress-icon.in-progress {
-      background: var(--teal);
-      color: white;
+    .summary-breakdown-divider {
+      font-size: 20px;
+      color: var(--gray-600);
+      font-weight: 300;
     }
 
-    .progress-icon.locked {
-      background: var(--gray-200);
+    .summary-vs-insurer {
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 24px;
+    }
+
+    .summary-vs-label {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .summary-vs-value {
+      font-size: 28px;
+      font-weight: 700;
       color: var(--gray-400);
     }
 
-    .progress-text {
-      flex: 1;
-      font-size: 13px;
-      color: var(--gray-900);
+    .summary-gap-hero {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15) 0%, rgba(239,68,68,0.05) 100%);
+      border: 2px solid var(--red);
+      border-radius: 12px;
+      padding: 24px;
     }
 
-    .progress-status {
+    .summary-gap-hero-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .summary-gap-hero-amount {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--red);
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .summary-buckets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 900px) {
+      .summary-buckets {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bucket-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 32px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .bucket-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .bucket-structure {
+      border-left: 4px solid #3b82f6;
+    }
+
+    .bucket-contents {
+      border-left: 4px solid #a855f7;
+    }
+
+    .bucket-ale {
+      border-left: 4px solid var(--orange);
+    }
+
+    .bucket-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .bucket-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .bucket-subtitle {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-bottom: 24px;
+    }
+
+    .bucket-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .bucket-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .bucket-stat-gap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .bucket-stat-label {
+      font-size: 12px;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .bucket-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .bucket-stat-gap .bucket-stat-label {
+      color: var(--red);
+    }
+
+    .bucket-stat-gap .bucket-stat-value {
+      color: var(--red);
+    }
+
+    .summary-action-section {
+      background: rgba(20,184,166,0.1);
+      border: 1px solid rgba(20,184,166,0.3);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .summary-action-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .summary-action-text {
+      font-size: 16px;
+      color: white;
+      line-height: 1.6;
+    }
+
+    .summary-progress-section {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 40px;
+    }
+
+    .summary-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .summary-progress-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .summary-progress-percent {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--teal);
+    }
+
+    .summary-progress-bar {
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .summary-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--teal) 0%, var(--emerald) 100%);
+      transition: width 0.5s ease;
+    }
+
+    .summary-progress-phases {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .summary-progress-phases {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .summary-phase-item {
+      text-align: center;
+      padding: 16px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .summary-phase-item.active {
+      border-color: var(--teal);
+      background: rgba(20,184,166,0.1);
+    }
+
+    .summary-phase-item.completed {
+      border-color: var(--emerald);
+      background: rgba(16,185,129,0.1);
+    }
+
+    .summary-phase-name {
       font-size: 11px;
       color: var(--gray-400);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
+    .summary-phase-item.active .summary-phase-name {
+      color: var(--teal);
+    }
+
+    .summary-phase-item.completed .summary-phase-name {
+      color: var(--emerald);
+    }
+
+    .summary-phase-steps {
+      font-size: 14px;
+      color: white;
+      font-weight: 600;
+    }
+
+    .summary-cta-section {
+      text-align: center;
+    }
+
+    .summary-cta-button {
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 20px 48px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(20,184,166,0.3);
+    }
+
+    .summary-cta-button:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(20,184,166,0.4);
+    }
+
+    /* Claim Summary Panel */
     /* Claim Journal Panel */
     .claim-journal-panel {
       display: none;
@@ -937,11 +1198,93 @@
       color: white;
     }
 
-    .metric-block.highlight-emerald .metric-value { color: var(--emerald); }
+    .metric-block.highlight-blue .metric-value { color: #3b82f6; }
+    .metric-block.highlight-purple .metric-value { color: #a855f7; }
+    .metric-block.highlight-orange .metric-value { color: var(--orange); }
     .metric-block.highlight-red .metric-value { color: var(--red); }
-    .metric-block.teal-value .metric-value { color: var(--teal); font-family: 'DM Sans', sans-serif; }
+    .metric-block.highlight-blue .metric-value { color: #3b82f6; }
+    .metric-block.highlight-purple .metric-value { color: #a855f7; }
+    .metric-block.highlight-orange .metric-value { color: var(--orange); }
 
     .metric-sublabel { display: none; }
+
+    /* Roadmap strip — clickable step tiles (synced with goToStep / completeStep) */
+    .roadmap-strip {
+      background: var(--navy-light);
+      border-bottom: 1px solid var(--navy-border);
+      padding: 10px 0 12px;
+    }
+
+    .roadmap-strip-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray-400);
+      padding: 0 32px 8px;
+    }
+
+    .roadmap-strip-inner {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 0 28px 4px;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .roadmap-tile {
+      flex: 0 0 auto;
+      min-width: 56px;
+      padding: 8px 6px 10px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    }
+
+    .roadmap-tile:hover {
+      border-color: rgba(20, 184, 166, 0.5);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .roadmap-tile:focus {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    .roadmap-tile.active {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 1px rgba(20, 184, 166, 0.35);
+      background: rgba(20, 184, 166, 0.12);
+    }
+
+    .roadmap-tile.completed {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .roadmap-tile.completed .tile-number {
+      background: var(--emerald);
+      color: #fff;
+    }
+
+    .roadmap-tile .tile-number {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .roadmap-tile .tile-label {
+      font-size: 9px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.82);
+      max-width: 72px;
+    }
 
     /* Roadmap Strip */
     /* Content Header */
@@ -1518,77 +1861,158 @@
 </head>
 <body>
 
-  <!-- Claim Summary Panel -->
-  <div class="claim-summary-panel" id="claimSummary">
-    <div class="summary-header">
-      <div style="display: flex; align-items: flex-start; justify-content: space-between;">
-        <div>
-          <div class="summary-title">Your Claim Snapshot</div>
-          <div class="summary-subtitle">Real-time tracking of your claim progress</div>
+  <!-- Full-Page Claim Summary (First Screen) -->
+  <div class="claim-summary-page" id="claimSummaryPage">
+    <div class="summary-page-container">
+      
+      <!-- Header -->
+      <div class="summary-page-header">
+        <div class="summary-page-brand">
+          <span class="brand-claim">Claim</span>
+          <span class="brand-command">Command</span>
+          <span class="brand-pro">Pro</span>
         </div>
-        <button onclick="closeSummary()" style="background:none;border:none;color:var(--gray-400);font-size:22px;cursor:pointer;padding:0;line-height:1;margin-left:auto;">×</button>
+        <div class="summary-page-claim-num" id="summaryPageClaimNum">CLM-2024-0847</div>
       </div>
-    </div>
 
-    <div class="summary-section">
-      <div class="summary-section-title">Policy Summary</div>
-      <div class="summary-row">
-        <span class="summary-label">Dwelling Coverage</span>
-        <span class="summary-value" id="dwellingCoverage">—</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Deductible</span>
-        <span class="summary-value" id="deductible">—</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Settlement Type</span>
-        <span class="summary-value" id="settlementType">—</span>
-      </div>
-    </div>
+      <!-- Hero Section -->
+      <div class="summary-hero">
+        <div class="summary-hero-eyebrow">YOUR CLAIM SNAPSHOT</div>
+        <div class="summary-hero-title">Real-time breakdown of your total recoverable claim</div>
+        
+        <div class="summary-total-value">
+          <div class="summary-total-label">TOTAL RECOVERABLE VALUE</div>
+          <div class="summary-total-amount" id="summaryTotalValue">$67,400</div>
+        </div>
 
-    <div class="summary-section">
-      <div class="summary-section-title">Estimate Comparison</div>
-      <div class="summary-row">
-        <span class="summary-label">Insurance Estimate</span>
-        <span class="summary-value" id="insuranceEstimate">$18,200</span>
-      </div>
-      <div class="summary-row">
-        <span class="summary-label">Your Estimated Loss</span>
-        <span class="summary-value" id="yourEstimate">$36,750</span>
-      </div>
-    </div>
+        <div class="summary-breakdown">
+          <div class="summary-breakdown-item">
+            <div class="breakdown-label">Structure Value</div>
+            <div class="breakdown-value" id="summaryStructureValue">$36,750</div>
+          </div>
+          <div class="summary-breakdown-divider">+</div>
+          <div class="summary-breakdown-item">
+            <div class="breakdown-label">Contents Value</div>
+            <div class="breakdown-value" id="summaryContentsValue">$12,400</div>
+          </div>
+          <div class="summary-breakdown-divider">+</div>
+          <div class="summary-breakdown-item">
+            <div class="breakdown-label">ALE Value</div>
+            <div class="breakdown-value" id="summaryALEValue">$18,250</div>
+          </div>
+        </div>
 
-    <div class="summary-gap">
-      <div class="summary-gap-label">Claim Gap Identified</div>
-      <div class="summary-gap-amount" id="claimGap">$18,550</div>
-    </div>
+        <div class="summary-vs-insurer">
+          <div class="summary-vs-label">Insurer Estimate</div>
+          <div class="summary-vs-value" id="summaryInsurerValue">$18,200</div>
+        </div>
 
-    <div class="summary-section">
-      <div class="summary-section-title">Action Summary</div>
-      <div class="summary-synopsis" id="actionSummary">
-        You're just getting started. Complete Step 1 to understand the claim process, then upload your policy to see your coverage details here.
+        <div class="summary-gap-hero">
+          <div class="summary-gap-hero-label">TOTAL GAP</div>
+          <div class="summary-gap-hero-amount" id="summaryGapValue">$49,200</div>
+        </div>
       </div>
-    </div>
 
-    <div class="summary-section">
-      <div class="summary-section-title">Progress Tracker</div>
-      <ul class="summary-progress" id="progressTracker">
-        <li class="summary-progress-item">
-          <div class="progress-icon in-progress">1</div>
-          <div class="progress-text">Understand the Process</div>
-          <div class="progress-status">In Progress</div>
-        </li>
-        <li class="summary-progress-item">
-          <div class="progress-icon locked">2</div>
-          <div class="progress-text">Review Your Policy</div>
-          <div class="progress-status">Locked</div>
-        </li>
-        <li class="summary-progress-item">
-          <div class="progress-icon locked">3</div>
-          <div class="progress-text">Report the Loss</div>
-          <div class="progress-status">Locked</div>
-        </li>
-      </ul>
+      <!-- Three Bucket Breakdown -->
+      <div class="summary-buckets">
+        <div class="bucket-card bucket-structure">
+          <div class="bucket-icon">🏠</div>
+          <div class="bucket-title">STRUCTURE</div>
+          <div class="bucket-subtitle">Repairs + Upgrades</div>
+          <div class="bucket-stats">
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Insurance Estimate</div>
+              <div class="bucket-stat-value" id="bucketStructureInsurer">$18,200</div>
+            </div>
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Your Estimate</div>
+              <div class="bucket-stat-value" id="bucketStructureUser">$36,750</div>
+            </div>
+            <div class="bucket-stat-gap">
+              <div class="bucket-stat-label">Gap</div>
+              <div class="bucket-stat-value" id="bucketStructureGap">$18,550</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bucket-card bucket-contents">
+          <div class="bucket-icon">📦</div>
+          <div class="bucket-title">CONTENTS</div>
+          <div class="bucket-subtitle">Personal Property</div>
+          <div class="bucket-stats">
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Total Identified</div>
+              <div class="bucket-stat-value" id="bucketContentsTotal">$12,400</div>
+            </div>
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Submitted</div>
+              <div class="bucket-stat-value" id="bucketContentsSubmitted">$0</div>
+            </div>
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Recovered</div>
+              <div class="bucket-stat-value" id="bucketContentsRecovered">$0</div>
+            </div>
+            <div class="bucket-stat-gap">
+              <div class="bucket-stat-label">Remaining</div>
+              <div class="bucket-stat-value" id="bucketContentsRemaining">$12,400</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bucket-card bucket-ale">
+          <div class="bucket-icon">🏨</div>
+          <div class="bucket-title">ALE</div>
+          <div class="bucket-subtitle">Living Expenses</div>
+          <div class="bucket-stats">
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Days Tracked</div>
+              <div class="bucket-stat-value" id="bucketALEDays">85</div>
+            </div>
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Daily Average</div>
+              <div class="bucket-stat-value" id="bucketALEDaily">$215/day</div>
+            </div>
+            <div class="bucket-stat">
+              <div class="bucket-stat-label">Total Claimable</div>
+              <div class="bucket-stat-value" id="bucketALETotal">$18,250</div>
+            </div>
+            <div class="bucket-stat-gap">
+              <div class="bucket-stat-label">Submitted vs Recovered</div>
+              <div class="bucket-stat-value" id="bucketALERecovered">$0 / $0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Summary -->
+      <div class="summary-action-section">
+        <div class="summary-action-title">What's Next</div>
+        <div class="summary-action-text" id="summaryActionText">
+          You're just getting started. Begin Step 1 to set up your claim correctly.
+        </div>
+      </div>
+
+      <!-- Progress Tracker -->
+      <div class="summary-progress-section">
+        <div class="summary-progress-header">
+          <div class="summary-progress-title">Your Progress</div>
+          <div class="summary-progress-percent" id="summaryProgressPercent">0%</div>
+        </div>
+        <div class="summary-progress-bar">
+          <div class="summary-progress-fill" id="summaryProgressFill" style="width: 0%"></div>
+        </div>
+        <div class="summary-progress-phases" id="summaryProgressPhases">
+          <!-- Phases will be populated here -->
+        </div>
+      </div>
+
+      <!-- Primary CTA -->
+      <div class="summary-cta-section">
+        <button class="summary-cta-button" onclick="enterWorkflow()">
+          Continue Your Claim →
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1658,7 +2082,7 @@
         <div class="nav-claim-num">Day 85 • Active</div>
       </div>
       <div class="nav-pills">
-        <button class="nav-pill" onclick="showClaimSummary()">Claim Snapshot</button>
+        <button class="nav-pill" onclick="showSummaryPage()">Claim Summary</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
         <button class="nav-pill" onclick="showClaimJournal()">Activity Log</button>
         <button class="nav-pill" onclick="showMessages()">Messages</button>
@@ -1783,11 +2207,11 @@
             <div class="step-number">15</div>
             <div class="step-title">Appraisal/Mediation</div>
           </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(16)">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(17)">
             <div class="step-number">16</div>
             <div class="step-title">Review Settlement Offer</div>
           </div>
-          <div class="step-item" onclick="event.stopPropagation(); goToStep(17)">
+          <div class="step-item" onclick="event.stopPropagation(); goToStep(18)">
             <div class="step-number">17</div>
             <div class="step-title">Execute Final Recovery</div>
           </div>
@@ -1806,24 +2230,53 @@
       <!-- Metric Strip -->
       <div class="metric-strip">
         <div class="metric-block">
-          <div class="metric-label">What your insurer offered</div>
-          <div class="metric-value">$18,200</div>
+          <div class="metric-label">Insurer Offered</div>
+          <div class="metric-value" id="metricInsurerOffered">$18,200</div>
           <div class="metric-sublabel">Initial estimate</div>
         </div>
-        <div class="metric-block highlight-emerald">
-          <div class="metric-label">What your loss is actually worth</div>
-          <div class="metric-value">$36,750</div>
-          <div class="metric-sublabel">Verified claim value</div>
+        <div class="metric-block highlight-blue">
+          <div class="metric-label">Structure Value</div>
+          <div class="metric-value" id="metricStructureValue">$36,750</div>
+          <div class="metric-sublabel">Repairs + upgrades</div>
+        </div>
+        <div class="metric-block highlight-purple">
+          <div class="metric-label">Contents Value</div>
+          <div class="metric-value" id="metricContentsValue">$12,400</div>
+          <div class="metric-sublabel">Personal property</div>
+        </div>
+        <div class="metric-block highlight-orange">
+          <div class="metric-label">ALE Accruing</div>
+          <div class="metric-value" id="metricALEValue">$132/day</div>
+          <div class="metric-sublabel">Living expenses</div>
         </div>
         <div class="metric-block highlight-red">
-          <div class="metric-label">Money you may be leaving behind</div>
-          <div class="metric-value">$18,550</div>
-          <div class="metric-sublabel">Gap identified</div>
+          <div class="metric-label">Total Recoverable Gap</div>
+          <div class="metric-value" id="metricTotalGap">$35,200</div>
+          <div class="metric-sublabel">Your recovery target</div>
         </div>
-        <div class="metric-block teal-value">
-          <div class="metric-label">Where you are in the process</div>
-          <div class="metric-value">Step 1 of 18</div>
-          <div class="metric-sublabel">Each step moves your claim closer to full payout</div>
+      </div>
+
+      <div class="roadmap-strip" role="navigation" aria-label="All claim steps">
+        <div class="roadmap-strip-label"><span id="metricStepPosition">Step 1 of 18</span> — click a tile to open that step</div>
+        <div class="roadmap-strip-inner">
+          <div class="roadmap-tile active" role="button" tabindex="0" data-step="1" aria-label="Step 1, Claim guide" onclick="goToStep(1)"><div class="tile-number">01</div><div class="tile-label">Guide</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="2" aria-label="Step 2, Policy" onclick="goToStep(2)"><div class="tile-number">02</div><div class="tile-label">Policy</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="3" aria-label="Step 3, Notice" onclick="goToStep(3)"><div class="tile-number">03</div><div class="tile-label">Notice</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="4" aria-label="Step 4, Document" onclick="goToStep(4)"><div class="tile-number">04</div><div class="tile-label">Document</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="5" aria-label="Step 5, Estimates" onclick="goToStep(5)"><div class="tile-number">05</div><div class="tile-label">Estimates</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="6" aria-label="Step 6, Adjuster" onclick="goToStep(6)"><div class="tile-number">06</div><div class="tile-label">Adjuster</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="7" aria-label="Step 7, Contents" onclick="goToStep(7)"><div class="tile-number">07</div><div class="tile-label">Contents</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="8" aria-label="Step 8, Review estimate" onclick="goToStep(8)"><div class="tile-number">08</div><div class="tile-label">Review</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="9" aria-label="Step 9, Pricing" onclick="goToStep(9)"><div class="tile-number">09</div><div class="tile-label">Pricing</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="10" aria-label="Step 10, Coverage" onclick="goToStep(10)"><div class="tile-number">10</div><div class="tile-label">Coverage</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="11" aria-label="Step 11, Supplement" onclick="goToStep(11)"><div class="tile-number">11</div><div class="tile-label">Supplement</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="12" aria-label="Step 12, Letters" onclick="goToStep(12)"><div class="tile-number">12</div><div class="tile-label">Letters</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="13" aria-label="Step 13, RCV" onclick="goToStep(13)"><div class="tile-number">13</div><div class="tile-label">RCV</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="14" aria-label="Step 14, Negotiate" onclick="goToStep(14)"><div class="tile-number">14</div><div class="tile-label">Negotiate</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="15" aria-label="Step 15, Escalate" onclick="goToStep(15)"><div class="tile-number">15</div><div class="tile-label">Escalate</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="16" aria-label="Step 16, Settlement" onclick="goToStep(17)"><div class="tile-number">16</div><div class="tile-label">Settlement</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="17" aria-label="Step 17, Archive" onclick="goToStep(18)"><div class="tile-number">17</div><div class="tile-label">Archive</div></div>
+          <div class="roadmap-tile" role="button" tabindex="0" data-step="18" aria-label="Step 18, Release" onclick="goToStep(18)"><div class="tile-number">18</div><div class="tile-label">Release</div></div>
         </div>
       </div>
 
@@ -2726,6 +3179,144 @@
           </div>
         </div>
 
+        <!-- Step 8 (NEW - ALE) -->
+        <div class="step-card collapsed step-locked" id="step-8">
+          <div class="step-card-header" onclick="toggleStep('step-8')">
+            <div class="card-number">08</div>
+            <div class="card-text">
+              <div class="card-title">Track & Recover Living Expenses (ALE)</div>
+              <div class="card-subtitle">Additional Living Expenses Tracker</div>
+            </div>
+            <div class="card-right">
+              <div class="card-status pending">Pending</div>
+              <span class="card-lock">🔒</span>
+              <span class="card-chevron">▼</span>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="section-label">Why This Matters</div>
+            <p class="section-text">If your home is uninhabitable, your policy covers the extra costs of living elsewhere — but only the overage above your normal daily expenses. Most policyholders don't track these expenses and forfeit thousands. ALE accrues daily and can represent 15-30% of your total claim value.</p>
+
+            <div class="section-label">What You Do</div>
+            <p class="section-text">Track every extra dollar you spend due to displacement: hotel costs, restaurant meals (vs home cooking), mileage to/from temporary housing, laundry, storage, pet boarding, and more. Set your baseline daily spend (what you normally spend at home) and the system calculates your claimable overage automatically.</p>
+
+            <div class="section-label">What Claim Command Pro Provides</div>
+            <ul class="provides-list">
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Daily expense tracker with automatic overage calculation</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Running totals showing total logged vs total claimable ALE</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">Receipt upload and organization by category</div>
+              </li>
+              <li class="provides-item">
+                <div class="provides-bullet"></div>
+                <div class="provides-text">ALE summary report export (PDF + CSV) with categorized totals</div>
+              </li>
+            </ul>
+
+            <!-- ALE Tracker UI -->
+            <div class="ale-tracker-container">
+              <div class="ale-live-indicator">
+                <div class="ale-pulse"></div>
+                <div class="ale-live-text">You are currently accruing <span id="aleAccrualRate">~$132/day</span> in living expenses</div>
+              </div>
+
+              <div class="ale-baseline-config">
+                <label class="ale-label">Your Daily Baseline (Normal Home Expenses)</label>
+                <div class="ale-baseline-input-group">
+                  <span class="ale-currency">$</span>
+                  <input type="number" id="aleBaseline" value="75" min="0" step="5" onchange="updateALEBaseline()">
+                  <span class="ale-helper">/day</span>
+                </div>
+                <p class="ale-help-text">This is what you normally spend per day living at home (food, utilities, etc.). We'll calculate your claimable overage above this amount.</p>
+              </div>
+
+              <div class="ale-entry-form">
+                <div class="ale-form-header">Add Living Expense</div>
+                <div class="ale-form-grid">
+                  <div class="ale-form-field">
+                    <label>Date</label>
+                    <input type="date" id="aleDate" required>
+                  </div>
+                  <div class="ale-form-field">
+                    <label>Category</label>
+                    <select id="aleCategory" required>
+                      <option value="">Select category</option>
+                      <option value="lodging">Lodging</option>
+                      <option value="food">Food & Meals</option>
+                      <option value="mileage">Mileage</option>
+                      <option value="laundry">Laundry</option>
+                      <option value="storage">Storage</option>
+                      <option value="pet_boarding">Pet Boarding</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="ale-form-field">
+                    <label>Amount</label>
+                    <input type="number" id="aleAmount" step="0.01" min="0" placeholder="0.00" required>
+                  </div>
+                  <div class="ale-form-field ale-field-full">
+                    <label>Notes</label>
+                    <input type="text" id="aleNotes" placeholder="Brief description">
+                  </div>
+                  <div class="ale-form-field ale-field-full">
+                    <label>Receipt (Optional)</label>
+                    <input type="file" id="aleReceipt" accept="image/*,.pdf">
+                  </div>
+                </div>
+                <button class="ale-add-button" onclick="addALEEntry()">+ Add Expense</button>
+              </div>
+
+              <div class="ale-totals-grid">
+                <div class="ale-total-card">
+                  <div class="ale-total-label">Total ALE Logged</div>
+                  <div class="ale-total-value" id="aleTotalLogged">$0</div>
+                </div>
+                <div class="ale-total-card highlight">
+                  <div class="ale-total-label">Total Claimable ALE</div>
+                  <div class="ale-total-value" id="aleTotalClaimable">$0</div>
+                </div>
+                <div class="ale-total-card">
+                  <div class="ale-total-label">Daily Accrual Estimate</div>
+                  <div class="ale-total-value" id="aleDailyEstimate">$0/day</div>
+                </div>
+              </div>
+
+              <div class="ale-entries-list" id="aleEntriesList">
+                <div class="ale-entries-header">Your Expense Entries</div>
+                <div class="ale-empty-state">No expenses logged yet. Add your first expense above.</div>
+              </div>
+
+              <div class="ale-export-section">
+                <button class="ale-export-button" onclick="exportALEReport()">📄 Export ALE Summary Report</button>
+              </div>
+            </div>
+
+            <!-- Results Display Area -->
+            <div class="step-results hidden" id="step-8-results">
+              <div class="results-header">
+                <div class="results-icon">✓</div>
+                <div class="results-title">ALE Tracked</div>
+                <button class="results-close" onclick="clearStepResults(8)">×</button>
+              </div>
+              <div class="results-body" id="step-8-results-body"></div>
+            </div>
+          </div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(7)">← Step 7</button>
+              <button class="nav-button" onclick="goToStep(9)">Step 9 →</button>
+            </div>
+            <button class="complete-button" onclick="completeStep(8)">Mark Complete →</button>
+          </div>
+        </div>
+
         <!-- Phase 3 Divider -->
         <div class="phase-divider">
           <div class="phase-divider-line"></div>
@@ -2733,7 +3324,7 @@
           <div class="phase-divider-line"></div>
         </div>
 
-        <!-- Step 8 -->
+        <!-- Step 9 (was Step 8) -->
         <div class="step-card collapsed step-locked" id="step-8">
           <div class="step-card-header" onclick="toggleStep('step-8')">
             <div class="card-number">08</div>
@@ -3205,16 +3796,16 @@
           <div class="step-footer">
             <div class="footer-nav">
               <button class="nav-button" onclick="goToStep(14)">← Step 14</button>
-              <button class="nav-button" onclick="goToStep(16)">Step 16 →</button>
+              <button class="nav-button" onclick="goToStep(17)">Step 16 →</button>
             </div>
             <button class="complete-button" onclick="completeStep(15)">Mark Complete →</button>
           </div>
         </div>
 
-        <!-- Step 16 -->
-        <div class="step-card collapsed step-locked" id="step-16">
-          <div class="step-card-header" onclick="toggleStep('step-16')">
-            <div class="card-number">16</div>
+        <!-- Step 17 (was Step 16) -->
+        <div class="step-card collapsed step-locked" id="step-17">
+          <div class="step-card-header" onclick="toggleStep('step-17')">
+            <div class="card-number">17</div>
             <div class="card-text">
               <div class="card-title">Settlement Review</div>
               <div class="card-subtitle">Read Every Word of This Offer Before You Sign Anything</div>
@@ -3248,14 +3839,14 @@
               </li>
             </ul>
 
-            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(16, 'AI Settlement Review Tool')">Open AI Settlement Review Tool →</a>
+            <a href="app/tools/settlement-review-working.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(17, 'AI Settlement Review Tool')">Open AI Settlement Review Tool →</a>
 
             <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-16-results">
+            <div class="step-results hidden" id="step-17-results">
               <div class="results-header">
                 <div class="results-icon">✓</div>
                 <div class="results-title">Settlement Reviewed</div>
-                <button class="results-close" onclick="clearStepResults(16)">×</button>
+                <button class="results-close" onclick="clearStepResults(17)">×</button>
               </div>
               <div class="results-body" id="step-16-results-body"></div>
             </div>
@@ -3263,16 +3854,16 @@
           <div class="step-footer">
             <div class="footer-nav">
               <button class="nav-button" onclick="goToStep(15)">← Step 15</button>
-              <button class="nav-button" onclick="goToStep(17)">Step 17 →</button>
+              <button class="nav-button" onclick="goToStep(18)">Step 17 →</button>
             </div>
-            <button class="complete-button" onclick="completeStep(16)">Mark Complete →</button>
+            <button class="complete-button" onclick="completeStep(17)">Mark Complete →</button>
           </div>
         </div>
 
-        <!-- Step 17 -->
-        <div class="step-card collapsed step-locked" id="step-17">
-          <div class="step-card-header" onclick="toggleStep('step-17')">
-            <div class="card-number">17</div>
+        <!-- Step 18 (was Step 17) -->
+        <div class="step-card collapsed step-locked" id="step-18">
+          <div class="step-card-header" onclick="toggleStep('step-18')">
+            <div class="card-number">18</div>
             <div class="card-text">
               <div class="card-title">Final Recovery</div>
               <div class="card-subtitle">Complete Repairs and Collect Every Dollar You're Owed</div>
@@ -3306,24 +3897,24 @@
               </li>
             </ul>
 
-            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(17, 'Claim Archive Generator')">Open Claim Archive Generator →</a>
+            <a href="app/tools/claim-archive-generator.html" class="expand-button" style="text-decoration: none; display: block;" onclick="trackToolOpen(18, 'Claim Archive Generator')">Open Claim Archive Generator →</a>
 
             <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-17-results">
+            <div class="step-results hidden" id="step-18-results">
               <div class="results-header">
                 <div class="results-icon">✓</div>
                 <div class="results-title">Archive Generated</div>
-                <button class="results-close" onclick="clearStepResults(17)">×</button>
+                <button class="results-close" onclick="clearStepResults(18)">×</button>
               </div>
               <div class="results-body" id="step-17-results-body"></div>
             </div>
           </div>
           <div class="step-footer">
             <div class="footer-nav">
-              <button class="nav-button" onclick="goToStep(16)">← Step 16</button>
+              <button class="nav-button" onclick="goToStep(17)">← Step 16</button>
               <button class="nav-button" onclick="goToStep(18)">Step 18 →</button>
             </div>
-            <button class="complete-button" onclick="completeStep(17)">Mark Complete →</button>
+            <button class="complete-button" onclick="completeStep(18)">Mark Complete →</button>
           </div>
         </div>
 
@@ -3378,7 +3969,7 @@
           </div>
           <div class="step-footer">
             <div class="footer-nav">
-              <button class="nav-button" onclick="goToStep(17)">← Step 17</button>
+              <button class="nav-button" onclick="goToStep(18)">← Step 17</button>
               <button class="nav-button" disabled style="opacity: 0.4;">Step 19 →</button>
             </div>
             <button class="complete-button" onclick="completeStep(18)">Mark Complete →</button>
@@ -3554,13 +4145,164 @@
     let claimData = {
       policyUploaded: false,
       estimateUploaded: false,
-      insuranceEstimate: 18200,
-      yourEstimate: 36750,
-      claimGap: 18550,
+      structure: {
+        insurerEstimate: 18200,
+        userEstimate: 36750,
+        gap: 18550
+      },
+      contents: {
+        items: [],
+        totalValue: 0,
+        submitted: 0,
+        recovered: 0
+      },
+      ale: {
+        entries: [],
+        dailyBaseline: 75,
+        totalLogged: 0,
+        totalClaimable: 0,
+        daysDisplaced: 0,
+        avgDailyOverage: 0
+      },
       dwellingCoverage: null,
       deductible: null,
       settlementType: null
     };
+
+    // Calculate total recoverable value
+    function calculateTotalRecoverable() {
+      const structureGap = claimData.structure.userEstimate - claimData.structure.insurerEstimate;
+      const contentsValue = claimData.contents.totalValue;
+      const aleValue = claimData.ale.totalClaimable;
+      return structureGap + contentsValue + aleValue;
+    }
+
+    // Update summary page with live data
+    function updateSummaryPage() {
+      const totalRecoverable = calculateTotalRecoverable();
+      const structureGap = claimData.structure.userEstimate - claimData.structure.insurerEstimate;
+
+      // Hero section
+      document.getElementById('summaryTotalValue').textContent = '$' + totalRecoverable.toLocaleString();
+      document.getElementById('summaryStructureValue').textContent = '$' + claimData.structure.userEstimate.toLocaleString();
+      document.getElementById('summaryContentsValue').textContent = '$' + claimData.contents.totalValue.toLocaleString();
+      
+      // ALE display logic
+      const aleDisplay = claimData.ale.entries.length === 0 
+        ? '$' + claimData.ale.avgDailyOverage + '/day'
+        : '$' + claimData.ale.totalClaimable.toLocaleString();
+      document.getElementById('summaryALEValue').textContent = aleDisplay;
+      
+      document.getElementById('summaryInsurerValue').textContent = '$' + claimData.structure.insurerEstimate.toLocaleString();
+      document.getElementById('summaryGapValue').textContent = '$' + totalRecoverable.toLocaleString();
+
+      // Bucket cards
+      document.getElementById('bucketStructureInsurer').textContent = '$' + claimData.structure.insurerEstimate.toLocaleString();
+      document.getElementById('bucketStructureUser').textContent = '$' + claimData.structure.userEstimate.toLocaleString();
+      document.getElementById('bucketStructureGap').textContent = '$' + structureGap.toLocaleString();
+
+      document.getElementById('bucketContentsTotal').textContent = '$' + claimData.contents.totalValue.toLocaleString();
+      document.getElementById('bucketContentsSubmitted').textContent = '$' + claimData.contents.submitted.toLocaleString();
+      document.getElementById('bucketContentsRecovered').textContent = '$' + claimData.contents.recovered.toLocaleString();
+      document.getElementById('bucketContentsRemaining').textContent = '$' + (claimData.contents.totalValue - claimData.contents.recovered).toLocaleString();
+
+      document.getElementById('bucketALEDays').textContent = claimData.ale.daysDisplaced || claimData.ale.entries.length;
+      document.getElementById('bucketALEDaily').textContent = '$' + (claimData.ale.avgDailyOverage || 0) + '/day';
+      document.getElementById('bucketALETotal').textContent = '$' + claimData.ale.totalClaimable.toLocaleString();
+      document.getElementById('bucketALERecovered').textContent = '$' + (claimData.ale.submitted || 0).toLocaleString() + ' / $' + (claimData.ale.recovered || 0).toLocaleString();
+
+      // Claim number
+      const claimNum = document.getElementById('claimNumber')?.textContent || 'CLM-2024-0847';
+      document.getElementById('summaryPageClaimNum').textContent = claimNum;
+
+      // Action summary
+      updateSummaryActionText();
+
+      // Progress tracker
+      updateSummaryProgress();
+    }
+
+    // Update action summary text
+    function updateSummaryActionText() {
+      const completedCount = completedSteps.length;
+      const totalSteps = 19;
+      
+      let actionText = '';
+      
+      if (completedCount === 0) {
+        actionText = "You're just getting started. Begin Step 1 to set up your claim correctly.";
+      } else if (claimData.ale.entries.length === 0 && currentStep > 3) {
+        actionText = "Start tracking your living expenses — this accrues daily and can add thousands to your claim.";
+      } else if (claimData.contents.items.length === 0 && currentStep >= 7) {
+        actionText = "Begin your contents inventory — often 20-40% of total claim value.";
+      } else if (completedCount < totalSteps) {
+        actionText = `You've completed ${completedCount} of ${totalSteps} steps. Continue to Step ${currentStep} to maximize your recovery.`;
+      } else {
+        actionText = "All steps complete! Review your claim summary and proceed to settlement.";
+      }
+      
+      document.getElementById('summaryActionText').textContent = actionText;
+    }
+
+    // Update progress tracker
+    function updateSummaryProgress() {
+      const totalSteps = 19;
+      const completedCount = completedSteps.length;
+      const percent = Math.round((completedCount / totalSteps) * 100);
+      
+      document.getElementById('summaryProgressPercent').textContent = percent + '%';
+      document.getElementById('summaryProgressFill').style.width = percent + '%';
+
+      // Build phase breakdown
+      const phases = [
+        { name: 'Set Up', steps: [1, 2, 3], color: '#14b8a6' },
+        { name: 'Document', steps: [4, 5, 6, 7, 8], color: '#10b981' },
+        { name: 'Find Missing', steps: [9, 10, 11], color: '#f97316' },
+        { name: 'Request Money', steps: [12, 13, 14, 15], color: '#f59e0b' },
+        { name: 'Finish & Get Paid', steps: [16, 17, 18, 19], color: '#ef4444' }
+      ];
+
+      let phasesHTML = '';
+      phases.forEach(phase => {
+        const phaseCompleted = phase.steps.filter(s => completedSteps.includes(s)).length;
+        const phaseTotal = phase.steps.length;
+        const isActive = phase.steps.includes(currentStep);
+        const allCompleted = phaseCompleted === phaseTotal;
+        
+        const statusClass = allCompleted ? 'completed' : (isActive ? 'active' : '');
+        
+        phasesHTML += `
+          <div class="summary-phase-item ${statusClass}">
+            <div class="summary-phase-name">${phase.name}</div>
+            <div class="summary-phase-steps">${phaseCompleted}/${phaseTotal}</div>
+          </div>
+        `;
+      });
+
+      document.getElementById('summaryProgressPhases').innerHTML = phasesHTML;
+    }
+
+    // Enter workflow from summary page
+    function enterWorkflow() {
+      document.getElementById('claimSummaryPage').classList.add('hidden');
+      
+      // Mark that user has seen summary
+      localStorage.setItem('ccc_summary_viewed', 'true');
+      
+      // Scroll to current step
+      setTimeout(() => {
+        const targetCard = document.getElementById('step-' + currentStep);
+        if (targetCard) {
+          targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+
+    // Show summary page
+    function showSummaryPage() {
+      updateSummaryPage();
+      document.getElementById('claimSummaryPage').classList.remove('hidden');
+    }
 
     // Load state from localStorage
     function loadState() {
@@ -3571,6 +4313,16 @@
       if (savedSteps) {
         completedSteps = JSON.parse(savedSteps);
       }
+
+      const savedCur = localStorage.getItem('ccc_current_step');
+      if (savedCur) {
+        const n = parseInt(savedCur, 10);
+        if (n >= 1 && n <= 18) currentStep = n;
+      } else if (completedSteps.length) {
+        const maxC = Math.max(...completedSteps);
+        currentStep = maxC >= 18 ? 18 : maxC + 1;
+      }
+
       if (savedJournal) {
         claimJournal = JSON.parse(savedJournal);
         renderJournal();
@@ -3584,8 +4336,94 @@
     // Save state to localStorage
     function saveState() {
       localStorage.setItem('ccc_completed_steps', JSON.stringify(completedSteps));
+      localStorage.setItem('ccc_current_step', String(currentStep));
       localStorage.setItem('ccc_journal', JSON.stringify(claimJournal));
       localStorage.setItem('ccc_claim_data', JSON.stringify(claimData));
+    }
+
+    function syncRoadmapActiveStep(stepNum) {
+      document.querySelectorAll('.roadmap-tile').forEach((tile, i) => {
+        tile.classList.toggle('active', i + 1 === stepNum);
+      });
+    }
+
+    function updateStepPositionLabel(stepNum) {
+      const el = document.getElementById('metricStepPosition');
+      if (el) {
+        el.textContent = `Step ${stepNum} of 18`;
+      }
+    }
+
+    function applyCompletedVisualForStep(num) {
+      const card = document.getElementById('step-' + num);
+      if (!card) return;
+      card.classList.remove('active-card', 'step-locked');
+      card.classList.add('collapsed', 'step-done');
+      const status = card.querySelector('.card-status');
+      if (status) {
+        status.textContent = 'Complete';
+        status.classList.remove('in-progress', 'pending');
+        status.style.background = 'rgba(16,185,129,0.15)';
+        status.style.color = 'var(--emerald)';
+      }
+      const cardNumber = card.querySelector('.card-number');
+      if (cardNumber) cardNumber.textContent = '✓';
+      const cardLock = card.querySelector('.card-lock');
+      if (cardLock) cardLock.style.display = 'none';
+    }
+
+    function restoreStepUiFromStorage() {
+      completedSteps.forEach(n => {
+        applyCompletedVisualForStep(n);
+        document.querySelectorAll('.step-item').forEach(item => {
+          const oc = item.getAttribute('onclick') || '';
+          if (oc.includes(`goToStep(${n})`)) item.classList.add('done');
+        });
+        const tile = document.querySelectorAll('.roadmap-tile')[n - 1];
+        if (tile) {
+          tile.classList.add('completed');
+          tile.style.opacity = '0.7';
+        }
+      });
+
+      document.querySelectorAll('.step-card').forEach((card, index) => {
+        const stepNum = index + 1;
+        if (completedSteps.includes(stepNum)) return;
+        card.classList.add('collapsed');
+        card.classList.remove('active-card');
+        if (stepNum > currentStep) {
+          card.classList.add('step-locked');
+        } else {
+          card.classList.remove('step-locked');
+        }
+      });
+
+      const cur = document.getElementById('step-' + currentStep);
+      if (cur && !completedSteps.includes(currentStep)) {
+        cur.classList.remove('collapsed', 'step-locked');
+        cur.classList.add('active-card');
+        const st = cur.querySelector('.card-status');
+        if (st && st.textContent !== 'Complete') {
+          st.textContent = 'In Progress';
+          st.classList.remove('pending');
+          st.classList.add('in-progress');
+        }
+        const lock = cur.querySelector('.card-lock');
+        if (lock) lock.style.display = 'none';
+      }
+
+      document.querySelectorAll('.step-item').forEach(item => item.classList.remove('active'));
+      const sidebarSteps = document.querySelectorAll('.step-item');
+      if (sidebarSteps[currentStep - 1]) {
+        sidebarSteps[currentStep - 1].classList.add('active');
+      }
+
+      syncRoadmapActiveStep(currentStep);
+      updateCurrentStepWidget(currentStep);
+      updateDoThisNow(currentStep);
+      updateSummary();
+      updatePhaseCounts();
+      updatePhaseBar();
     }
 
     // Add journal entry
@@ -3720,22 +4558,62 @@
     }
 
     // Update claim summary panel
-    function updateSummary() {
-      // Update policy info
-      if (claimData.dwellingCoverage) {
-        document.getElementById('dwellingCoverage').textContent = `$${claimData.dwellingCoverage.toLocaleString()}`;
-      }
-      if (claimData.deductible) {
-        document.getElementById('deductible').textContent = `$${claimData.deductible.toLocaleString()}`;
-      }
-      if (claimData.settlementType) {
-        document.getElementById('settlementType').textContent = claimData.settlementType;
-      }
+    function calculateTotalGap() {
+      const structureGap = claimData.structure.userEstimate - claimData.structure.insurerEstimate;
+      const contentsGap = claimData.contents.totalValue - claimData.contents.recovered;
+      const aleGap = claimData.ale.totalClaimable - claimData.ale.recovered || 0;
+      return structureGap + contentsGap + aleGap;
+    }
 
-      // Update estimates
-      document.getElementById('insuranceEstimate').textContent = `$${claimData.insuranceEstimate.toLocaleString()}`;
-      document.getElementById('yourEstimate').textContent = `$${claimData.yourEstimate.toLocaleString()}`;
-      document.getElementById('claimGap').textContent = `$${claimData.claimGap.toLocaleString()}`;
+    function updateMoneyBar() {
+      // Update insurer offered
+      document.getElementById('metricInsurerOffered').textContent = 
+        `$${claimData.structure.insurerEstimate.toLocaleString()}`;
+
+      // Update structure value
+      document.getElementById('metricStructureValue').textContent = 
+        `$${claimData.structure.userEstimate.toLocaleString()}`;
+
+      // Update contents value
+      document.getElementById('metricContentsValue').textContent = 
+        `$${claimData.contents.totalValue.toLocaleString()}`;
+
+      // Update ALE - show daily rate if early, total if data exists
+      const aleDisplay = claimData.ale.entries.length > 0 
+        ? `$${claimData.ale.totalClaimable.toLocaleString()}`
+        : `$${claimData.ale.avgDailyOverage || 132}/day`;
+      document.getElementById('metricALEValue').textContent = aleDisplay;
+
+      // Update total gap
+      const totalGap = calculateTotalGap();
+      document.getElementById('metricTotalGap').textContent = `$${totalGap.toLocaleString()}`;
+    }
+
+    // Update money bar with 3-bucket data
+    function updateMoneyBar() {
+      const totalRecoverable = calculateTotalRecoverable();
+      
+      document.getElementById('metricInsurerOffered').textContent = '$' + claimData.structure.insurerEstimate.toLocaleString();
+      document.getElementById('metricStructureValue').textContent = '$' + claimData.structure.userEstimate.toLocaleString();
+      document.getElementById('metricContentsValue').textContent = '$' + claimData.contents.totalValue.toLocaleString();
+      
+      // ALE display logic
+      const aleDisplay = claimData.ale.entries.length === 0 
+        ? '$' + (claimData.ale.avgDailyOverage || 132) + '/day'
+        : '$' + claimData.ale.totalClaimable.toLocaleString();
+      document.getElementById('metricALEValue').textContent = aleDisplay;
+      
+      document.getElementById('metricTotalGap').textContent = '$' + totalRecoverable.toLocaleString();
+    }
+
+    function updateSummary() {
+      // Update money bar
+      updateMoneyBar();
+
+      // Update summary page if it exists
+      if (document.getElementById('summaryTotalValue')) {
+        updateSummaryPage();
+      }
 
       // Update action summary
       updateActionSummary();
@@ -3904,7 +4782,24 @@
         }
       };
 
-      const data = instructions[stepNum] || instructions[1];
+      // Priority logic: override with ALE/Contents if needed
+      let data = instructions[stepNum] || instructions[1];
+      
+      // If past step 3 and no ALE entries, prioritize ALE
+      if (stepNum > 3 && claimData.ale.entries.length === 0) {
+        data = {
+          instruction: 'Start tracking your living expenses — this accrues daily',
+          sub: 'Every day without tracking costs you money. ALE can add $5,000-$20,000 to your claim.'
+        };
+      }
+      // If at/past step 7 and no contents, prioritize contents
+      else if (stepNum >= 7 && claimData.contents.items.length === 0) {
+        data = {
+          instruction: 'Begin your contents inventory — often 20-40% of claim value',
+          sub: 'Personal property is frequently undervalued. Document everything you lost.'
+        };
+      }
+      
       instruction.textContent = data.instruction;
       sub.textContent = data.sub;
     }
@@ -3998,15 +4893,6 @@
 
     // Toggle summary panel
     // Navigation pill functions
-    function showClaimSummary() {
-      document.getElementById('claimSummary').classList.add('summary-open');
-      setActiveNavPill(0);
-      trackActivity('summary_view', { destination: 'Claim Snapshot' });
-    }
-
-    function closeSummary() {
-      document.getElementById('claimSummary').classList.remove('summary-open');
-    }
 
     function showFinancialSummary() {
       // Scroll to financial metrics at top
@@ -4108,6 +4994,10 @@
     }
 
     function goToStep(num) {
+      if (num < 1 || num > 18) return;
+
+      currentStep = num;
+
       // Collapse all cards and remove active state
       document.querySelectorAll('.step-card').forEach(card => {
         card.classList.add('collapsed');
@@ -4137,8 +5027,11 @@
         sidebarSteps[num - 1].classList.add('active');
       }
 
-      // Update current step widget
+      syncRoadmapActiveStep(num);
       updateCurrentStepWidget(num);
+      updateDoThisNow(num);
+      updateSummary();
+      saveState();
     }
 
     function scrollToCurrentStep() {
@@ -4175,6 +5068,7 @@
       if (titleEl) {
         titleEl.textContent = stepTitles[stepNum] || `Step ${stepNum}`;
       }
+      updateStepPositionLabel(stepNum);
     }
 
     function completeStep(num) {
@@ -4281,10 +5175,7 @@
           }
         });
 
-        // Update roadmap tile for next step
-        if (roadmapTiles[num]) {
-          roadmapTiles[num].classList.add('active');
-        }
+        syncRoadmapActiveStep(num + 1);
 
         // Unlock next phase if needed
         unlockNextPhase(num + 1);
@@ -4299,10 +5190,18 @@
         setTimeout(() => {
           nextCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 200);
+      } else {
+        currentStep = num;
+        syncRoadmapActiveStep(num);
+        updateDoThisNow(num);
+        updateCurrentStepWidget(num);
       }
 
-      // Update counter
-      document.querySelector('.phase-counter strong').textContent = completedSteps.length + '/18';
+      // Overall progress (optional element — guard avoids breaking the flow)
+      const phaseCounterStrong = document.querySelector('.phase-counter strong');
+      if (phaseCounterStrong) {
+        phaseCounterStrong.textContent = completedSteps.length + '/18';
+      }
 
       // Update phase bar
       updatePhaseBar();
@@ -4341,42 +5240,19 @@
     }
 
     function unlockNextPhase(stepNum) {
-      // Unlock Document phase after step 3
-      if (stepNum === 4) {
-        const docPhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
-          g.querySelector('.phase-name').textContent === 'Document'
-        );
-        if (docPhase) {
-          docPhase.classList.add('expanded');
-        }
-      }
-      // Unlock Analyze phase after step 7
-      if (stepNum === 8) {
-        const analyzePhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
-          g.querySelector('.phase-name').textContent === 'Analyze'
-        );
-        if (analyzePhase) {
-          analyzePhase.classList.add('expanded');
-        }
-      }
-      // Unlock Recover phase after step 10
-      if (stepNum === 11) {
-        const recoverPhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
-          g.querySelector('.phase-name').textContent === 'Recover'
-        );
-        if (recoverPhase) {
-          recoverPhase.classList.add('expanded');
-        }
-      }
-      // Unlock Resolve phase after step 13
-      if (stepNum === 14) {
-        const resolvePhase = Array.from(document.querySelectorAll('.phase-group')).find(g => 
-          g.querySelector('.phase-name').textContent === 'Resolve'
-        );
-        if (resolvePhase) {
-          resolvePhase.classList.add('expanded');
-        }
-      }
+      const map = [
+        { atStep: 4, phaseName: 'Document Your Damage' },
+        { atStep: 8, phaseName: 'Find What\'s Missing' },
+        { atStep: 11, phaseName: 'Request the Money' },
+        { atStep: 14, phaseName: 'Finish & Get Paid' }
+      ];
+      const entry = map.find(m => m.atStep === stepNum);
+      if (!entry) return;
+      const phase = Array.from(document.querySelectorAll('.phase-group')).find(g => {
+        const nameEl = g.querySelector('.phase-name');
+        return nameEl && nameEl.textContent === entry.phaseName;
+      });
+      if (phase) phase.classList.add('expanded');
     }
 
     function updatePhaseBar() {
@@ -4420,17 +5296,23 @@
       // Load saved state
       loadState();
 
-      // Initialize Do This Now banner
-      updateDoThisNow(currentStep);
+      restoreStepUiFromStorage();
 
-      // Initialize current step widget
-      updateCurrentStepWidget(currentStep);
+      // Check if this is first visit - show summary page
+      const summaryViewed = localStorage.getItem('ccc_summary_viewed');
+      if (!summaryViewed) {
+        showSummaryPage();
+      } else {
+        document.getElementById('claimSummaryPage').classList.add('hidden');
+      }
 
-      // Set locked state on future steps
-      document.querySelectorAll('.step-card').forEach((card, index) => {
-        const stepNum = index + 1;
-        if (stepNum > currentStep && !completedSteps.includes(stepNum)) {
-          card.classList.add('step-locked');
+      document.querySelector('.roadmap-strip-inner')?.addEventListener('keydown', (e) => {
+        const tile = e.target.closest('.roadmap-tile');
+        if (!tile) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const n = parseInt(tile.getAttribute('data-step'), 10);
+          if (n >= 1 && n <= 18) goToStep(n);
         }
       });
 
@@ -4438,9 +5320,6 @@
       if (completedSteps.length === 0) {
         document.getElementById('welcomeModal').classList.remove('hidden');
       }
-
-      // Initialize summary
-      updateSummary();
 
       // Add close button to summary
       addSummaryCloseButton();
