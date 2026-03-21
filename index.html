@@ -2245,6 +2245,48 @@
         grid-template-columns: repeat(3, 1fr);
       }
     }
+
+    .situation-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 0.9rem 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .situation-option:hover {
+      border-color: #14b8a6;
+      background: #f0fdf9;
+    }
+
+    .situation-option.selected {
+      border-color: #14b8a6;
+      background: #f0fdf9;
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.15);
+    }
+
+    .situation-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .situation-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.2rem;
+    }
+
+    .situation-sub {
+      font-size: 0.78rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -2331,25 +2373,61 @@
         </div>
 
         <div class="hero-right">
-          <div class="calc-destination-label">See what your claim may be missing</div>
+          <div class="calc-destination-label">Tell us where you are — we'll show you what to do next</div>
           <div class="calculator-card">
-            <div class="calc-title">Start by checking your claim</div>
-            <div class="calc-subtitle">Enter your numbers to see if your claim is being handled correctly</div>
-            <div class="input-group">
-              <label>Insurance Estimate</label>
-              <input type="text" id="insurance-estimate" placeholder="$18,200" oninput="calculateGap()">
+            <div class="calc-title">Where are you in your claim?</div>
+            <div class="calc-subtitle">Select your situation and get an immediate action plan.</div>
+
+            <div id="situation-options" style="display: flex; flex-direction: column; gap: 0.65rem; margin: 1.5rem 0;">
+
+              <div class="situation-option" onclick="selectSituation(this, 'just-had-loss')">
+                <div class="situation-icon">🏚️</div>
+                <div class="situation-text">
+                  <div class="situation-label">I just had a loss</div>
+                  <div class="situation-sub">Fire, flood, storm, or other damage — I haven't filed yet</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'filed-waiting')">
+                <div class="situation-icon">⏳</div>
+                <div class="situation-text">
+                  <div class="situation-label">I filed and I'm waiting</div>
+                  <div class="situation-sub">Claim is open — adjuster hasn't been out or I'm waiting on an estimate</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'received-estimate')">
+                <div class="situation-icon">📄</div>
+                <div class="situation-text">
+                  <div class="situation-label">I received the insurance estimate</div>
+                  <div class="situation-sub">I have their number but I'm not sure it's right</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'lowball-denial')">
+                <div class="situation-icon">⚠️</div>
+                <div class="situation-text">
+                  <div class="situation-label">I got a lowball offer or partial denial</div>
+                  <div class="situation-sub">They're not paying what I think the damage is worth</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'denied')">
+                <div class="situation-icon">🚫</div>
+                <div class="situation-text">
+                  <div class="situation-label">My claim was denied</div>
+                  <div class="situation-sub">They rejected my claim and I need to appeal</div>
+                </div>
+              </div>
+
             </div>
-            <div class="calc-divider">vs.</div>
-            <div class="input-group">
-              <label>Contractor Estimate</label>
-              <input type="text" id="contractor-estimate" placeholder="$36,750" oninput="calculateGap()">
+
+            <div id="situation-result" style="display: none; background: #f0fdf9; border: 2px solid #14b8a6; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
+              <div id="situation-result-text" style="font-size: 0.95rem; color: #0f172a; line-height: 1.6; font-weight: 500;"></div>
             </div>
-            <div class="calc-result" id="calc-result">
-              <div class="calc-result-label">Potential Missing Claim Value</div>
-              <div class="calc-result-amount" id="gap-amount">$0</div>
-              <div class="calc-result-note">Run a full analysis to identify exactly where your claim is short.</div>
-            </div>
-            <button class="btn-calc">Run Full Claim Analysis →</button>
+
+            <button id="situation-cta" class="btn-calc" style="display: none;">Get My Action Plan →</button>
+
           </div>
         </div>
 
@@ -2965,7 +3043,7 @@
       <div class="analysis-content">
         <p class="analysis-desc">Before you spend a dollar, answer a few questions about your claim and we'll show you where you may be losing money. You'll get a clear, plain-language breakdown of what your policy covers, what your insurer may have missed, and exactly what to do next.</p>
         
-        <p style="text-align: center; font-size: 1.25rem; color: #111827; margin-bottom: 2rem; font-weight: 600;">Start free. Only upgrade if the analysis shows missing money.</p>
+        <p style="text-align: center; font-size: 1.25rem; color: rgba(255, 255, 255, 0.95); margin-bottom: 2rem; font-weight: 600;">Start free. Only upgrade if the analysis shows missing money.</p>
         
         <div class="analysis-checklist">
           <ul>
@@ -2977,11 +3055,11 @@
           </ul>
         </div>
         
-        <p style="text-align: center; font-size: 1.2rem; color: #4b5563; margin: 2rem 0; font-weight: 600;">At the end, you'll know exactly what your claim is missing — and what to do next.</p>
+        <p style="text-align: center; font-size: 1.2rem; color: rgba(255, 255, 255, 0.95); margin: 2rem 0; font-weight: 600;">At the end, you'll know exactly what your claim is missing — and what to do next.</p>
         
         <!-- Low-Risk Decision Frame -->
         <div style="background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.2); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
-          <p style="font-size: 1.2rem; color: #111827; text-align: center; line-height: 1.8;">
+          <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.95); text-align: center; line-height: 1.8;">
             You're not committing to anything.<br><br>
             You're checking if money was missed.<br><br>
             If nothing is found, you move on.<br>
@@ -2990,13 +3068,13 @@
         </div>
 
         <div class="urgency-callout">
-          <p style="font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem; color: #111827;">Every claim operates on deadlines:</p>
+          <p style="font-weight: 700; font-size: 1.3rem; margin-bottom: 1rem; color: #ffffff;">Every claim operates on deadlines:</p>
           <ul style="margin-bottom: 1.5rem;">
             <li>Proof of loss deadlines can be as short as 60 days</li>
             <li>Depreciation recovery windows can expire in months</li>
             <li>Once a release is signed, the claim is closed permanently</li>
           </ul>
-          <p style="font-size: 1.2rem; color: #111827; font-weight: 600; text-align: center;">
+          <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.95); font-weight: 600; text-align: center;">
             Your insurer knows this.<br>
             Most policyholders don't.
           </p>
@@ -3548,6 +3626,7 @@
         <a href="/privacy.html">Privacy Policy</a>
         <a href="/terms.html">Terms</a>
         <a href="/disclaimer.html">Disclaimer</a>
+        <a href="/app/admin.html">Admin</a>
       </div>
     </div>
   </footer>
@@ -3602,6 +3681,44 @@
 
     function toggleFaq(element) {
       element.classList.toggle('expanded');
+    }
+
+    const situationMessages = {
+      'just-had-loss': {
+        text: 'Start by documenting everything before anything is moved or repaired. The next 48 hours determine how much you recover.',
+        cta: 'Show Me What to Document First →'
+      },
+      'filed-waiting': {
+        text: 'Before the adjuster arrives, you need to know your rights and exactly what to show them. Most underpayments happen at this stage.',
+        cta: 'Prepare for My Adjuster Inspection →'
+      },
+      'received-estimate': {
+        text: 'Insurance estimates routinely miss scope, use outdated pricing, and underapply depreciation. A line-by-line review almost always finds gaps.',
+        cta: 'Review My Estimate →'
+      },
+      'lowball-denial': {
+        text: 'A low offer is not a final answer. You have the right to dispute it with documentation and a formal demand. We\'ll show you how.',
+        cta: 'Build My Dispute →'
+      },
+      'denied': {
+        text: 'A denial is not the end of your claim. Most denials can be appealed with the right documentation and policy language. Start here.',
+        cta: 'Start My Appeal →'
+      }
+    };
+
+    function selectSituation(el, key) {
+      document.querySelectorAll('.situation-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+
+      const msg = situationMessages[key];
+      const result = document.getElementById('situation-result');
+      const resultText = document.getElementById('situation-result-text');
+      const cta = document.getElementById('situation-cta');
+
+      resultText.textContent = msg.text;
+      cta.textContent = msg.cta;
+      result.style.display = 'block';
+      cta.style.display = 'block';
     }
   </script>
 
