@@ -2111,80 +2111,6 @@
       padding: 0 2rem 2rem 2rem;
     }
 
-    /* HUMAN TOUCHPOINT */
-    .human-touchpoint {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: white;
-      border: 2px solid var(--gray-200);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-      max-width: 320px;
-      z-index: 1000;
-      transition: all 0.3s;
-    }
-
-    .human-touchpoint:hover {
-      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .human-touchpoint-header {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .human-touchpoint-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--gray-100);
-      border: 2px solid var(--gray-200);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .human-touchpoint-text {
-      flex: 1;
-    }
-
-    .human-touchpoint-title {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 0.25rem;
-    }
-
-    .human-touchpoint-subtitle {
-      font-size: 0.8125rem;
-      color: var(--gray-600);
-      line-height: 1.4;
-    }
-
-    .human-touchpoint-button {
-      display: block;
-      width: 100%;
-      padding: 0.875rem;
-      background: var(--teal);
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .human-touchpoint-button:hover {
-      background: var(--teal-dark);
-    }
-
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -2282,12 +2208,6 @@
         padding: 0.25rem 0.5rem;
       }
 
-      .human-touchpoint {
-        position: static;
-        margin: 2rem auto;
-        max-width: 100%;
-      }
-
       .credibility-items {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -2350,44 +2270,59 @@
       <div class="hero-grid">
 
         <div class="hero-left">
-          <p class="hero-subtext">
-            <span class="body-highlight">Most policyholders don't know how to prove their loss correctly and it costs them. We show you exactly what to do, what to document, and how to recover the full value of your claim.</span>
-          </p>
-          
-          <p class="hero-subtext" style="margin-top: 1.5rem;">
-            Insurance companies pay based on what's properly proven. Claim Command Pro gives you an expert step-by-step system to prove your claim and get paid what you're owed.
-          </p>
-          
-          <p style="font-size: 0.95rem; color: rgba(255,255,255,0.6); text-align: center; margin-top: 2rem; margin-bottom: 0.5rem; font-weight: 500;">
-            What happens when a claim is properly handled
-          </p>
-          
-          <div style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 2rem; margin: 2rem 0; text-align: center;">
-            <div style="margin-bottom: 1.5rem;">
-              <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 0.5rem;">What the insurance company offered:</p>
-              <p style="font-family: 'DM Serif Display', serif; font-size: 3rem; font-weight: bold; color: white;">$18,200</p>
-            </div>
-            <div style="margin-bottom: 1.5rem;">
-              <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 0.5rem;">What a properly proven claim supports:</p>
-              <p style="font-family: 'DM Serif Display', serif; font-size: 3rem; font-weight: bold; color: #14b8a6;">$36,750</p>
-            </div>
-            <div style="border-top: 2px solid rgba(255,255,255,0.2); padding-top: 1.5rem;">
-              <p style="color: #fca5a5; font-size: 1.1rem; margin-bottom: 0.5rem;">Lost because the claim wasn't properly proven:</p>
-              <p style="font-family: 'DM Serif Display', serif; font-size: 3.5rem; font-weight: bold; color: #ef4444;">$18,550</p>
-            </div>
-          </div>
-          
-          <p style="font-size: 1.5rem; color: #fde047; font-weight: bold; text-align: center; margin-bottom: 2rem;">
-            8 out of 10 claim estimates are incomplete or underpaid.
+
+          <h1 class="hero-question">You've already been through enough.<br>Let's get you the money to put it back together.</h1>
+
+          <p class="hero-answer">
+            Claim Command Pro is a <strong style="color: white; font-weight: 700;">complete claim management system</strong> that empowers you to handle your own claim the right way — with the tools, documentation process, and expert methodology to prove your damage fully and recover everything you're owed.
           </p>
 
-          <div class="hero-ctas">
-            <button class="btn-primary">Check My Claim →</button>
-          </div>
-          
-          <p style="font-size: 1.25rem; color: rgba(255,255,255,0.8); text-align: center; margin-top: 2rem; font-weight: 500;">
-            Don't leave the money you're owed sitting in their pocket.
+          <p class="hero-subtext" style="margin-top: 1.5rem; margin-bottom: 0;">
+            Insurance companies pay based on what's properly <em style="color: rgba(255,255,255,0.9);">proven and documented</em>. Most homeowners don't know how to build that proof — and end up settling for far less than their claim is worth.
           </p>
+
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); text-align: center; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">
+            Real example — water damage claim
+          </p>
+
+          <div style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 1.75rem; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">Insurer's first offer</p>
+                <p style="font-family: 'DM Serif Display', serif; font-size: 2.25rem; color: rgba(255,255,255,0.7);">$18,200</p>
+              </div>
+              <div style="color: rgba(255,255,255,0.2); font-size: 2rem;">→</div>
+              <div style="text-align: right;">
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">After proper documentation</p>
+                <p style="font-family: 'DM Serif Display', serif; font-size: 2.25rem; color: #14b8a6;">$36,750</p>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">Additional recovery</p>
+              <p style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #ef4444; line-height: 1;">+$18,550</p>
+              <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">Left on the table by the first estimate</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.9rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">Guided claim walkthrough</strong> — a structured, multi-step process covering documentation, adjuster meetings, estimate review, and negotiation so nothing falls through the cracks</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.9rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">AI estimate analysis</strong> — compare your insurance estimate to real contractor pricing and identify every missing or undervalued line item</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">Professional letter generator</strong> — dispute letters, demand letters, and appeal letters formatted the way adjusters and insurers expect to see them</p>
+            </div>
+          </div>
+
+          <div class="hero-ctas">
+            <button class="btn-primary">Start Free Claim Analysis →</button>
+          </div>
+
         </div>
 
         <div class="hero-right">
@@ -2424,15 +2359,11 @@
   <section class="credibility-stack">
     <div class="container">
       <div class="credibility-items">
-        <div class="credibility-item">Used by policyholders across all 50 states to identify missing claim money</div>
+        <div class="credibility-item">Used by policyholders across all 50 states</div>
         <div class="credibility-divider"></div>
-        <div class="credibility-item">Built on licensed public adjuster methodology and real-world claim handling standards</div>
+        <div class="credibility-item">Built on expert claim methodology and real-world claim handling standards</div>
         <div class="credibility-divider"></div>
         <div class="credibility-item">Complete Claim Guidance System</div>
-        <div class="credibility-divider"></div>
-        <div class="credibility-item">$18,400 Average Additional Value Identified</div>
-        <div class="credibility-divider"></div>
-        <div class="credibility-item"><span class="credibility-icon">🔒</span> 256-bit SSL Secured | Stripe Payments</div>
       </div>
     </div>
   </section>
@@ -3615,23 +3546,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- HUMAN TOUCHPOINT -->
-  <div class="human-touchpoint">
-    <div class="human-touchpoint-header">
-      <div class="human-touchpoint-avatar">
-        <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="17.5" cy="11" r="6" fill="#cbd5e1"/>
-          <ellipse cx="17.5" cy="27" rx="11" ry="8.5" fill="#cbd5e1"/>
-        </svg>
-      </div>
-      <div class="human-touchpoint-text">
-        <div class="human-touchpoint-title">Have a question before you start?</div>
-        <div class="human-touchpoint-subtitle">James typically responds within a few hours.</div>
-      </div>
-    </div>
-    <a href="mailto:support@claimcommandpro.com" class="human-touchpoint-button">Send a Question →</a>
-  </div>
 
   <script>
     function calculateGap() {
