@@ -146,8 +146,8 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1fr 500px;
-      gap: 5rem;
+      grid-template-columns: 1fr 580px;
+      gap: 4rem;
       align-items: start;
     }
 
@@ -170,13 +170,17 @@
 
     .hero-question {
       font-family: 'DM Serif Display', serif;
-      font-size: 2.5rem;
+      font-size: 3.5rem;
       font-style: normal;
       color: rgba(255,255,255,0.9);
-      margin-bottom: 3rem;
+      margin-bottom: 3.5rem;
       letter-spacing: -0.02em;
-      line-height: 1.1;
+      line-height: 1.15;
       text-align: center;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 1rem;
     }
 
     .hero-answer {
@@ -2114,6 +2118,7 @@
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-question { font-size: 2.25rem; padding-top: 0; }
       .hero-left { text-align: center; padding-bottom: 0; }
       .hero-ctas { justify-content: center; }
 
@@ -2267,11 +2272,11 @@
   <section class="hero">
     <div class="hero-container">
 
+      <h1 class="hero-question">You've already been through enough.<br>Let's get you the money to put it back together.</h1>
+
       <div class="hero-grid">
 
         <div class="hero-left">
-
-          <h1 class="hero-question">You've already been through enough.<br>Let's get you the money to put it back together.</h1>
 
           <p class="hero-answer">
             Claim Command Pro is a <strong style="color: white; font-weight: 700;">complete claim management system</strong> that empowers you to handle your own claim the right way — with the tools, documentation process, and expert methodology to prove your damage fully and recover everything you're owed.
