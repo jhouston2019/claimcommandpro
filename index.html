@@ -20,6 +20,10 @@
       --navy-light: #1e293b;
       --teal: #14b8a6;
       --teal-dark: #0d9488;
+      --phase-green: #0d9488;
+      --phase-orange: #ea580c;
+      --phase-amber: #d97706;
+      --phase-red: #dc2626;
       --gray-50: #f9fafb;
       --gray-100: #f3f4f6;
       --gray-200: #e5e7eb;
@@ -1113,376 +1117,380 @@
       margin-bottom: 2rem;
       overflow: hidden;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      height: min(520px, 72vh);
+      max-height: 560px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .dashboard-mockup-topnav {
+    /* Mirrors claim-command-center.html overview + tiles — scaled to fit preview window */
+    .ccc-mockup-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
       background: var(--navy);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      -webkit-overflow-scrolling: touch;
     }
 
-    .dashboard-mockup-brand {
-      font-family: 'DM Serif Display', serif;
-      font-size: 1.125rem;
-      color: white;
-      font-weight: 400;
-    }
-
-    .dashboard-mockup-nav-links {
-      display: flex;
-      gap: 1.5rem;
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .dashboard-mockup-phasebar {
-      background: #1e293b;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0.875rem 1.5rem;
+    .ccc-mockup-nav {
+      flex-shrink: 0;
+      background: var(--navy);
+      border-bottom: 1px solid #2d3f55;
+      padding: 0 10px;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
     }
 
-    .dashboard-mockup-phases {
+    .ccc-mockup-nav-left {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
       flex: 1;
     }
 
-    .dashboard-mockup-phase {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.8125rem;
-      color: rgba(255, 255, 255, 0.4);
-      font-weight: 500;
-    }
-
-    .dashboard-mockup-phase-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    .dashboard-mockup-phase.complete {
-      color: #10b981;
-    }
-
-    .dashboard-mockup-phase.active {
-      color: var(--teal);
-    }
-
-    .dashboard-mockup-phase-arrow {
-      color: rgba(255, 255, 255, 0.2);
-      font-size: 1rem;
-    }
-
-    .dashboard-mockup-counter {
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-      padding-left: 1.25rem;
-      font-size: 0.8125rem;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .dashboard-mockup-counter strong {
-      color: white;
-      font-weight: 600;
-    }
-
-    .dashboard-mockup-body {
-      display: grid;
-      grid-template-columns: 220px 1fr;
-      min-height: 500px;
-    }
-
-    .dashboard-mockup-sidebar {
-      background: #1e293b;
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 0;
-    }
-
-    .dashboard-mockup-claim-info {
-      padding: 1.25rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .dashboard-mockup-claim-label {
-      font-size: 0.6875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: rgba(255, 255, 255, 0.5);
-      margin-bottom: 0.375rem;
-    }
-
-    .dashboard-mockup-claim-number {
+    .ccc-mockup-brand {
       font-family: 'DM Serif Display', serif;
-      font-size: 1rem;
+      font-size: 15px;
       color: white;
-      margin-bottom: 0.625rem;
+      white-space: nowrap;
     }
 
-    .dashboard-mockup-badges {
-      display: flex;
-      gap: 0.375rem;
-    }
-
-    .dashboard-mockup-badge {
-      padding: 0.25rem 0.625rem;
-      border-radius: 12px;
-      font-size: 0.6875rem;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.15);
-      color: #10b981;
-    }
-
-    .dashboard-mockup-phase-group {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .dashboard-mockup-phase-header {
-      padding: 0.875rem 1.25rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.6875rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .dashboard-mockup-phase-group.active .dashboard-mockup-phase-header {
-      color: var(--teal);
-    }
-
-    .dashboard-mockup-phase-count {
-      font-size: 0.6875rem;
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    .dashboard-mockup-step {
-      padding: 0.625rem 1.25rem 0.625rem 3rem;
-      font-size: 0.8125rem;
-      color: rgba(255, 255, 255, 0.5);
-      position: relative;
-      transition: background 0.2s;
-    }
-
-    .dashboard-mockup-step:hover {
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .dashboard-mockup-step.complete {
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .dashboard-mockup-step.complete::before {
-      content: '✓';
-      position: absolute;
-      left: 1.5rem;
-      color: #10b981;
-      font-weight: 700;
-      font-size: 0.75rem;
-    }
-
-    .dashboard-mockup-step.active {
-      background: rgba(20, 184, 166, 0.15);
-      color: white;
-      font-weight: 600;
-    }
-
-    .dashboard-mockup-step.active::before {
-      content: '→';
-      position: absolute;
-      left: 1.5rem;
-      color: var(--teal);
-      font-weight: 700;
-    }
-
-    .dashboard-mockup-main {
-      background: var(--navy);
-      padding: 2rem;
-      overflow-y: auto;
-    }
-
-    .dashboard-mockup-step-card {
-      background: white;
-      border-radius: 12px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-
-    .dashboard-mockup-card-header {
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      border-bottom: 1px solid var(--gray-200);
-    }
-
-    .dashboard-mockup-card-number {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 2px solid var(--teal);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: var(--teal);
+    .ccc-mockup-divider {
+      width: 1px;
+      height: 12px;
+      background: #2d3f55;
       flex-shrink: 0;
     }
 
-    .dashboard-mockup-card-text {
-      flex: 1;
+    .ccc-mockup-nav-txt {
+      font-size: 11px;
+      color: #9ca3af;
+      white-space: nowrap;
     }
 
-    .dashboard-mockup-card-title {
-      font-size: 1rem;
+    .ccc-mockup-nav-step {
+      font-size: 11px;
+      color: #9ca3af;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ccc-mockup-allsteps {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid #2d3f55;
+      border-radius: 6px;
+      color: #d1d5db;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: default;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+
+    .ccc-mockup-nav-pills {
+      display: flex;
+      flex-shrink: 0;
+      gap: 0;
+    }
+
+    .ccc-mockup-nav-pills span {
+      padding: 0 10px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #9ca3af;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .ccc-mockup-metric-strip {
+      flex-shrink: 0;
+      background: #1e293b;
+      border-bottom: 1px solid #2d3f55;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 8px;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .ccc-mockup-metric-block {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      border-right: 1px solid #2d3f55;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ccc-mockup-metric-block:last-child {
+      border-right: none;
+    }
+
+    .ccc-mockup-metric-block .lbl {
+      font-size: 11px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .ccc-mockup-metric-block .val {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
       font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: 0.25rem;
+      color: #fff;
+      margin: 0;
     }
 
-    .dashboard-mockup-card-subtitle {
-      font-size: 0.8125rem;
-      color: var(--gray-600);
+    .ccc-mockup-metric-block.mv-blue .val { color: #3b82f6; }
+    .ccc-mockup-metric-block.mv-purple .val { color: #a855f7; }
+    .ccc-mockup-metric-block.mv-orange .val { color: #f97316; }
+    .ccc-mockup-metric-block.mv-red .val { color: #ef4444; }
+
+    .ccc-mockup-overview {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 8px 10px 12px;
+    }
+
+    .ccc-mockup-page-head {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    .ccc-mockup-overview-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(14px, 1.8vw, 20px);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 4px;
+      line-height: 1.2;
+    }
+
+    .ccc-mockup-overview-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin: 0;
       line-height: 1.4;
     }
 
-    .dashboard-mockup-card-status {
-      padding: 0.375rem 0.75rem;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: rgba(20, 184, 166, 0.15);
+    .ccc-mockup-phase {
+      margin-bottom: 10px;
+    }
+
+    .ccc-mockup-phase:last-of-type {
+      margin-bottom: 4px;
+    }
+
+    .ccc-mockup-phase-bar {
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 1px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .ccc-mockup-phase-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 1px;
+    }
+
+    .ccc-mockup-phase-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ccc-mockup-pill {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 10px;
+      border-radius: 999px;
+      color: white;
+    }
+
+    .ccc-mockup-pill.p1 { background: #14b8a6; }
+    .ccc-mockup-pill.p2 { background: #10b981; }
+    .ccc-mockup-pill.p3 { background: #f97316; }
+    .ccc-mockup-pill.p4 { background: #f59e0b; }
+    .ccc-mockup-pill.p5 { background: #ef4444; }
+
+    .ccc-mockup-phase-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .ccc-mockup-phase-time {
+      font-size: 10px;
+      color: #6b7280;
+      margin-left: auto;
+    }
+
+    .ccc-mockup-phase-count {
+      font-size: 10px;
+      font-weight: 700;
+      color: #9ca3af;
+    }
+
+    .ccc-mockup-step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .ccc-mockup-tile {
+      display: flex;
+      align-items: stretch;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+      position: relative;
+      min-height: 0;
+    }
+
+    .ccc-mockup-tile-ico {
+      flex-shrink: 0;
+      width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9fafb;
+      border-right: 1px solid #f3f4f6;
+      font-size: 16px;
+      padding: 6px 0;
+    }
+
+    .ccc-mockup-tile-body {
+      flex: 1;
+      padding: 6px 8px;
+      min-width: 0;
+    }
+
+    .ccc-mockup-tile-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.25;
+      margin: 0 0 2px;
+    }
+
+    .ccc-mockup-tile-sub {
+      font-size: 9px;
+      color: var(--gray-600);
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .ccc-mockup-tile-ai {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: var(--teal);
     }
 
-    .dashboard-mockup-card-body {
-      padding: 1.5rem;
-      color: var(--gray-900);
+    .ccc-mockup-tile-ai::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
     }
 
-    .dashboard-mockup-section-label {
-      font-size: 0.8125rem;
+    .ccc-mockup-badge-col {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .ccc-mockup-badge {
+      width: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 6px 4px;
+    }
+
+    .ccc-mockup-badge-w {
+      font-size: 7px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: var(--gray-900);
-      margin-bottom: 0.75rem;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.85);
     }
 
-    .dashboard-mockup-section-text {
-      font-size: 0.9375rem;
-      line-height: 1.7;
-      color: var(--gray-600);
-      margin-bottom: 1rem;
-    }
-
-    .dashboard-mockup-summary-cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .dashboard-mockup-summary-card {
-      background: white;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      padding: 1rem;
-    }
-
-    .dashboard-mockup-summary-label {
-      font-size: 0.75rem;
-      color: var(--gray-600);
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .dashboard-mockup-summary-value {
-      font-size: 1.5rem;
-      font-weight: 700;
+    .ccc-mockup-badge-n {
       font-family: 'DM Serif Display', serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
     }
 
-    .dashboard-mockup-summary-value.green {
-      color: #10b981;
+    .ccc-mockup-tile-arr {
+      width: 10px;
+      position: relative;
+      align-self: stretch;
+      min-height: 100%;
     }
 
-    .dashboard-mockup-summary-value.red {
-      color: #ef4444;
+    .ccc-mockup-tile-arr::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 0, 0% 100%, 100% 50%);
     }
 
-    .dashboard-mockup-summary-value.navy {
-      color: var(--navy);
-    }
+    .ccc-mockup-tile.p1 .ccc-mockup-badge,
+    .ccc-mockup-tile.p1 .ccc-mockup-tile-arr::before { background: #14b8a6; }
+    .ccc-mockup-tile.p2 .ccc-mockup-badge,
+    .ccc-mockup-tile.p2 .ccc-mockup-tile-arr::before { background: #10b981; }
+    .ccc-mockup-tile.p3 .ccc-mockup-badge,
+    .ccc-mockup-tile.p3 .ccc-mockup-tile-arr::before { background: #f97316; }
+    .ccc-mockup-tile.p4 .ccc-mockup-badge,
+    .ccc-mockup-tile.p4 .ccc-mockup-tile-arr::before { background: #f59e0b; }
+    .ccc-mockup-tile.p5 .ccc-mockup-badge,
+    .ccc-mockup-tile.p5 .ccc-mockup-tile-arr::before { background: #ef4444; }
 
-    .dashboard-mockup-summary-value.teal {
-      color: var(--teal);
-    }
-
-    .dashboard-mockup-summary-sublabel {
-      font-size: 0.75rem;
-      color: var(--gray-500);
-      margin-top: 0.25rem;
-    }
-
-    .dashboard-mockup-roadmap {
-      background: var(--navy);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .dashboard-mockup-roadmap-title {
-      font-size: 0.75rem;
-      color: rgba(255, 255, 255, 0.6);
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .dashboard-mockup-roadmap-steps {
-      display: grid;
-      grid-template-columns: repeat(9, 1fr);
-      gap: 0.5rem;
-    }
-
-    .dashboard-mockup-roadmap-step {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      padding: 0.75rem 0.5rem;
+    .ccc-mockup-footnote {
       text-align: center;
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.5);
-    }
-
-    .dashboard-mockup-roadmap-step.active {
-      background: rgba(20, 184, 166, 0.15);
-      border-color: var(--teal);
-      color: var(--teal);
-    }
-
-    .dashboard-mockup-roadmap-step.complete {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: #10b981;
-      color: #10b981;
-    }
-
-    .dashboard-mockup-roadmap-icon {
-      font-size: 1.25rem;
-      margin-bottom: 0.25rem;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+      padding: 4px 8px 2px;
+      margin: 0;
     }
 
     .platform-callouts {
@@ -2156,13 +2164,21 @@
         grid-template-columns: 1fr;
       }
 
-      .dashboard-mockup-body {
-        grid-template-columns: 1fr;
+      .ccc-mockup-nav-pills {
+        display: none;
       }
 
-      .dashboard-mockup-sidebar {
+      .ccc-mockup-metric-strip {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        min-height: auto;
+        padding: 6px 8px;
+      }
+
+      .ccc-mockup-metric-block {
+        padding: 4px 10px;
         border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid #2d3f55;
       }
     }
 
@@ -2238,12 +2254,16 @@
         grid-template-columns: 1fr;
       }
 
-      .dashboard-mockup-summary-cards {
-        grid-template-columns: repeat(2, 1fr);
+      .ccc-mockup-step-grid {
+        grid-template-columns: 1fr;
       }
 
-      .dashboard-mockup-roadmap-steps {
-        grid-template-columns: repeat(3, 1fr);
+      .ccc-mockup-nav-left {
+        gap: 6px;
+      }
+
+      .ccc-mockup-nav-step {
+        max-width: 140px;
       }
     }
 
@@ -3096,187 +3116,342 @@
       
       <div class="dashboard-visual">
         <div class="dashboard-placeholder">
-          <!-- Top Nav -->
-          <div class="dashboard-mockup-topnav">
-            <div class="dashboard-mockup-brand">Claim Control Center</div>
-            <div class="dashboard-mockup-nav-links">
-              <span>Reference Library</span>
-              <span>Logout</span>
-            </div>
-          </div>
-
-          <!-- Phase Bar -->
-          <div class="dashboard-mockup-phasebar">
-            <div class="dashboard-mockup-phases">
-              <div class="dashboard-mockup-phase complete">
-                <div class="dashboard-mockup-phase-dot"></div>
-                <span>Set Up Your Claim <small>(3/3)</small></span>
+          <div class="ccc-mockup-scroll">
+            <div class="ccc-mockup-nav">
+              <div class="ccc-mockup-nav-left">
+                <span class="ccc-mockup-brand">Claim Command Center</span>
+                <span class="ccc-mockup-divider"></span>
+                <span class="ccc-mockup-nav-txt">Claim #CLM-2024-0847</span>
+                <span class="ccc-mockup-divider"></span>
+                <span class="ccc-mockup-nav-txt">Day 85 • Active</span>
+                <span class="ccc-mockup-divider"></span>
+                <span class="ccc-mockup-nav-step">Step 1 — Claim Process Guide</span>
+                <span class="ccc-mockup-divider"></span>
+                <button type="button" class="ccc-mockup-allsteps" aria-hidden="true">⊞ All Steps</button>
               </div>
-              <div class="dashboard-mockup-phase-arrow">→</div>
-              <div class="dashboard-mockup-phase complete">
-                <div class="dashboard-mockup-phase-dot"></div>
-                <span>Document Your Damage <small>(4/4)</small></span>
-              </div>
-              <div class="dashboard-mockup-phase-arrow">→</div>
-              <div class="dashboard-mockup-phase active">
-                <div class="dashboard-mockup-phase-dot"></div>
-                <span>Find What's Missing <small>(1/3)</small></span>
-              </div>
-              <div class="dashboard-mockup-phase-arrow">→</div>
-              <div class="dashboard-mockup-phase">
-                <div class="dashboard-mockup-phase-dot"></div>
-                <span>Request the Money <small>(0/3)</small></span>
-              </div>
-              <div class="dashboard-mockup-phase-arrow">→</div>
-              <div class="dashboard-mockup-phase">
-                <div class="dashboard-mockup-phase-dot"></div>
-                <span>Finish & Get Paid <small>(0/5)</small></span>
-              </div>
-            </div>
-            <div class="dashboard-mockup-counter"><strong>8/18</strong> Complete</div>
-          </div>
-
-          <!-- Main Body -->
-          <div class="dashboard-mockup-body">
-            <!-- Sidebar -->
-            <div class="dashboard-mockup-sidebar">
-              <div class="dashboard-mockup-claim-info">
-                <div class="dashboard-mockup-claim-label">Your Claim</div>
-                <div class="dashboard-mockup-claim-number">CLM-2024-8471</div>
-                <div class="dashboard-mockup-badges">
-                  <div class="dashboard-mockup-badge">Active</div>
-                </div>
-              </div>
-
-              <div class="dashboard-mockup-phase-group">
-                <div class="dashboard-mockup-phase-header">
-                  <span>Set Up Your Claim</span>
-                  <span class="dashboard-mockup-phase-count">3/3</span>
-                </div>
-              </div>
-
-              <div class="dashboard-mockup-phase-group">
-                <div class="dashboard-mockup-phase-header">
-                  <span>Document Your Damage</span>
-                  <span class="dashboard-mockup-phase-count">4/4</span>
-                </div>
-              </div>
-
-              <div class="dashboard-mockup-phase-group active">
-                <div class="dashboard-mockup-phase-header">
-                  <span>Find What's Missing</span>
-                  <span class="dashboard-mockup-phase-count">1/3</span>
-                </div>
-                <div class="dashboard-mockup-step complete">Step 8: Review Your Insurance Estimate</div>
-                <div class="dashboard-mockup-step active">Step 9: Find Underpaid Items</div>
-                <div class="dashboard-mockup-step">Step 10: Find Missing Coverage</div>
-              </div>
-
-              <div class="dashboard-mockup-phase-group">
-                <div class="dashboard-mockup-phase-header">
-                  <span>Request the Money</span>
-                  <span class="dashboard-mockup-phase-count">0/3</span>
-                </div>
-              </div>
-
-              <div class="dashboard-mockup-phase-group">
-                <div class="dashboard-mockup-phase-header">
-                  <span>Finish & Get Paid</span>
-                  <span class="dashboard-mockup-phase-count">0/5</span>
-                </div>
+              <div class="ccc-mockup-nav-pills">
+                <span>Claim Summary</span>
+                <span>Financial Summary</span>
+                <span>Activity Log</span>
+                <span>Messages</span>
+                <span>Documents</span>
+                <span>Deadlines</span>
               </div>
             </div>
 
-            <!-- Main Content -->
-            <div class="dashboard-mockup-main">
-              <!-- Summary Cards -->
-              <div class="dashboard-mockup-summary-cards">
-                <div class="dashboard-mockup-summary-card">
-                  <div class="dashboard-mockup-summary-label">What Your Insurer Offered:</div>
-                  <div class="dashboard-mockup-summary-value navy">$18,200</div>
-                  <div class="dashboard-mockup-summary-sublabel">Initial estimate</div>
+            <div class="ccc-mockup-metric-strip">
+              <div class="ccc-mockup-metric-block">
+                <span class="lbl">Insurer Offered</span>
+                <span class="val">$18,200</span>
+              </div>
+              <div class="ccc-mockup-metric-block mv-blue">
+                <span class="lbl">Structure Value</span>
+                <span class="val">$36,750</span>
+              </div>
+              <div class="ccc-mockup-metric-block mv-purple">
+                <span class="lbl">Contents Value</span>
+                <span class="val">$12,400</span>
+              </div>
+              <div class="ccc-mockup-metric-block mv-orange">
+                <span class="lbl">ALE Accruing</span>
+                <span class="val">$132/day</span>
+              </div>
+              <div class="ccc-mockup-metric-block mv-red">
+                <span class="lbl">Total Recoverable Gap</span>
+                <span class="val">$35,200</span>
+              </div>
+            </div>
+
+            <div class="ccc-mockup-overview">
+              <div class="ccc-mockup-page-head">
+                <h3 class="ccc-mockup-overview-title">The step-by-step claim process</h3>
+                <p class="ccc-mockup-overview-sub">Follow this system to document, prove, and recover your full claim value</p>
+              </div>
+
+              <div class="ccc-mockup-phase">
+                <div class="ccc-mockup-phase-bar"><div class="ccc-mockup-phase-bar-fill"></div></div>
+                <div class="ccc-mockup-phase-head">
+                  <span class="ccc-mockup-pill p1">Phase 1</span>
+                  <span class="ccc-mockup-phase-name">Set Up Your Claim</span>
+                  <span class="ccc-mockup-phase-time">Days 1–14</span>
+                  <span class="ccc-mockup-phase-count">0/3</span>
                 </div>
-                <div class="dashboard-mockup-summary-card">
-                  <div class="dashboard-mockup-summary-label">What Your Loss Is Actually Worth:</div>
-                  <div class="dashboard-mockup-summary-value green">$36,750</div>
-                  <div class="dashboard-mockup-summary-sublabel">Verified scope</div>
-                </div>
-                <div class="dashboard-mockup-summary-card">
-                  <div class="dashboard-mockup-summary-label">Money You May Be Leaving Behind:</div>
-                  <div class="dashboard-mockup-summary-value red">$18,550</div>
-                  <div class="dashboard-mockup-summary-sublabel">Gap identified</div>
-                </div>
-                <div class="dashboard-mockup-summary-card">
-                  <div class="dashboard-mockup-summary-label">Where You Are In The Process</div>
-                  <div class="dashboard-mockup-summary-value teal">Step 1 of 18</div>
-                  <div class="dashboard-mockup-summary-sublabel">Foundation phase</div>
+                <div class="ccc-mockup-step-grid">
+                  <div class="ccc-mockup-tile p1">
+                    <div class="ccc-mockup-tile-ico">📋</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Understand the Claim Process</div>
+                      <p class="ccc-mockup-tile-sub">Read This First — Before You Call Anyone</p>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">01</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p1">
+                    <div class="ccc-mockup-tile-ico">📄</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Review &amp; Understand Your Policy</div>
+                      <p class="ccc-mockup-tile-sub">Upload Your Policy — Find Out What You&apos;re Owed</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">02</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p1">
+                    <div class="ccc-mockup-tile-ico">📞</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Report the Loss the Right Way</div>
+                      <p class="ccc-mockup-tile-sub">Report Using These Exact Words</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">03</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Step-by-Step Roadmap -->
-              <div class="dashboard-mockup-roadmap">
-                <div class="dashboard-mockup-roadmap-title">Your Step-by-Step Claim Plan</div>
-                <div class="dashboard-mockup-roadmap-steps">
-                  <div class="dashboard-mockup-roadmap-step active">
-                    <div class="dashboard-mockup-roadmap-icon">📋</div>
-                    <div>1. Set Up Your Claim</div>
+              <div class="ccc-mockup-phase">
+                <div class="ccc-mockup-phase-bar"><div class="ccc-mockup-phase-bar-fill"></div></div>
+                <div class="ccc-mockup-phase-head">
+                  <span class="ccc-mockup-pill p2">Phase 2</span>
+                  <span class="ccc-mockup-phase-name">Document Your Damage</span>
+                  <span class="ccc-mockup-phase-time">Days 7–45</span>
+                  <span class="ccc-mockup-phase-count">0/5</span>
+                </div>
+                <div class="ccc-mockup-step-grid">
+                  <div class="ccc-mockup-tile p2">
+                    <div class="ccc-mockup-tile-ico">📸</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Document All Damage</div>
+                      <p class="ccc-mockup-tile-sub">Photograph Everything Before You Touch Anything</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">04</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
                   </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">📸</div>
-                    <div>2. Document Your Damage</div>
+                  <div class="ccc-mockup-tile p2">
+                    <div class="ccc-mockup-tile-ico">🏗️</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Get Accurate Contractor Estimates</div>
+                      <p class="ccc-mockup-tile-sub">Get 2 Contractors to Give Written Estimates</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">05</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
                   </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">🔍</div>
-                    <div>3. Find What's Missing</div>
+                  <div class="ccc-mockup-tile p2">
+                    <div class="ccc-mockup-tile-ico">🔍</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Prepare for the Adjuster Inspection</div>
+                      <p class="ccc-mockup-tile-sub">Do This Before the Adjuster Shows Up</p>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">06</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
                   </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">📊</div>
-                    <div>4. Coverage</div>
+                  <div class="ccc-mockup-tile p2">
+                    <div class="ccc-mockup-tile-ico">📦</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Build Your Contents Inventory</div>
+                      <p class="ccc-mockup-tile-sub">Write Down Every Item Lost or Damaged</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">07</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
                   </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">⚖️</div>
-                    <div>5. Assessment</div>
-                  </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">📝</div>
-                    <div>6. Dispute</div>
-                  </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">💬</div>
-                    <div>7. Negotiate</div>
-                  </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">✅</div>
-                    <div>8. Appraisal</div>
-                  </div>
-                  <div class="dashboard-mockup-roadmap-step">
-                    <div class="dashboard-mockup-roadmap-icon">🏁</div>
-                    <div>9. Settlement</div>
+                  <div class="ccc-mockup-tile p2">
+                    <div class="ccc-mockup-tile-ico">💳</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Track &amp; Recover Living Expenses</div>
+                      <p class="ccc-mockup-tile-sub">Additional Living Expenses Tracker</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">08</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <!-- Current Step Card -->
-              <div class="dashboard-mockup-step-card">
-                <div class="dashboard-mockup-card-header">
-                  <div class="dashboard-mockup-card-number">01</div>
-                  <div class="dashboard-mockup-card-text">
-                    <div class="dashboard-mockup-card-title">Enter Your Claim Details</div>
-                    <div class="dashboard-mockup-card-subtitle">Add your claim and policy details so we can analyze your estimate and identify what may be missing.</div>
-                  </div>
-                  <div class="dashboard-mockup-card-status">In Progress</div>
+              <div class="ccc-mockup-phase">
+                <div class="ccc-mockup-phase-bar"><div class="ccc-mockup-phase-bar-fill"></div></div>
+                <div class="ccc-mockup-phase-head">
+                  <span class="ccc-mockup-pill p3">Phase 3</span>
+                  <span class="ccc-mockup-phase-name">Find What&apos;s Missing</span>
+                  <span class="ccc-mockup-phase-time">Days 30–60</span>
+                  <span class="ccc-mockup-phase-count">0/3</span>
                 </div>
-                <div class="dashboard-mockup-card-body">
-                  <div class="dashboard-mockup-section-label">Why This Matters</div>
-                  <div class="dashboard-mockup-section-text">Most policyholders lose money early in the claim because key steps are missed or handled incorrectly. An insurance claim is not automatic reimbursement — it is a formal financial review governed by your policy contract.</div>
-                  
-                  <div class="dashboard-mockup-section-label">What Claim Command Pro Provides</div>
-                  <div class="dashboard-mockup-section-text">• A plain-language overview of the entire claim process from start to finish<br>• What to expect at each phase<br>• Common mistakes policyholders make and how to avoid them</div>
-                  
-                  <div class="dashboard-mockup-section-label" style="margin-top: 1.5rem;">Next Step</div>
-                  <div class="dashboard-mockup-section-text" style="font-weight: 600; color: #14b8a6;">Takes about 10 minutes. This is how you find out if your claim is underpaid.</div>
+                <div class="ccc-mockup-step-grid">
+                  <div class="ccc-mockup-tile p3">
+                    <div class="ccc-mockup-tile-ico">🧮</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Analyze Your Insurance Estimate</div>
+                      <p class="ccc-mockup-tile-sub">AI Estimate Review Engine</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">09</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p3">
+                    <div class="ccc-mockup-tile-ico">💰</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Identify Pricing Gaps &amp; Underpayment</div>
+                      <p class="ccc-mockup-tile-sub">AI Pricing Deviation Analyzer</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">10</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p3">
+                    <div class="ccc-mockup-tile-ico">🔎</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Identify Missing Coverage &amp; Benefits</div>
+                      <p class="ccc-mockup-tile-sub">Find the Money They Should Have Paid</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">11</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div class="ccc-mockup-phase">
+                <div class="ccc-mockup-phase-bar"><div class="ccc-mockup-phase-bar-fill"></div></div>
+                <div class="ccc-mockup-phase-head">
+                  <span class="ccc-mockup-pill p4">Phase 4</span>
+                  <span class="ccc-mockup-phase-name">Request the Money</span>
+                  <span class="ccc-mockup-phase-time">Days 45–90</span>
+                  <span class="ccc-mockup-phase-count">0/3</span>
+                </div>
+                <div class="ccc-mockup-step-grid">
+                  <div class="ccc-mockup-tile p4">
+                    <div class="ccc-mockup-tile-ico">✉️</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Submit Your Supplement Request</div>
+                      <p class="ccc-mockup-tile-sub">Send a Written Demand for Everything Underpaid</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">12</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p4">
+                    <div class="ccc-mockup-tile-ico">⚖️</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Send Claim Dispute Letters</div>
+                      <p class="ccc-mockup-tile-sub">Put Every Denial and Disagreement in Writing</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">13</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p4">
+                    <div class="ccc-mockup-tile-ico">💲</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Recover Depreciation (RCV)</div>
+                      <p class="ccc-mockup-tile-sub">Repairs Done? Claim the Money They Held Back</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">14</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ccc-mockup-phase">
+                <div class="ccc-mockup-phase-bar"><div class="ccc-mockup-phase-bar-fill"></div></div>
+                <div class="ccc-mockup-phase-head">
+                  <span class="ccc-mockup-pill p5">Phase 5</span>
+                  <span class="ccc-mockup-phase-name">Finish &amp; Get Paid</span>
+                  <span class="ccc-mockup-phase-time">Days 60–120</span>
+                  <span class="ccc-mockup-phase-count">0/5</span>
+                </div>
+                <div class="ccc-mockup-step-grid">
+                  <div class="ccc-mockup-tile p5">
+                    <div class="ccc-mockup-tile-ico">🤝</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Negotiate Your Settlement</div>
+                      <p class="ccc-mockup-tile-sub">Counter Their Offer With Your Number — In Writing</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">15</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p5">
+                    <div class="ccc-mockup-tile-ico">⚡</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Escalate (Appraisal / Mediation)</div>
+                      <p class="ccc-mockup-tile-sub">If They Still Won&apos;t Move — Force a Decision</p>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">16</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p5">
+                    <div class="ccc-mockup-tile-ico">📝</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Review Final Offer</div>
+                      <p class="ccc-mockup-tile-sub">Read Every Word Before You Sign Anything</p>
+                      <div class="ccc-mockup-tile-ai">AI Powered</div>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">17</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p5">
+                    <div class="ccc-mockup-tile-ico">✅</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Execute Final Recovery</div>
+                      <p class="ccc-mockup-tile-sub">Complete Repairs and Collect Every Dollar</p>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">18</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                  <div class="ccc-mockup-tile p5">
+                    <div class="ccc-mockup-tile-ico">🏆</div>
+                    <div class="ccc-mockup-tile-body">
+                      <div class="ccc-mockup-tile-title">Close Your Claim</div>
+                      <p class="ccc-mockup-tile-sub">Save Your Records — Legal Value for Years</p>
+                    </div>
+                    <div class="ccc-mockup-badge-col">
+                      <div class="ccc-mockup-badge"><span class="ccc-mockup-badge-w">Step</span><span class="ccc-mockup-badge-n">19</span></div>
+                      <div class="ccc-mockup-tile-arr"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="ccc-mockup-footnote">Same 19-step layout as the live Claim Command Center — scroll the preview to see every phase.</p>
             </div>
           </div>
         </div>
@@ -3284,7 +3459,7 @@
         <div class="platform-callouts">
           <div class="platform-callout">
             <div class="platform-callout-title">You always know where you are</div>
-            <div class="platform-callout-desc">Five phases — Set Up Your Claim, Document Your Damage, Find What's Missing, Request the Money, Finish & Get Paid. A progress bar at the top of every screen shows exactly how far you've come and what's left to do.</div>
+            <div class="platform-callout-desc">Five phases — Set Up Your Claim, Document Your Damage, Find What's Missing, Request the Money, Finish & Get Paid. The Command Center lays out every step in order with clear status, so you always know where you are and what comes next.</div>
           </div>
 
           <div class="platform-callout">
