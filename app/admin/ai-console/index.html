@@ -8,23 +8,45 @@
   <link rel="stylesheet" href="/app/assets/css/design-system.css">
   
   <link rel="stylesheet" href="/app/assets/css/tool-visual-alignment.css">
+  <link rel="stylesheet" href="/app/assets/css/admin-hub.css">
 </head>
 <body>
   <div class="admin-container">
-    <aside class="sidebar">
-      <h2>🔧 Admin Console</h2>
+    <aside class="sidebar admin-sidebar">
+      <h2 style="font-size: 1.05rem; margin-bottom: 0.35rem;"><a href="/app/admin/monitoring/index.html" style="color: inherit; text-decoration: none;">Admin hub</a></h2>
+      <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin: 0 0 0.75rem 0;">Full site access</p>
       <nav>
-        <a href="/app/admin/ai-console/index.html" class="active">Dashboard</a>
+        <div class="admin-sidebar-section">Site &amp; marketing</div>
+        <a href="/index.html">Marketing home</a>
+        <a href="/claim-command-center.html">Claim Command Center</a>
+        <a href="/app/claim-management-center.html">Claim Management Center</a>
+        <a href="/app/resource-center.html">Resource Center</a>
+        <a href="/app/admin/site-index.html">Full site index (all pages)</a>
+
+        <div class="admin-sidebar-section">Monitoring</div>
+        <a href="/app/admin/monitoring/index.html">Dashboard</a>
+        <a href="/app/admin/monitoring/errors.html">Errors</a>
+        <a href="/app/admin/monitoring/performance.html">Performance</a>
+        <a href="/app/admin/monitoring/usage.html">Usage</a>
+        <a href="/app/admin/monitoring/ai-costs.html">AI Costs</a>
+        <a href="/app/admin/monitoring/rate-limits.html">Rate Limits</a>
+        <a href="/app/admin/monitoring/events.html">Events</a>
+        <a href="/app/admin/monitoring/health.html">Health</a>
+
+        <div class="admin-sidebar-section">AI console</div>
+        <a href="/app/admin/ai-console/index.html" class="active">AI Dashboard</a>
         <a href="/app/admin/ai-console/prompts.html">System Prompts</a>
         <a href="/app/admin/ai-console/rules.html">Rulesets</a>
         <a href="/app/admin/ai-console/examples.html">Examples</a>
         <a href="/app/admin/ai-console/outputs.html">Output Formats</a>
         <a href="/app/admin/ai-console/versions.html">Version History</a>
         <a href="/app/admin/ai-console/versions.html#rollback">Rollback Center</a>
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
-          <a href="/claim-command-center.html" style="color: rgba(255,255,255,0.9); font-weight: 600;">⭐ Claim Command Center</a>
-          <a href="/app/admin/monitoring/index.html" style="color: rgba(255,255,255,0.7); display: block; margin-top: 0.5rem;">📊 Monitoring Dashboard</a>
-        </div>
+
+        <div class="admin-sidebar-section">Account &amp; API</div>
+        <a href="/app/settings.html">Settings</a>
+        <a href="/app/settings/api-keys.html">API Keys</a>
+        <a href="/app/api-docs.html">API Documentation</a>
+        <a href="/app/settings/api-logs.html">API Logs</a>
       </nav>
     </aside>
 

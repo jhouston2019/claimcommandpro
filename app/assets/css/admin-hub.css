@@ -1,0 +1,71 @@
+/* Shared admin hub: sidebar sections + main link grid */
+.admin-sidebar-section {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 1.15rem 0 0.4rem 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.admin-sidebar-section:first-of-type {
+  margin-top: 0.5rem;
+  padding-top: 0;
+  border-top: none;
+}
+
+.admin-sidebar nav a {
+  display: block;
+  padding: 0.35rem 0;
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.admin-sidebar nav a:hover {
+  color: #fff;
+}
+
+.admin-sidebar nav a.active {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.admin-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.admin-hub-group h3 {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 0.65rem 0;
+}
+
+.admin-hub-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-hub-group li {
+  margin: 0 0 0.4rem 0;
+}
+
+.admin-hub-group a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.admin-hub-group a:hover {
+  text-decoration: underline;
+}

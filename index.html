@@ -1571,7 +1571,8 @@
 
     .pricing-tiers {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: minmax(0, 440px);
+      justify-content: center;
       gap: 2rem;
       max-width: 1200px;
       margin: 3rem auto 4rem;
@@ -3364,7 +3365,7 @@
   <!-- PRICING SECTION -->
   <section class="pricing-section" id="pricing">
     <div class="container">
-      <h2 class="section-title">Choose Your Level</h2>
+      <h2 class="section-title">Pricing</h2>
       
       <!-- Value Reframe -->
       <div style="background: rgba(20,184,166,0.1); border: 2px solid #14b8a6; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; text-align: center;">
@@ -3391,59 +3392,13 @@
       </div>
 
       <div class="pricing-tiers">
-        <!-- FREE TIER -->
-        <div class="pricing-tier">
-          <div class="pricing-tier-label">Start Here</div>
-          <div class="pricing-tier-price">$0</div>
-          <div class="pricing-tier-period">Free forever</div>
-          
-          <ul class="pricing-tier-features">
-            <li>Policy coverage review (plain language summary)</li>
-            <li>Scope gap check for your claim type</li>
-            <li>Pricing comparison to local market rates</li>
-            <li>Unclaimed coverage identification</li>
-            <li>Your personalized next-step recommendation</li>
-          </ul>
-
-          <div class="pricing-tier-cta">
-            <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
-            <div class="pricing-tier-note">No credit card. No commitment.</div>
-          </div>
-        </div>
-
-        <!-- ESSENTIAL TIER -->
-        <div class="pricing-tier">
-          <div class="pricing-tier-label">Essential</div>
-          <div class="pricing-tier-price">$97</div>
-          <div class="pricing-tier-period">One-time payment</div>
-          
-          <ul class="pricing-tier-features">
-            <li>Everything in Free, plus:</li>
-            <li>Full Estimate Review Engine (line-by-line analysis)</li>
-            <li>3 professionally formatted claim letters</li>
-            <li>Settlement gap report (PDF export)</li>
-            <li>Step-by-step claim plan (read-only)</li>
-          </ul>
-
-          <div class="pricing-tier-cta">
-            <a href="/app/free-policy-analysis.html" class="btn-primary">Start for $97 →</a>
-            <div class="pricing-tier-note">Instant access.</div>
-            <div class="pricing-reassurance">
-              <div class="pricing-reassurance-line">Instant access — you're inside the platform in under 60 seconds.</div>
-              <div class="pricing-reassurance-line">Start with your claim type and policy details — takes about 10 minutes.</div>
-              <div class="pricing-reassurance-line">Questions after purchase? Email support@claimcommandpro.com — we respond same day.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- COMMAND TIER -->
         <div class="pricing-tier popular">
-          <div class="pricing-tier-label">Most Popular</div>
+          <div class="pricing-tier-label">Full access</div>
           <div class="pricing-tier-price">$297</div>
           <div class="pricing-tier-period">One-time payment</div>
           
           <ul class="pricing-tier-features">
-            <li>Everything in Essential, plus:</li>
+            <li>Full access includes:</li>
             <li>Unlimited claim letters and supplement requests</li>
             <li>Full Claim Command Center (complete step-by-step plan, interactive)</li>
             <li>Settlement Maximization tool</li>

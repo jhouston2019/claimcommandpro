@@ -8,12 +8,22 @@
   <link rel="stylesheet" href="/app/assets/css/design-system.css">
   
   <link rel="stylesheet" href="/app/assets/css/tool-visual-alignment.css">
+  <link rel="stylesheet" href="/app/assets/css/admin-hub.css">
 </head>
 <body>
   <div class="admin-container">
-    <aside class="sidebar">
-      <h2>📊 Monitoring</h2>
+    <aside class="sidebar admin-sidebar">
+      <h2 style="font-size: 1.05rem; margin-bottom: 0.35rem;"><a href="/app/admin/monitoring/index.html" style="color: inherit; text-decoration: none;">Admin hub</a></h2>
+      <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); margin: 0 0 0.75rem 0;">Full site access</p>
       <nav>
+        <div class="admin-sidebar-section">Site &amp; marketing</div>
+        <a href="/index.html">Marketing home</a>
+        <a href="/claim-command-center.html">Claim Command Center</a>
+        <a href="/app/claim-management-center.html">Claim Management Center</a>
+        <a href="/app/resource-center.html">Resource Center</a>
+        <a href="/app/admin/site-index.html">Full site index (all pages)</a>
+
+        <div class="admin-sidebar-section">Monitoring</div>
         <a href="/app/admin/monitoring/index.html" class="active">Dashboard</a>
         <a href="/app/admin/monitoring/errors.html">Errors</a>
         <a href="/app/admin/monitoring/performance.html">Performance</a>
@@ -22,11 +32,21 @@
         <a href="/app/admin/monitoring/rate-limits.html">Rate Limits</a>
         <a href="/app/admin/monitoring/events.html">Events</a>
         <a href="/app/admin/monitoring/health.html">Health</a>
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
-          <a href="/claim-command-center.html" style="color: rgba(255,255,255,0.9); font-weight: 600;">⭐ Claim Command Center</a>
-          <a href="/app/admin/ai-console/index.html" style="color: rgba(255,255,255,0.7); display: block; margin-top: 0.5rem;">🔧 AI Console</a>
-          <a href="/app/resource-center.html" style="color: rgba(255,255,255,0.7); display: block; margin-top: 0.5rem;">📚 Resource Center</a>
-        </div>
+
+        <div class="admin-sidebar-section">AI console</div>
+        <a href="/app/admin/ai-console/index.html">AI Dashboard</a>
+        <a href="/app/admin/ai-console/prompts.html">System Prompts</a>
+        <a href="/app/admin/ai-console/rules.html">Rulesets</a>
+        <a href="/app/admin/ai-console/examples.html">Examples</a>
+        <a href="/app/admin/ai-console/outputs.html">Output Formats</a>
+        <a href="/app/admin/ai-console/versions.html">Version History</a>
+        <a href="/app/admin/ai-console/versions.html#rollback">Rollback Center</a>
+
+        <div class="admin-sidebar-section">Account &amp; API</div>
+        <a href="/app/settings.html">Settings</a>
+        <a href="/app/settings/api-keys.html">API Keys</a>
+        <a href="/app/api-docs.html">API Documentation</a>
+        <a href="/app/settings/api-logs.html">API Logs</a>
       </nav>
     </aside>
 
@@ -35,7 +55,61 @@
         <strong>⚠️ Admin Access Only</strong> - Enterprise monitoring dashboard for system health, performance, and usage analytics.
       </div>
 
-      <h1>Enterprise Monitoring Dashboard</h1>
+      <h1>Admin dashboard</h1>
+      <p style="color: rgba(255,255,255,0.65); margin: -0.25rem 0 1.25rem 0; max-width: 52rem; line-height: 1.5;">Use the sidebar or the grid below to open any admin tool, AI console page, API settings, or customer-facing product.</p>
+
+      <div class="card">
+        <h2 style="margin-top: 0;">Manage the site</h2>
+        <p style="color: rgba(255,255,255,0.5); margin-bottom: 0;">Every admin and product destination in one place.</p>
+        <div class="admin-hub-grid">
+          <div class="admin-hub-group">
+            <h3>Site &amp; product</h3>
+            <ul>
+              <li><a href="/index.html">Marketing home</a></li>
+              <li><a href="/claim-command-center.html">Claim Command Center</a></li>
+              <li><a href="/app/claim-management-center.html">Claim Management Center</a></li>
+              <li><a href="/app/resource-center.html">Resource Center</a></li>
+              <li><a href="/app/admin/site-index.html">Full site index (every HTML page)</a></li>
+            </ul>
+          </div>
+          <div class="admin-hub-group">
+            <h3>Monitoring</h3>
+            <ul>
+              <li><a href="/app/admin/monitoring/index.html">Dashboard</a></li>
+              <li><a href="/app/admin/monitoring/errors.html">Errors</a></li>
+              <li><a href="/app/admin/monitoring/performance.html">Performance</a></li>
+              <li><a href="/app/admin/monitoring/usage.html">Usage</a></li>
+              <li><a href="/app/admin/monitoring/ai-costs.html">AI Costs</a></li>
+              <li><a href="/app/admin/monitoring/rate-limits.html">Rate Limits</a></li>
+              <li><a href="/app/admin/monitoring/events.html">Events</a></li>
+              <li><a href="/app/admin/monitoring/health.html">Health</a></li>
+            </ul>
+          </div>
+          <div class="admin-hub-group">
+            <h3>AI console</h3>
+            <ul>
+              <li><a href="/app/admin/ai-console/index.html">AI Dashboard</a></li>
+              <li><a href="/app/admin/ai-console/prompts.html">System Prompts</a></li>
+              <li><a href="/app/admin/ai-console/rules.html">Rulesets</a></li>
+              <li><a href="/app/admin/ai-console/examples.html">Examples</a></li>
+              <li><a href="/app/admin/ai-console/outputs.html">Output Formats</a></li>
+              <li><a href="/app/admin/ai-console/versions.html">Version History</a></li>
+              <li><a href="/app/admin/ai-console/versions.html#rollback">Rollback Center</a></li>
+            </ul>
+          </div>
+          <div class="admin-hub-group">
+            <h3>Account &amp; API</h3>
+            <ul>
+              <li><a href="/app/settings.html">Settings</a></li>
+              <li><a href="/app/settings/api-keys.html">API Keys</a></li>
+              <li><a href="/app/api-docs.html">API Documentation</a></li>
+              <li><a href="/app/settings/api-logs.html">API Logs</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <h2 style="font-size: 1.2rem; margin: 1.75rem 0 1rem; color: #94a3b8; font-weight: 600;">Live metrics</h2>
 
       <div class="stats-grid">
         <div class="stat-card">
