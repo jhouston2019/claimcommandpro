@@ -7169,7 +7169,7 @@ Generated using expert claim methodology and structured for carrier review`;
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             pdfBase64,
-            mediaType: insurerEstimateFile.type || 'application/pdf'
+            mediaType: file.type || 'application/pdf'
           })
         });
 
