@@ -8440,8 +8440,17 @@ Generated using expert claim methodology and structured for carrier review`;
       });
     }
 
+    // Returns true when the user entered via ?start=estimate
+    function isEstimatePath() {
+      return sessionStorage.getItem('entryPath') === 'estimate';
+    }
+
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
+      // URL parameter detection for alternate entry paths
+      const urlParams = new URLSearchParams(window.location.search);
+      const startParam = urlParams.get('start');
+
       // Update tool links to resolve paths correctly
       updateToolLinks();
 
@@ -8460,8 +8469,20 @@ Generated using expert claim methodology and structured for carrier review`;
 
       // Roadmap strip removed - navigation via sidebar and step buttons only
 
-      showOverviewView();
-      renderStepPage(currentStep);
+      if (startParam === 'estimate') {
+        // Suppress welcome/onboarding modal
+        const modal = document.getElementById('guideModal');
+        if (modal) modal.classList.add('hidden');
+
+        // Flag entry path for use by downstream logic
+        sessionStorage.setItem('entryPath', 'estimate');
+
+        // Skip overview, go directly to the estimate analysis step
+        goToStep(9);
+      } else {
+        showOverviewView();
+        renderStepPage(currentStep);
+      }
     });
   </script>
 
