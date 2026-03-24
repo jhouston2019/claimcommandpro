@@ -2388,7 +2388,7 @@
           </div>
 
           <div class="hero-ctas">
-            <button class="btn-primary">Start Free Claim Analysis →</button>
+            <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Claim Analysis →</a>
           </div>
 
         </div>
@@ -3582,7 +3582,7 @@
           </ul>
 
           <div class="pricing-tier-cta">
-            <a href="/app/free-policy-analysis.html" class="btn-primary">Get Full Access →</a>
+            <button onclick="startCheckout(this)" class="btn-primary">Get Full Access →</button>
             <div class="pricing-tier-note">You keep every dollar you recover.</div>
             <div class="pricing-reassurance">
               <div class="pricing-reassurance-line">Instant access — you're inside the platform in under 60 seconds.</div>
@@ -3806,6 +3806,27 @@
         document.getElementById('missing-amount').textContent = formatCurrency(missing);
       } else {
         document.getElementById('calc-result-2').classList.remove('active');
+      }
+    }
+
+    async function startCheckout(btn) {
+      const original = btn.textContent;
+      btn.textContent = 'Loading...';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/.netlify/functions/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priceId: 'price_1SFM1K7CdVcPUl7l8sQDsC6Y' }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Unable to start checkout');
+        window.location.href = data.url;
+      } catch (err) {
+        console.error('Checkout error:', err);
+        alert('Could not start checkout: ' + err.message);
+        btn.textContent = original;
+        btn.disabled = false;
       }
     }
 
