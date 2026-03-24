@@ -70,27 +70,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     sessionStorage.removeItem('checkoutMessage');
   }
 
-  // Log checkout page view
-  if (window.CNAnalytics) {
-    CNAnalytics.log("checkout_page_view");
-  }
-
-  // Handle checkout button click - use REAL Stripe checkout
+  // Handle checkout button click
   const completeBtn = document.getElementById("checkout-complete");
   if (completeBtn) {
     completeBtn.addEventListener("click", async () => {
-      // Log checkout started
-      if (window.CNAnalytics) {
-        CNAnalytics.log("checkout_started", { tier: "pro" });
-      }
-      
-      // Launch real Stripe checkout
-      if (window.launchClaimCheckout) {
-        await window.launchClaimCheckout();
-      } else {
-        // Fallback: redirect to paywall which has the checkout function
-        window.location.href = '/paywall/locked.html';
-      }
+      await window.launchClaimCheckout();
     });
   }
 });
