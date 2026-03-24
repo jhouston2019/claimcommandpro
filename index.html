@@ -2308,6 +2308,7 @@
       color: #6b7280;
       line-height: 1.4;
     }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -2443,11 +2444,11 @@
 
             </div>
 
-            <div id="situation-result" style="display: none; background: #f0fdf9; border: 2px solid #14b8a6; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
+            <div id="situation-result" class="hidden" style="background: #f0fdf9; border: 2px solid #14b8a6; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
               <div id="situation-result-text" style="font-size: 0.95rem; color: #0f172a; line-height: 1.6; font-weight: 500;"></div>
             </div>
 
-            <a id="situation-cta" class="btn-primary" href="#" style="display: none; text-align: center;">Get My Action Plan →</a>
+            <a id="situation-cta" class="btn-primary hidden" href="#" style="text-align: center;">Get My Action Plan →</a>
 
           </div>
         </div>
@@ -3766,19 +3767,21 @@
     };
 
     function selectSituation(el, key) {
-      document.querySelectorAll('.situation-option').forEach(o => o.classList.remove('selected'));
+      document.querySelectorAll('.situation-option')
+        .forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
 
-      const msg = situationMessages[key];
-      const result = document.getElementById('situation-result');
-      const resultText = document.getElementById('situation-result-text');
-      const cta = document.getElementById('situation-cta');
+      const routes = {
+        'just-had-loss':    '/app/situation-loss.html',
+        'filed-waiting':    '/app/situation-waiting.html',
+        'received-estimate':'/app/situation-estimate.html',
+        'lowball-denial':   '/app/situation-lowball.html',
+        'denied':           '/app/situation-denied.html'
+      };
 
-      resultText.textContent = msg.text;
-      cta.textContent = msg.cta;
-      cta.href = situationRoutes[key];
-      result.style.display = 'block';
-      cta.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = routes[key];
+      }, 180);
     }
   </script>
 
