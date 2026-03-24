@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Denied — Start Your Appeal | Claim Command Pro</title>
+  <meta name="description" content="A denial is not the end of your claim. Most denials can be appealed with the right documentation and policy language.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #0f172a;
+      --navy-light: #1e293b;
+      --teal: #14b8a6;
+      --teal-dark: #0d9488;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--gray-900);
+      background: #ffffff;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 0;
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy);
+      text-decoration: none;
+    }
+
+    .btn-login {
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+      background: white;
+      color: var(--gray-900);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .situation-banner {
+      background: var(--navy);
+      padding: 4rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .situation-banner::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(20,184,166,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .banner-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1rem;
+    }
+
+    .banner-headline {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2.25rem;
+      color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .banner-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.75;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .urgency-section {
+      background: #fffbeb;
+      border-top: 3px solid #f59e0b;
+      padding: 2rem;
+    }
+
+    .urgency-inner {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .urgency-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .urgency-text {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.975rem;
+      font-weight: 500;
+      color: #92400e;
+      line-height: 1.65;
+    }
+
+    .cards-section {
+      background: #ffffff;
+      padding: 4rem 2rem;
+    }
+
+    .cards-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .card-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.6rem;
+    }
+
+    .card-body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.925rem;
+      color: var(--gray-600);
+      line-height: 1.65;
+    }
+
+    .cta-section {
+      background: var(--navy);
+      padding: 4.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      position: relative;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .cta-headline {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2rem;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+      line-height: 1.25;
+    }
+
+    .cta-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2rem;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(20,184,166,0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(20,184,166,0.45);
+    }
+
+    .footer {
+      background: var(--navy-light);
+      padding: 2.5rem 0;
+      color: rgba(255,255,255,0.7);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--teal);
+    }
+
+    @media (max-width: 768px) {
+      .banner-headline { font-size: 1.75rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .cta-headline { font-size: 1.6rem; }
+      .footer-container { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/index.html" class="nav-logo">Claim Command Pro</a>
+      <a href="/app/login.html" class="btn-login">Login</a>
+    </div>
+  </nav>
+
+  <section class="situation-banner">
+    <div class="banner-inner">
+      <span class="eyebrow">Claim denied — appeal needed</span>
+      <h1 class="banner-headline">A denial is not the end of your claim.</h1>
+      <p class="banner-sub">Most denials can be appealed with the right documentation and policy language. The denial letter itself tells you exactly what to address.</p>
+    </div>
+  </section>
+
+  <div class="urgency-section">
+    <div class="urgency-inner">
+      <span class="urgency-icon">⚠️</span>
+      <p class="urgency-text">Most denials cite specific policy language. If that language is misapplied or the investigation was incomplete, the denial is disputable — and reversible.</p>
+    </div>
+  </div>
+
+  <section class="cards-section">
+    <div class="cards-inner">
+      <div class="cards-grid">
+
+        <div class="feature-card">
+          <span class="card-icon">📄</span>
+          <div class="card-title">Denial letter analysis</div>
+          <p class="card-body">Upload the denial. The system identifies the grounds cited, the applicable policy language, and whether the denial is disputable.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="card-icon">⚖️</span>
+          <div class="card-title">Formal appeal letter</div>
+          <p class="card-body">A documented appeal citing your policy, the adjuster's obligations, and the specific grounds for reversal.</p>
+        </div>
+
+        <div class="feature-card">
+          <span class="card-icon">💬</span>
+          <div class="card-title">Bad faith assessment</div>
+          <p class="card-body">If the insurer acted in bad faith — unreasonable delay, false statements, refusal to investigate — that is a separate and significant claim.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-headline">Start now — $297 one-time</h2>
+      <p class="cta-sub">Instant access after payment. No subscription. No percentage of your settlement.</p>
+      <a href="/app/checkout.html?situation=denied" class="btn-primary">Start my appeal →</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div>&copy; 2026 Claim Command Pro</div>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/disclaimer.html">Disclaimer</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
