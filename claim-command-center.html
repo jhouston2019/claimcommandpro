@@ -7138,49 +7138,77 @@ Generated using expert claim methodology and structured for carrier review`;
       const btn = document.getElementById('reviewEstimateBtn');
 
       btn.disabled = true;
+      btn.textContent = 'Analyzing…';
       processingEl.classList.remove('hidden');
       outputEl.classList.add('hidden');
 
-      // Simulate AI processing (replace with actual API call)
-      setTimeout(() => {
-        // Mock parsed data
-        const insurerTotal = 18200;
-        const contractorTotal = claimData.structure.userEstimate || 36750;
-        const gap = contractorTotal - insurerTotal;
+      const fmt = (n) => new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: 'USD',
+        minimumFractionDigits: 0, maximumFractionDigits: 0
+      }).format(n);
+
+      try {
+        // Read the uploaded file as base64
+        const pdfBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = () => reject(new Error('Failed to read file'));
+          reader.readAsDataURL(insurerEstimateFile);
+        });
+
+        // Call the Anthropic-backed Netlify function
+        const response = await fetch('/.netlify/functions/analyze-insurer-estimate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pdfBase64,
+            mediaType: insurerEstimateFile.type || 'application/pdf'
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Analysis failed');
+        }
+
+        const responseText = result.analysis;
+
+        // Extract dollar values from AI response text
+        const insurerAmount = extractDollarAmount(responseText, 'insurer|insurance estimate|carrier');
+        const gapAmount     = extractDollarAmount(responseText, 'gap|missing|underpaid|difference|recoverable');
+
+        const insurerTotal    = insurerAmount || 0;
+        const contractorTotal = claimData.structure.userEstimate || 0;
+        const gap             = gapAmount || (contractorTotal - insurerTotal) || 0;
         window._lastGapAmount = gap;
 
-        // When real responseText is available, replace these with:
-        //   insurerAmount = extractDollarAmount(responseText, 'insurer|insurance estimate|carrier')
-        //   gapAmount     = extractDollarAmount(responseText, 'gap|missing|underpaid|difference')
-        const insurerAmount = insurerTotal;
-        const gapAmount = gap;
+        // Parse scope and pricing sections from response text for display
+        const scopeMatch   = responseText.match(/missing scope[:\s]*([\s\S]*?)(?:\n\n|pricing|suppressed|$)/i);
+        const pricingMatch = responseText.match(/(?:suppressed|below.market|pricing)[:\s]*([\s\S]*?)(?:\n\n|unclaimed|coverage|gap|$)/i);
+        const scopeText    = scopeMatch   ? scopeMatch[1].trim().slice(0, 300)   : 'See full analysis below';
+        const pricingText  = pricingMatch ? pricingMatch[1].trim().slice(0, 300) : 'See full analysis below';
 
-        const analysis = {
-          insurerTotal,
-          contractorTotal,
-          gap,
-          missingScope: ['Drywall replacement in bedroom', 'Insulation repair', 'Paint (2 coats)'],
-          pricingGaps: ['Flooring underpriced by $4,200', 'Labor rate 30% below market']
-        };
-
-        // Update UI
-        document.getElementById('insurerEstimateAmount').textContent = `$${insurerTotal.toLocaleString()}`;
-        document.getElementById('contractorEstimateAmount').textContent = `$${contractorTotal.toLocaleString()}`;
-        document.getElementById('moneyMomentGap').textContent = `$${gap.toLocaleString()}`;
-        document.getElementById('missingScope').innerHTML = `<strong>Missing Scope:</strong> ${analysis.missingScope.join(', ')}`;
-        document.getElementById('pricingGaps').innerHTML = `<strong>Pricing Issues:</strong> ${analysis.pricingGaps.join(', ')}`;
+        // Update output elements
+        document.getElementById('insurerEstimateAmount').textContent  = insurerTotal   ? fmt(insurerTotal)    : '—';
+        document.getElementById('contractorEstimateAmount').textContent = contractorTotal ? fmt(contractorTotal) : '—';
+        document.getElementById('moneyMomentGap').textContent         = gap            ? fmt(gap)             : 'See analysis';
+        document.getElementById('missingScope').innerHTML  = `<strong>Missing Scope:</strong> ${scopeText}`;
+        document.getElementById('pricingGaps').innerHTML   = `<strong>Pricing Issues:</strong> ${pricingText}`;
 
         // Save to claimData
         claimData.structure.insurerEstimate = insurerTotal;
-        claimData.structure.gap = gap;
-        claimData.estimateReview = analysis;
+        claimData.structure.gap             = gap;
+        claimData.estimateReview            = { insurerTotal, contractorTotal, gap, responseText };
         claimData.meta.documentsGenerated++;
         claimData.meta.stepValueMap[9] = gap;
 
         // Update journal
-        addJournalEntry('Insurance estimate reviewed', `Insurer estimate: $${insurerTotal.toLocaleString()}. Gap identified: $${gap.toLocaleString()}.`);
+        addJournalEntry('Insurance estimate reviewed',
+          `Insurer estimate: ${insurerTotal ? fmt(insurerTotal) : 'parsed from document'}. Gap identified: ${gap ? fmt(gap) : 'see analysis'}.`
+        );
 
-        // Update UI
+        // Reveal output
         processingEl.classList.add('hidden');
         outputEl.classList.remove('hidden');
         btn.textContent = 'Re-analyze Estimates';
@@ -7193,16 +7221,11 @@ Generated using expert claim methodology and structured for carrier review`;
         saveState();
 
         // Show money found animation
-        showMoneyFoundToast(`+$${gap.toLocaleString()} Gap Identified`);
+        if (gap > 0) showMoneyFoundToast(`+${fmt(gap)} Gap Identified`);
 
         trackActivity('estimate_review_complete', { stepNum: 9, gap });
 
         // Update metric strip with extracted values
-        const fmt = (n) => new Intl.NumberFormat('en-US', {
-          style: 'currency', currency: 'USD',
-          minimumFractionDigits: 0, maximumFractionDigits: 0
-        }).format(n);
-
         if (insurerAmount) {
           const el = document.getElementById('metricInsurerOffered');
           if (el) el.textContent = fmt(insurerAmount);
@@ -7227,7 +7250,14 @@ Generated using expert claim methodology and structured for carrier review`;
         // Reveal recovery roadmap after output renders
         const roadmap = document.getElementById('recoveryRoadmapInject');
         if (roadmap) roadmap.classList.remove('hidden');
-      }, 3000);
+
+      } catch (err) {
+        console.error('reviewInsurerEstimate error:', err);
+        processingEl.classList.add('hidden');
+        btn.textContent = 'Compare Estimates with AI';
+        btn.disabled = false;
+        alert('Analysis failed: ' + err.message + '\n\nCheck that ANTHROPIC_API_KEY is set in your Netlify environment variables.');
+      }
     }
 
     // STEPS 10-19 — Simplified execution handlers
