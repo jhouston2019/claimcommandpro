@@ -3577,6 +3577,7 @@
         <button type="button" class="overview-toggle-btn" id="overviewToggleBtn" onclick="toggleOverview()">⊞ All Steps</button>
       </div>
       <div class="nav-pills">
+        <button class="nav-pill" id="pill-fullplan" onclick="openFullPlanFromNav()">⊞ Full Plan</button>
         <button class="nav-pill" onclick="showSummaryView()">Claim Summary</button>
         <button class="nav-pill" onclick="showFinancialSummary()">Financial Summary</button>
         <button class="nav-pill" onclick="showClaimJournal()">Activity Log</button>
@@ -8300,6 +8301,14 @@ Generated using expert claim methodology and structured for carrier review`;
       if (rs && phase) rs.textContent = `Phase ${phase.num} · ${phase.name}`;
     }
 
+    function openFullPlanFromNav() {
+      closeAllNavSidePanels();
+      document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+      document.getElementById('pill-fullplan').classList.add('active');
+      showOverviewView();
+      sessionStorage.setItem('lastNavTab', 'fullplan');
+    }
+
     function goToStep(num) {
       if (num < 1 || num > 19) return;
 
@@ -8511,6 +8520,11 @@ Generated using expert claim methodology and structured for carrier review`;
       document.getElementById('view-summary').classList.add('hidden');
 
       // Roadmap strip removed - navigation via sidebar and step buttons only
+
+      if (isEstimatePath()) {
+        const pill = document.getElementById('pill-fullplan');
+        if (pill) pill.innerHTML = '⊞ Full Plan <span style="background: #14b8a6; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 999px; margin-left: 4px;">Optional</span>';
+      }
 
       if (startParam === 'estimate') {
         // Suppress welcome/onboarding modal
