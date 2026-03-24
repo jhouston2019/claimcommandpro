@@ -7122,6 +7122,15 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     // Extracts a dollar amount following a label keyword from AI response text.
+    function getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
     // Used when the real API response lands — currently values come from computed mock data.
     function extractDollarAmount(text, label) {
       const pattern = new RegExp(label + '[^$\\d]*\\$?([\\d,]+)', 'i');
@@ -7131,7 +7140,12 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     async function reviewInsurerEstimate() {
-      if (!insurerEstimateFile) return;
+      const fileInput = document.getElementById('insurerEstimateInput');
+      if (!fileInput || !fileInput.files[0]) {
+        alert('Please upload an estimate PDF first.');
+        return;
+      }
+      const file = fileInput.files[0];
 
       const processingEl = document.getElementById('estimateReviewProcessing');
       const outputEl = document.getElementById('estimateReviewOutput');
@@ -7149,12 +7163,7 @@ Generated using expert claim methodology and structured for carrier review`;
 
       try {
         // Read the uploaded file as base64
-        const pdfBase64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = () => reject(new Error('Failed to read file'));
-          reader.readAsDataURL(insurerEstimateFile);
-        });
+        const pdfBase64 = await getBase64(file);
 
         // Call the Anthropic-backed Netlify function
         const response = await fetch('/.netlify/functions/analyze-insurer-estimate', {
@@ -7256,7 +7265,10 @@ Generated using expert claim methodology and structured for carrier review`;
         processingEl.classList.add('hidden');
         btn.textContent = 'Compare Estimates with AI';
         btn.disabled = false;
-        alert('Analysis failed: ' + err.message + '\n\nCheck that ANTHROPIC_API_KEY is set in your Netlify environment variables.');
+        const errBox = document.createElement('div');
+        errBox.style.cssText = 'margin:16px 28px;padding:14px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;font-size:13px;color:#991b1b;';
+        errBox.textContent = 'Analysis failed: ' + err.message + '. Please check your PDF and try again.';
+        document.getElementById('stepWorkspace').appendChild(errBox);
       }
     }
 
