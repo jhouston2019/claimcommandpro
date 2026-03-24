@@ -7121,6 +7121,15 @@ Generated using expert claim methodology and structured for carrier review`;
       trackActivity('file_upload', { stepNum: 9, fileName: file.name, fileType: 'insurer_estimate' });
     }
 
+    // Extracts a dollar amount following a label keyword from AI response text.
+    // Used when the real API response lands — currently values come from computed mock data.
+    function extractDollarAmount(text, label) {
+      const pattern = new RegExp(label + '[^$\\d]*\\$?([\\d,]+)', 'i');
+      const match = text.match(pattern);
+      if (!match) return null;
+      return parseInt(match[1].replace(/,/g, ''), 10);
+    }
+
     async function reviewInsurerEstimate() {
       if (!insurerEstimateFile) return;
 
@@ -7139,6 +7148,12 @@ Generated using expert claim methodology and structured for carrier review`;
         const contractorTotal = claimData.structure.userEstimate || 36750;
         const gap = contractorTotal - insurerTotal;
         window._lastGapAmount = gap;
+
+        // When real responseText is available, replace these with:
+        //   insurerAmount = extractDollarAmount(responseText, 'insurer|insurance estimate|carrier')
+        //   gapAmount     = extractDollarAmount(responseText, 'gap|missing|underpaid|difference')
+        const insurerAmount = insurerTotal;
+        const gapAmount = gap;
 
         const analysis = {
           insurerTotal,
@@ -7182,18 +7197,36 @@ Generated using expert claim methodology and structured for carrier review`;
 
         trackActivity('estimate_review_complete', { stepNum: 9, gap });
 
+        // Update metric strip with extracted values
+        const fmt = (n) => new Intl.NumberFormat('en-US', {
+          style: 'currency', currency: 'USD',
+          minimumFractionDigits: 0, maximumFractionDigits: 0
+        }).format(n);
+
+        if (insurerAmount) {
+          const el = document.getElementById('metricInsurerOffered');
+          if (el) el.textContent = fmt(insurerAmount);
+        }
+
+        if (gapAmount) {
+          const el = document.getElementById('metricTotalGap');
+          if (el) {
+            el.textContent = fmt(gapAmount);
+            el.classList.add('highlight-red');
+          }
+        }
+
+        // Fallback if gap could not be parsed from response
+        const gapMetricEl = document.getElementById('metricTotalGap');
+        if (gapMetricEl && !gapAmount) {
+          gapMetricEl.textContent = 'See analysis below';
+          gapMetricEl.style.color = 'rgba(255,255,255,0.5)';
+          gapMetricEl.style.fontSize = '11px';
+        }
+
         // Reveal recovery roadmap after output renders
         const roadmap = document.getElementById('recoveryRoadmapInject');
         if (roadmap) roadmap.classList.remove('hidden');
-
-        // Update gap metric display if present
-        const gapEl = document.getElementById('metricTotalGap');
-        if (gapEl && window._lastGapAmount) {
-          gapEl.textContent = new Intl.NumberFormat('en-US', {
-            style: 'currency', currency: 'USD',
-            minimumFractionDigits: 0, maximumFractionDigits: 0
-          }).format(window._lastGapAmount);
-        }
       }, 3000);
     }
 
