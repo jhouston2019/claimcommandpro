@@ -2856,11 +2856,12 @@
     }
 
     .tile-title {
-      font-size: 15px;
+      font-size: 19px;
       font-weight: 700;
       color: var(--gray-900);
       line-height: 1.3;
       margin-bottom: 3px;
+      text-transform: uppercase;
     }
 
     .tile-sub {
@@ -3168,7 +3169,7 @@
     .overview-page-head .overview-title {
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      font-size: clamp(16px, 2vw, 26px);
+      font-size: clamp(12px, 1.6vw, 22px);
       margin-bottom: 7px;
       line-height: 1.25;
     }
@@ -3595,8 +3596,8 @@
         <div class="resume-icon">▶</div>
         <div class="resume-content">
           <div class="resume-label">Your next step</div>
-          <div class="resume-title" id="resumeStepTitle">Step 8 — Track & Recover Living Expenses</div>
-          <div class="resume-sub" id="resumePhaseSub">Phase 2 · Document Your Damage</div>
+          <div class="resume-title" id="resumeStepTitle">Step 1 — Understand the Claim Process</div>
+          <div class="resume-sub" id="resumePhaseSub">Phase 1 · Set Up Your Claim</div>
         </div>
         <button type="button" class="resume-btn" id="resumeBtn" onclick="resumeCurrentStep()">Resume →</button>
       </div>
@@ -3620,7 +3621,7 @@
             <div class="tile-icon">📋</div>
             <div class="tile-body">
               <div class="tile-title">Understand the Claim Process</div>
-              <div class="tile-sub">Read This First — Before You Call Anyone</div>
+              <div class="tile-sub">Claim Command Pro walks you through how insurance claims work so you avoid early mistakes that reduce your payout.</div>
               </div>
             <div class="tile-badge-col">
               <div class="tile-badge">
@@ -3634,8 +3635,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📄</div>
             <div class="tile-body">
-              <div class="tile-title">Review & Understand Your Policy</div>
-              <div class="tile-sub">Upload Your Policy — Find Out What You're Owed</div>
+              <div class="tile-title">Identify All Available Coverages — Expert-Driven AI Policy Analysis ⚡</div>
+              <div class="tile-sub">Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3650,8 +3651,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📞</div>
             <div class="tile-body">
-              <div class="tile-title">Report the Loss the Right Way</div>
-              <div class="tile-sub">Report Using These Exact Words</div>
+              <div class="tile-title">Report the Loss Correctly ⚡</div>
+              <div class="tile-sub">Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3678,8 +3679,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📸</div>
             <div class="tile-body">
-              <div class="tile-title">Document All Damage</div>
-              <div class="tile-sub">Photograph Everything Before You Touch Anything</div>
+              <div class="tile-title">Document All Damage ⚡</div>
+              <div class="tile-sub">Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3694,8 +3695,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🏗️</div>
             <div class="tile-body">
-              <div class="tile-title">Get Accurate Contractor Estimates</div>
-              <div class="tile-sub">Get 2 Contractors to Give Written Estimates</div>
+              <div class="tile-title">Establish Repair Costs — Secure an Independent Contractor Estimate ⚡</div>
+              <div class="tile-sub">Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3708,11 +3709,12 @@
 
           <div class="step-tile p2" id="tile-6" onclick="goToStep(6)">
             <div class="tile-done-check">✓</div>
-            <div class="tile-icon">🔍</div>
+            <div class="tile-icon">📦</div>
             <div class="tile-body">
-              <div class="tile-title">Prepare for the Adjuster Inspection</div>
-              <div class="tile-sub">Do This Before the Adjuster Shows Up</div>
-              </div>
+              <div class="tile-title">Build Contents Inventory ⚡</div>
+              <div class="tile-sub">Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
             <div class="tile-badge-col">
               <div class="tile-badge">
                 <div class="tile-badge-word">Step</div>
@@ -3723,10 +3725,10 @@
 
           <div class="step-tile p2" id="tile-7" onclick="goToStep(7)">
             <div class="tile-done-check">✓</div>
-            <div class="tile-icon">📦</div>
+            <div class="tile-icon">💳</div>
             <div class="tile-body">
-              <div class="tile-title">Build Your Contents Inventory</div>
-              <div class="tile-sub">Write Down Every Item Lost or Damaged</div>
+              <div class="tile-title">Track Living Expenses (ALE) ⚡</div>
+              <div class="tile-sub">Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3739,12 +3741,11 @@
 
           <div class="step-tile p2" id="tile-8" onclick="goToStep(8)">
             <div class="tile-done-check">✓</div>
-            <div class="tile-icon">💳</div>
+            <div class="tile-icon">🔍</div>
             <div class="tile-body">
-              <div class="tile-title">Track & Recover Living Expenses</div>
-              <div class="tile-sub">Additional Living Expenses Tracker</div>
-              <div class="tile-ai">AI Powered</div>
-</div>
+              <div class="tile-title">Prepare for the Adjuster Inspection</div>
+              <div class="tile-sub">Claim Command Pro prepares you for the adjuster visit so damage is properly presented and nothing is overlooked during inspection.</div>
+              </div>
             <div class="tile-badge-col">
               <div class="tile-badge">
                 <div class="tile-badge-word">Step</div>
@@ -3769,8 +3770,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🧮</div>
             <div class="tile-body">
-              <div class="tile-title">Analyze Your Insurance Estimate</div>
-              <div class="tile-sub">AI Estimate Review Engine</div>
+              <div class="tile-title">Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡</div>
+              <div class="tile-sub">Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3785,8 +3786,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">💰</div>
             <div class="tile-body">
-              <div class="tile-title">Identify Pricing Gaps & Underpayment</div>
-              <div class="tile-sub">AI Pricing Deviation Analyzer</div>
+              <div class="tile-title">Identify Low-Balled Labor & Material Costs ⚡</div>
+              <div class="tile-sub">Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3801,8 +3802,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🔎</div>
             <div class="tile-body">
-              <div class="tile-title">Identify Missing Coverage & Benefits</div>
-              <div class="tile-sub">Find the Money They Should Have Paid</div>
+              <div class="tile-title">Identify Unapplied Policy Benefits ⚡</div>
+              <div class="tile-sub">Identify coverages and policy benefits that were not applied to your claim but should have been.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3829,8 +3830,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">✉️</div>
             <div class="tile-body">
-              <div class="tile-title">Submit Your Supplement Request</div>
-              <div class="tile-sub">Send a Written Demand for Everything Underpaid</div>
+              <div class="tile-title">Submit a Demand for Payment ⚡</div>
+              <div class="tile-sub">Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3845,8 +3846,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">⚖️</div>
             <div class="tile-body">
-              <div class="tile-title">Send Claim Dispute Letters</div>
-              <div class="tile-sub">Put Every Denial and Disagreement in Writing</div>
+              <div class="tile-title">Send Dispute Letters ⚡</div>
+              <div class="tile-sub">Generate formal dispute letters to challenge denials, underpayments, and incorrect claim decisions at any stage of your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3861,8 +3862,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">💲</div>
             <div class="tile-body">
-              <div class="tile-title">Recover Depreciation (RCV)</div>
-              <div class="tile-sub">Repairs Done? Claim the Money They Held Back</div>
+              <div class="tile-title">Negotiate the Settlement ⚡</div>
+              <div class="tile-sub">Use structured negotiation language and documentation to support your position and increase your settlement.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3889,10 +3890,9 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🤝</div>
             <div class="tile-body">
-              <div class="tile-title">Negotiate Your Settlement</div>
-              <div class="tile-sub">Counter Their Offer With Your Number — In Writing</div>
-              <div class="tile-ai">AI Powered</div>
-</div>
+              <div class="tile-title">Escalate the Claim (Appraisal / Mediation)</div>
+              <div class="tile-sub">Follow guided escalation steps including appraisal and mediation when the carrier refuses to properly adjust the claim.</div>
+            </div>
             <div class="tile-badge-col">
               <div class="tile-badge">
                 <div class="tile-badge-word">Step</div>
@@ -3905,9 +3905,10 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">⚡</div>
             <div class="tile-body">
-              <div class="tile-title">Escalate (Appraisal / Mediation)</div>
-              <div class="tile-sub">If They Still Won't Move — Force a Decision</div>
-              </div>
+              <div class="tile-title">Review the Final Offer ⚡</div>
+              <div class="tile-sub">Analyze the final settlement offer to ensure all amounts, coverages, and payments are correct before acceptance.</div>
+              <div class="tile-ai">AI Powered</div>
+</div>
             <div class="tile-badge-col">
               <div class="tile-badge">
                 <div class="tile-badge-word">Step</div>
@@ -3920,8 +3921,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📝</div>
             <div class="tile-body">
-              <div class="tile-title">Review Final Offer</div>
-              <div class="tile-sub">Read Every Word Before You Sign Anything</div>
+              <div class="tile-title">Complete Repairs & Recover Remaining Funds ⚡</div>
+              <div class="tile-sub">Track repair completion and monitor remaining claim payments so all funds are properly released and collected.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
             <div class="tile-badge-col">
@@ -3936,8 +3937,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">✅</div>
             <div class="tile-body">
-              <div class="tile-title">Execute Final Recovery</div>
-              <div class="tile-sub">Complete Repairs and Collect Every Dollar</div>
+              <div class="tile-title">Recover Depreciation (RCV) ⚡</div>
+              <div class="tile-sub">Generate and submit the required documentation to recover withheld depreciation after repairs are completed.</div>
               </div>
             <div class="tile-badge-col">
               <div class="tile-badge">
@@ -3951,8 +3952,8 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🏆</div>
             <div class="tile-body">
-              <div class="tile-title">Close Your Claim</div>
-              <div class="tile-sub">Save Your Records — Legal Value for Years</div>
+              <div class="tile-title">Close the Claim & Secure Records</div>
+              <div class="tile-sub">Organize and preserve your full claim file for future reference, disputes, or legal protection.</div>
               </div>
             <div class="tile-badge-col">
               <div class="tile-badge">
@@ -4060,23 +4061,23 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 4 — Document All Damage:</strong> Capture everything — missed damage means missed money.</div>
+                <div class="provides-text"><strong>Step 4 — Document All Damage ⚡:</strong> Upload and organize complete photo and video evidence of all damage.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 5 — Get Accurate Contractor Estimates:</strong> Use real-world pricing so your claim reflects actual repair costs.</div>
+                <div class="provides-text"><strong>Step 5 — Establish Repair Costs — Secure an Independent Contractor Estimate ⚡:</strong> Document your independent contractor estimate so true repair scope and cost are defensible.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 6 — Prepare for the Adjuster Inspection:</strong> Make sure nothing is overlooked or minimized.</div>
+                <div class="provides-text"><strong>Step 6 — Build Contents Inventory ⚡:</strong> Capture and value your full contents inventory within your claim.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 7 — Build Your Contents Inventory:</strong> Account for all contents and items with AI valuation.</div>
+                <div class="provides-text"><strong>Step 7 — Track Living Expenses (ALE) ⚡:</strong> Log every reimbursable additional living expense with support.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 8 — Track & Recover Living Expenses:</strong> Log and claim all additional living expenses (ALE).</div>
+                <div class="provides-text"><strong>Step 8 — Prepare for the Adjuster Inspection:</strong> Present damage clearly so nothing is overlooked during inspection.</div>
               </li>
             </ul>
 
@@ -4086,15 +4087,15 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 9 — Analyze Your Insurance Estimate:</strong> See exactly what your insurer included — and what they didn't.</div>
+                <div class="provides-text"><strong>Step 9 — Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡:</strong> Find missing scope, quantity errors, pricing mistakes, and incomplete line items.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 10 — Identify Pricing Gaps & Underpayment:</strong> Find where pricing is below market.</div>
+                <div class="provides-text"><strong>Step 10 — Identify Low-Balled Labor & Material Costs ⚡:</strong> Compare carrier pricing to real market rates.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 11 — Identify Missing Coverage & Benefits:</strong> Uncover policy benefits that were not applied.</div>
+                <div class="provides-text"><strong>Step 11 — Identify Unapplied Policy Benefits ⚡:</strong> Surface coverages and benefits that should have been applied.</div>
               </li>
             </ul>
 
@@ -4104,15 +4105,15 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 12 — Submit Your Supplement Request:</strong> Submit a supplement for missed or underpaid items.</div>
+                <div class="provides-text"><strong>Step 12 — Submit a Demand for Payment ⚡:</strong> Request payment for underpaid, omitted, and incorrectly evaluated items.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 13 — Send Claim Dispute Letters:</strong> Use clear communication your insurer will respond to.</div>
+                <div class="provides-text"><strong>Step 13 — Send Dispute Letters ⚡:</strong> Formal letters challenging denials, underpayments, and incorrect decisions.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 14 — Recover Depreciation (RCV):</strong> Claim withheld funds from your initial payment.</div>
+                <div class="provides-text"><strong>Step 14 — Negotiate the Settlement ⚡:</strong> Support your position with structured negotiation documentation.</div>
               </li>
             </ul>
 
@@ -4122,23 +4123,23 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 15 — Negotiate Your Settlement:</strong> Push your claim to the correct value.</div>
+                <div class="provides-text"><strong>Step 15 — Escalate the Claim (Appraisal / Mediation):</strong> Use guided appraisal and mediation when the carrier will not adjust properly.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 16 — Escalate (Appraisal / Mediation):</strong> Use appraisal or mediation if required.</div>
+                <div class="provides-text"><strong>Step 16 — Review the Final Offer ⚡:</strong> Confirm amounts, coverages, and payments before you accept.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 17 — Review Final Offer:</strong> Make sure the settlement is adequate before signing.</div>
+                <div class="provides-text"><strong>Step 17 — Complete Repairs & Recover Remaining Funds ⚡:</strong> Track repairs and remaining payments until fully collected.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 18 — Execute Final Recovery:</strong> Verify every dollar owed has been paid.</div>
+                <div class="provides-text"><strong>Step 18 — Recover Depreciation (RCV) ⚡:</strong> Submit documentation to recover withheld depreciation after repairs.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 19 — Close Your Claim:</strong> Finish your claim knowing it was handled correctly.</div>
+                <div class="provides-text"><strong>Step 19 — Close the Claim & Secure Records:</strong> Preserve your full claim file for future protection.</div>
               </li>
             </ul>
 
@@ -4359,15 +4360,15 @@
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>If the adjuster has already inspected:</strong> Start at Step 4 (Document Damage) and photograph everything now before repairs begin. Then jump to Step 8 when you receive the estimate.</div>
+                <div class="provides-text"><strong>If the adjuster has already inspected:</strong> Start at Step 4 (Document Damage) and photograph everything now before repairs begin. Then jump to Step 9 when you receive the estimate.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>If you've received an estimate:</strong> Jump to Step 8 (Review Insurance Estimate) and use our tools to identify gaps. You can still submit a supplement request even if you initially accepted the estimate.</div>
+                <div class="provides-text"><strong>If you've received an estimate:</strong> Jump to Step 9 (Audit the Insurance Estimate) and use our tools to identify gaps. You can still submit a supplement request even if you initially accepted the estimate.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>If you've already cashed the check:</strong> You can still request additional payment if you discover the estimate was incomplete. Start at Step 8 and build your supplement case.</div>
+                <div class="provides-text"><strong>If you've already cashed the check:</strong> You can still request additional payment if you discover the estimate was incomplete. Start at Step 9 and build your supplement case.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
@@ -4806,57 +4807,6 @@
             <!-- DO THIS NOW -->
             <div class="step-do-this-now">
               <div class="step-dtn-label">DO THIS NOW</div>
-              <div class="step-dtn-text">Document everything the adjuster says and requests during the inspection</div>
-            </div>
-            
-            <!-- Step Workspace -->
-            <div class="step-workspace">
-              
-              <!-- INPUT SECTION -->
-              <div class="workspace-section">
-                <div class="workspace-label">📋 Log Adjuster Requests</div>
-                
-                <div class="step-input-group">
-                  <label class="step-input-label">Inspection Date</label>
-                  <input type="date" class="step-input" id="inspectionDate">
-                </div>
-
-                <div class="step-input-group">
-                  <label class="step-input-label">Adjuster Name</label>
-                  <input type="text" class="step-input" id="adjusterName" placeholder="e.g. John Smith">
-                </div>
-
-                <div class="step-input-group">
-                  <label class="step-input-label">What the Adjuster Requested or Said</label>
-                  <textarea class="step-textarea" id="adjusterRequest" placeholder="Document everything the adjuster says, requests, or acknowledges during the inspection..."></textarea>
-                </div>
-
-                <button class="step-action-button" onclick="logAdjusterRequest()">Log Request</button>
-              </div>
-
-              <!-- LOGGED REQUESTS -->
-              <div class="workspace-section hidden" id="adjusterRequestsLog">
-                <div class="workspace-label">📝 Inspection Log</div>
-                <div id="adjusterRequestsList"></div>
-              </div>
-
-            </div>
-          </div>
-          <div class="step-footer">
-            <div class="footer-nav">
-              <button class="nav-button" onclick="goToStep(5)">← Step 5</button>
-              <button class="nav-button" onclick="goToStep(7)">Step 7 →</button>
-            </div>
-            <button class="complete-button" onclick="completeStep(6)">Mark Complete →</button>
-          </div>
-        </div>
-        <div id="step-workspace-7" class="step-workspace-content hidden">
-          <div class="step-body">
-<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
-            
-            <!-- DO THIS NOW -->
-            <div class="step-do-this-now">
-              <div class="step-dtn-label">DO THIS NOW</div>
               <div class="step-dtn-text">Start adding items to build your contents value</div>
             </div>
             
@@ -4926,13 +4876,13 @@
           </div>
           <div class="step-footer">
             <div class="footer-nav">
-              <button class="nav-button" onclick="goToStep(6)">← Step 6</button>
-              <button class="nav-button" onclick="goToStep(8)">Step 8 →</button>
+              <button class="nav-button" onclick="goToStep(5)">← Step 5</button>
+              <button class="nav-button" onclick="goToStep(7)">Step 7 →</button>
             </div>
-            <button class="complete-button" onclick="completeStep(7)">Mark Complete →</button>
+            <button class="complete-button" onclick="completeStep(6)">Mark Complete →</button>
           </div>
         </div>
-        <div id="step-workspace-8" class="step-workspace-content hidden">
+        <div id="step-workspace-7" class="step-workspace-content hidden">
           <div class="step-body">
 <div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
             
@@ -5053,23 +5003,66 @@
             </div>
 
             <!-- Results Display Area -->
-            <div class="step-results hidden" id="step-8-results">
+            <div class="step-results hidden" id="step-7-results">
               <div class="results-header">
                 <div class="results-icon">✓</div>
                 <div class="results-title">ALE Tracked</div>
-                <button class="results-close" onclick="clearStepResults(8)">×</button>
+                <button class="results-close" onclick="clearStepResults(7)">×</button>
               </div>
-              <div class="results-body" id="step-8-results-body"></div>
+              <div class="results-body" id="step-7-results-body"></div>
             </div>
           </div>
-          <div class="step-results hidden" id="step-8-results">
-              <div class="results-header">
-                <div class="results-icon">✓</div>
-                <div class="results-title">ALE Tracked</div>
-                <button class="results-close" onclick="clearStepResults(8)">×</button>
-              </div>
-              <div class="results-body" id="step-8-results-body"></div>
+          <div class="step-footer">
+            <div class="footer-nav">
+              <button class="nav-button" onclick="goToStep(6)">← Step 6</button>
+              <button class="nav-button" onclick="goToStep(8)">Step 8 →</button>
             </div>
+            <button class="complete-button" onclick="completeStep(7)">Mark Complete →</button>
+          </div>
+        </div>
+        <div id="step-workspace-8" class="step-workspace-content hidden">
+          <div class="step-body">
+<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
+            
+            <!-- DO THIS NOW -->
+            <div class="step-do-this-now">
+              <div class="step-dtn-label">DO THIS NOW</div>
+              <div class="step-dtn-text">Document everything the adjuster says and requests during the inspection</div>
+            </div>
+            
+            <!-- Step Workspace -->
+            <div class="step-workspace">
+              
+              <!-- INPUT SECTION -->
+              <div class="workspace-section">
+                <div class="workspace-label">📋 Log Adjuster Requests</div>
+                
+                <div class="step-input-group">
+                  <label class="step-input-label">Inspection Date</label>
+                  <input type="date" class="step-input" id="inspectionDate">
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">Adjuster Name</label>
+                  <input type="text" class="step-input" id="adjusterName" placeholder="e.g. John Smith">
+                </div>
+
+                <div class="step-input-group">
+                  <label class="step-input-label">What the Adjuster Requested or Said</label>
+                  <textarea class="step-textarea" id="adjusterRequest" placeholder="Document everything the adjuster says, requests, or acknowledges during the inspection..."></textarea>
+                </div>
+
+                <button class="step-action-button" onclick="logAdjusterRequest()">Log Request</button>
+              </div>
+
+              <!-- LOGGED REQUESTS -->
+              <div class="workspace-section hidden" id="adjusterRequestsLog">
+                <div class="workspace-label">📝 Inspection Log</div>
+                <div id="adjusterRequestsList"></div>
+              </div>
+
+            </div>
+          </div>
           <div class="step-footer">
             <div class="footer-nav">
               <button class="nav-button" onclick="goToStep(7)">← Step 7</button>
@@ -5180,7 +5173,7 @@
                     </div>
                   </div>
                   <button onclick="goToStep(10)" style="width: 100%; background: #14b8a6; color: white; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;">
-                    Continue to Step 10 — Identify Pricing Gaps →
+                    Continue to Step 10 — Identify Low-Balled Labor & Material Costs →
                   </button>
                 </div>
               </div>
@@ -5672,8 +5665,8 @@
           </p>
           <ul style="list-style: none; padding: 0; margin: 0;">
             <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 1: Understand the claim process</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 2: Review your policy with AI</li>
-            <li style="padding: 8px 0;">✓ Step 3: Report the loss properly</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 2: Identify all coverages (expert AI policy analysis)</li>
+            <li style="padding: 8px 0;">✓ Step 3: Report the loss correctly</li>
           </ul>
         </div>
 
@@ -5683,10 +5676,11 @@
             <strong>Goal:</strong> Capture the evidence needed to support full payment.
           </p>
           <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 4: Document all damage with photos</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 5: Get contractor estimates</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 6: Prepare for adjuster inspection</li>
-            <li style="padding: 8px 0;">✓ Step 7: Complete contents inventory</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 4: Document all damage</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 5: Establish repair costs (independent contractor estimate)</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 6: Build contents inventory</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 7: Track living expenses (ALE)</li>
+            <li style="padding: 8px 0;">✓ Step 8: Prepare for adjuster inspection</li>
           </ul>
         </div>
 
@@ -5696,9 +5690,9 @@
             <strong>Goal:</strong> Identify what's missing, underpaid, or incorrect.
           </p>
           <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 8: Review insurance estimate with AI</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 9: Analyze pricing deviations</li>
-            <li style="padding: 8px 0;">✓ Step 10: Identify coverage gaps</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 9: Audit the insurance estimate (expert AI)</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 10: Identify low-balled labor & material costs</li>
+            <li style="padding: 8px 0;">✓ Step 11: Identify unapplied policy benefits</li>
           </ul>
         </div>
 
@@ -5708,9 +5702,9 @@
             <strong>Goal:</strong> Submit corrections and recover the money you're owed.
           </p>
           <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 11: Submit supplement request</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 12: Send dispute letters</li>
-            <li style="padding: 8px 0;">✓ Step 13: Recover ACV vs RCV difference</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 12: Submit a demand for payment</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 13: Send dispute letters</li>
+            <li style="padding: 8px 0;">✓ Step 14: Negotiate the settlement</li>
           </ul>
         </div>
 
@@ -5720,11 +5714,11 @@
             <strong>Goal:</strong> Finalize your claim at the correct value — not the initial estimate.
           </p>
           <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 14: Negotiate settlement</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 15: Consider appraisal/mediation</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 16: Review settlement offer</li>
-            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 17: Execute final recovery</li>
-            <li style="padding: 8px 0;">✓ Step 18: Close the claim</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 15: Escalate (appraisal / mediation)</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 16: Review the final offer</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 17: Complete repairs & recover remaining funds</li>
+            <li style="padding: 8px 0; border-bottom: 1px solid var(--gray-100);">✓ Step 18: Recover depreciation (RCV)</li>
+            <li style="padding: 8px 0;">✓ Step 19: Close the claim & secure records</li>
           </ul>
         </div>
 
@@ -5801,25 +5795,25 @@
     }
 
     const STEP_META = {
-      1: { title: 'Understand the Claim Process', subtitle: 'Read This First — Before You Call Anyone', short: 'Claim Guide', time: '5 min read' },
-      2: { title: 'Review & Understand Your Policy', subtitle: "Upload Your Policy — Find Out What You're Owed", short: 'Review Policy', time: '10–15 min' },
-      3: { title: 'Report the Loss the Right Way', subtitle: 'Report Using These Exact Words', short: 'Report the Loss', time: '5 min' },
-      4: { title: 'Document All Damage', subtitle: 'Photograph Everything Before You Touch Anything', short: 'Document Damage', time: '15–20 min' },
-      5: { title: 'Get Accurate Contractor Estimates', subtitle: 'Get 2 Contractors to Give Written Estimates', short: 'Contractor Est.', time: '10–15 min' },
-      6: { title: 'Prepare for the Adjuster Inspection', subtitle: 'Do This Before the Adjuster Shows Up', short: 'Adjuster Prep', time: '10 min' },
-      7: { title: 'Build Your Contents Inventory', subtitle: 'Write Down Every Item Lost or Damaged', short: 'Contents Inventory', time: '20–30 min' },
-      8: { title: 'Track & Recover Living Expenses', subtitle: 'Additional Living Expenses Tracker', short: 'Track ALE', time: '5 min/day' },
-      9: { title: 'Analyze Your Insurance Estimate', subtitle: 'AI Estimate Review Engine', short: 'Analyze Estimate', time: '10–15 min' },
-      10: { title: 'Identify Pricing Gaps & Underpayment', subtitle: 'AI Pricing Deviation Analyzer', short: 'Pricing Gaps', time: '10 min' },
-      11: { title: 'Identify Missing Coverage & Benefits', subtitle: 'Find the Money They Should Have Paid', short: 'Coverage Gaps', time: '10 min' },
-      12: { title: 'Submit Your Supplement Request', subtitle: 'Send a Written Demand for Everything Underpaid', short: 'Submit Supplement', time: '10–15 min' },
-      13: { title: 'Send Claim Dispute Letters', subtitle: 'Put Every Denial and Disagreement in Writing', short: 'Dispute Letters', time: '10 min' },
-      14: { title: 'Recover Depreciation (RCV)', subtitle: "Repairs Done? Claim the Money They Held Back", short: 'Recover RCV', time: '5 min' },
-      15: { title: 'Negotiate Your Settlement', subtitle: 'Counter Their Offer With Your Number — In Writing', short: 'Negotiate', time: '15–20 min' },
-      16: { title: 'Escalate (Appraisal / Mediation)', subtitle: "If They Still Won't Move — Force a Decision", short: 'Escalate', time: '10 min' },
-      17: { title: 'Review Final Offer', subtitle: 'Read Every Word Before You Sign Anything', short: 'Final Offer', time: '15 min' },
-      18: { title: 'Execute Final Recovery', subtitle: 'Complete Repairs and Collect Every Dollar', short: 'Execute Recovery', time: '10 min' },
-      19: { title: 'Close Your Claim', subtitle: 'Save Your Records — Legal Value for Years', short: 'Close Claim', time: '10 min' }
+      1: { title: 'Understand the Claim Process', subtitle: 'Claim Command Pro walks you through how insurance claims work so you avoid early mistakes that reduce your payout.', short: 'Claim Guide', time: '5 min read' },
+      2: { title: 'Identify All Available Coverages — Expert-Driven AI Policy Analysis ⚡', subtitle: 'Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.', short: 'Policy Coverage', time: '10–15 min' },
+      3: { title: 'Report the Loss Correctly ⚡', subtitle: 'Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.', short: 'Report Loss', time: '5 min' },
+      4: { title: 'Document All Damage ⚡', subtitle: 'Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.', short: 'Document Damage', time: '15–20 min' },
+      5: { title: 'Establish Repair Costs — Secure an Independent Contractor Estimate ⚡', subtitle: "Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.", short: 'Contractor Est.', time: '10–15 min' },
+      6: { title: 'Build Contents Inventory ⚡', subtitle: 'Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.', short: 'Contents', time: '20–30 min' },
+      7: { title: 'Track Living Expenses (ALE) ⚡', subtitle: 'Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.', short: 'Track ALE', time: '5 min/day' },
+      8: { title: 'Prepare for the Adjuster Inspection', subtitle: 'Claim Command Pro prepares you for the adjuster visit so damage is properly presented and nothing is overlooked during inspection.', short: 'Adjuster Prep', time: '10 min' },
+      9: { title: 'Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡', subtitle: "Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.", short: 'Audit Estimate', time: '10–15 min' },
+      10: { title: 'Identify Low-Balled Labor & Material Costs ⚡', subtitle: "Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.", short: 'Labor & Material', time: '10 min' },
+      11: { title: 'Identify Unapplied Policy Benefits ⚡', subtitle: 'Identify coverages and policy benefits that were not applied to your claim but should have been.', short: 'Unapplied Benefits', time: '10 min' },
+      12: { title: 'Submit a Demand for Payment ⚡', subtitle: 'Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.', short: 'Demand Payment', time: '10–15 min' },
+      13: { title: 'Send Dispute Letters ⚡', subtitle: 'Generate formal dispute letters to challenge denials, underpayments, and incorrect claim decisions at any stage of your claim.', short: 'Dispute Letters', time: '10 min' },
+      14: { title: 'Negotiate the Settlement ⚡', subtitle: 'Use structured negotiation language and documentation to support your position and increase your settlement.', short: 'Negotiate', time: '15–20 min' },
+      15: { title: 'Escalate the Claim (Appraisal / Mediation)', subtitle: 'Follow guided escalation steps including appraisal and mediation when the carrier refuses to properly adjust the claim.', short: 'Escalate', time: '10 min' },
+      16: { title: 'Review the Final Offer ⚡', subtitle: 'Analyze the final settlement offer to ensure all amounts, coverages, and payments are correct before acceptance.', short: 'Final Offer', time: '15 min' },
+      17: { title: 'Complete Repairs & Recover Remaining Funds ⚡', subtitle: 'Track repair completion and monitor remaining claim payments so all funds are properly released and collected.', short: 'Complete Repairs', time: '10 min' },
+      18: { title: 'Recover Depreciation (RCV) ⚡', subtitle: 'Generate and submit the required documentation to recover withheld depreciation after repairs are completed.', short: 'Recover RCV', time: '5 min' },
+      19: { title: 'Close the Claim & Secure Records', subtitle: 'Organize and preserve your full claim file for future reference, disputes, or legal protection.', short: 'Close Claim', time: '10 min' }
     };
 
     const stepTools = {
@@ -5853,23 +5847,23 @@
       ],
       6: [
         {
-          name: "AI Inspection Prep System",
-          description: "Tracks carrier requests and prepares inspection documentation",
-          url: "app/tools/carrier-request-logger.html"
-        }
-      ],
-      7: [
-        {
           name: "AI Contents Valuation Engine",
           description: "Calculates replacement value for all personal property",
           url: "app/tools/contents-inventory.html"
         }
       ],
-      8: [
+      7: [
         {
           name: "AI ALE Tracking System",
           description: "Tracks daily living expenses and calculates claimable totals",
           url: "app/tools/ale-tracker.html"
+        }
+      ],
+      8: [
+        {
+          name: "AI Inspection Prep System",
+          description: "Tracks carrier requests and prepares inspection documentation",
+          url: "app/tools/carrier-request-logger.html"
         }
       ],
       9: [
@@ -6617,7 +6611,7 @@ ${policyholderName}`;
       }, 2500);
     }
 
-    // STEP 7 — Contents Inventory
+    // STEP 6 — Contents Inventory
     function addContentsItem() {
       const room = document.getElementById('contentsRoom').value;
       const itemName = document.getElementById('contentsItemName').value;
@@ -6666,7 +6660,7 @@ ${policyholderName}`;
       // Show money found animation
       showMoneyFoundToast(`+$${item.totalValue.toLocaleString()} Added to Claim Value`);
 
-      trackActivity('contents_item_added', { stepNum: 7, item: itemName, value: item.totalValue });
+      trackActivity('contents_item_added', { stepNum: 6, item: itemName, value: item.totalValue });
     }
 
     function renderContentsTable() {
@@ -6709,10 +6703,10 @@ ${policyholderName}`;
       updateSummaryPage();
       saveState();
 
-      trackActivity('contents_item_removed', { stepNum: 7, item: item.itemName });
+      trackActivity('contents_item_removed', { stepNum: 6, item: item.itemName });
     }
 
-    // STEP 8 — ALE Tracking System
+    // STEP 7 — ALE Tracking System
     function updateALEBaseline() {
       const baseline = parseFloat(document.getElementById('aleBaseline').value) || 75;
       claimData.ALE.baseline = baseline;
@@ -6797,7 +6791,7 @@ ${policyholderName}`;
       // Check daily reminder
       checkDailyALEEntry();
 
-      trackActivity('ale_entry_added', { stepNum: 8, category, amount, claimable: claimableAmount });
+      trackActivity('ale_entry_added', { stepNum: 7, category, amount, claimable: claimableAmount });
     }
 
     function renderALEEntries() {
@@ -6851,7 +6845,7 @@ ${policyholderName}`;
       updateSummaryPage();
       saveState();
 
-      trackActivity('ale_entry_removed', { stepNum: 8, entryId });
+      trackActivity('ale_entry_removed', { stepNum: 7, entryId });
     }
 
     function exportALEReport() {
@@ -6874,7 +6868,7 @@ ${policyholderName}`;
       a.download = `ALE_Report_${Date.now()}.csv`;
       a.click();
 
-      trackActivity('ale_report_exported', { stepNum: 8, entryCount: claimData.ALE.entries.length });
+      trackActivity('ale_report_exported', { stepNum: 7, entryCount: claimData.ALE.entries.length });
     }
 
     // ============================================
@@ -7285,7 +7279,7 @@ Generated using expert claim methodology and structured for carrier review`;
       saveState();
     }
 
-    // STEP 6 — Adjuster Inspection Prep
+    // STEP 8 — Adjuster Inspection Prep
     function logAdjusterRequest() {
       const date = document.getElementById('inspectionDate').value;
       const adjusterName = document.getElementById('adjusterName').value;
@@ -7322,7 +7316,7 @@ Generated using expert claim methodology and structured for carrier review`;
       document.getElementById('adjusterRequest').value = '';
 
       saveState();
-      trackActivity('adjuster_request_logged', { stepNum: 6, adjusterName });
+      trackActivity('adjuster_request_logged', { stepNum: 8, adjusterName });
     }
 
     function renderAdjusterRequests() {
@@ -7460,9 +7454,9 @@ Generated using expert claim methodology and structured for carrier review`;
     function updateProgressTracker() {
       const tracker = document.getElementById('progressTracker');
       const steps = [
-        { num: 1, title: 'Understand the Process' },
-        { num: 2, title: 'Review Your Policy' },
-        { num: 3, title: 'Report the Loss' }
+        { num: 1, title: 'Understand the Claim Process' },
+        { num: 2, title: 'Identify All Available Coverages' },
+        { num: 3, title: 'Report the Loss Correctly' }
       ];
 
       tracker.innerHTML = steps.map(step => {
@@ -7668,14 +7662,14 @@ Generated using expert claim methodology and structured for carrier review`;
       updateSummary();
     }
 
-    // Simulate estimate upload (for Step 8)
+    // Simulate estimate upload (for Step 9 — audit insurance estimate)
     function simulateEstimateUpload() {
       claimData.estimateUploaded = true;
       claimData.insuranceEstimate = 18200;
       claimData.yourEstimate = 36750;
       claimData.claimGap = 18550;
       
-      addJournalEntry('estimate_analysis', 'Estimate analyzed — $18,550 gap identified', 18550, 8);
+      addJournalEntry('estimate_analysis', 'Estimate analyzed — $18,550 gap identified', 18550, 9);
       saveState();
       updateSummary();
     }
