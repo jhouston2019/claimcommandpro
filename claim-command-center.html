@@ -7138,6 +7138,7 @@ Generated using expert claim methodology and structured for carrier review`;
         const insurerTotal = 18200;
         const contractorTotal = claimData.structure.userEstimate || 36750;
         const gap = contractorTotal - insurerTotal;
+        window._lastGapAmount = gap;
 
         const analysis = {
           insurerTotal,
@@ -7184,6 +7185,15 @@ Generated using expert claim methodology and structured for carrier review`;
         // Reveal recovery roadmap after output renders
         const roadmap = document.getElementById('recoveryRoadmapInject');
         if (roadmap) roadmap.classList.remove('hidden');
+
+        // Update gap metric display if present
+        const gapEl = document.getElementById('metricTotalGap');
+        if (gapEl && window._lastGapAmount) {
+          gapEl.textContent = new Intl.NumberFormat('en-US', {
+            style: 'currency', currency: 'USD',
+            minimumFractionDigits: 0, maximumFractionDigits: 0
+          }).format(window._lastGapAmount);
+        }
       }, 3000);
     }
 
