@@ -5191,6 +5191,45 @@
                 </div>
               </div>
 
+              <div class="recovery-roadmap-inject hidden" id="recoveryRoadmapInject">
+                <div style="margin-top: 28px; padding: 24px; background: #f0fdf9; border: 2px solid #14b8a6; border-radius: 12px;">
+                  <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #14b8a6; margin-bottom: 8px;">
+                    YOUR RECOVERY PLAN
+                  </div>
+                  <div style="font-family: 'DM Serif Display', serif; font-size: 20px; color: #0f172a; margin-bottom: 8px; line-height: 1.3;">
+                    Here's how to recover what was found.
+                  </div>
+                  <p style="font-size: 14px; color: #4b5563; margin-bottom: 20px; line-height: 1.6;">
+                    The gap above is recoverable — but only if it's properly documented and demanded. The steps below are the process to get it paid.
+                  </p>
+                  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px;">
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                      <div style="font-size: 11px; font-weight: 700; color: #14b8a6; margin-bottom: 4px;">PHASE 1</div>
+                      <div style="font-size: 12px; font-weight: 600; color: #111827;">Set Up Your Claim</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                      <div style="font-size: 11px; font-weight: 700; color: #f97316; margin-bottom: 4px;">PHASE 2</div>
+                      <div style="font-size: 12px; font-weight: 600; color: #111827;">Document Your Damage</div>
+                    </div>
+                    <div style="background: white; border: 2px solid #14b8a6; border-radius: 8px; padding: 12px; text-align: center;">
+                      <div style="font-size: 11px; font-weight: 700; color: #14b8a6; margin-bottom: 4px;">YOU ARE HERE</div>
+                      <div style="font-size: 12px; font-weight: 600; color: #111827;">Find What's Missing</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                      <div style="font-size: 11px; font-weight: 700; color: #d97706; margin-bottom: 4px;">PHASE 4</div>
+                      <div style="font-size: 12px; font-weight: 600; color: #111827;">Request the Money</div>
+                    </div>
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; text-align: center;">
+                      <div style="font-size: 11px; font-weight: 700; color: #10b981; margin-bottom: 4px;">PHASE 5</div>
+                      <div style="font-size: 12px; font-weight: 600; color: #111827;">Finish & Get Paid</div>
+                    </div>
+                  </div>
+                  <button onclick="goToStep(10)" style="width: 100%; background: #14b8a6; color: white; border: none; border-radius: 10px; padding: 14px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer;">
+                    Continue to Step 10 — Identify Pricing Gaps →
+                  </button>
+                </div>
+              </div>
+
               <!-- ACTION BUTTON -->
               <div class="workspace-section">
                 <button class="step-action-button" id="reviewEstimateBtn" onclick="reviewInsurerEstimate()" disabled>Compare Estimates with AI</button>
@@ -7184,6 +7223,10 @@ Generated using expert claim methodology and structured for carrier review`;
         showMoneyFoundToast(`+$${gap.toLocaleString()} Gap Identified`);
 
         trackActivity('estimate_review_complete', { stepNum: 9, gap });
+
+        // Reveal recovery roadmap after output renders
+        const roadmap = document.getElementById('recoveryRoadmapInject');
+        if (roadmap) roadmap.classList.remove('hidden');
       }, 3000);
     }
 
