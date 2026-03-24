@@ -52,7 +52,7 @@ exports.handler = async (event, context) => {
               name: 'Claim Command Pro - Complete Toolkit',
               description: 'One claim toolkit with all professional tools'
             },
-            unit_amount: 14900 // $149.00 in cents
+            unit_amount: 29700 // $297.00 in cents
           },
           quantity: 1
         }
