@@ -2447,7 +2447,7 @@
               <div id="situation-result-text" style="font-size: 0.95rem; color: #0f172a; line-height: 1.6; font-weight: 500;"></div>
             </div>
 
-            <button id="situation-cta" class="btn-calc" style="display: none;">Get My Action Plan →</button>
+            <a id="situation-cta" class="btn-primary" href="#" style="display: none; text-align: center;">Get My Action Plan →</a>
 
           </div>
         </div>
@@ -3757,6 +3757,14 @@
       }
     };
 
+    const situationRoutes = {
+      'just-had-loss':      '/app/claim-command-center.html',
+      'filed-waiting':      '/app/claim-command-center.html',
+      'received-estimate':  '/app/claim-command-center.html?start=estimate',
+      'lowball-denial':     '/app/claim-command-center.html?start=estimate',
+      'denied':             '/app/claim-command-center.html?start=estimate'
+    };
+
     function selectSituation(el, key) {
       document.querySelectorAll('.situation-option').forEach(o => o.classList.remove('selected'));
       el.classList.add('selected');
@@ -3768,6 +3776,7 @@
 
       resultText.textContent = msg.text;
       cta.textContent = msg.cta;
+      cta.href = situationRoutes[key];
       result.style.display = 'block';
       cta.style.display = 'block';
     }
