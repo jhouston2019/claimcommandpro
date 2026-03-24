@@ -4,7 +4,7 @@
  */
 
 (function() {
-  let currentUser = null;
+  let _currentUser = null;
   let authListeners = [];
   let authStateSubscription = null;
 
@@ -15,22 +15,22 @@
       // Get initial session
       const { data: { session }, error } = await supabase.auth.getSession();
       if (session) {
-        currentUser = session.user;
-        notifyListeners(currentUser);
+        _currentUser = session.user;
+        notifyListeners(_currentUser);
       }
 
       // Listen for auth state changes
       authStateSubscription = supabase.auth.onAuthStateChange((event, session) => {
         if (session) {
-          currentUser = session.user;
+          _currentUser = session.user;
         } else {
-          currentUser = null;
+          _currentUser = null;
         }
-        notifyListeners(currentUser);
+        notifyListeners(_currentUser);
       });
     } catch (error) {
       console.error('CNError (Auth Init):', error);
-      currentUser = null;
+      _currentUser = null;
     }
   }
 
@@ -45,18 +45,18 @@
   }
 
   async function currentUser() {
-    if (!currentUser) {
+    if (!_currentUser) {
       try {
         const supabase = await window.getSupabaseClient();
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          currentUser = session.user;
+          _currentUser = session.user;
         }
       } catch (error) {
         console.error('CNError (Get Current User):', error);
       }
     }
-    return currentUser;
+    return _currentUser;
   }
 
   async function requireAuth(redirectToLogin = false) {
@@ -75,7 +75,7 @@
     try {
       const supabase = await window.getSupabaseClient();
       await supabase.auth.signOut();
-      currentUser = null;
+      _currentUser = null;
       
       // Redirect to marketing site
       window.location.href = '/marketing/index.html';
