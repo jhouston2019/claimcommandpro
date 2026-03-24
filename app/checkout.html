@@ -59,6 +59,12 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
+  // Capture situation parameter and persist it across the Stripe redirect
+  const situation = new URLSearchParams(window.location.search).get('situation');
+  if (situation) {
+    sessionStorage.setItem('ccp_situation', situation);
+  }
+
   // Display checkout message if redirected from Claim Management Center
   const checkoutMessage = sessionStorage.getItem('checkoutMessage');
   if (checkoutMessage) {

@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
         }
       ],
       mode: 'payment',
-      success_url: `${process.env.URL || 'http://localhost:8888'}/claim/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.URL || 'http://localhost:8888'}/app/post-payment.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.URL || 'http://localhost:8888'}/marketing/pricing.html`,
       // Stripe will collect email - no customer_email pre-filled
       // After payment, user will be prompted to create account
