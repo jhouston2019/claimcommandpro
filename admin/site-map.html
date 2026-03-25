@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Command Pro — Full Site Map & Sequencing</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    :root {
+      --bg: #07090f;
+      --bg2: #0d1117;
+      --bg3: #161b27;
+      --border: #1e2740;
+      --border2: #263354;
+      --teal: #14b8a6;
+      --teal-dim: rgba(20,184,166,0.12);
+      --teal-glow: rgba(20,184,166,0.3);
+      --blue: #3b82f6;
+      --blue-dim: rgba(59,130,246,0.12);
+      --emerald: #10b981;
+      --emerald-dim: rgba(16,185,129,0.12);
+      --amber: #f59e0b;
+      --amber-dim: rgba(245,158,11,0.12);
+      --orange: #f97316;
+      --orange-dim: rgba(249,115,22,0.12);
+      --red: #ef4444;
+      --red-dim: rgba(239,68,68,0.12);
+      --purple: #a855f7;
+      --purple-dim: rgba(168,85,247,0.12);
+      --pink: #ec4899;
+      --gray: #94a3b8;
+      --gray-dim: rgba(148,163,184,0.08);
+      --white: #f1f5f9;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7,9,15,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    .logo span { color: var(--teal); }
+    .header-meta { font-size: 12px; color: var(--gray); font-family: 'JetBrains Mono', monospace; }
+
+    /* ── NAV PILLS ── */
+    .nav-pills {
+      display: flex;
+      gap: 6px;
+      padding: 16px 32px 0;
+      flex-wrap: wrap;
+    }
+    .pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .pill:hover { opacity: 0.8; transform: translateY(-1px); }
+    .pill-teal { background: var(--teal-dim); border-color: var(--teal); color: var(--teal); }
+    .pill-blue { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+    .pill-emerald { background: var(--emerald-dim); border-color: var(--emerald); color: var(--emerald); }
+    .pill-amber { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+    .pill-orange { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+    .pill-red { background: var(--red-dim); border-color: var(--red); color: var(--red); }
+    .pill-purple { background: var(--purple-dim); border-color: var(--purple); color: var(--purple); }
+
+    /* ── MAIN ── */
+    main { padding: 24px 32px 80px; max-width: 1600px; margin: 0 auto; }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── GRID LAYOUTS ── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    /* ── ZONE ── */
+    .zone {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--bg2);
+      margin-bottom: 20px;
+    }
+    .zone-teal { border-color: rgba(20,184,166,0.35); background: linear-gradient(135deg, rgba(20,184,166,0.05), var(--bg2)); }
+    .zone-blue { border-color: rgba(59,130,246,0.35); background: linear-gradient(135deg, rgba(59,130,246,0.05), var(--bg2)); }
+    .zone-emerald { border-color: rgba(16,185,129,0.35); background: linear-gradient(135deg, rgba(16,185,129,0.05), var(--bg2)); }
+    .zone-amber { border-color: rgba(245,158,11,0.35); background: linear-gradient(135deg, rgba(245,158,11,0.05), var(--bg2)); }
+    .zone-orange { border-color: rgba(249,115,22,0.35); background: linear-gradient(135deg, rgba(249,115,22,0.05), var(--bg2)); }
+    .zone-red { border-color: rgba(239,68,68,0.35); background: linear-gradient(135deg, rgba(239,68,68,0.05), var(--bg2)); }
+    .zone-purple { border-color: rgba(168,85,247,0.35); background: linear-gradient(135deg, rgba(168,85,247,0.05), var(--bg2)); }
+    .zone-gray { border-color: rgba(148,163,184,0.25); background: linear-gradient(135deg, rgba(148,163,184,0.04), var(--bg2)); }
+
+    /* ── NODE (page card) ── */
+    .node {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      transition: all 0.2s;
+      cursor: default;
+      position: relative;
+    }
+    .node:hover {
+      border-color: var(--border2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .node-label {
+      font-weight: 600;
+      font-size: 12px;
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+    .node-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--gray);
+      line-height: 1.4;
+      word-break: break-all;
+    }
+    .node-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-top: 5px;
+      letter-spacing: 0.5px;
+    }
+    .badge-ai { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+    .badge-gated { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-public { background: var(--emerald-dim); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-seo { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+    .badge-admin { background: var(--red-dim); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+    /* ── STEP NODE (for the 18-step flow) ── */
+    .step-node {
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid transparent;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .step-node:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .step-num {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .step-name {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 10px;
+      color: var(--gray);
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    .step-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tag {
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+    .tag-ai { background: rgba(168,85,247,0.2); color: #c084fc; }
+    .tag-pdf { background: rgba(239,68,68,0.2); color: #f87171; }
+    .tag-excel { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-docx { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    /* phase colors */
+    .phase-1 { background: linear-gradient(135deg, rgba(20,184,166,0.12), var(--bg3)); border-color: rgba(20,184,166,0.4); }
+    .phase-2 { background: linear-gradient(135deg, rgba(59,130,246,0.12), var(--bg3)); border-color: rgba(59,130,246,0.4); }
+    .phase-3 { background: linear-gradient(135deg, rgba(245,158,11,0.12), var(--bg3)); border-color: rgba(245,158,11,0.4); }
+    .phase-4 { background: linear-gradient(135deg, rgba(249,115,22,0.12), var(--bg3)); border-color: rgba(249,115,22,0.4); }
+    .phase-5 { background: linear-gradient(135deg, rgba(239,68,68,0.12), var(--bg3)); border-color: rgba(239,68,68,0.4); }
+
+    .phase-1 .step-num { color: var(--teal); }
+    .phase-2 .step-num { color: var(--blue); }
+    .phase-3 .step-num { color: var(--amber); }
+    .phase-4 .step-num { color: var(--orange); }
+    .phase-5 .step-num { color: var(--red); }
+
+    .phase-1 .step-name { color: #5eead4; }
+    .phase-2 .step-name { color: #93c5fd; }
+    .phase-3 .step-name { color: #fcd34d; }
+    .phase-4 .step-name { color: #fdba74; }
+    .phase-5 .step-name { color: #fca5a5; }
+
+    /* ── PHASE HEADER ── */
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .phase-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .phase-timeline {
+      font-size: 11px;
+      color: var(--gray);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── ARROW CONNECTOR ── */
+    .arrow-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .arrow { font-size: 18px; color: var(--border2); }
+    .arrow-label { font-size: 10px; color: var(--gray); font-family: 'JetBrains Mono', monospace; }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow-strip {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .flow-node {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+      padding: 14px 10px;
+      border-radius: 10px;
+      position: relative;
+    }
+    .flow-node-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .flow-node-sub { font-size: 10px; color: var(--gray); }
+    .flow-arrow-h {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      color: var(--border2);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ── TECH STACK ── */
+    .tech-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .tech-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    .tech-icon { font-size: 22px; margin-bottom: 6px; }
+    .tech-name { font-size: 12px; font-weight: 700; }
+    .tech-desc { font-size: 10px; color: var(--gray); margin-top: 3px; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-num { font-size: 26px; font-weight: 800; margin-bottom: 3px; }
+    .stat-label { font-size: 10px; color: var(--gray); font-weight: 500; line-height: 1.3; }
+
+    /* ── SCROLL ANCHOR ── */
+    .anchor { scroll-margin-top: 80px; }
+
+    /* ── SEPARATOR ── */
+    .sep { height: 1px; background: var(--border); margin: 24px 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) {
+      .grid-5 { grid-template-columns: repeat(3, 1fr); }
+      .stats-bar { grid-template-columns: repeat(3, 1fr); }
+      .tech-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      main { padding: 16px; }
+      header { padding: 12px 16px; }
+    }
+    @media (max-width: 600px) {
+      .grid-4, .grid-3, .grid-2, .grid-5 { grid-template-columns: 1fr; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .tech-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="logo">Claim Command <span>Pro</span></div>
+  <div class="header-meta">Full Site Map &amp; Sequencing · v2026 · 976 pages</div>
+</header>
+
+<!-- ══ NAV PILLS ══ -->
+<div class="nav-pills">
+  <a href="#stats"       class="pill pill-teal">Overview Stats</a>
+  <a href="#user-flow"   class="pill pill-blue">User Flow</a>
+  <a href="#public"      class="pill pill-emerald">Public Pages</a>
+  <a href="#seo"         class="pill pill-blue">SEO / Programmatic</a>
+  <a href="#app"         class="pill pill-teal">App Core</a>
+  <a href="#18steps"     class="pill pill-orange">18-Step Command Center</a>
+  <a href="#resource"    class="pill pill-amber">Resource Center</a>
+  <a href="#tools"       class="pill pill-purple">Tools Library</a>
+  <a href="#doclib"      class="pill pill-amber">Document Library</a>
+  <a href="#admin"       class="pill pill-red">Admin</a>
+  <a href="#techstack"   class="pill pill-teal">Tech Stack</a>
+  <a href="#dataflow"    class="pill pill-blue">Data Flow</a>
+</div>
+
+<main>
+
+  <!-- ══ STATS ══ -->
+  <div style="height:24px"></div>
+  <div id="stats" class="anchor">
+    <div class="section-title" style="color:var(--teal)">Site Overview</div>
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--teal)">976</div>
+        <div class="stat-label">Total Pages / Files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--blue)">18</div>
+        <div class="stat-label">Claim Command Steps</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--purple)">12</div>
+        <div class="stat-label">AI-Powered Tools</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--amber)">88+</div>
+        <div class="stat-label">App Tool Files</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--emerald)">50+</div>
+        <div class="stat-label">City SEO Pages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:var(--orange)">5</div>
+        <div class="stat-label">Claim Phases</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ USER FLOW ══ -->
+  <div id="user-flow" class="anchor">
+    <div class="section-title" style="color:var(--blue)">Primary User Journey</div>
+    <div class="zone zone-blue">
+      <div class="flow-strip">
+        <div class="flow-node" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3);">
+          <div style="font-size:20px;margin-bottom:4px;">🌐</div>
+          <div class="flow-node-label" style="color:#34d399">DISCOVER</div>
+          <div class="flow-node-sub">SEO / City Page<br>Google Ads / Referral</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3);">
+          <div style="font-size:20px;margin-bottom:4px;">🏠</div>
+          <div class="flow-node-label" style="color:#60a5fa">HOMEPAGE</div>
+          <div class="flow-node-sub">index.html<br>Value prop + CTA</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3);">
+          <div style="font-size:20px;margin-bottom:4px;">💰</div>
+          <div class="flow-node-label" style="color:#fcd34d">PRICING</div>
+          <div class="flow-node-sub">app/pricing.html<br>Free trial / Plans</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3);">
+          <div style="font-size:20px;margin-bottom:4px;">🔐</div>
+          <div class="flow-node-label" style="color:#c084fc">AUTH</div>
+          <div class="flow-node-sub">login.html<br>Sign up / Login</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(20,184,166,0.1); border:1px solid rgba(20,184,166,0.4);">
+          <div style="font-size:20px;margin-bottom:4px;">🚀</div>
+          <div class="flow-node-label" style="color:#5eead4">ONBOARD</div>
+          <div class="flow-node-sub">app/onboarding<br>Claim setup</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.5);">
+          <div style="font-size:20px;margin-bottom:4px;">⚡</div>
+          <div class="flow-node-label" style="color:#fb923c">CMD CENTER</div>
+          <div class="flow-node-sub">claim-command-center<br>18-Step Hub</div>
+        </div>
+        <div class="flow-arrow-h">→</div>
+        <div class="flow-node" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.5);">
+          <div style="font-size:20px;margin-bottom:4px;">✅</div>
+          <div class="flow-node-label" style="color:#34d399">RESOLVE</div>
+          <div class="flow-node-sub">Settlement<br>Archive + Close</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PUBLIC PAGES ══ -->
+  <div id="public" class="anchor">
+    <div class="section-title" style="color:var(--emerald)">Public / Marketing Pages</div>
+    <div class="zone zone-emerald">
+      <div class="grid-4">
+        <div class="node">
+          <div class="node-label">Homepage</div>
+          <div class="node-path">index.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Login / Sign Up</div>
+          <div class="node-path">login.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Pricing</div>
+          <div class="node-path">app/pricing.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Product Overview</div>
+          <div class="node-path">product.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">About</div>
+          <div class="node-path">about/index.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Contact</div>
+          <div class="node-path">contact.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Terms of Service</div>
+          <div class="node-path">terms.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Privacy Policy</div>
+          <div class="node-path">privacy.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Disclaimer</div>
+          <div class="node-path">disclaimer.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Downloads Hub</div>
+          <div class="node-path">downloads/index.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Sample Supplement</div>
+          <div class="node-path">downloads/sample-insurance-supplement.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Step-by-Step Guide</div>
+          <div class="node-path">step-by-step-guide.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Guides Hub</div>
+          <div class="node-path">guides/index.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Property Damage Blueprint</div>
+          <div class="node-path">guides/property-damage-documentation-blueprint.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Success Page</div>
+          <div class="node-path">success.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+        <div class="node">
+          <div class="node-label">404 Error</div>
+          <div class="node-path">404.html</div>
+          <span class="node-badge badge-public">PUBLIC</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SEO / PROGRAMMATIC ══ -->
+  <div id="seo" class="anchor">
+    <div class="section-title" style="color:var(--blue)">SEO &amp; Programmatic Pages</div>
+    <div class="zone zone-blue">
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:10px;letter-spacing:1px;">TOPIC PAGES · /seo/</div>
+        <div class="grid-4">
+          <div class="node">
+            <div class="node-label">Insurance Settlement Too Low</div>
+            <div class="node-path">/seo/insurance-settlement-too-low.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">How Long Claims Take</div>
+            <div class="node-path">/seo/how-long-insurance-claims-take.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Missing Items Claim</div>
+            <div class="node-path">/seo/missing-items-insurance-claim.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Reopen Claim After Settlement</div>
+            <div class="node-path">/seo/reopen-insurance-claim-after-settlement.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Condo Insurance Claim</div>
+            <div class="node-path">/seo/condo-insurance-claim.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Business Interruption</div>
+            <div class="node-path">/seo/business-interruption-claim-help.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Claim Deadlines</div>
+            <div class="node-path">/seo/insurance-claim-deadlines.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Public Adjuster vs CCP</div>
+            <div class="node-path">/seo/public-adjuster-vs-claim-command-pro.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Allstate Help</div>
+            <div class="node-path">/seo/allstate-claim-help.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">American Family Help</div>
+            <div class="node-path">/seo/american-family-claim-help.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Texas Claim Help</div>
+            <div class="node-path">/seo/texas-insurance-claim-help.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+          <div class="node">
+            <div class="node-label">Arizona Claim Help</div>
+            <div class="node-path">/seo/arizona-insurance-claim-help.html</div>
+            <span class="node-badge badge-seo">SEO</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:10px;letter-spacing:1px;">CITY PAGES · /cities/ · (50+ pages)</div>
+        <div class="grid-5">
+          <div class="node"><div class="node-label">Miami</div><div class="node-path">/cities/miami-insurance-claim-help.html</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">Chicago</div><div class="node-path">/cities/chicago-insurance-claim-help.html</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">Philadelphia</div><div class="node-path">/cities/philadelphia-insurance-claim-help.html</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">Houston / Texas</div><div class="node-path">/cities/...</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">Portland / Denver / etc.</div><div class="node-path">/cities/ · 50+ cities</div><span class="node-badge badge-seo">SEO</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:10px;letter-spacing:1px;">COMPLAINT GUIDES · /complaints/</div>
+        <div class="grid-4">
+          <div class="node"><div class="node-label">Texas Complaint Guide</div><div class="node-path">/complaints/texas-insurance-complaint-guide.html</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">New Jersey Complaint Guide</div><div class="node-path">/complaints/new-jersey-insurance-complaint-guide.html</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">Rhode Island Guide</div><div class="node-path">/complaints/rhode-island-...</div><span class="node-badge badge-seo">SEO</span></div>
+          <div class="node"><div class="node-label">+ More States</div><div class="node-path">/complaints/</div><span class="node-badge badge-seo">SEO</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:10px;letter-spacing:1px;">CASE STUDIES · /case-studies/</div>
+        <div class="grid-4">
+          <div class="node"><div class="node-label">Depreciation Recovery</div><div class="node-path">/case-studies/case-study-04-depreciation-recovery.html</div><span class="node-badge badge-seo">CONTENT</span></div>
+          <div class="node"><div class="node-label">+ More Case Studies</div><div class="node-path">/case-studies/</div><span class="node-badge badge-seo">CONTENT</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ APP CORE ══ -->
+  <div id="app" class="anchor">
+    <div class="section-title" style="color:var(--teal)">App Core (Authenticated Area)</div>
+    <div class="zone zone-teal">
+      <div class="grid-4">
+        <div class="node">
+          <div class="node-label">Onboarding Wizard</div>
+          <div class="node-path">app/onboarding/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label" style="color:var(--teal)">⚡ Claim Command Center</div>
+          <div class="node-path">claim-command-center.html</div>
+          <span class="node-badge badge-gated">GATED · MAIN HUB</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Claim Timeline</div>
+          <div class="node-path">app/claim-timeline.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Claim Deadlines</div>
+          <div class="node-path">app/claim-deadlines.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Negotiation Tools</div>
+          <div class="node-path">app/negotiation-tools.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">State Directory</div>
+          <div class="node-path">app/state-directory.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Claim Journal</div>
+          <div class="node-path">app/resource-center/claim-journal.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Situation: Denied</div>
+          <div class="node-path">app/situation-denied.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Coverage Alignment</div>
+          <div class="node-path">app/tools/coverage-alignment.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+          <span class="node-badge badge-ai">AI</span>
+        </div>
+        <div class="node">
+          <div class="node-label">State Rights</div>
+          <div class="node-path">app/resource-center/state-rights.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Fire Damage Guide</div>
+          <div class="node-path">app/claim-guides/fire-damage.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Hail Pillar Guide</div>
+          <div class="node-path">app/pillar-guides/hail.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 18-STEP COMMAND CENTER ══ -->
+  <div id="18steps" class="anchor">
+    <div class="section-title" style="color:var(--orange)">18-Step Claim Command Center · Core Sequencing</div>
+
+    <!-- Phase 1 -->
+    <div class="zone" style="border-color:rgba(20,184,166,0.4); background:linear-gradient(135deg,rgba(20,184,166,0.04),var(--bg2)); margin-bottom:12px;">
+      <div class="phase-header">
+        <span class="phase-badge" style="background:rgba(20,184,166,0.15); color:var(--teal); border:1px solid rgba(20,184,166,0.4);">PHASE 1 · ESTABLISH</span>
+        <span class="phase-timeline">Days 1–7 · Foundation</span>
+      </div>
+      <div class="grid-3">
+        <div class="step-node phase-1">
+          <div class="step-num">STEP 01</div>
+          <div class="step-name">Claim Process Guide</div>
+          <div class="step-desc">Informational overview of the entire insurance claim process. Modal-based orientation.</div>
+          <div class="step-tags"><span class="tag" style="background:rgba(148,163,184,0.15);color:var(--gray);">Informational</span></div>
+        </div>
+        <div class="step-node phase-1">
+          <div class="step-num">STEP 02</div>
+          <div class="step-name">Policy Analyzer</div>
+          <div class="step-desc">Upload your policy PDF. AI extracts coverage limits, exclusions, deductibles, endorsements.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF.js</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-1">
+          <div class="step-num">STEP 03</div>
+          <div class="step-name">Written Notice Generator</div>
+          <div class="step-desc">Generate formal notice of loss letter to carrier. GPT-4 drafts legally appropriate language.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="zone" style="border-color:rgba(59,130,246,0.4); background:linear-gradient(135deg,rgba(59,130,246,0.04),var(--bg2)); margin-bottom:12px;">
+      <div class="phase-header">
+        <span class="phase-badge" style="background:rgba(59,130,246,0.15); color:var(--blue); border:1px solid rgba(59,130,246,0.4);">PHASE 2 · DOCUMENT</span>
+        <span class="phase-timeline">Days 7–45 · Evidence Building</span>
+      </div>
+      <div class="grid-4">
+        <div class="step-node phase-2">
+          <div class="step-num">STEP 04</div>
+          <div class="step-name">Damage Documentation Tool</div>
+          <div class="step-desc">Photo upload + AI quality scoring. Organizes visual evidence by category and room.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+          </div>
+        </div>
+        <div class="step-node phase-2">
+          <div class="step-num">STEP 05</div>
+          <div class="step-name">Contractor Scope Checklist</div>
+          <div class="step-desc">AI generates comprehensive repair scope. Flags critical items carriers typically miss.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-2">
+          <div class="step-num">STEP 06</div>
+          <div class="step-name">Carrier Request Logger</div>
+          <div class="step-desc">Track all carrier document requests. Auto-detects overdue items. Client-side, no backend.</div>
+          <div class="step-tags">
+            <span class="tag excel">Excel</span>
+          </div>
+        </div>
+        <div class="step-node phase-2">
+          <div class="step-num">STEP 07</div>
+          <div class="step-name">Contents Inventory</div>
+          <div class="step-desc">Room-by-room personal property inventory tool. Excel export for submission to carrier.</div>
+          <div class="step-tags">
+            <span class="tag tag-excel">Excel</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="zone" style="border-color:rgba(245,158,11,0.4); background:linear-gradient(135deg,rgba(245,158,11,0.04),var(--bg2)); margin-bottom:12px;">
+      <div class="phase-header">
+        <span class="phase-badge" style="background:rgba(245,158,11,0.15); color:var(--amber); border:1px solid rgba(245,158,11,0.4);">PHASE 3 · ANALYZE</span>
+        <span class="phase-timeline">Days 30–60 · Gap Detection</span>
+      </div>
+      <div class="grid-3">
+        <div class="step-node phase-3">
+          <div class="step-num">STEP 08</div>
+          <div class="step-name">Estimate Review</div>
+          <div class="step-desc">Upload carrier estimate PDF. AI identifies missing line items, low pricing, excluded categories.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF.js</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-3">
+          <div class="step-num">STEP 09</div>
+          <div class="step-name">Pricing Deviation Analyzer</div>
+          <div class="step-desc">Line-item price comparison against market rates. Quantifies underpayment per trade category.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-excel">Excel</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-3">
+          <div class="step-num">STEP 10</div>
+          <div class="step-name">Coverage Gap Detector</div>
+          <div class="step-desc">Maps policy coverage to claim items. Identifies unclaimed coverage categories and sublimits.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="zone" style="border-color:rgba(249,115,22,0.4); background:linear-gradient(135deg,rgba(249,115,22,0.04),var(--bg2)); margin-bottom:12px;">
+      <div class="phase-header">
+        <span class="phase-badge" style="background:rgba(249,115,22,0.15); color:var(--orange); border:1px solid rgba(249,115,22,0.4);">PHASE 4 · RECOVER</span>
+        <span class="phase-timeline">Days 45–90 · Active Recovery</span>
+      </div>
+      <div class="grid-3">
+        <div class="step-node phase-4">
+          <div class="step-num">STEP 11</div>
+          <div class="step-name">Supplement Letter</div>
+          <div class="step-desc">AI drafts supplement demand letter incorporating all gaps found in Phases 2–3.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-4">
+          <div class="step-num">STEP 12</div>
+          <div class="step-name">Demand Letter</div>
+          <div class="step-desc">Formal demand letter with legal citations, dollar figures, and carrier response deadline.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-pdf">PDF</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-4">
+          <div class="step-num">STEP 13</div>
+          <div class="step-name">RCV Recovery Submitter</div>
+          <div class="step-desc">Submit replacement cost value recovery once repairs complete. File upload + recovery tracking.</div>
+          <div class="step-tags">
+            <span class="tag tag-pdf">PDF Upload</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 5 -->
+    <div class="zone" style="border-color:rgba(239,68,68,0.4); background:linear-gradient(135deg,rgba(239,68,68,0.04),var(--bg2)); margin-bottom:12px;">
+      <div class="phase-header">
+        <span class="phase-badge" style="background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.4);">PHASE 5 · RESOLVE</span>
+        <span class="phase-timeline">Days 60–120 · Final Resolution</span>
+      </div>
+      <div class="grid-5">
+        <div class="step-node phase-5">
+          <div class="step-num">STEP 14</div>
+          <div class="step-name">Negotiation Strategy</div>
+          <div class="step-desc">AI generates carrier-specific negotiation playbook with leverage points and counter-arguments.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-5">
+          <div class="step-num">STEP 15</div>
+          <div class="step-name">Escalation Evaluator</div>
+          <div class="step-desc">Assesses when to escalate: appraisal, DOI complaint, attorney, public adjuster.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-5">
+          <div class="step-num">STEP 16</div>
+          <div class="step-name">Settlement Review</div>
+          <div class="step-desc">AI reviews proposed settlement offer against claim value. Flags acceptance risks.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+        <div class="step-node phase-5">
+          <div class="step-num">STEP 17</div>
+          <div class="step-name">Claim Archive Generator</div>
+          <div class="step-desc">Packages complete claim file into downloadable ZIP archive for records.</div>
+          <div class="step-tags">
+            <span class="tag" style="background:rgba(148,163,184,0.15);color:var(--gray);">ZIP</span>
+          </div>
+        </div>
+        <div class="step-node phase-5">
+          <div class="step-num">STEP 18</div>
+          <div class="step-name">Release Review</div>
+          <div class="step-desc">AI reviews final release document before signing. Identifies waiver traps and rights given up.</div>
+          <div class="step-tags">
+            <span class="tag tag-ai">GPT-4</span>
+            <span class="tag tag-docx">DOCX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RESOURCE CENTER ══ -->
+  <div id="resource" class="anchor">
+    <div class="section-title" style="color:var(--amber)">Resource Center · /app/resource-center/</div>
+    <div class="zone zone-amber">
+      <div class="grid-4">
+        <div class="node">
+          <div class="node-label">Knowledge Center</div>
+          <div class="node-path">resource-center/knowledge-center/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Document Generator Hub</div>
+          <div class="node-path">resource-center/document-generator/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+          <span class="node-badge badge-ai">AI</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Situational Advisory</div>
+          <div class="node-path">resource-center/situational-advisory/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Maximize Your Claim</div>
+          <div class="node-path">resource-center/maximize-your-claim/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+          <span class="node-badge badge-ai">AI</span>
+        </div>
+        <div class="node">
+          <div class="node-label">AI Response Agent</div>
+          <div class="node-path">resource-center/ai-response-agent/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+          <span class="node-badge badge-ai">GPT-4</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Deadlines Tracker</div>
+          <div class="node-path">resource-center/deadlines/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">State Insurance Department Directory</div>
+          <div class="node-path">resource-center/state-insurance-department-directory/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">FNOL Wizard</div>
+          <div class="node-path">resource-center/fnol-wizard.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Recommended Resources</div>
+          <div class="node-path">resource-center/recommended-resources/index.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Advanced Tools: Settlement Calculator Pro</div>
+          <div class="node-path">resource-center/advanced-tools/settlement-calculator-pro.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+          <span class="node-badge badge-ai">AI</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Advanced Tools: Regulatory Updates Monitor</div>
+          <div class="node-path">resource-center/advanced-tools/regulatory-updates-monitor.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Advanced Tools: Comm Templates</div>
+          <div class="node-path">resource-center/advanced-tools/communication-templates.html</div>
+          <span class="node-badge badge-gated">GATED</span>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:10px;letter-spacing:1px;">SITUATIONAL ADVISORY SCENARIOS · /resource-center/situational-advisory/scenarios/</div>
+        <div class="grid-4">
+          <div class="node"><div class="node-label">Water Damage Exclusion</div><div class="node-path">scenarios/water-damage-exclusion/</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">No Response 30 Days</div><div class="node-path">scenarios/no-response-for-30-days/</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Theft Claim</div><div class="node-path">scenarios/theft-claim/</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Vandalism Damage</div><div class="node-path">scenarios/vandalism-damage/</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Research Loss</div><div class="node-path">scenarios/research-loss/</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Production Loss</div><div class="node-path">scenarios/production-loss/</div><span class="node-badge badge-gated">GATED</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:10px;letter-spacing:1px;">STATE GUIDES · /resource-center/state/ · 50 States</div>
+        <div class="grid-5">
+          <div class="node"><div class="node-label">Florida</div><div class="node-path">resource-center/state/FL.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Utah</div><div class="node-path">resource-center/state/UT.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">+ All 50 States</div><div class="node-path">resource-center/state/[ST].html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">State Timelines Index</div><div class="node-path">resource-center/timelines/index.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Regulations Index</div><div class="node-path">state-guides/regulations/index.html</div><span class="node-badge badge-gated">GATED</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--amber);margin-bottom:10px;letter-spacing:1px;">DOCUMENT GENERATOR TEMPLATES · /document-generator/templates/</div>
+        <div class="grid-4">
+          <div class="node"><div class="node-label">Rebuttal to Wrongful Denial</div><div class="node-path">...rebuttal-to-wrongful-claim-denial-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Advance Payment Request</div><div class="node-path">...request-for-advance-payment-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">ALE Reimbursement Request</div><div class="node-path">...ale-interim-reimbursement-request-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Hurricane/Windstorm Docs</div><div class="node-path">...hurricanewindstorm-claim-documentation-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Check Endorsement Instructions</div><div class="node-path">...check-endorsement-instructions-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Expert Engineer Engagement</div><div class="node-path">...expert-engineer-engagement-letter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Property Damage Verification</div><div class="node-path">...property-damage-verification-and-documentation-statement.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Commercial Lease Interruption</div><div class="node-path">...commercial-lease-interruption-notice-business-interruption.html</div><span class="node-badge badge-gated">GATED</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOOLS LIBRARY ══ -->
+  <div id="tools" class="anchor">
+    <div class="section-title" style="color:var(--purple)">Tools Library · /app/tools/ · (88+ files)</div>
+    <div class="zone zone-purple">
+      <div style="font-size:11px;font-weight:600;color:var(--purple);margin-bottom:12px;letter-spacing:1px;">CORE 18-STEP TOOLS</div>
+      <div class="grid-4">
+        <div class="node">
+          <div class="node-label">Policy Analyzer</div>
+          <div class="node-path">tools/policy-analyzer-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 2</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Written Notice Generator</div>
+          <div class="node-path">tools/written-notice-generator.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 3</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Damage Documentation Tool</div>
+          <div class="node-path">tools/damage-documentation-tool.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 4</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Contractor Scope Checklist</div>
+          <div class="node-path">tools/contractor-scope-checklist.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 5</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Carrier Request Logger</div>
+          <div class="node-path">tools/carrier-request-logger.html</div>
+          <span class="node-badge badge-gated">STEP 6</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Contents Inventory</div>
+          <div class="node-path">tools/contents-inventory.html</div>
+          <span class="node-badge badge-gated">STEP 7</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Estimate Review</div>
+          <div class="node-path">tools/estimate-review-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 8</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Pricing Deviation Analyzer</div>
+          <div class="node-path">tools/pricing-deviation-analyzer.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 9</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Coverage Gap Detector</div>
+          <div class="node-path">tools/coverage-gap-detector.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 10</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Supplement Letter</div>
+          <div class="node-path">tools/supplement-letter-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 11</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Demand Letter</div>
+          <div class="node-path">tools/demand-letter-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 12</span>
+        </div>
+        <div class="node">
+          <div class="node-label">RCV Recovery Submitter</div>
+          <div class="node-path">tools/rcv-recovery-submitter.html</div>
+          <span class="node-badge badge-gated">STEP 13</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Negotiation Strategy</div>
+          <div class="node-path">tools/negotiation-strategy-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 14</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Escalation Evaluator</div>
+          <div class="node-path">tools/escalation-evaluator-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 15</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Settlement Review</div>
+          <div class="node-path">tools/settlement-review-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 16</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Claim Archive Generator</div>
+          <div class="node-path">tools/claim-archive-generator.html</div>
+          <span class="node-badge badge-gated">STEP 17</span>
+        </div>
+        <div class="node">
+          <div class="node-label">Release Reviewer</div>
+          <div class="node-path">tools/release-reviewer-working.html</div>
+          <span class="node-badge badge-ai">GPT-4</span>
+          <span class="node-badge badge-gated">STEP 18</span>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--purple);margin-bottom:10px;letter-spacing:1px;">SUPPLEMENTAL TOOLS</div>
+        <div class="grid-4">
+          <div class="node"><div class="node-label">Depreciation Calculator</div><div class="node-path">tools/depreciation-calculator.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Supplement Calculation Tool</div><div class="node-path">tools/supplement-calculation-tool.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">ALE Tracker</div><div class="node-path">tools/ale-tracker.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">ALE Eligibility Checker</div><div class="node-path">tools/ale-eligibility-checker.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Remaining ALE Limit Calculator</div><div class="node-path">tools/remaining-ale-limit-calculator.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Payment Tracker</div><div class="node-path">tools/payment-tracker.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Deadline Calculator</div><div class="node-path">tools/deadline-calculator.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Deadline Response Tracker</div><div class="node-path">tools/deadline-response-tracker.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Photo Upload Organizer</div><div class="node-path">tools/photo-upload-organizer.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Scope Omission Detector</div><div class="node-path">tools/scope-omission-detector.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Missing Trade Detector</div><div class="node-path">tools/missing-trade-detector.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Comparable Item Finder</div><div class="node-path">tools/comparable-item-finder.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Expert Opinion Tool</div><div class="node-path">tools/expert-opinion.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">EUO / Sworn Statement Guide</div><div class="node-path">tools/euo-sworn-statement-guide.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Response Letter Generator</div><div class="node-path">tools/response-letter-generator.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Claim Submitter</div><div class="node-path">tools/claim-submitter.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Coverage Mapping Visualizer</div><div class="node-path">tools/coverage-mapping-visualizer.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Coverage QA Chat</div><div class="node-path">tools/coverage-qa-chat.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Line Item Discrepancy Finder</div><div class="node-path">tools/line-item-discrepancy-finder.html</div><span class="node-badge badge-gated">GATED</span></div>
+          <div class="node"><div class="node-label">Pre-Submission Risk Review</div><div class="node-path">tools/pre-submission-risk-review-tool.html</div><span class="node-badge badge-gated">GATED</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DOCUMENT LIBRARY ══ -->
+  <div id="doclib" class="anchor">
+    <div class="section-title" style="color:var(--amber)">Document Library · /app/document-library/</div>
+    <div class="zone zone-amber">
+      <div class="grid-4">
+        <div class="node"><div class="node-label">Damage Documentation</div><div class="node-path">document-library/damage-documentation.html</div><span class="node-badge badge-gated">GATED</span></div>
+        <div class="node"><div class="node-label">Hurricane / Windstorm Documents</div><div class="node-path">document-library/hurricane-windstorm-documents.html</div><span class="node-badge badge-gated">GATED</span></div>
+        <div class="node"><div class="node-label">Legal Documents</div><div class="node-path">document-library/legal-documents.html</div><span class="node-badge badge-gated">GATED</span></div>
+        <div class="node"><div class="node-label">Settlement &amp; Negotiation Letters</div><div class="node-path">document-library/settlement-and-negotiation-letters.html</div><span class="node-badge badge-gated">GATED</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div id="admin" class="anchor">
+    <div class="section-title" style="color:var(--red)">Admin Area</div>
+    <div class="zone zone-red">
+      <div class="grid-4">
+        <div class="node"><div class="node-label">Admin Dashboard</div><div class="node-path">admin-dashboard.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">Admin Login</div><div class="node-path">admin-login.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">AI Console</div><div class="node-path">app/admin/ai-console/index.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">Health Monitor</div><div class="node-path">app/admin/monitoring/health.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">Debug Console</div><div class="node-path">app/debug/index.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">Rank Flow Map</div><div class="node-path">admin/rank-flow-map.html</div><span class="node-badge badge-admin">ADMIN</span></div>
+        <div class="node"><div class="node-label">Professional Dashboard</div><div class="node-path">professional-dashboard.html</div><span class="node-badge badge-admin">PRO</span></div>
+        <div class="node"><div class="node-label">Professional Login</div><div class="node-path">professional-login.html</div><span class="node-badge badge-admin">PRO</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TECH STACK ══ -->
+  <div id="techstack" class="anchor">
+    <div class="section-title" style="color:var(--teal)">Technology Stack</div>
+    <div class="zone zone-teal">
+      <div class="tech-row">
+        <div class="tech-card">
+          <div class="tech-icon">🤖</div>
+          <div class="tech-name" style="color:var(--purple)">OpenAI GPT-4 Turbo</div>
+          <div class="tech-desc">12 AI-powered tools · Policy, estimates, letters, strategy, negotiation</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">⚡</div>
+          <div class="tech-name" style="color:var(--teal)">Netlify Functions</div>
+          <div class="tech-desc">16 serverless functions · Backend AI orchestration · PDF generation</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🗄️</div>
+          <div class="tech-name" style="color:var(--blue)">Supabase</div>
+          <div class="tech-desc">PostgreSQL + Auth + Storage · RLS policies · 14+ tables</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">📄</div>
+          <div class="tech-name" style="color:var(--amber)">PDF.js + pdf-lib</div>
+          <div class="tech-desc">Client-side PDF parsing · Server-side generation · DOCX + Excel + ZIP</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">⚛️</div>
+          <div class="tech-name" style="color:var(--blue)">Next.js 14</div>
+          <div class="tech-desc">Claim OS workspace · App Router · TypeScript · Tailwind CSS</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🌐</div>
+          <div class="tech-name" style="color:var(--emerald)">HTML5 / CSS / JS</div>
+          <div class="tech-desc">976 static pages · localStorage fallback · Fetch API</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🚀</div>
+          <div class="tech-name" style="color:var(--orange)">Netlify CDN</div>
+          <div class="tech-desc">Static hosting · Redirects · Edge distribution · Deploy hooks</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-icon">🔐</div>
+          <div class="tech-name" style="color:var(--red)">Auth + RLS</div>
+          <div class="tech-desc">Supabase Auth · JWT tokens · Row-level security · Paywall enforcement</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ DATA FLOW ══ -->
+  <div id="dataflow" class="anchor">
+    <div class="section-title" style="color:var(--blue)">AI Data Flow</div>
+    <div class="zone zone-blue">
+      <div style="display:grid; grid-template-columns: repeat(9, 1fr); gap:0; align-items:center;">
+        <div style="text-align:center; padding:12px 6px; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); border-radius:8px;">
+          <div style="font-size:16px;margin-bottom:4px;">👤</div>
+          <div style="font-size:11px;font-weight:600;color:#60a5fa;">User</div>
+          <div style="font-size:9px;color:var(--gray);">Upload / Input</div>
+        </div>
+        <div style="text-align:center;font-size:16px;color:var(--border2);">→</div>
+        <div style="text-align:center; padding:12px 6px; background:rgba(20,184,166,0.1); border:1px solid rgba(20,184,166,0.3); border-radius:8px;">
+          <div style="font-size:16px;margin-bottom:4px;">📄</div>
+          <div style="font-size:11px;font-weight:600;color:var(--teal);">Frontend</div>
+          <div style="font-size:9px;color:var(--gray);">PDF.js parse</div>
+        </div>
+        <div style="text-align:center;font-size:16px;color:var(--border2);">→</div>
+        <div style="text-align:center; padding:12px 6px; background:rgba(249,115,22,0.1); border:1px solid rgba(249,115,22,0.3); border-radius:8px;">
+          <div style="font-size:16px;margin-bottom:4px;">⚡</div>
+          <div style="font-size:11px;font-weight:600;color:var(--orange);">Netlify Fn</div>
+          <div style="font-size:9px;color:var(--gray);">Auth + route</div>
+        </div>
+        <div style="text-align:center;font-size:16px;color:var(--border2);">→</div>
+        <div style="text-align:center; padding:12px 6px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); border-radius:8px;">
+          <div style="font-size:16px;margin-bottom:4px;">🤖</div>
+          <div style="font-size:11px;font-weight:600;color:var(--purple);">GPT-4</div>
+          <div style="font-size:9px;color:var(--gray);">AI analysis</div>
+        </div>
+        <div style="text-align:center;font-size:16px;color:var(--border2);">→</div>
+        <div style="text-align:center; padding:12px 6px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px;">
+          <div style="font-size:16px;margin-bottom:4px;">🗄️</div>
+          <div style="font-size:11px;font-weight:600;color:var(--emerald);">Supabase</div>
+          <div style="font-size:9px;color:var(--gray);">Store + log</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;color:var(--teal);margin-bottom:8px;letter-spacing:1px;">SUPABASE TABLES</div>
+          <div style="font-size:10px;color:var(--gray);line-height:1.8;font-family:'JetBrains Mono',monospace;">
+            claims<br>
+            claim_analysis<br>
+            claim_financial_summary<br>
+            claim_estimate_discrepancies<br>
+            coverage_flags<br>
+            claim_alerts<br>
+            recommended_actions<br>
+            claim_timeline<br>
+            carrier_patterns<br>
+            documents<br>
+            payments<br>
+            generated_letters<br>
+            claim_events_log<br>
+            claim_workspace_settings
+          </div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;color:var(--orange);margin-bottom:8px;letter-spacing:1px;">NETLIFY FUNCTIONS (16)</div>
+          <div style="font-size:10px;color:var(--gray);line-height:1.8;font-family:'JetBrains Mono',monospace;">
+            analyze-policy.js<br>
+            generate-written-notice.js<br>
+            analyze-damage-documentation.js<br>
+            generate-scope-checklist.js<br>
+            detect-coverage-gaps.js<br>
+            analyze-estimate.js<br>
+            analyze-pricing-deviations.js<br>
+            generate-supplement-letter.js<br>
+            generate-demand-letter.js<br>
+            submit-rcv-recovery.js<br>
+            generate-negotiation-strategy.js<br>
+            evaluate-escalation-status.js<br>
+            analyze-settlement.js<br>
+            analyze-release.js<br>
+            generate-pdf.js · export-docx.js
+          </div>
+        </div>
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="font-size:10px;font-weight:700;color:var(--purple);margin-bottom:8px;letter-spacing:1px;">DOCUMENT OUTPUTS</div>
+          <div style="font-size:10px;color:var(--gray);line-height:1.8;">
+            <span style="color:#f87171;">PDF</span> — Policy Report, Estimate Review, Letters, Strategy<br><br>
+            <span style="color:#60a5fa;">DOCX</span> — All 12 AI tool outputs<br><br>
+            <span style="color:#34d399;">Excel</span> — Carrier Logger, Contents Inventory, Pricing Deviation<br><br>
+            <span style="color:#fcd34d;">ZIP</span> — Claim Archive Package (Step 17)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="sep"></div>
+  <div style="text-align:center;padding:16px 0 0;font-size:11px;color:var(--gray);">
+    Claim Command Pro · Site Map · Generated Mar 2026 · 976 pages · 5 Phases · 18 Steps · 12 AI Tools
+  </div>
+
+</main>
+
+<script>
+  // Smooth scroll for nav pills
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // Highlight step nodes on hover
+  document.querySelectorAll('.step-node').forEach(node => {
+    node.addEventListener('mouseenter', () => {
+      node.style.zIndex = '10';
+    });
+    node.addEventListener('mouseleave', () => {
+      node.style.zIndex = '';
+    });
+  });
+</script>
+</body>
+</html>
