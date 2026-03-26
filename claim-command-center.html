@@ -3532,6 +3532,484 @@
       transform: none;
     }
 
+    /* --- Claim Command Center: light execution UI (presentation) --- */
+    body {
+      background: #f7f7f8;
+      color: #111827;
+    }
+
+    .top-nav {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .nav-brand,
+    .nav-current-step {
+      color: #111827;
+    }
+
+    .nav-claim-num {
+      color: #6b7280;
+    }
+
+    .nav-divider {
+      background: #e5e7eb;
+    }
+
+    .nav-pill {
+      color: #6b7280;
+    }
+
+    .nav-pill:hover {
+      color: #111827;
+    }
+
+    .nav-pill.active {
+      color: #0f766e;
+      border-bottom-color: #0f766e;
+    }
+
+    .overview-toggle-btn {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+
+    .main-layout {
+      background: #f7f7f8;
+    }
+
+    .metric-strip-inline {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      height: auto;
+      min-height: 44px;
+      padding: 10px 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .metric-inline-inner {
+      font-size: 14px;
+      color: #111827;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .metric-inline-muted {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .metric-inline-val {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .metric-inline-sep {
+      color: #d1d5db;
+      margin: 0 10px;
+    }
+
+    .metric-gap-emphasis {
+      color: #16a34a;
+      font-weight: 700;
+      margin: 0 4px 0 0;
+    }
+
+    .metric-gap-amount {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    .ccc-main-row {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .ccc-sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+
+    .ccc-views-stack {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .ccc-step-nav-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 14px 10px 16px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      color: #374151;
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1.35;
+      border-left: 3px solid transparent;
+    }
+
+    .ccc-step-nav-item:hover {
+      background: #f9fafb;
+    }
+
+    .ccc-step-nav-item.active {
+      background: #f3f4f6;
+      border-left-color: #111827;
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .ccc-step-nav-item.done {
+      color: #6b7280;
+    }
+
+    .tile-ai {
+      display: none !important;
+    }
+
+    .tile-icon {
+      display: none !important;
+    }
+
+    .step-tile {
+      box-shadow: none;
+      border: 1px solid #e5e7eb;
+    }
+
+    .step-tile:hover {
+      transform: none;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+
+    .tile-title {
+      text-transform: none;
+      font-size: 16px;
+    }
+
+    .ai-powered-note {
+      display: none !important;
+    }
+
+    .step-topbar {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .step-breadcrumb {
+      color: #6b7280;
+    }
+
+    .step-breadcrumb-phase,
+    .step-breadcrumb-current {
+      color: #111827;
+    }
+
+    .step-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .step-header .step-title {
+      color: #111827;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .step-header .step-phase-eyebrow {
+      color: #6b7280 !important;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .step-main {
+      background: #f7f7f8;
+    }
+
+    .step-main-workspace {
+      background: #f7f7f8;
+    }
+
+    .step-workspace {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+    .step-do-this-now {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-left: 3px solid #111827;
+    }
+
+    .step-dtn-label {
+      color: #6b7280;
+    }
+
+    .step-dtn-text {
+      color: #111827;
+    }
+
+    .step-footer-nav {
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .step-complete-btn {
+      box-shadow: none;
+      background: #0f766e;
+    }
+
+    .step-complete-btn:hover {
+      transform: none;
+    }
+
+    .next-step-banner {
+      border-top: 1px solid #e5e7eb;
+      box-shadow: none;
+    }
+
+    .next-step-icon {
+      background: #16a34a;
+      box-shadow: none;
+    }
+
+    .next-step-button {
+      background: #0f766e;
+    }
+
+    .ccc-exec-panel {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+    }
+
+    .ccc-exec-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .ccc-exec-desc {
+      font-size: 15px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
+
+    .ccc-primary-action-block {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .ccc-upload-minimal {
+      border: 1px dashed #d1d5db;
+      background: #fafafa;
+      padding: 28px 20px;
+      margin-bottom: 16px;
+    }
+
+    .ccc-upload-minimal .upload-icon {
+      display: none;
+    }
+
+    .ccc-file-name {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .ccc-btn-primary-lg {
+      min-height: 48px;
+      padding: 0 28px;
+      background: #111827;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .ccc-btn-primary-lg:hover:not(:disabled) {
+      background: #030712;
+    }
+
+    .ccc-btn-primary-lg:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+
+    .ccc-section {
+      margin-top: 28px;
+    }
+
+    .ccc-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .ccc-bullet-list,
+    .ccc-checklist {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .ccc-bullet-list li {
+      position: relative;
+      padding-left: 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .ccc-bullet-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #9ca3af;
+    }
+
+    .ccc-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    .ccc-checklist .chk {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .policy-complete-panel {
+      margin-top: 24px;
+      padding: 22px 24px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .policy-complete-panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .policy-complete-panel-msg {
+      font-size: 14px;
+      color: #4b5563;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .policy-complete-panel-recovery-label {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .policy-complete-panel-recovery-amt {
+      font-size: 20px;
+      font-weight: 700;
+      color: #16a34a;
+      margin-bottom: 20px;
+    }
+
+    .policy-complete-panel-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .policy-complete-panel-actions .ccc-btn-secondary {
+      min-height: 44px;
+      padding: 0 18px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .policy-complete-panel-actions .ccc-btn-secondary-tone {
+      max-width: none;
+      width: auto;
+      flex: 1;
+      min-width: 180px;
+      background: #0f766e;
+    }
+
+    .policy-complete-panel-actions .ccc-btn-secondary-tone:hover {
+      background: #0d9488;
+    }
+
+    .ccc-step1-reference {
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 0 16px 16px;
+      background: #fafafa;
+    }
+
+    .ccc-step1-reference-summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      color: #374151;
+      padding: 14px 0;
+    }
+
+    .ccc-ai-banner {
+      background: #f3f4f6 !important;
+      border: 1px solid #e5e7eb !important;
+    }
+
+    .ai-chip {
+      background: #e5e7eb !important;
+      color: #374151 !important;
+    }
+
+    .ale-live-indicator {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+
+    .step-results {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      box-shadow: none;
+    }
+
   </style>
 </head>
 <body>
@@ -3564,33 +4042,21 @@
 
   <!-- Main Layout -->
   <div class="main-layout" id="main-layout">
-    <div class="metric-strip">
-      <div class="metric-block">
-        <div class="metric-label">Insurer Offered</div>
-        <div class="metric-value" id="metricInsurerOffered">$18,200</div>
-        <div class="metric-sublabel">Initial estimate</div>
-      </div>
-      <div class="metric-block highlight-blue">
-        <div class="metric-label">Structure Value</div>
-        <div class="metric-value" id="metricStructureValue">$36,750</div>
-        <div class="metric-sublabel">Repairs + upgrades</div>
-      </div>
-      <div class="metric-block highlight-purple">
-        <div class="metric-label">Contents Value</div>
-        <div class="metric-value" id="metricContentsValue">$12,400</div>
-        <div class="metric-sublabel">Personal property</div>
-      </div>
-      <div class="metric-block highlight-orange">
-        <div class="metric-label">ALE Accruing</div>
-        <div class="metric-value" id="metricALEValue">$132/day</div>
-        <div class="metric-sublabel">Living expenses</div>
-      </div>
-      <div class="metric-block highlight-red">
-        <div class="metric-label">Total Recoverable Gap</div>
-        <div class="metric-value" id="metricTotalGap">$35,200</div>
-        <div class="metric-sublabel">Your recovery target</div>
+    <div class="metric-strip metric-strip-inline" role="region" aria-label="Claim financial snapshot">
+      <div class="metric-inline-inner">
+        <span class="metric-inline-muted">Insurer Offered:</span>
+        <span class="metric-inline-val" id="metricInsurerOffered">$0</span>
+        <span class="metric-inline-sep" aria-hidden="true">|</span>
+        <span class="metric-inline-muted">Your Estimate:</span>
+        <span class="metric-inline-val" id="metricStructureValue">$0</span>
+        <span class="metric-inline-sep" aria-hidden="true">|</span>
+        <strong class="metric-gap-emphasis">Recoverable Gap:</strong>
+        <span class="metric-inline-val metric-gap-amount" id="metricTotalGap">$0</span>
       </div>
     </div>
+    <div class="ccc-main-row">
+    <aside class="ccc-sidebar" id="cccStepSidebar" aria-label="Claim steps"></aside>
+    <div class="ccc-views-stack">
     <div id="view-overview" class="view">
       <div class="resume-banner hidden" id="resumeBanner">
         <div class="resume-icon">▶</div>
@@ -4055,6 +4521,8 @@
             <div class="section-label">What Happens Next</div>
             <p class="section-text">Once initialized, the system will track your progress across all 19 steps, calculate your total recoverable value across structure, contents, and living expenses, and show you exactly what to do at each stage.</p>
 
+<details class="ccc-step1-reference">
+<summary class="ccc-step1-reference-summary">Full claim process reference (optional)</summary>
 <div class="ccc-step1-orphan">
 <p class="section-text" style="margin-bottom: 16px;"><strong>Goal:</strong> Capture the evidence needed to support full payment.</p>
             
@@ -4500,12 +4968,12 @@
               </li>
             </ul>
 
-            <div class="ai-banner" style="margin-top: 32px;">
-              <div class="ai-chip">PRO TIP</div>
+            <div class="ai-banner ccc-ai-banner" style="margin-top: 32px;">
+              <div class="ai-chip">Pro tip</div>
               <div class="ai-text">The single biggest mistake policyholders make is accepting the insurer's first offer without analysis. Steps 8-10 will show you exactly how much you're being underpaid — but only if you complete the documentation steps first. Follow the process in order.</div>
             </div>
           </div>
-</div>
+</details>
           </div>
           <div class="step-results hidden" id="step-1-results">
             <div class="results-header">
@@ -4526,67 +4994,74 @@
           </div>
         </div>
         <div id="step-workspace-2" class="step-workspace-content hidden">
-          <div class="step-body">
-<div class="ai-powered-note">Powered by AI analysis calibrated to real claim data</div>
-            
-            <!-- DO THIS NOW -->
-            <div class="step-do-this-now">
-              <div class="step-dtn-label">DO THIS NOW</div>
-              <div class="step-dtn-text">Upload your policy to identify your full coverage and claim rights</div>
+          <div class="step-body ccc-exec-panel">
+            <header class="ccc-exec-header">
+              <h2 class="ccc-exec-title">STEP 2 — POLICY ANALYSIS</h2>
+              <p class="ccc-exec-desc">Upload your policy to identify all coverages, limits, and missed claim value.</p>
+            </header>
+
+            <div class="ccc-primary-action-block">
+              <div class="step-file-upload ccc-upload-minimal" id="policyUpload" onclick="document.getElementById('policyFileInput').click()">
+                <div class="upload-text">Upload policy PDF</div>
+                <div class="upload-hint">Declarations page and full policy document</div>
+                <input type="file" id="policyFileInput" accept=".pdf" style="display: none;" onchange="handlePolicyUpload(event)">
+              </div>
+              <div id="policyFileName" class="ccc-file-name"></div>
+              <button type="button" class="ccc-btn-primary-lg" id="analyzePolicyBtn" onclick="analyzePolicyAI()" disabled>Analyze policy</button>
             </div>
-            
-            <!-- Step Workspace -->
-            <div class="step-workspace">
-              
-              <!-- INPUT SECTION -->
-              <div class="workspace-section">
-                <div class="workspace-label">📄 Upload Your Policy</div>
-                <div class="step-file-upload" id="policyUpload" onclick="document.getElementById('policyFileInput').click()">
-                  <div class="upload-icon">📤</div>
-                  <div class="upload-text">Click to upload policy PDF</div>
-                  <div class="upload-hint">Declarations page + full policy document</div>
-                  <input type="file" id="policyFileInput" accept=".pdf" style="display: none;" onchange="handlePolicyUpload(event)">
-                </div>
-                <div id="policyFileName" style="margin-top: 8px; font-size: 12px; color: var(--gray-600);"></div>
-              </div>
 
-              <!-- PROCESSING INDICATOR -->
-              <div class="processing-indicator hidden" id="policyProcessing">
-                <div class="processing-spinner"></div>
-                <span>Analyzing your policy...</span>
-              </div>
+            <div class="processing-indicator hidden" id="policyProcessing">
+              <div class="processing-spinner"></div>
+              <span>Analyzing your policy...</span>
+            </div>
 
-              <!-- OUTPUT SECTION -->
-              <div class="workspace-section hidden" id="policyOutput">
-                <div class="workspace-label">✓ Policy Analysis Results</div>
-                <div class="step-output-box success">
-                  <div class="output-summary" id="policySummary">Your policy has been analyzed</div>
-                  
-                  <div style="margin-top: 16px;">
-                    <div class="output-detail"><strong>Dwelling Coverage:</strong> <span id="dwellingCoverage">—</span></div>
-                    <div class="output-detail"><strong>Deductible:</strong> <span id="deductible">—</span></div>
-                    <div class="output-detail"><strong>Settlement Type:</strong> <span id="settlementType">—</span></div>
-                    <div class="output-detail"><strong>Contents Coverage:</strong> <span id="contentsCoverage">—</span></div>
-                    <div class="output-detail"><strong>ALE Coverage:</strong> <span id="aleCoverage">—</span></div>
-                    <div class="output-detail"><strong>Key Endorsements:</strong> <span id="endorsements">—</span></div>
-                  </div>
+            <section class="ccc-section">
+              <h3 class="ccc-section-title">What this step does</h3>
+              <ul class="ccc-bullet-list">
+                <li>Identifies all applicable coverages</li>
+                <li>Flags missing endorsements</li>
+                <li>Surfaces claim strategy opportunities</li>
+              </ul>
+            </section>
 
-                  <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
-                  
-                  <div class="ready-badge">✔ Ready to submit to carrier</div>
+            <section class="ccc-section ccc-output-expect" id="policyOutputExpect">
+              <h3 class="ccc-section-title">Output (generated after upload)</h3>
+              <ul class="ccc-checklist">
+                <li><span class="chk">✔</span> Coverage breakdown</li>
+                <li><span class="chk">✔</span> Limits &amp; sublimits</li>
+                <li><span class="chk">✔</span> Exclusions that may be challenged</li>
+                <li><span class="chk">✔</span> Strategy notes</li>
+              </ul>
+            </section>
 
-                  <div class="output-actions">
-                    <button class="output-action-btn" onclick="copyPolicySummary()">📋 Copy</button>
-                    <button class="output-action-btn primary" onclick="downloadPolicySummaryPDF()">📄 Download PDF</button>
-                  </div>
+            <div class="workspace-section hidden" id="policyOutput">
+              <h3 class="ccc-section-title">Policy analysis results</h3>
+              <div class="step-output-box success ccc-policy-output-detail" id="policyOutputDetail">
+                <div class="output-summary" id="policySummary">Your policy has been analyzed</div>
+                <div class="output-detail"><strong>Dwelling Coverage:</strong> <span id="dwellingCoverage">—</span></div>
+                <div class="output-detail"><strong>Deductible:</strong> <span id="deductible">—</span></div>
+                <div class="output-detail"><strong>Settlement Type:</strong> <span id="settlementType">—</span></div>
+                <div class="output-detail"><strong>Contents Coverage:</strong> <span id="contentsCoverage">—</span></div>
+                <div class="output-detail"><strong>ALE Coverage:</strong> <span id="aleCoverage">—</span></div>
+                <div class="output-detail"><strong>Key Endorsements:</strong> <span id="endorsements">—</span></div>
+                <div class="authority-note">Generated using expert claim methodology and structured for carrier review</div>
+                <div class="ready-badge">Ready to submit to carrier</div>
+                <div class="output-actions">
+                  <button type="button" class="output-action-btn" onclick="copyPolicySummary()">Copy</button>
+                  <button type="button" class="output-action-btn primary" onclick="downloadPolicySummaryPDF()">Download PDF</button>
                 </div>
               </div>
+            </div>
 
-              <!-- ACTION BUTTON -->
-              <div class="workspace-section">
-                <button class="step-action-button" id="analyzePolicyBtn" onclick="analyzePolicyAI()" disabled>Analyze Policy with AI</button>
+            <div class="policy-complete-panel hidden" id="policyCompleteBanner">
+              <div class="policy-complete-panel-title">POLICY ANALYSIS COMPLETE</div>
+              <p class="policy-complete-panel-msg" id="policyCompleteMessage">You have applicable coverages not included by the carrier.</p>
+              <p class="policy-complete-panel-recovery-label">Estimated additional recovery:</p>
+              <div class="policy-complete-panel-recovery-amt" id="policyCompleteRecovery">$0</div>
+              <div class="policy-complete-panel-actions">
+                <button type="button" class="ccc-btn-secondary" onclick="document.getElementById('policyOutputDetail').scrollIntoView({ behavior: 'smooth', block: 'start' })">View full breakdown</button>
+                <button type="button" class="ccc-btn-primary-lg ccc-btn-secondary-tone" onclick="goToStep(3)">Continue to Step 3</button>
               </div>
-
             </div>
           </div>
           <div class="step-footer">
@@ -5561,13 +6036,15 @@
         </div>
       </div>
     </div>
+    </div>
+    </div>
 
     <!-- Claim Activity Log Panel (Overlay) -->
     <div class="claim-journal-panel">
       <div class="journal-header">
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <div>
-            <div class="journal-title">📋 Claim Activity Log</div>
+            <div class="journal-title">Claim Activity Log</div>
             <div style="font-size: 12px; color: var(--gray-600); margin-top: 4px;">Every action is tracked automatically</div>
           </div>
           <button onclick="closeJournal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray-600);padding:0;line-height:1;">×</button>
@@ -6075,6 +6552,7 @@
       const rb = document.getElementById('resumeBanner');
       if (rb) rb.classList.add('hidden');
       updateSummaryPage();
+      renderStepSidebar();
       trackActivity('nav_click', { destination: 'Claim Summary page' });
     }
 
@@ -6131,8 +6609,51 @@
       localStorage.setItem('ccc_claim_data', JSON.stringify(claimData));
     }
 
+    function renderStepSidebar() {
+      const nav = document.getElementById('cccStepSidebar');
+      if (!nav) return;
+      let html = '';
+      for (let i = 1; i <= 19; i++) {
+        const meta = STEP_META[i];
+        if (!meta) continue;
+        const done = completedSteps.includes(i);
+        const active = currentStep === i;
+        let prefix = '•';
+        if (done) prefix = '✓';
+        else if (active) prefix = '→';
+        const cls = ['ccc-step-nav-item'];
+        if (active) cls.push('active');
+        if (done) cls.push('done');
+        html += `<button type="button" class="${cls.join(' ')}" onclick="goToStep(${i})">${prefix} Step ${i}: ${meta.short}</button>`;
+      }
+      nav.innerHTML = html;
+    }
+
+    function syncPolicyStepCompletionUi() {
+      const expectEl = document.getElementById('policyOutputExpect');
+      const completeEl = document.getElementById('policyCompleteBanner');
+      const outWrap = document.getElementById('policyOutput');
+      const msgEl = document.getElementById('policyCompleteMessage');
+      const recEl = document.getElementById('policyCompleteRecovery');
+      if (!claimData.policyUploaded) {
+        if (expectEl) expectEl.classList.remove('hidden');
+        if (completeEl) completeEl.classList.add('hidden');
+        if (outWrap) outWrap.classList.add('hidden');
+        return;
+      }
+      if (expectEl) expectEl.classList.add('hidden');
+      if (outWrap) outWrap.classList.remove('hidden');
+      if (completeEl) completeEl.classList.remove('hidden');
+      if (msgEl) {
+        msgEl.textContent = 'You have 3 applicable coverages not included by the carrier.';
+      }
+      if (recEl && typeof formatMoneyNav === 'function') {
+        recEl.textContent = formatMoneyNav(calculateTotalRecoverable());
+      }
+    }
+
     function syncRoadmapActiveStep(stepNum) {
-      // Roadmap tiles removed - navigation now via sidebar and step buttons
+      /* Step list updates via renderStepPage → renderStepSidebar */
     }
 
     function updateStepPositionLabel(stepNum) {
@@ -6145,6 +6666,7 @@
       updateOverviewGrid();
       renderStepPage(currentStep);
       syncRoadmapActiveStep(currentStep);
+      syncPolicyStepCompletionUi();
       updateCurrentStepWidget(currentStep);
       updateDoThisNow(currentStep);
       updateSummary();
@@ -6378,13 +6900,20 @@
         // Update journal
         addJournalEntry('Policy analyzed', `Uploaded and analyzed policy: ${policyFile.name}. Coverage: ${parsedPolicy.dwellingCoverage} dwelling, ${parsedPolicy.deductible} deductible.`);
 
-        // Update UI
         processingEl.classList.add('hidden');
         outputEl.classList.remove('hidden');
-        btn.textContent = 'Re-analyze Policy';
+        btn.textContent = 'Re-analyze policy';
         btn.disabled = false;
 
-        // Update global state
+        const expectEl = document.getElementById('policyOutputExpect');
+        if (expectEl) expectEl.classList.add('hidden');
+        const pcb = document.getElementById('policyCompleteBanner');
+        if (pcb) pcb.classList.remove('hidden');
+        const pcm = document.getElementById('policyCompleteMessage');
+        if (pcm) pcm.textContent = 'You have 3 applicable coverages not included by the carrier.';
+        const pcr = document.getElementById('policyCompleteRecovery');
+        if (pcr) pcr.textContent = formatMoneyNav(calculateTotalRecoverable());
+
         updateMoneyBar();
         updateSummaryPage();
         updateAssetBuilder();
@@ -7392,29 +7921,23 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function updateMoneyBar() {
-      // Update insurer offered
       document.getElementById('metricInsurerOffered').textContent =
         `$${claimData.structure.insurerEstimate.toLocaleString()}`;
 
-      // Update structure value
       document.getElementById('metricStructureValue').textContent =
         `$${claimData.structure.userEstimate.toLocaleString()}`;
 
-      // Update contents value
-      document.getElementById('metricContentsValue').textContent =
-        `$${claimData.contents.totalValue.toLocaleString()}`;
-
-      // Update ALE - show daily rate if early, total if data exists
-      const aleDisplay = claimData.ALE.entries.length > 0
-        ? `$${claimData.ALE.total.toLocaleString()}`
-        : `$${Math.round(claimData.ALE.dailyRate) || 132}/day`;
-      document.getElementById('metricALEValue').textContent = aleDisplay;
-
-      // Update total gap
-      const totalGap = (claimData.structure.userEstimate - claimData.structure.insurerEstimate) + 
-                       claimData.contents.totalValue + 
+      const totalGap = (claimData.structure.userEstimate - claimData.structure.insurerEstimate) +
+                       claimData.contents.totalValue +
                        claimData.ALE.total;
       document.getElementById('metricTotalGap').textContent = `$${totalGap.toLocaleString()}`;
+
+      const recEl = document.getElementById('policyCompleteRecovery');
+      if (recEl && claimData.policyUploaded) {
+        recEl.textContent = typeof formatMoneyNav === 'function'
+          ? formatMoneyNav(calculateTotalRecoverable())
+          : `$${calculateTotalRecoverable().toLocaleString()}`;
+      }
     }
 
     function updateSummary() {
@@ -8211,22 +8734,13 @@ Generated using expert claim methodology and structured for carrier review`;
     function renderStepTopbar(stepNum) {
       const phase = getPhaseForStep(stepNum);
       const topbar = document.getElementById('stepTopbar');
-      let dots = '';
-      for (let i = 1; i <= 19; i++) {
-        const cls = completedSteps.includes(i) ? 'done' : (i === stepNum ? 'active' : '');
-        dots += `<div class="mini-dot ${cls}"></div>`;
-      }
       topbar.innerHTML = `
-    <div class="step-breadcrumb">
-      <button type="button" class="step-back-btn" onclick="showOverviewView()">← All Steps</button>
-      <span class="step-breadcrumb-sep">›</span>
-      <span class="step-breadcrumb-phase" style="color:${phase.color}">Phase ${phase.num}: ${phase.name}</span>
-      <span class="step-breadcrumb-sep">›</span>
-      <span class="step-breadcrumb-current">Step ${String(stepNum).padStart(2, '0')}</span>
-    </div>
-    <div class="step-topbar-right">
-      <div class="mini-progress">${dots}</div>
-      <div class="step-position-text">Step <strong>${stepNum}</strong> of 19</div>
+    <div class="step-breadcrumb ccc-step-topbar-simple">
+      <button type="button" class="step-back-btn" onclick="showOverviewView()">All steps</button>
+      <span class="step-breadcrumb-sep">·</span>
+      <span class="step-breadcrumb-phase">Phase ${phase.num}: ${phase.name}</span>
+      <span class="step-breadcrumb-sep">·</span>
+      <span class="step-breadcrumb-current">Step ${stepNum} of 19</span>
     </div>
   `;
     }
@@ -8234,22 +8748,15 @@ Generated using expert claim methodology and structured for carrier review`;
     function renderStepHeader(stepNum) {
       const step = STEP_META[stepNum];
       const phase = getPhaseForStep(stepNum);
-      const tools = stepTools[stepNum] || [];
-      const aiBadge = tools.length > 0 ? `<div class="step-ai-badge">${tools[0].name}</div>` : '';
       const header = document.getElementById('stepHeader');
       header.innerHTML = `
-    <div class="step-header-top">
-      <div class="step-num-badge" style="background:${phase.color}">
-        <div class="snb-word">Step</div>
-        <div class="snb-num">${String(stepNum).padStart(2, '0')}</div>
-      </div>
+    <div class="step-header-top ccc-step-header-clean">
       <div class="step-header-text">
-        <div class="step-phase-eyebrow" style="color:${phase.color}">Phase ${phase.num} · ${phase.name}</div>
+        <div class="step-phase-eyebrow">Phase ${phase.num} · ${phase.name}</div>
         <div class="step-title">${step.title}</div>
         <div class="step-subtitle">${step.subtitle}</div>
         <div class="step-meta-row">
-          ${aiBadge}
-          <div class="step-time-badge">⏱ ${step.time}</div>
+          <div class="step-time-badge">${step.time}</div>
         </div>
       </div>
     </div>
@@ -8309,6 +8816,7 @@ Generated using expert claim methodology and structured for carrier review`;
         if (bar) bar.style.background = color;
       });
       syncResumeBanner();
+      renderStepSidebar();
     }
 
     function syncResumeBanner() {
