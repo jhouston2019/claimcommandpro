@@ -256,20 +256,6 @@
       display: none !important;
     }
 
-    .ccp-main > #view-summary {
-      margin: -24px;
-      width: calc(100% + 48px);
-      flex: 1;
-      min-height: 0;
-    }
-
-    .ccp-main > #view-step {
-      margin: -24px;
-      width: calc(100% + 48px);
-      flex: 1;
-      min-height: 0;
-    }
-
     .summary-page-scroll {
       flex: 1;
       overflow-y: auto;
@@ -3663,49 +3649,141 @@
       font-weight: 700;
     }
 
-    .ccp-layout {
+    .ccc-main-row {
       flex: 1;
       display: flex;
       min-height: 0;
       overflow: hidden;
     }
 
-    .ccp-sidebar {
+    .ccc-sidebar {
       width: 260px;
+      flex-shrink: 0;
       background: #0f172a;
-      color: #e5e7eb;
-      padding: 16px;
+      border-right: 1px solid #1e293b;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      flex-shrink: 0;
       min-height: 0;
       overflow: hidden;
+      padding: 16px;
       box-sizing: border-box;
-      border-right: 1px solid #1e293b;
     }
 
-    .ccp-sb-title {
-      font-size: 13px;
+    .ccc-sb-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      min-height: 0;
+      gap: 24px;
+    }
+
+    .ccc-sb-section-top {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      gap: 24px;
+    }
+
+    .ccc-sb-value-anchor {
+      flex-shrink: 0;
+    }
+
+    .ccc-sb-brand {
+      font-size: 12px;
       font-weight: 700;
       color: #e5e7eb;
       letter-spacing: 0.02em;
-      flex-shrink: 0;
+      margin-bottom: 12px;
     }
 
-    .ccp-sb-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow-y: auto;
+    .ccc-sb-gap-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+
+    .ccc-sb-gap-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #22c55e;
+      line-height: 1.2;
+    }
+
+    .ccc-sb-steps-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+    }
+
+    .ccc-sb-steps {
       flex: 1;
       min-height: 0;
-      margin: 0;
-      padding: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .ccp-step-item {
-      display: block;
+    .ccc-sb-section-bottom {
+      flex-shrink: 0;
+      padding-top: 16px;
+      border-top: 1px solid #1e293b;
+    }
+
+    .ccc-sb-next-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .ccc-sb-next-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .ccc-sb-continue {
+      width: 100%;
+      padding: 11px 14px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .ccc-sb-continue:hover {
+      background: #1d4ed8;
+    }
+
+    .ccc-views-stack {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: #f7f7f8;
+    }
+
+    .ccc-step-nav-item.ccc-sb-step-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       width: 100%;
       text-align: left;
       padding: 10px 12px;
@@ -3714,255 +3792,76 @@
       border-radius: 6px;
       background: transparent;
       font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
       font-family: inherit;
       line-height: 1.35;
-      cursor: pointer;
-      color: #6b7280;
       box-sizing: border-box;
     }
 
-    .ccp-step-item:hover:not(.active) {
+    .ccc-sb-step-left {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .ccc-sb-step-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ccc-sb-step-prefix {
+      flex-shrink: 0;
+    }
+
+    .ccc-sb-step-num {
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+
+    .ccc-sb-step-title {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .ccc-sb-step-right {
+      flex-shrink: 0;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .ccc-sb-val-money {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    .ccc-sb-val-pending {
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .ccc-step-nav-item.ccc-sb-step-row:hover:not(.active) {
       background: rgba(255, 255, 255, 0.06);
     }
 
-    .ccp-step-item.done {
-      color: #9ca3af;
-    }
-
-    .ccp-step-item.upcoming {
-      color: #6b7280;
-    }
-
-    .ccp-step-item.active {
+    .ccc-step-nav-item.ccc-sb-step-row.active {
       background: #1e3a8a;
       border-left-color: #3b82f6;
       color: #ffffff;
       font-weight: 600;
     }
 
-    .ccp-main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      overflow: hidden;
-      background: #ffffff;
-      padding: 24px;
-      box-sizing: border-box;
+    .ccc-step-nav-item.ccc-sb-step-row.active:hover {
+      background: #1e40af;
     }
 
-    .ccp-main > .view {
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .ccp-main > .view.hidden {
-      display: none !important;
-    }
-
-    .ccp-work-view {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    .ccp-work-scroll {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 0 24px 8px;
-      box-sizing: border-box;
-    }
-
-    #view-overview.ccp-overview-retired {
-      display: none !important;
-    }
-
-    .ccp-sec-status.metric-strip {
-      flex-shrink: 0;
-      margin-left: -24px;
-      margin-right: -24px;
-      width: calc(100% + 48px);
-    }
-
-    .ccp-status-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-start;
-      text-align: left;
-      gap: 4px 10px;
-    }
-
-    .ccp-gap-value,
-    .metric-strip .metric-gap-amount.ccp-gap-value {
-      color: #16a34a !important;
-      font-weight: 700 !important;
-      font-size: 1.25rem !important;
-    }
-
-    .ccp-gap-label {
-      color: #111827;
-    }
-
-    .ccp-sec-status .metric-gap-emphasis.ccp-gap-label {
-      color: #111827;
-    }
-
-    .ccp-sec {
-      padding: 0;
-      margin-top: 20px;
-    }
-
-    .ccp-sec-status {
-      padding: 16px 24px !important;
-    }
-
-    .ccp-sec-next {
-      margin: 24px 0 0;
-      padding: 20px;
-      background: #eff6ff;
-      border: 1px solid #dbeafe;
-      border-left: 4px solid #3b82f6;
-      border-radius: 8px;
-    }
-
-    .ccp-next-title-line {
-      font-size: 18px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 10px;
-      line-height: 1.3;
-    }
-
-    .ccp-next-why {
-      margin: 0 0 16px;
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.5;
-    }
-
-    .ccp-next-primary-mount .step-action-button,
-    .ccp-next-primary-mount .step-complete-btn {
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .ccp-sec-h {
-      margin: 0 0 12px;
-      font-size: 15px;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .ccp-checklist {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .ccp-check-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid #f3f4f6;
-      font-size: 14px;
-      color: #4b5563;
-    }
-
-    .ccp-ci-icon {
-      flex-shrink: 0;
-      width: 1.25em;
-    }
-
-    .ccp-check-item.ok .ccp-ci-icon {
-      color: #16a34a;
-    }
-
-    .ccp-check-item:not(.ok) .ccp-ci-icon {
+    .ccc-step-nav-item.ccc-sb-step-row.done {
       color: #9ca3af;
     }
 
-    .ccp-bullet-list,
-    .ccp-money-list {
-      margin: 0;
-      padding-left: 1.15rem;
-      color: #4b5563;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .ccp-money-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .ccp-money-list li {
-      padding: 6px 0;
-    }
-
-    .ccp-money-val {
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .ccp-money-k {
-      color: #4b5563;
-    }
-
-    .ccp-step-main {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      margin: 24px 0 32px;
-      overflow: hidden;
-    }
-
-    .ccp-step-main .step-main-workspace {
-      background: #ffffff;
-      padding: 16px 20px 24px;
-    }
-
-    .ccp-step-context {
-      padding: 16px 20px;
-      border-bottom: 1px solid #f3f4f6;
-      background: #fafafa;
-    }
-
-    .ccp-context-label {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .ccc-step-nav-item.ccc-sb-step-row.upcoming {
       color: #6b7280;
-      margin-bottom: 8px;
-    }
-
-    .ccp-context-list {
-      margin: 0;
-      padding-left: 1.2rem;
-      color: #4b5563;
-      font-size: 14px;
-      line-height: 1.55;
-    }
-
-    .ccp-work-view .ccc-accordion-head {
-      display: none !important;
-    }
-
-    .ccp-work-view .ccc-accordion-item:not(.is-active) .ccc-accordion-body {
-      display: none !important;
-    }
-
-    .ccp-work-view .ccc-start-here-bar {
-      display: none !important;
     }
 
     .tile-ai {
@@ -4539,10 +4438,22 @@
 
   <!-- Main Layout -->
   <div class="main-layout" id="main-layout">
-    <div class="ccp-layout">
-    <aside class="ccp-sidebar" id="cccStepSidebar" aria-label="Claim steps"></aside>
-    <main class="ccp-main">
-    <div id="view-overview" class="view hidden ccp-overview-retired" aria-hidden="true">
+    <div class="metric-strip metric-strip-inline" role="region" aria-label="Claim financial snapshot">
+      <div class="metric-inline-inner">
+        <span class="metric-inline-muted">Insurer Offered:</span>
+        <span class="metric-inline-val" id="metricInsurerOffered">$0</span>
+        <span class="metric-inline-sep" aria-hidden="true">|</span>
+        <span class="metric-inline-muted">Your Estimate:</span>
+        <span class="metric-inline-val" id="metricStructureValue">$0</span>
+        <span class="metric-inline-sep" aria-hidden="true">|</span>
+        <strong class="metric-gap-emphasis">Recoverable Gap:</strong>
+        <span class="metric-inline-val metric-gap-amount" id="metricTotalGap">$0</span>
+      </div>
+    </div>
+    <div class="ccc-main-row">
+    <aside class="ccc-sidebar" id="cccStepSidebar" aria-label="Claim steps"></aside>
+    <div class="ccc-views-stack">
+    <div id="view-overview" class="view">
       <div class="resume-banner hidden" id="resumeBanner">
         <div class="resume-icon">▶</div>
         <div class="resume-content">
@@ -4920,42 +4831,10 @@
     </div>
       </div>
     </div>
-    <div id="view-step" class="view ccp-work-view">
-    <div class="ccp-work-scroll">
-    <section class="metric-strip metric-strip-inline ccp-sec-status" role="region" aria-label="Claim financial snapshot">
-      <div class="metric-inline-inner ccp-status-row">
-        <span class="metric-inline-muted">Insurer Offered:</span>
-        <span class="metric-inline-val" id="metricInsurerOffered">$0</span>
-        <span class="metric-inline-sep" aria-hidden="true">|</span>
-        <span class="metric-inline-muted">Your Estimated Value:</span>
-        <span class="metric-inline-val" id="metricStructureValue">$0</span>
-        <span class="metric-inline-sep" aria-hidden="true">|</span>
-        <strong class="metric-gap-emphasis ccp-gap-label">Recoverable Gap:</strong>
-        <span class="metric-inline-val metric-gap-amount ccp-gap-value" id="metricTotalGap">$0</span>
-      </div>
-    </section>
-    <section class="ccp-sec ccp-sec-next" id="ccpSecNext" aria-label="Primary next action">
-      <div class="ccp-next-title-line">Next Step: <span id="ccpNextTitle"></span></div>
-      <p class="ccp-next-why" id="ccpNextWhy"></p>
-      <div id="ccpNextPrimaryMount" class="ccp-next-primary-mount"></div>
-    </section>
-    <section class="ccp-sec ccp-sec-checklist" id="ccpSecChecklist">
-      <h3 class="ccp-sec-h">Claim file checklist</h3>
-      <ul class="ccp-checklist" id="ccpChecklistList"></ul>
-    </section>
-    <section class="ccp-sec ccp-sec-findings" id="ccpSecFindings">
-      <h3 class="ccp-sec-h">Findings So Far</h3>
-      <ul class="ccp-bullet-list" id="ccpFindingsList"></ul>
-    </section>
-    <section class="ccp-sec ccp-sec-money" id="ccpSecMoney">
-      <h3 class="ccp-sec-h">Potential Recovery Identified</h3>
-      <ul class="ccp-money-list" id="ccpMoneyList"></ul>
-    </section>
-    <section class="ccp-sec ccp-sec-active">
-    <main class="step-main ccp-step-main" id="stepMain">
+    <div id="view-step" class="view hidden">
+    <main class="step-main" id="stepMain">
       <div class="step-topbar" id="stepTopbar"></div>
       <div class="step-header" id="stepHeader"></div>
-      <div id="ccpStepContext" class="ccp-step-context" aria-live="polite"></div>
       <div class="step-main-workspace" id="stepWorkspace">
         <div id="step-workspace-1" class="step-workspace-content hidden">
           <div class="step-body">
@@ -6456,8 +6335,6 @@
         </button>
       </div>
     </main>
-    </section>
-    </div>
     </div>
 
     <div id="view-summary" class="view hidden">
@@ -6555,7 +6432,7 @@
         </div>
       </div>
     </div>
-    </main>
+    </div>
     </div>
 
     <!-- Claim Activity Log Panel (Overlay) -->
@@ -7128,118 +7005,40 @@
       localStorage.setItem('ccc_claim_data', JSON.stringify(claimData));
     }
 
-    function renderCcpStepContext(stepNum) {
-      const el = document.getElementById('ccpStepContext');
-      if (!el) return;
-      const m = STEP_META[stepNum];
-      if (!m) {
-        el.innerHTML = '';
-        return;
+    function formatSidebarStepValueIndicator(stepNum) {
+      if (!claimData.meta || !claimData.meta.stepValueMap) {
+        return '<span class="ccc-sb-val-pending">Pending</span>';
       }
-      const raw = String(m.subtitle || '');
-      const parts = raw.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
-      const chunks = parts.length ? parts : [raw];
-      const items = chunks.map((p) => '<li>' + escapeHtml(p) + '</li>').join('');
-      el.innerHTML =
-        '<div class="ccp-context-head">' +
-        '<div class="ccp-context-label">What this step does</div>' +
-        '<ul class="ccp-context-list">' + items + '</ul>' +
-        '</div>';
+      if (!Object.prototype.hasOwnProperty.call(claimData.meta.stepValueMap, stepNum)) {
+        return '<span class="ccc-sb-val-pending">Pending</span>';
+      }
+      const raw = claimData.meta.stepValueMap[stepNum];
+      if (raw == null || (typeof raw === 'number' && Number.isNaN(raw))) {
+        return '<span class="ccc-sb-val-pending">Pending</span>';
+      }
+      if (typeof raw === 'number') {
+        const amt = typeof formatMoneyNav === 'function' ? formatMoneyNav(raw) : ('$' + Number(raw).toLocaleString());
+        return '<span class="ccc-sb-val-money">+' + amt + '</span>';
+      }
+      return '<span class="ccc-sb-val-pending">Pending</span>';
     }
 
-    function renderCcpNextBlock(stepNum) {
-      const titleEl = document.getElementById('ccpNextTitle');
-      const whyEl = document.getElementById('ccpNextWhy');
-      const m = STEP_META[stepNum];
-      if (titleEl && m) titleEl.textContent = m.title;
-      if (whyEl && m) whyEl.textContent = 'Why this matters: ' + m.subtitle;
-    }
-
-    function renderCcpNextPrimaryMount() {
-      const host = document.getElementById('ccpNextPrimaryMount');
-      if (!host) return;
-      host.innerHTML = '';
-      const body = document.getElementById('ccc-acc-body-' + currentStep);
-      let src = null;
-      if (body) {
-        src = body.querySelector('.step-action-button:not(.secondary)') || body.querySelector('.step-action-button');
+    function getSidebarContinueTarget() {
+      for (let i = currentStep; i <= 19; i++) {
+        if (!completedSteps.includes(i)) return i;
       }
-      if (!src) {
-        const footer = document.getElementById('stepFooterNav');
-        if (footer) {
-          src = footer.querySelector('.step-complete-btn:not(.already-done)') || footer.querySelector('.step-complete-btn');
-        }
-      }
-      if (src && !src.disabled) {
-        host.appendChild(src.cloneNode(true));
-      }
-    }
-
-    function ccpChecklistRow(ok, label) {
-      const icon = ok ? '\u2714' : '\u2716';
-      const cls = ok ? ' ok' : '';
-      return '<li class="ccp-check-item' + cls + '"><span class="ccp-ci-icon" aria-hidden="true">' + icon + '</span> ' + escapeHtml(label) + '</li>';
-    }
-
-    function updateCcpInsightPanels() {
-      const list = document.getElementById('ccpChecklistList');
-      if (list) {
-        const photosOk = Array.isArray(claimData.damagePhotos) && claimData.damagePhotos.length > 0;
-        const policyOk = !!claimData.policyUploaded;
-        const estOk = claimData.estimateUploaded === true || (claimData.structure && claimData.structure.insurerEstimate > 0);
-        const contentsOk = !!(claimData.contents.items && claimData.contents.items.length > 0);
-        list.innerHTML = [
-          ccpChecklistRow(policyOk, 'Policy uploaded'),
-          ccpChecklistRow(estOk, 'Carrier estimate on file'),
-          ccpChecklistRow(contentsOk, 'Contents inventory captured'),
-          ccpChecklistRow(photosOk, 'Damage photos uploaded')
-        ].join('');
-      }
-      const findings = document.getElementById('ccpFindingsList');
-      if (findings) {
-        const bullets = [];
-        const mi = document.getElementById('missingItems');
-        if (mi) {
-          const t = (mi.textContent || '').trim();
-          if (t) bullets.push(t);
-        }
-        const ms = document.getElementById('missingScope');
-        if (ms) {
-          const t = (ms.textContent || '').trim();
-          if (t) bullets.push(t);
-        }
-        if (bullets.length === 0) {
-          findings.innerHTML = '<li>Missing line items</li><li>Coverage gaps</li><li>Pricing issues</li>';
-        } else {
-          findings.innerHTML = bullets.slice(0, 5).map((b) => '<li>' + escapeHtml(b) + '</li>').join('');
-        }
-      }
-      const money = document.getElementById('ccpMoneyList');
-      if (money) {
-        let polTxt = '\u2014';
-        const m2 = claimData.meta && claimData.meta.stepValueMap && claimData.meta.stepValueMap[2];
-        if (m2 != null && !Number.isNaN(Number(m2)) && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(m2);
-          polTxt = v + '\u2013' + v;
-        }
-        let estTxt = '\u2014';
-        const g = claimData.claimGap != null ? Number(claimData.claimGap) : NaN;
-        if (!Number.isNaN(g) && g !== 0 && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(g);
-          estTxt = v + '\u2013' + v;
-        } else if (claimData.meta && claimData.meta.stepValueMap && claimData.meta.stepValueMap[9] != null && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(claimData.meta.stepValueMap[9]);
-          estTxt = v + '\u2013' + v;
-        }
-        money.innerHTML =
-          '<li><span class="ccp-money-k">Policy gaps: </span><span class="ccp-money-val">' + polTxt + '</span></li>' +
-          '<li><span class="ccp-money-k">Estimate deficiencies: </span><span class="ccp-money-val">' + estTxt + '</span></li>';
-      }
+      return 19;
     }
 
     function renderStepSidebar() {
       const nav = document.getElementById('cccStepSidebar');
       if (!nav) return;
+      const gapNum = typeof calculateTotalRecoverable === 'function' ? calculateTotalRecoverable() : 0;
+      const gapDisplay = '$' + Number(gapNum).toLocaleString();
+      const nextTarget = getSidebarContinueTarget();
+      const nextMeta = STEP_META[nextTarget];
+      const nextName = nextMeta ? nextMeta.short : ('Step ' + nextTarget);
+
       let stepsHtml = '';
       for (let i = 1; i <= 19; i++) {
         const meta = STEP_META[i];
@@ -7248,13 +7047,33 @@
         const active = currentStep === i;
         let prefix = '';
         if (done) prefix = '\u2713 ';
-        const cls = ['ccp-step-item'];
+        else if (active) prefix = '\u2192 ';
+        const cls = ['ccc-step-nav-item', 'ccc-sb-step-row'];
         if (active) cls.push('active');
         if (done) cls.push('done');
         if (!done && !active) cls.push('upcoming');
-        stepsHtml += `<button type="button" class="${cls.join(' ')}" onclick="goToStep(${i})">${prefix}${escapeHtml(meta.short)}</button>`;
+        const valInd = formatSidebarStepValueIndicator(i);
+        stepsHtml += `<button type="button" class="${cls.join(' ')}" onclick="goToStep(${i})"><span class="ccc-sb-step-left"><span class="ccc-sb-step-line"><span class="ccc-sb-step-prefix">${prefix}</span><span class="ccc-sb-step-num">${i}</span><span class="ccc-sb-step-title">${meta.short}</span></span></span><span class="ccc-sb-step-right">${valInd}</span></button>`;
       }
-      nav.innerHTML = '<div class="ccp-sb-title">Your Claim Process</div><nav class="ccp-sb-steps" aria-label="Steps">' + stepsHtml + '</nav>';
+
+      nav.innerHTML = `
+        <div class="ccc-sb-inner">
+          <div class="ccc-sb-section ccc-sb-section-top">
+            <div class="ccc-sb-value-anchor">
+              <div class="ccc-sb-brand">Claim Command Center</div>
+              <div class="ccc-sb-gap-label">Recoverable Gap</div>
+              <div class="ccc-sb-gap-value" id="cccSidebarGapValue">${gapDisplay}</div>
+            </div>
+            <div class="ccc-sb-steps-label">Step progress</div>
+            <div class="ccc-sb-steps">${stepsHtml}</div>
+          </div>
+          <div class="ccc-sb-section ccc-sb-section-bottom">
+            <div class="ccc-sb-next-label">Next Step</div>
+            <div class="ccc-sb-next-name">${nextName}</div>
+            <button type="button" class="ccc-sb-continue" onclick="goToStep(${nextTarget})">Continue</button>
+          </div>
+        </div>
+      `;
     }
 
     function syncPolicyStepCompletionUi() {
@@ -8560,6 +8379,9 @@ Generated using expert claim methodology and structured for carrier review`;
                        claimData.ALE.total;
       document.getElementById('metricTotalGap').textContent = `$${totalGap.toLocaleString()}`;
 
+      const sidebarGapEl = document.getElementById('cccSidebarGapValue');
+      if (sidebarGapEl) sidebarGapEl.textContent = `$${totalGap.toLocaleString()}`;
+
       const recEl = document.getElementById('policyCompleteRecovery');
       if (recEl && claimData.policyUploaded) {
         recEl.textContent = typeof formatMoneyNav === 'function'
@@ -8581,8 +8403,6 @@ Generated using expert claim methodology and structured for carrier review`;
 
       // Update progress tracker
       updateProgressTracker();
-
-      updateCcpInsightPanels();
     }
 
     // Update action summary text
@@ -9412,17 +9232,19 @@ Generated using expert claim methodology and structured for carrier review`;
     function showOverviewView() {
       window._currentViewId = 'overview';
       const ms = document.querySelector('.metric-strip');
-      if (ms) ms.style.display = 'flex';
+      if (ms) ms.style.display = 'none';
       document.getElementById('view-summary').classList.add('hidden');
-      document.getElementById('view-step').classList.remove('hidden');
-      document.getElementById('view-overview').classList.add('hidden');
+      document.getElementById('view-step').classList.add('hidden');
+      document.getElementById('view-overview').classList.remove('hidden');
       const btn = document.getElementById('overviewToggleBtn');
-      if (btn) btn.classList.remove('active');
+      if (btn) btn.classList.add('active');
       updateOverviewGrid();
     }
 
     function toggleOverview() {
-      showStepView();
+      const overview = document.getElementById('view-overview');
+      if (overview.classList.contains('hidden')) showOverviewView();
+      else showStepView();
     }
 
     function resumeCurrentStep() {
@@ -9437,10 +9259,6 @@ Generated using expert claim methodology and structured for carrier review`;
       renderStepWorkspace(stepNum);
       syncAccordionUI(stepNum);
       renderStepFooter(stepNum);
-      renderCcpStepContext(stepNum);
-      renderCcpNextBlock(stepNum);
-      renderCcpNextPrimaryMount();
-      updateCcpInsightPanels();
       renderStepSidebar();
     }
 
