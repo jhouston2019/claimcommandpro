@@ -302,7 +302,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--teal);
+      color: #6b7280;
       margin-bottom: 6px;
     }
 
@@ -341,7 +341,7 @@
       font-family: 'DM Serif Display', serif;
       font-size: 56px;
       font-weight: 900;
-      color: var(--crimson);
+      color: #16a34a;
       line-height: 1;
       margin-bottom: 8px;
     }
@@ -387,9 +387,11 @@
       color: var(--gray-400);
     }
 
-    .summary-stat-card.accent-blue .summary-stat-value { color: #3b82f6; }
-    .summary-stat-card.accent-purple .summary-stat-value { color: #a855f7; }
-    .summary-stat-card.accent-orange .summary-stat-value { color: var(--orange); }
+    .summary-stat-card.accent-blue .summary-stat-value,
+    .summary-stat-card.accent-purple .summary-stat-value,
+    .summary-stat-card.accent-orange .summary-stat-value {
+      color: #111827;
+    }
 
     .summary-section-title {
       font-size: 13px;
@@ -417,9 +419,11 @@
       border-top: 3px solid var(--gray-200);
     }
 
-    .summary-breakdown-card.accent-blue { border-top-color: #3b82f6; }
-    .summary-breakdown-card.accent-purple { border-top-color: #a855f7; }
-    .summary-breakdown-card.accent-orange { border-top-color: var(--orange); }
+    .summary-breakdown-card.accent-blue,
+    .summary-breakdown-card.accent-purple,
+    .summary-breakdown-card.accent-orange {
+      border-top-color: #e5e7eb;
+    }
 
     .summary-breakdown-heading {
       font-size: 12px;
@@ -1331,7 +1335,7 @@
 
     .step-action-button {
       padding: 12px 24px;
-      background: var(--teal);
+      background: #111827;
       color: white;
       border: none;
       border-radius: 6px;
@@ -1342,8 +1346,8 @@
     }
 
     .step-action-button:hover {
-      background: var(--teal-dark);
-      transform: translateY(-1px);
+      background: #030712;
+      transform: none;
     }
 
     .step-action-button:disabled {
@@ -1354,12 +1358,12 @@
 
     .step-action-button.secondary {
       background: white;
-      color: var(--teal);
-      border: 1px solid var(--teal);
+      color: #111827;
+      border: 1px solid #e5e7eb;
     }
 
     .step-action-button.secondary:hover {
-      background: rgba(20,184,166,0.05);
+      background: #f9fafb;
     }
 
     .processing-indicator {
@@ -1367,8 +1371,8 @@
       align-items: center;
       gap: 12px;
       padding: 16px;
-      background: rgba(20,184,166,0.05);
-      border: 1px solid rgba(20,184,166,0.2);
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
       font-size: 14px;
       color: var(--gray-700);
@@ -1377,8 +1381,8 @@
     .processing-spinner {
       width: 20px;
       height: 20px;
-      border: 3px solid rgba(20,184,166,0.2);
-      border-top-color: var(--teal);
+      border: 3px solid #e5e7eb;
+      border-top-color: #111827;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
@@ -1415,7 +1419,7 @@
     .value-display {
       font-size: 24px;
       font-weight: 700;
-      color: var(--teal);
+      color: #16a34a;
       margin: 16px 0;
     }
 
@@ -2669,7 +2673,7 @@
 
     .complete-button {
       padding: 12px 24px;
-      background: var(--teal);
+      background: #111827;
       color: white;
       border: none;
       border-radius: 8px;
@@ -2680,7 +2684,7 @@
     }
 
     .complete-button:hover {
-      background: var(--teal-dark);
+      background: #030712;
     }
 
     /* Phase Preview */
@@ -2734,6 +2738,7 @@
       flex-direction: column;
       overflow: hidden;
       min-height: 0;
+      background: #f7f7f8;
     }
 
     #view-overview.hidden {
@@ -2788,23 +2793,26 @@
     .step-tile {
       display: flex;
       align-items: stretch;
-      background: white;
-      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: border-color 0.15s, opacity 0.15s;
+      box-shadow: none;
       position: relative;
     }
 
     .step-tile:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      transform: none;
+      border-color: #d1d5db;
+      box-shadow: none;
     }
 
     .step-tile.current {
-      outline: 2px solid var(--teal);
-      outline-offset: 2px;
+      outline: none;
+      border-color: #111827;
+      box-shadow: none;
     }
 
     .step-tile.done {
@@ -2823,7 +2831,7 @@
       left: 7px;
       width: 18px;
       height: 18px;
-      background: var(--emerald);
+      background: #6b7280;
       border-radius: 50%;
       align-items: center;
       justify-content: center;
@@ -2851,23 +2859,23 @@
 
     .tile-body {
       flex: 1;
-      padding: 12px 14px;
+      padding: 16px 18px;
       min-width: 0;
     }
 
     .tile-title {
-      font-size: 19px;
-      font-weight: 700;
-      color: var(--gray-900);
-      line-height: 1.3;
-      margin-bottom: 3px;
-      text-transform: uppercase;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.35;
+      margin-bottom: 6px;
+      text-transform: none;
     }
 
     .tile-sub {
       font-size: 13px;
-      color: var(--gray-600);
-      line-height: 1.35;
+      color: #6b7280;
+      line-height: 1.45;
     }
 
     .tile-ai {
@@ -2908,45 +2916,43 @@
     }
 
     .tile-badge-word {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #6b7280;
     }
 
     .tile-badge-num {
-      font-size: 20px;
-      font-weight: 900;
-      color: white;
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
       line-height: 1;
-      font-family: 'DM Serif Display', serif;
+      font-family: 'DM Sans', -apple-system, sans-serif;
     }
 
-    .p1 .tile-badge { background: #14b8a6; }
-    .p2 .tile-badge { background: #10b981; }
-    .p3 .tile-badge { background: #f97316; }
-    .p4 .tile-badge { background: #f59e0b; }
-    .p5 .tile-badge { background: #ef4444; }
+    .p1 .tile-badge,
+    .p2 .tile-badge,
+    .p3 .tile-badge,
+    .p4 .tile-badge,
+    .p5 .tile-badge {
+      background: #f3f4f6;
+    }
 
     .step-grid {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-width: 680px;
-      margin: 0 auto;
+      gap: 12px;
+      max-width: none;
+      margin: 0;
     }
 
     .phase-section {
-      margin-bottom: 28px;
+      margin-bottom: 0;
     }
 
+    .phase-progress-bar,
     .phase-section-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
+      display: none !important;
     }
 
     .phase-pill {
@@ -2997,11 +3003,11 @@
     }
 
     .resume-banner {
-      background: linear-gradient(135deg, rgba(20,184,166,0.15), rgba(20,184,166,0.05));
-      border: 1px solid rgba(20,184,166,0.35);
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0;
       padding: 18px 24px;
-      margin-bottom: 32px;
+      margin-bottom: 0;
       display: flex;
       align-items: center;
       gap: 20px;
@@ -3012,60 +3018,77 @@
       flex-shrink: 0;
       border-radius: 0;
       margin: 0;
-      border-left: none;
-      border-right: none;
-      border-top: none;
-      border-bottom: 1px solid var(--navy-border);
-      padding: 6px 24px;
+      border: none;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 24px;
       max-width: none;
       position: relative;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 0;
+      background: #ffffff;
+      background-image: none;
     }
 
     #view-overview > .resume-banner .resume-icon {
-      position: absolute;
-      left: 24px;
-      top: 50%;
-      transform: translateY(-50%);
+      position: static;
+      left: auto;
+      top: auto;
+      transform: none;
       width: 32px;
       height: 32px;
       font-size: 14px;
       border-radius: 8px;
+      background: #f3f4f6;
+      color: #111827;
     }
 
     #view-overview > .resume-banner .resume-content {
-      flex: none;
-      text-align: center;
-      max-width: min(520px, calc(100% - 200px));
-      padding: 0 8px;
+      flex: 1;
+      text-align: left;
+      max-width: none;
+      padding: 0 12px 0 12px;
     }
 
     #view-overview > .resume-banner .resume-label {
       margin-bottom: 2px;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     #view-overview > .resume-banner .resume-title {
-      font-size: 15px;
-      margin-bottom: 1px;
-      line-height: 1.25;
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      font-size: 14px;
+      margin-bottom: 2px;
+      line-height: 1.3;
+      color: #111827;
     }
 
     #view-overview > .resume-banner .resume-sub {
       font-size: 12px;
       line-height: 1.3;
+      color: #6b7280;
     }
 
     #view-overview > .resume-banner .resume-btn {
-      position: absolute;
-      right: 24px;
-      top: 50%;
-      transform: translateY(-50%);
-      padding: 6px 16px;
+      position: static;
+      right: auto;
+      top: auto;
+      transform: none;
+      padding: 8px 16px;
       font-size: 13px;
+      background: #111827;
+      color: #ffffff;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    #view-overview > .resume-banner .resume-btn:hover {
+      background: #030712;
     }
 
     .resume-banner.hidden {
@@ -3129,13 +3152,13 @@
     .overview-scroll {
       flex: 1;
       overflow-y: auto;
-      background: var(--navy);
+      background: #f7f7f8;
     }
 
     .overview-inner {
-      max-width: 1200px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 16px 40px 30px;
+      padding: 20px 24px 48px;
     }
 
     .overview-eyebrow {
@@ -3148,35 +3171,38 @@
     }
 
     .overview-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 30px;
-      color: white;
-      margin-bottom: 4px;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 6px;
     }
 
     .overview-sub {
       font-size: 14px;
-      color: var(--gray-400);
+      color: #6b7280;
       margin-bottom: 0;
+      line-height: 1.5;
     }
 
     .overview-page-head {
-      text-align: center;
-      max-width: 640px;
-      margin: 0 auto 18px;
+      text-align: left;
+      max-width: none;
+      margin: 0 0 16px 0;
     }
 
     .overview-page-head .overview-title {
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      font-size: clamp(12px, 1.6vw, 22px);
-      margin-bottom: 7px;
-      line-height: 1.25;
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 15px;
+      margin-bottom: 6px;
+      line-height: 1.35;
+      color: #111827;
     }
 
     .overview-page-head .overview-sub {
-      line-height: 1.45;
-      color: var(--gray-400);
+      line-height: 1.5;
+      color: #6b7280;
     }
 
     .step-back-btn {
@@ -3197,9 +3223,9 @@
     }
 
     .step-back-btn:hover {
-      border-color: var(--teal);
-      color: var(--teal);
-      background: var(--teal-dim);
+      border-color: #d1d5db;
+      color: #111827;
+      background: #f9fafb;
     }
 
     .step-topbar {
@@ -3221,7 +3247,7 @@
     }
 
     .step-breadcrumb a {
-      color: var(--teal);
+      color: #111827;
       font-weight: 600;
       cursor: pointer;
       text-decoration: none;
@@ -3229,6 +3255,7 @@
 
     .step-breadcrumb a:hover {
       text-decoration: underline;
+      color: #374151;
     }
 
     .step-breadcrumb-sep {
@@ -3502,7 +3529,7 @@
 
     .step-complete-btn {
       margin-left: auto;
-      background: var(--teal);
+      background: #111827;
       color: white;
       border: none;
       border-radius: 8px;
@@ -3515,16 +3542,16 @@
       align-items: center;
       gap: 8px;
       transition: all 0.15s;
-      box-shadow: 0 2px 10px rgba(20,184,166,0.25);
+      box-shadow: none;
     }
 
     .step-complete-btn:hover {
-      background: var(--teal-dark);
-      transform: translateY(-1px);
+      background: #030712;
+      transform: none;
     }
 
     .step-complete-btn.already-done {
-      background: var(--emerald);
+      background: #6b7280;
       cursor: default;
     }
 
@@ -3565,8 +3592,8 @@
     }
 
     .nav-pill.active {
-      color: #0f766e;
-      border-bottom-color: #0f766e;
+      color: #111827;
+      border-bottom-color: #111827;
     }
 
     .overview-toggle-btn {
@@ -3644,6 +3671,7 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
+      background: #f7f7f8;
     }
 
     .ccc-step-nav-item {
@@ -3685,18 +3713,24 @@
     }
 
     .step-tile {
-      box-shadow: none;
-      border: 1px solid #e5e7eb;
+      box-shadow: none !important;
+      border: 1px solid #e5e7eb !important;
     }
 
     .step-tile:hover {
-      transform: none;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .step-tile.current {
+      border-color: #2563eb !important;
+      outline: none !important;
     }
 
     .tile-title {
       text-transform: none;
-      font-size: 16px;
+      font-size: 15px;
+      font-weight: 600;
     }
 
     .ai-powered-note {
@@ -3768,27 +3802,23 @@
       border-top: 1px solid #e5e7eb;
     }
 
-    .step-complete-btn {
-      box-shadow: none;
-      background: #0f766e;
-    }
-
-    .step-complete-btn:hover {
-      transform: none;
-    }
-
     .next-step-banner {
       border-top: 1px solid #e5e7eb;
       box-shadow: none;
     }
 
     .next-step-icon {
-      background: #16a34a;
+      background: #e5e7eb;
+      color: #111827;
       box-shadow: none;
     }
 
     .next-step-button {
-      background: #0f766e;
+      background: #111827;
+    }
+
+    .next-step-button:hover {
+      background: #030712;
     }
 
     .ccc-exec-panel {
@@ -3966,11 +3996,11 @@
       width: auto;
       flex: 1;
       min-width: 180px;
-      background: #0f766e;
+      background: #111827;
     }
 
     .policy-complete-panel-actions .ccc-btn-secondary-tone:hover {
-      background: #0d9488;
+      background: #030712;
     }
 
     .ccc-step1-reference {
@@ -4008,6 +4038,246 @@
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       box-shadow: none;
+    }
+
+    /* Guided execution: accordion + sidebar + primary blue */
+    .ccc-sidebar {
+      width: 260px;
+      padding: 16px;
+    }
+
+    .ccc-sidebar-head {
+      font-size: 13px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .ccc-step-nav-item {
+      border-radius: 6px;
+      margin-bottom: 2px;
+    }
+
+    .ccc-step-nav-item.upcoming {
+      color: #9ca3af;
+    }
+
+    .ccc-step-nav-item.done {
+      color: #6b7280;
+    }
+
+    .ccc-step-nav-item.active {
+      background: #eff6ff;
+      border-left: 3px solid #2563eb;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .step-main-workspace {
+      padding: 16px 20px 24px;
+    }
+
+    .ccc-start-here-bar {
+      margin-bottom: 20px;
+    }
+
+    .ccc-start-here-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .ccc-start-here-line {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .ccc-btn-primary {
+      min-height: 44px;
+      padding: 0 20px;
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .ccc-btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .ccc-step-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .ccc-accordion-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .ccc-accordion-item.is-active {
+      border-color: #bfdbfe;
+      box-shadow: 0 1px 2px rgba(37, 99, 235, 0.06);
+    }
+
+    .ccc-accordion-head {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px;
+      border: none;
+      background: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      color: #9ca3af;
+      border-left: 3px solid transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .ccc-accordion-item.is-done .ccc-accordion-head {
+      color: #6b7280;
+    }
+
+    .ccc-accordion-item.is-upcoming .ccc-accordion-head {
+      color: #9ca3af;
+    }
+
+    .ccc-accordion-item.is-active .ccc-accordion-head {
+      background: #eff6ff;
+      border-left-color: #2563eb;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .ccc-accordion-head:hover {
+      background: #f9fafb;
+    }
+
+    .ccc-accordion-item.is-active .ccc-accordion-head:hover {
+      background: #eff6ff;
+    }
+
+    .ccc-accordion-head-text {
+      display: block;
+      width: 100%;
+    }
+
+    .ccc-accordion-body {
+      display: none;
+      border-top: 1px solid #e5e7eb;
+      padding: 0 16px 20px;
+      background: #fafafa;
+    }
+
+    .ccc-accordion-body.is-expanded {
+      display: block;
+    }
+
+    .ccc-accordion-body .step-workspace-content {
+      background: transparent;
+    }
+
+    .ccc-accordion-body .step-body {
+      padding-top: 16px;
+    }
+
+    .step-action-button {
+      background: #2563eb !important;
+    }
+
+    .step-action-button:hover {
+      background: #1d4ed8 !important;
+    }
+
+    .step-action-button.secondary {
+      background: #ffffff !important;
+      color: #111827 !important;
+      border: 1px solid #e5e7eb !important;
+    }
+
+    .step-action-button.secondary:hover {
+      background: #f9fafb !important;
+    }
+
+    .step-complete-btn {
+      background: #2563eb !important;
+    }
+
+    .step-complete-btn:hover {
+      background: #1d4ed8 !important;
+    }
+
+    .step-complete-btn.already-done {
+      background: #6b7280 !important;
+    }
+
+    .step-complete-btn.already-done:hover {
+      background: #6b7280 !important;
+    }
+
+    .complete-button {
+      background: #2563eb !important;
+    }
+
+    .complete-button:hover {
+      background: #1d4ed8 !important;
+    }
+
+    .next-step-button {
+      background: #2563eb !important;
+    }
+
+    .next-step-button:hover {
+      background: #1d4ed8 !important;
+    }
+
+    .policy-complete-panel-actions .ccc-btn-secondary-tone {
+      background: #2563eb !important;
+    }
+
+    .policy-complete-panel-actions .ccc-btn-secondary-tone:hover {
+      background: #1d4ed8 !important;
+    }
+
+    .ccc-btn-primary-lg {
+      background: #2563eb !important;
+    }
+
+    .ccc-btn-primary-lg:hover:not(:disabled) {
+      background: #1d4ed8 !important;
+    }
+
+    .nav-pill.active {
+      color: #2563eb !important;
+      border-bottom-color: #2563eb !important;
+    }
+
+    .processing-spinner {
+      border-top-color: #2563eb !important;
     }
 
   </style>
@@ -5060,7 +5330,7 @@
               <div class="policy-complete-panel-recovery-amt" id="policyCompleteRecovery">$0</div>
               <div class="policy-complete-panel-actions">
                 <button type="button" class="ccc-btn-secondary" onclick="document.getElementById('policyOutputDetail').scrollIntoView({ behavior: 'smooth', block: 'start' })">View full breakdown</button>
-                <button type="button" class="ccc-btn-primary-lg ccc-btn-secondary-tone" onclick="goToStep(3)">Continue to Step 3</button>
+                <button type="button" class="ccc-btn-primary-lg ccc-btn-secondary-tone" onclick="goToStep(3)">Continue to next step</button>
               </div>
             </div>
           </div>
@@ -6612,19 +6882,20 @@
     function renderStepSidebar() {
       const nav = document.getElementById('cccStepSidebar');
       if (!nav) return;
-      let html = '';
+      let html = '<div class="ccc-sidebar-head">Claim Progress</div>';
       for (let i = 1; i <= 19; i++) {
         const meta = STEP_META[i];
         if (!meta) continue;
         const done = completedSteps.includes(i);
         const active = currentStep === i;
-        let prefix = '•';
-        if (done) prefix = '✓';
-        else if (active) prefix = '→';
+        let prefix = '\u2022 ';
+        if (done) prefix = '\u2713 ';
+        else if (active) prefix = '\u2192 ';
         const cls = ['ccc-step-nav-item'];
         if (active) cls.push('active');
         if (done) cls.push('done');
-        html += `<button type="button" class="${cls.join(' ')}" onclick="goToStep(${i})">${prefix} Step ${i}: ${meta.short}</button>`;
+        if (!done && !active) cls.push('upcoming');
+        html += `<button type="button" class="${cls.join(' ')}" onclick="goToStep(${i})">${prefix} Step ${i} \u2014 ${meta.short}</button>`;
       }
       nav.innerHTML = html;
     }
@@ -8219,6 +8490,83 @@ Generated using expert claim methodology and structured for carrier review`;
         .replace(/"/g, '&quot;');
     }
 
+    function ensureAccordionShell() {
+      const ws = document.getElementById('stepWorkspace');
+      if (!ws || ws.dataset.accordionReady === '1') return;
+      const panels = Array.from(ws.querySelectorAll(':scope > .step-workspace-content'));
+      if (panels.length === 0) return;
+      while (ws.firstChild) ws.removeChild(ws.firstChild);
+      const startBar = document.createElement('div');
+      startBar.id = 'cccStartHereBar';
+      startBar.className = 'ccc-start-here-bar';
+      const acc = document.createElement('div');
+      acc.id = 'cccStepAccordion';
+      acc.className = 'ccc-step-accordion';
+      ws.appendChild(startBar);
+      ws.appendChild(acc);
+      panels.forEach((panel, idx) => {
+        const n = idx + 1;
+        const item = document.createElement('div');
+        item.className = 'ccc-accordion-item';
+        item.dataset.cccStep = String(n);
+        const head = document.createElement('button');
+        head.type = 'button';
+        head.className = 'ccc-accordion-head';
+        head.setAttribute('onclick', 'goToStep(' + n + ')');
+        const span = document.createElement('span');
+        span.className = 'ccc-accordion-head-text';
+        span.id = 'ccc-acc-label-' + n;
+        head.appendChild(span);
+        const body = document.createElement('div');
+        body.className = 'ccc-accordion-body';
+        body.id = 'ccc-acc-body-' + n;
+        body.appendChild(panel);
+        item.appendChild(head);
+        item.appendChild(body);
+        acc.appendChild(item);
+      });
+      ws.dataset.accordionReady = '1';
+    }
+
+    function syncAccordionUI(stepNum) {
+      ensureAccordionShell();
+      for (let i = 1; i <= 19; i++) {
+        const item = document.querySelector('.ccc-accordion-item[data-ccc-step="' + i + '"]');
+        if (!item) continue;
+        const label = document.getElementById('ccc-acc-label-' + i);
+        const meta = STEP_META[i];
+        if (label && meta) {
+          const done = completedSteps.includes(i);
+          let prefix = '\u2022 ';
+          if (done) prefix = '\u2713 ';
+          else if (i === stepNum) prefix = '\u2192 ';
+          label.textContent = prefix + 'Step ' + i + ' \u2014 ' + meta.short;
+        }
+        const done = completedSteps.includes(i);
+        item.classList.toggle('is-active', i === stepNum);
+        item.classList.toggle('is-done', done);
+        item.classList.toggle('is-upcoming', !done && i !== stepNum);
+        const body = document.getElementById('ccc-acc-body-' + i);
+        if (body) body.classList.toggle('is-expanded', i === stepNum);
+      }
+    }
+
+    function renderStartHereBar() {
+      const el = document.getElementById('cccStartHereBar');
+      if (!el) return;
+      const meta = STEP_META[currentStep];
+      const fresh = completedSteps.length === 0 && !claimData.initial;
+      if (fresh && currentStep === 1 && STEP_META[1]) {
+        const line = 'Start here: Step 1 \u2014 ' + STEP_META[1].short;
+        el.innerHTML = '<div class="ccc-start-here-inner"><p class="ccc-start-here-line">' + escapeHtml(line) + '</p><button type="button" class="ccc-btn-primary" onclick="goToStep(1)">Begin Step 1</button></div>';
+        return;
+      }
+      if (meta) {
+        const line = 'Continue: Step ' + currentStep + ' \u2014 ' + meta.short;
+        el.innerHTML = '<div class="ccc-start-here-inner"><p class="ccc-start-here-line">' + escapeHtml(line) + '</p><button type="button" class="ccc-btn-primary" onclick="goToStep(' + currentStep + ')">Continue</button></div>';
+      }
+    }
+
     function formatMoneyNav(n) {
       if (n == null || Number.isNaN(Number(n))) return '—';
       return '$' + Number(n).toLocaleString();
@@ -8725,20 +9073,21 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function renderStepPage(stepNum) {
+      ensureAccordionShell();
       renderStepTopbar(stepNum);
       renderStepHeader(stepNum);
+      renderStartHereBar();
       renderStepWorkspace(stepNum);
+      syncAccordionUI(stepNum);
       renderStepFooter(stepNum);
+      renderStepSidebar();
     }
 
     function renderStepTopbar(stepNum) {
-      const phase = getPhaseForStep(stepNum);
       const topbar = document.getElementById('stepTopbar');
       topbar.innerHTML = `
     <div class="step-breadcrumb ccc-step-topbar-simple">
       <button type="button" class="step-back-btn" onclick="showOverviewView()">All steps</button>
-      <span class="step-breadcrumb-sep">·</span>
-      <span class="step-breadcrumb-phase">Phase ${phase.num}: ${phase.name}</span>
       <span class="step-breadcrumb-sep">·</span>
       <span class="step-breadcrumb-current">Step ${stepNum} of 19</span>
     </div>
@@ -8747,12 +9096,10 @@ Generated using expert claim methodology and structured for carrier review`;
 
     function renderStepHeader(stepNum) {
       const step = STEP_META[stepNum];
-      const phase = getPhaseForStep(stepNum);
       const header = document.getElementById('stepHeader');
       header.innerHTML = `
     <div class="step-header-top ccc-step-header-clean">
       <div class="step-header-text">
-        <div class="step-phase-eyebrow">Phase ${phase.num} · ${phase.name}</div>
         <div class="step-title">${step.title}</div>
         <div class="step-subtitle">${step.subtitle}</div>
         <div class="step-meta-row">
