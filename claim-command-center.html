@@ -3824,8 +3824,74 @@
       padding: 16px 24px !important;
     }
 
-    .ccp-sec-next {
-      margin: 24px 0 0;
+    .ccp-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 960px) {
+      .ccp-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .left-column,
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .ccp-card-title {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .ccp-card-list {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .ccp-card-list li {
+      margin-bottom: 6px;
+    }
+
+    .ccp-recovery-strong {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    .ccp-act-date {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-right: 6px;
+    }
+
+    .ccp-next-hint {
+      margin: 0;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .ccp-sec-next,
+    .next-step {
+      margin: 0;
       padding: 20px;
       background: #eff6ff;
       border: 1px solid #dbeafe;
@@ -3833,15 +3899,15 @@
       border-radius: 8px;
     }
 
-    .ccp-next-title-line {
+    .ccp-next-heading {
       font-size: 18px;
       font-weight: 700;
       color: #111827;
-      margin-bottom: 10px;
+      margin: 0 0 10px;
       line-height: 1.3;
     }
 
-    .ccp-next-why {
+    .ccp-next-desc {
       margin: 0 0 16px;
       font-size: 14px;
       color: #4b5563;
@@ -3915,6 +3981,10 @@
 
     .ccp-money-k {
       color: #4b5563;
+    }
+
+    .ccp-grid + .ccp-sec-active {
+      margin-top: 8px;
     }
 
     .ccp-step-main {
@@ -4934,23 +5004,41 @@
         <span class="metric-inline-val metric-gap-amount ccp-gap-value" id="metricTotalGap">$0</span>
       </div>
     </section>
-    <section class="ccp-sec ccp-sec-next" id="ccpSecNext" aria-label="Primary next action">
-      <div class="ccp-next-title-line">Next Step: <span id="ccpNextTitle"></span></div>
-      <p class="ccp-next-why" id="ccpNextWhy"></p>
-      <div id="ccpNextPrimaryMount" class="ccp-next-primary-mount"></div>
-    </section>
-    <section class="ccp-sec ccp-sec-checklist" id="ccpSecChecklist">
-      <h3 class="ccp-sec-h">Claim file checklist</h3>
-      <ul class="ccp-checklist" id="ccpChecklistList"></ul>
-    </section>
-    <section class="ccp-sec ccp-sec-findings" id="ccpSecFindings">
-      <h3 class="ccp-sec-h">Findings So Far</h3>
-      <ul class="ccp-bullet-list" id="ccpFindingsList"></ul>
-    </section>
-    <section class="ccp-sec ccp-sec-money" id="ccpSecMoney">
-      <h3 class="ccp-sec-h">Potential Recovery Identified</h3>
-      <ul class="ccp-money-list" id="ccpMoneyList"></ul>
-    </section>
+    <div class="ccp-grid">
+      <div class="left-column">
+        <section class="next-step ccp-sec-next" id="ccpSecNext" aria-label="Primary next action">
+          <h3 class="ccp-next-heading" id="ccpNextHeading">Next Step: —</h3>
+          <p class="ccp-next-desc" id="ccpNextDesc">Complete this step to move your claim forward.</p>
+          <div id="ccpNextPrimaryMount" class="ccp-next-primary-mount"></div>
+        </section>
+        <div class="card" id="ccpChecklistCard">
+          <h4 class="ccp-card-title">Your Claim File</h4>
+          <ul class="ccp-checklist" id="ccpChecklistList">
+            <li class="ccp-check-item">Loading checklist…</li>
+          </ul>
+        </div>
+        <div class="card" id="ccpFindingsCard">
+          <h4 class="ccp-card-title">Findings So Far</h4>
+          <ul class="ccp-card-list" id="ccpFindingsList">
+            <li>No findings yet</li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-column">
+        <div class="card" id="ccpRecoveryCard">
+          <h4 class="ccp-card-title">Potential Recovery Identified</h4>
+          <ul class="ccp-card-list" id="ccpMoneyList">
+            <li>No recovery identified yet</li>
+          </ul>
+        </div>
+        <div class="card" id="ccpActivityCard">
+          <h4 class="ccp-card-title">Recent Activity</h4>
+          <ul class="ccp-card-list" id="ccpActivityList">
+            <li>No activity yet</li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <section class="ccp-sec ccp-sec-active">
     <main class="step-main ccp-step-main" id="stepMain">
       <div class="step-topbar" id="stepTopbar"></div>
@@ -7148,11 +7236,16 @@
     }
 
     function renderCcpNextBlock(stepNum) {
-      const titleEl = document.getElementById('ccpNextTitle');
-      const whyEl = document.getElementById('ccpNextWhy');
+      const h = document.getElementById('ccpNextHeading');
+      const p = document.getElementById('ccpNextDesc');
       const m = STEP_META[stepNum];
-      if (titleEl && m) titleEl.textContent = m.title;
-      if (whyEl && m) whyEl.textContent = 'Why this matters: ' + m.subtitle;
+      if (h) h.textContent = m ? ('Next Step: ' + m.title) : 'Next Step: —';
+      if (p) {
+        p.textContent =
+          m && m.subtitle
+            ? m.subtitle
+            : 'Complete this step to move your claim forward.';
+      }
     }
 
     function renderCcpNextPrimaryMount() {
@@ -7172,68 +7265,131 @@
       }
       if (src && !src.disabled) {
         host.appendChild(src.cloneNode(true));
+      } else {
+        host.innerHTML =
+          '<p class="ccp-next-hint">Use the <strong>Active step</strong> below — primary actions and footer buttons run your workflow.</p>';
       }
     }
 
-    function ccpChecklistRow(ok, label) {
-      const icon = ok ? '\u2714' : '\u2716';
+    function ccpChecklistLine(ok, okText, badText) {
       const cls = ok ? ' ok' : '';
-      return '<li class="ccp-check-item' + cls + '"><span class="ccp-ci-icon" aria-hidden="true">' + icon + '</span> ' + escapeHtml(label) + '</li>';
+      const line = ok ? okText : badText;
+      return '<li class="ccp-check-item' + cls + '">' + escapeHtml(line) + '</li>';
     }
 
     function updateCcpInsightPanels() {
       const list = document.getElementById('ccpChecklistList');
       if (list) {
-        const photosOk = Array.isArray(claimData.damagePhotos) && claimData.damagePhotos.length > 0;
         const policyOk = !!claimData.policyUploaded;
-        const estOk = claimData.estimateUploaded === true || (claimData.structure && claimData.structure.insurerEstimate > 0);
+        const estimateOk = claimData.estimateUploaded === true || (claimData.structure && claimData.structure.insurerEstimate > 0);
         const contentsOk = !!(claimData.contents.items && claimData.contents.items.length > 0);
+        const photosOk = Array.isArray(claimData.damagePhotos) && claimData.damagePhotos.length > 0;
         list.innerHTML = [
-          ccpChecklistRow(policyOk, 'Policy uploaded'),
-          ccpChecklistRow(estOk, 'Carrier estimate on file'),
-          ccpChecklistRow(contentsOk, 'Contents inventory captured'),
-          ccpChecklistRow(photosOk, 'Damage photos uploaded')
+          ccpChecklistLine(policyOk, '\u2714 Policy uploaded', '\u2716 Policy missing'),
+          ccpChecklistLine(estimateOk, '\u2714 Carrier estimate uploaded', '\u2716 Carrier estimate missing'),
+          ccpChecklistLine(contentsOk, '\u2714 Contents inventory complete', '\u2716 Contents inventory incomplete'),
+          ccpChecklistLine(photosOk, '\u2714 Photos uploaded', '\u2716 Photos missing')
         ].join('');
       }
-      const findings = document.getElementById('ccpFindingsList');
-      if (findings) {
+
+      const findingsEl = document.getElementById('ccpFindingsList');
+      if (findingsEl) {
+        const seen = {};
         const bullets = [];
-        const mi = document.getElementById('missingItems');
-        if (mi) {
-          const t = (mi.textContent || '').trim();
-          if (t) bullets.push(t);
+        function pushFinding(s) {
+          const t = (s || '').replace(/\s+/g, ' ').trim();
+          if (t.length < 3 || seen[t]) return;
+          seen[t] = 1;
+          bullets.push(t);
         }
+        const mi = document.getElementById('missingItems');
+        if (mi) pushFinding(mi.textContent);
         const ms = document.getElementById('missingScope');
-        if (ms) {
-          const t = (ms.textContent || '').trim();
-          if (t) bullets.push(t);
+        if (ms) pushFinding(ms.textContent);
+        const pcm = document.getElementById('policyCompleteMessage');
+        if (pcm && !pcm.closest('.hidden')) pushFinding(pcm.textContent);
+        const psum = document.getElementById('policySummary');
+        if (psum && claimData.policyUploaded) pushFinding(psum.textContent);
+        const gapSummary = document.getElementById('damageDocSummary');
+        if (gapSummary && !gapSummary.closest('.hidden')) pushFinding(gapSummary.textContent);
+        for (let j = 0; j < claimJournal.length && bullets.length < 12; j++) {
+          const e = claimJournal[j];
+          const d = (e && e.description) ? String(e.description) : '';
+          if (/gap|missing|coverage|estimate|underpaid|analyzed|uploaded|identified|supplement|demand/i.test(d)) {
+            pushFinding(d);
+          }
         }
         if (bullets.length === 0) {
-          findings.innerHTML = '<li>Missing line items</li><li>Coverage gaps</li><li>Pricing issues</li>';
+          findingsEl.innerHTML = '<li>No findings yet</li>';
         } else {
-          findings.innerHTML = bullets.slice(0, 5).map((b) => '<li>' + escapeHtml(b) + '</li>').join('');
+          findingsEl.innerHTML = bullets.slice(0, 8).map((b) => '<li>' + escapeHtml(b) + '</li>').join('');
         }
       }
+
       const money = document.getElementById('ccpMoneyList');
       if (money) {
-        let polTxt = '\u2014';
-        const m2 = claimData.meta && claimData.meta.stepValueMap && claimData.meta.stepValueMap[2];
-        if (m2 != null && !Number.isNaN(Number(m2)) && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(m2);
-          polTxt = v + '\u2013' + v;
+        const recoveryItems = [];
+        if (typeof calculateTotalRecoverable === 'function' && typeof formatMoneyNav === 'function') {
+          const tr = calculateTotalRecoverable();
+          if (claimData.initial || tr !== 0 || completedSteps.length > 0) {
+            recoveryItems.push({ label: 'Total recoverable gap', value: formatMoneyNav(tr) });
+          }
         }
-        let estTxt = '\u2014';
-        const g = claimData.claimGap != null ? Number(claimData.claimGap) : NaN;
-        if (!Number.isNaN(g) && g !== 0 && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(g);
-          estTxt = v + '\u2013' + v;
-        } else if (claimData.meta && claimData.meta.stepValueMap && claimData.meta.stepValueMap[9] != null && typeof formatMoneyNav === 'function') {
-          const v = formatMoneyNav(claimData.meta.stepValueMap[9]);
-          estTxt = v + '\u2013' + v;
+        const cg = claimData.claimGap;
+        if (cg != null && typeof formatMoneyNav === 'function') {
+          const n = Number(cg);
+          if (!Number.isNaN(n) && n !== 0) {
+            recoveryItems.push({ label: 'Estimate deficiency', value: formatMoneyNav(n) });
+          }
         }
-        money.innerHTML =
-          '<li><span class="ccp-money-k">Policy gaps: </span><span class="ccp-money-val">' + polTxt + '</span></li>' +
-          '<li><span class="ccp-money-k">Estimate deficiencies: </span><span class="ccp-money-val">' + estTxt + '</span></li>';
+        const prec = document.getElementById('policyCompleteRecovery');
+        if (prec) {
+          const pt = prec.textContent.trim();
+          if (pt && pt !== '$0' && pt !== '\u2014') {
+            recoveryItems.push({ label: 'Policy opportunity', value: pt });
+          }
+        }
+        const sm = claimData.meta && claimData.meta.stepValueMap;
+        if (sm && sm[9] != null && typeof formatMoneyNav === 'function') {
+          recoveryItems.push({ label: 'Estimate review gap', value: formatMoneyNav(sm[9]) });
+        }
+        if (sm && sm[2] != null && typeof formatMoneyNav === 'function') {
+          recoveryItems.push({ label: 'Policy analysis value', value: formatMoneyNav(sm[2]) });
+        }
+        if (recoveryItems.length === 0) {
+          money.innerHTML = '<li>No recovery identified yet</li>';
+        } else {
+          money.innerHTML = recoveryItems
+            .map(
+              (r) =>
+                '<li>' +
+                escapeHtml(r.label) +
+                ': <strong class="ccp-recovery-strong">' +
+                escapeHtml(r.value) +
+                '</strong></li>'
+            )
+            .join('');
+        }
+      }
+
+      const actEl = document.getElementById('ccpActivityList');
+      if (actEl) {
+        if (!claimJournal.length) {
+          actEl.innerHTML = '<li>No activity yet</li>';
+        } else {
+          actEl.innerHTML = claimJournal.slice(0, 12).map((e) => {
+            const d = new Date(e.timestamp);
+            const ds = d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+            const desc = e.description || e.actionType || 'Activity';
+            return (
+              '<li><span class="ccp-act-date">' +
+              escapeHtml(ds) +
+              '</span>' +
+              escapeHtml(desc) +
+              '</li>'
+            );
+          }).join('');
+        }
       }
     }
 
