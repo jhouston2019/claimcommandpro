@@ -205,6 +205,76 @@
     .tile-badge-col { display: none; }
 
     /* ── STEP VIEW ── */
+
+    /* ── STEP PAGE REDESIGN ── */
+    .step-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f4f7fb; }
+    .step-topbar {
+      background: #0f172a; border-bottom: 1px solid #1e293b;
+      padding: 0 28px; height: 42px; flex-shrink: 0;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .step-topbar-back {
+      font-size: 12px; color: #475569; cursor: pointer;
+      background: none; border: none; font-family: inherit;
+      padding: 0; display: flex; align-items: center; gap: 5px;
+    }
+    .step-topbar-back:hover { color: #94a3b8; }
+    .step-topbar-sep { color: #1e293b; font-size: 12px; }
+    .step-topbar-crumb { font-size: 12px; color: #475569; }
+    .step-topbar-phase { font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+
+    .step-header {
+      background: white; border-bottom: 1px solid #e2e8f0;
+      padding: 20px 28px 16px; flex-shrink: 0;
+    }
+    .step-header-phase-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .step-header-phase-pill {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px;
+    }
+    .step-header-num { font-size: 11px; color: #94a3b8; font-weight: 600; }
+    .step-header-title { font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.4px; line-height: 1.25; margin-bottom: 6px; }
+    .step-header-sub { font-size: 13px; color: #64748b; line-height: 1.6; margin-bottom: 12px; }
+    .step-header-meta-row { display: flex; align-items: center; gap: 10px; }
+    .step-time-badge { font-size: 11px; font-weight: 600; color: #475569; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 3px 10px; border-radius: 999px; }
+    .step-impact-badge { font-size: 11px; font-weight: 600; color: #059669; background: rgba(5,150,105,0.08); border: 1px solid rgba(5,150,105,0.2); padding: 3px 10px; border-radius: 999px; }
+    .step-warning-badge { font-size: 11px; font-weight: 600; color: #b45309; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); padding: 3px 10px; border-radius: 999px; }
+
+    .step-main-workspace { flex: 1; overflow-y: auto; }
+    .step-workspace-content { display: none; }
+    .step-workspace-content.active { display: block; }
+
+    .step-action-zone {
+      margin: 20px 28px 0;
+      background: white; border: 1px solid #e2e8f0;
+      border-radius: 12px; overflow: hidden;
+    }
+    .step-action-header {
+      background: #0f172a; padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .step-action-eyebrow {
+      font-size: 10px; font-weight: 800; color: #14b8a6;
+      text-transform: uppercase; letter-spacing: 0.15em;
+    }
+    .step-action-directive { font-size: 14px; font-weight: 700; color: #f1f5f9; }
+    .step-action-body { padding: 20px 24px; }
+
+    .step-outcome-zone {
+      margin: 14px 28px 0;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 10px; padding: 14px 20px;
+    }
+    .step-outcome-lbl { font-size: 10px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .step-outcome-items { display: flex; flex-wrap: wrap; gap: 8px; }
+    .step-outcome-item { font-size: 12px; color: #166534; background: white; border: 1px solid #bbf7d0; border-radius: 6px; padding: 4px 10px; }
+
+    .step-body { padding: 20px 28px; }
+    .step-footer-nav {
+      background: white; border-top: 1px solid #e2e8f0;
+      padding: 12px 28px; display: flex; align-items: center;
+      gap: 10px; flex-shrink: 0;
+    }
     .step-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f4f7fb; }
     .step-topbar { background: white; border-bottom: 1px solid var(--gray-200); padding: 10px 22px; flex-shrink: 0; }
     .step-breadcrumb { display: flex; align-items: center; gap: 8px; }
@@ -1027,7 +1097,7 @@
             <div class="advance-warning">⚠ Do not sign any document that uses the words "final," "full and complete," or "release of all claims" in connection with an advance payment — that converts it into a settlement.</div>
           </div>
           <div class="advance-actions">
-            <button class="advance-btn" onclick="goToStep(12)">Request an advance →</button>
+            <button class="advance-btn" onclick="showAdvanceView()">Request an advance →</button>
             <div class="advance-hint">Generates a formal advance request letter</div>
           </div>
         </div>
@@ -3158,6 +3228,86 @@
     </main>
     </div>
 
+        <div id="view-advance" class="view hidden" style="flex:1;display:flex;flex-direction:column;overflow:hidden;background:#f4f7fb;">
+          <main class="step-main" style="flex:1;overflow-y:auto;">
+            <div class="step-topbar" style="background:#0f172a;border-bottom:1px solid #1e293b;padding:0 28px;height:42px;display:flex;align-items:center;gap:12px;">
+              <button type="button" class="step-topbar-back" onclick="showOverviewView()">← Dashboard</button>
+              <span class="step-topbar-sep" style="color:#1e293b;">·</span>
+              <span class="step-topbar-crumb" style="font-size:12px;color:#475569;">Advance Payment Request</span>
+            </div>
+            <div class="step-header" style="background:white;border-bottom:1px solid #e2e8f0;padding:20px 28px 16px;">
+              <div class="step-header-phase-row">
+                <span class="step-header-phase-pill" style="background:rgba(245,158,11,0.1);color:#d97706;border:1px solid rgba(245,158,11,0.3);">Optional Action</span>
+                <span class="step-header-num" style="font-size:11px;color:#94a3b8;font-weight:600;">Available at any stage</span>
+              </div>
+              <div class="step-header-title" style="font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-0.4px;line-height:1.25;margin-bottom:6px;">Request an Advance Payment</div>
+              <div class="step-header-sub" style="font-size:13px;color:#64748b;line-height:1.6;margin-bottom:12px;">Most policies allow you to request a partial payment before final settlement. This is your right — exercising it does not settle your claim or waive any future recovery.</div>
+              <div class="step-header-meta-row">
+                <span class="step-time-badge">10–15 min</span>
+                <span class="step-impact-badge">💰 Get cash now while claim continues</span>
+                <span class="step-warning-badge">⚠ Never sign a release in exchange</span>
+              </div>
+            </div>
+            <div style="margin:20px 28px 0;background:white;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+              <div style="background:#0f172a;padding:12px 20px;">
+                <div style="font-size:10px;font-weight:800;color:#14b8a6;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px;">Do This Now</div>
+                <div style="font-size:14px;font-weight:700;color:#f1f5f9;">Generate your advance payment request letter</div>
+              </div>
+              <div style="padding:20px 24px;">
+                <p style="font-size:13px;color:#475569;line-height:1.65;margin-bottom:16px;">An advance is a partial payment against your total claim — paid before final settlement is agreed. It is not a settlement. You are not required to accept the insurer's valuation to receive one. Your right to dispute, supplement, and negotiate remains fully intact.</p>
+
+                <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 16px;margin-bottom:20px;">
+                  <div style="font-size:11px;font-weight:700;color:#92400e;margin-bottom:6px;">⚠ CRITICAL — Read before signing anything</div>
+                  <p style="font-size:12px;color:#92400e;line-height:1.6;margin:0;">Do not sign any document that contains the words <strong>"final," "full and complete,"</strong> or <strong>"release of all claims"</strong> in connection with an advance payment. These phrases convert the advance into a full and final settlement, extinguishing your right to further recovery.</p>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;display:block;">Advance Amount Requested ($)</label>
+                    <input type="number" id="advanceAmount" placeholder="e.g. 50000" style="width:100%;padding:10px 13px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;">
+                  </div>
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;display:block;">Basis for Request</label>
+                    <select id="advanceBasis" style="width:100%;padding:10px 13px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;">
+                      <option value="">Select reason...</option>
+                      <option value="displaced">Displaced — ongoing living expenses</option>
+                      <option value="repairs">Emergency repairs needed</option>
+                      <option value="contents">Contents replacement urgency</option>
+                      <option value="hardship">Financial hardship</option>
+                      <option value="undisputed">Undisputed portion of claim</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:20px;">
+                  <label style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;display:block;">Supporting Context (optional)</label>
+                  <textarea id="advanceContext" rows="3" placeholder="e.g. We have been displaced since the date of loss and are incurring $3,200/month in hotel costs..." style="width:100%;padding:10px 13px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box;"></textarea>
+                </div>
+
+                <button onclick="generateAdvanceLetter()" style="background:#f59e0b;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:700;color:#0f172a;cursor:pointer;font-family:inherit;">Generate Advance Request Letter →</button>
+
+                <div id="advanceLetterOutput" style="display:none;margin-top:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <div style="font-size:12px;font-weight:700;color:#0f172a;">Advance Request Letter</div>
+                    <button onclick="copyAdvanceLetter()" style="background:none;border:1px solid #e2e8f0;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:600;color:#64748b;cursor:pointer;font-family:inherit;">Copy</button>
+                  </div>
+                  <div id="advanceLetterText" style="font-size:13px;color:#334155;line-height:1.7;white-space:pre-wrap;"></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin:14px 28px 28px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 20px;">
+              <div style="font-size:10px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">What You Get</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:12px;color:#166534;background:white;border:1px solid #bbf7d0;border-radius:6px;padding:4px 10px;">Formal written advance request</span>
+                <span style="font-size:12px;color:#166534;background:white;border:1px solid #bbf7d0;border-radius:6px;padding:4px 10px;">Policy basis for the request</span>
+                <span style="font-size:12px;color:#166534;background:white;border:1px solid #bbf7d0;border-radius:6px;padding:4px 10px;">Rights preservation language</span>
+                <span style="font-size:12px;color:#166534;background:white;border:1px solid #bbf7d0;border-radius:6px;padding:4px 10px;">No-release instruction</span>
+              </div>
+            </div>
+          </main>
+        </div>
+
     <div id="view-summary" class="view hidden">
       <div class="summary-page-scroll">
         <div class="summary-page-inner">
@@ -3489,15 +3639,15 @@
     }
 
     const STEP_META = {
-      1: { title: 'Understand the Claim Process', subtitle: 'Claim Command Pro walks you through how insurance claims work so you avoid early mistakes that reduce your payout.', short: 'Claim Guide', time: '5 min read' },
-      2: { title: 'Identify All Available Coverages — Expert-Driven AI Policy Analysis', subtitle: 'Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.', short: 'Policy Coverage', time: '10–15 min' },
+      1: { title: 'Understand the Claim Process', subtitle: 'Claim Command Pro walks you through how insurance claims work so you avoid early mistakes that reduce your payout.', short: 'Claim Guide', time: '5 min read', impact: 'Foundation for every dollar you recover' },
+      2: { title: 'Identify All Available Coverages — Expert-Driven AI Policy Analysis', subtitle: 'Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.', short: 'Policy Coverage', time: '10–15 min', impact: 'Most missed coverages discovered here', warning: 'Do this before speaking to your adjuster' },
       3: { title: 'Report the Loss Correctly', subtitle: 'Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.', short: 'Report Loss', time: '5 min' },
       4: { title: 'Document All Damage', subtitle: 'Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.', short: 'Document Damage', time: '15–20 min' },
       5: { title: 'Establish Repair Costs — Secure an Independent Contractor Estimate', subtitle: "Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.", short: 'Contractor Est.', time: '10–15 min' },
-      6: { title: 'Build Contents Inventory', subtitle: 'Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.', short: 'Contents', time: '20–30 min' },
+      6: { title: 'Build Contents Inventory', subtitle: 'Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.', short: 'Contents', time: '20–30 min', impact: 'Often 20–40% of total claim value', warning: 'Estimates are accepted — complete it now' },
       7: { title: 'Track Living Expenses (ALE)', subtitle: 'Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.', short: 'Track ALE', time: '5 min/day' },
       8: { title: 'Prepare for the Adjuster Inspection', subtitle: 'Claim Command Pro prepares you for the adjuster visit so damage is properly presented and nothing is overlooked during inspection.', short: 'Adjuster Prep', time: '10 min' },
-      9: { title: 'Audit the Insurance Estimate — Expert AI Estimate Review & Analysis', subtitle: "Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.", short: 'Audit Estimate', time: '10–15 min' },
+      9: { title: 'Audit the Insurance Estimate — Expert AI Estimate Review & Analysis', subtitle: "Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.", short: 'Audit Estimate', time: '10–15 min', impact: 'Average gap found: 30–45% of estimate value' },
       10: { title: 'Identify Low-Balled Labor & Material Costs', subtitle: "Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.", short: 'Labor & Material', time: '10 min' },
       11: { title: 'Identify Unapplied Policy Benefits', subtitle: 'Identify coverages and policy benefits that were not applied to your claim but should have been.', short: 'Unapplied Benefits', time: '10 min' },
       12: { title: 'Submit a Demand for Payment', subtitle: 'Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.', short: 'Demand Payment', time: '10–15 min' },
@@ -3760,7 +3910,7 @@
     function showSummaryView() {
       window._summaryReturnView = window._currentViewId || 'overview';
       closeUtilityNavPages();
-      setActiveNavPill(0);
+      setActiveNavPill(1);
       document.getElementById('view-overview').classList.add('hidden');
       document.getElementById('view-step').classList.add('hidden');
       document.getElementById('view-summary').classList.remove('hidden');
@@ -4843,7 +4993,9 @@ Generated using expert claim methodology and structured for carrier review`;
             <p style="margin-top: 40px; font-size: 12px; color: #666; font-style: italic;">
               Generated using expert claim methodology and structured for carrier review
             </p>
-          </body>
+                  </div>
+
+</body>
         </html>
       `);
       printWindow.document.close();
@@ -5716,80 +5868,21 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function ensureAccordionShell() {
-      const ws = document.getElementById('stepWorkspace');
-      if (!ws || ws.dataset.accordionReady === '1') return;
-      const panels = Array.from(ws.querySelectorAll(':scope > .step-workspace-content'));
-      if (panels.length === 0) return;
-      while (ws.firstChild) ws.removeChild(ws.firstChild);
-      const startBar = document.createElement('div');
-      startBar.id = 'cccStartHereBar';
-      startBar.className = 'ccc-start-here-bar';
-      const acc = document.createElement('div');
-      acc.id = 'cccStepAccordion';
-      acc.className = 'ccc-step-accordion';
-      ws.appendChild(startBar);
-      ws.appendChild(acc);
-      panels.forEach((panel, idx) => {
-        const n = idx + 1;
-        const item = document.createElement('div');
-        item.className = 'ccc-accordion-item';
-        item.dataset.cccStep = String(n);
-        const head = document.createElement('button');
-        head.type = 'button';
-        head.className = 'ccc-accordion-head';
-        head.setAttribute('onclick', 'goToStep(' + n + ')');
-        const span = document.createElement('span');
-        span.className = 'ccc-accordion-head-text';
-        span.id = 'ccc-acc-label-' + n;
-        head.appendChild(span);
-        const body = document.createElement('div');
-        body.className = 'ccc-accordion-body';
-        body.id = 'ccc-acc-body-' + n;
-        body.appendChild(panel);
-        item.appendChild(head);
-        item.appendChild(body);
-        acc.appendChild(item);
-      });
-      ws.dataset.accordionReady = '1';
+      // Accordion replaced — step content renders directly
     }
 
     function syncAccordionUI(stepNum) {
-      ensureAccordionShell();
-      for (let i = 1; i <= 19; i++) {
-        const item = document.querySelector('.ccc-accordion-item[data-ccc-step="' + i + '"]');
-        if (!item) continue;
-        const label = document.getElementById('ccc-acc-label-' + i);
-        const meta = STEP_META[i];
-        if (label && meta) {
-          const done = completedSteps.includes(i);
-          let prefix = '\u2022 ';
-          if (done) prefix = '\u2713 ';
-          else if (i === stepNum) prefix = '\u2192 ';
-          label.textContent = prefix + 'Step ' + i + ' \u2014 ' + meta.short;
-        }
-        const done = completedSteps.includes(i);
-        item.classList.toggle('is-active', i === stepNum);
-        item.classList.toggle('is-done', done);
-        item.classList.toggle('is-upcoming', !done && i !== stepNum);
-        const body = document.getElementById('ccc-acc-body-' + i);
-        if (body) body.classList.toggle('is-expanded', i === stepNum);
-      }
+      // Show only the active step workspace
+      document.querySelectorAll('.step-workspace-content').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none';
+      });
+      const active = document.getElementById('step-workspace-' + stepNum);
+      if (active) { active.classList.add('active'); active.style.display = 'block'; }
     }
 
     function renderStartHereBar() {
-      const el = document.getElementById('cccStartHereBar');
-      if (!el) return;
-      const meta = STEP_META[currentStep];
-      const fresh = completedSteps.length === 0 && !claimData.initial;
-      if (fresh && currentStep === 1 && STEP_META[1]) {
-        const line = 'Start here: Step 1 \u2014 ' + STEP_META[1].short;
-        el.innerHTML = '<div class="ccc-start-here-inner"><p class="ccc-start-here-line">' + escapeHtml(line) + '</p><button type="button" class="ccc-btn-primary" onclick="goToStep(1)">Begin Step 1</button></div>';
-        return;
-      }
-      if (meta) {
-        const line = 'Continue: Step ' + currentStep + ' \u2014 ' + meta.short;
-        el.innerHTML = '<div class="ccc-start-here-inner"><p class="ccc-start-here-line">' + escapeHtml(line) + '</p><button type="button" class="ccc-btn-primary" onclick="goToStep(' + currentStep + ')">Continue</button></div>';
-      }
+      // Suppressed — step header handles this now
     }
 
     function formatMoneyNav(n) {
@@ -5816,13 +5909,13 @@ Generated using expert claim methodology and structured for carrier review`;
     function closeFinancialPanel() {
       document.getElementById('financialNavPanel')?.classList.remove('panel-open');
       document.getElementById('financialNavPanel')?.setAttribute('aria-hidden', 'true');
-      document.querySelectorAll('.nav-pill')[1]?.classList.remove('active');
+      document.querySelectorAll('.nav-pill')[2]?.classList.remove('active');
     }
 
     function closeMessagesPanel() {
       document.getElementById('messagesNavPanel')?.classList.remove('panel-open');
       document.getElementById('messagesNavPanel')?.setAttribute('aria-hidden', 'true');
-      document.querySelectorAll('.nav-pill')[3]?.classList.remove('active');
+      document.querySelectorAll('.nav-pill')[6]?.classList.remove('active');
     }
 
     function closeDocumentsPanel() {
@@ -6041,7 +6134,7 @@ Generated using expert claim methodology and structured for carrier review`;
           </div>
           <div class="ccc-field">
             <label for="docNotes">Notes</label>
-            <textarea class="ccc-textarea" id="docNotes" placeholder="Where it’s stored, version, adjuster name…"></textarea>
+            <textarea class="ccc-textarea" id="docNotes" placeholder="Where it's stored, version, adjuster name…"></textarea>
           </div>
           <div class="ccc-field">
             <label for="docFile">Attach file name (optional)</label>
@@ -6203,7 +6296,7 @@ Generated using expert claim methodology and structured for carrier review`;
       renderFinancialPanel();
       p.classList.add('panel-open');
       p.setAttribute('aria-hidden', 'false');
-      setActiveNavPill(1);
+      setActiveNavPill(2);
       trackActivity('nav_click', { destination: 'Financial Summary panel' });
     }
 
@@ -6216,13 +6309,13 @@ Generated using expert claim methodology and structured for carrier review`;
       }
       closeAllNavSidePanels();
       j.classList.add('journal-open');
-      setActiveNavPill(2);
+      setActiveNavPill(3);
       trackActivity('journal_view', { destination: 'Activity Log' });
     }
 
     function closeJournal() {
       document.querySelector('.claim-journal-panel').classList.remove('journal-open');
-      document.querySelectorAll('.nav-pill')[2]?.classList.remove('active');
+      document.querySelectorAll('.nav-pill')[3]?.classList.remove('active');
     }
 
     function showMessages() {
@@ -6231,7 +6324,7 @@ Generated using expert claim methodology and structured for carrier review`;
       renderMessagesPanel();
       p.classList.add('panel-open');
       p.setAttribute('aria-hidden', 'false');
-      setActiveNavPill(3);
+      setActiveNavPill(4);
       trackActivity('nav_click', { destination: 'Messages panel' });
     }
 
@@ -6241,7 +6334,7 @@ Generated using expert claim methodology and structured for carrier review`;
       renderDocumentsPanel();
       p.classList.add('panel-open');
       p.setAttribute('aria-hidden', 'false');
-      setActiveNavPill(4);
+      setActiveNavPill(5);
       trackActivity('nav_click', { destination: 'Documents panel' });
     }
 
@@ -6251,7 +6344,7 @@ Generated using expert claim methodology and structured for carrier review`;
       renderDeadlinesPanel();
       p.classList.add('panel-open');
       p.setAttribute('aria-hidden', 'false');
-      setActiveNavPill(5);
+      setActiveNavPill(6);
       trackActivity('nav_click', { destination: 'Deadlines panel' });
     }
 
@@ -6263,6 +6356,7 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function showStepView() {
+      const adv = document.getElementById('view-advance'); if (adv) { adv.classList.add('hidden'); adv.style.display = 'none'; }
       window._currentViewId = 'step';
       const rb = document.getElementById('resumeBanner');
       if (rb) rb.classList.add('hidden');
@@ -6276,6 +6370,7 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     function showOverviewView() {
+      const adv = document.getElementById('view-advance'); if (adv) { adv.classList.add('hidden'); adv.style.display = 'none'; }
       window._currentViewId = 'overview';
       const ms = document.querySelector('.metric-strip');
       if (ms) ms.style.display = 'none';
@@ -6310,29 +6405,34 @@ Generated using expert claim methodology and structured for carrier review`;
 
     function renderStepTopbar(stepNum) {
       const topbar = document.getElementById('stepTopbar');
+      const phase = getPhaseForStep(stepNum);
       topbar.innerHTML = `
-    <div class="step-breadcrumb ccc-step-topbar-simple">
-      <button type="button" class="step-back-btn" onclick="showOverviewView()">All steps</button>
-      <span class="step-breadcrumb-sep">·</span>
-      <span class="step-breadcrumb-current">Step ${stepNum} of 19</span>
-    </div>
-  `;
+        <button type="button" class="step-topbar-back" onclick="showOverviewView()">← Dashboard</button>
+        <span class="step-topbar-sep">·</span>
+        <span class="step-topbar-crumb">Step ${stepNum} of 19</span>
+      `;
     }
 
     function renderStepHeader(stepNum) {
       const step = STEP_META[stepNum];
+      const phase = getPhaseForStep(stepNum);
       const header = document.getElementById('stepHeader');
+      const impactBadge = step.impact
+        ? `<span class="step-impact-badge">💰 ${step.impact}</span>` : '';
+      const warningBadge = step.warning
+        ? `<span class="step-warning-badge">⚠ ${step.warning}</span>` : '';
       header.innerHTML = `
-    <div class="step-header-top ccc-step-header-clean">
-      <div class="step-header-text">
-        <div class="step-title">${step.title}</div>
-        <div class="step-subtitle">${step.subtitle}</div>
-        <div class="step-meta-row">
-          <div class="step-time-badge">${step.time}</div>
+        <div class="step-header-phase-row">
+          <span class="step-header-phase-pill" style="background:${phase.color}20;color:${phase.color};border:1px solid ${phase.color}40;">Phase ${phase.num} — ${phase.name}</span>
+          <span class="step-header-num">Step ${stepNum} of 19</span>
         </div>
-      </div>
-    </div>
-  `;
+        <div class="step-header-title">${step.title}</div>
+        <div class="step-header-sub">${step.subtitle}</div>
+        <div class="step-header-meta-row">
+          <span class="step-time-badge">${step.time}</span>
+          ${impactBadge}${warningBadge}
+        </div>
+      `;
     }
 
     function renderStepWorkspace(stepNum) {
@@ -6416,7 +6516,7 @@ Generated using expert claim methodology and structured for carrier review`;
 
     function openFullPlanFromNav() {
       closeAllNavSidePanels();
-      document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+      setActiveNavPill(0);
       document.getElementById('pill-fullplan').classList.add('active');
       showOverviewView();
       sessionStorage.setItem('lastNavTab', 'fullplan');
@@ -6759,6 +6859,76 @@ Generated using expert claim methodology and structured for carrier review`;
     }
     // ── END ONBOARDING ─────────────────────────────────────────────────────────
 
+
+    function showAdvanceView() {
+      document.querySelectorAll('.view').forEach(v => {
+        v.classList.add('hidden');
+        v.style.display = 'none';
+      });
+      const av = document.getElementById('view-advance');
+      if (av) {
+        av.classList.remove('hidden');
+        av.style.display = 'flex';
+      }
+    }
+
+    function generateAdvanceLetter() {
+      const amount = document.getElementById('advanceAmount').value;
+      const basis  = document.getElementById('advanceBasis').value;
+      const context = document.getElementById('advanceContext').value;
+      const basisText = {
+        'displaced': 'ongoing displacement and additional living expenses',
+        'repairs': 'the urgent need for emergency repairs to prevent further damage',
+        'contents': 'the urgent need to replace essential personal property',
+        'hardship': 'documented financial hardship resulting from this loss',
+        'undisputed': 'payment of the undisputed portion of this claim'
+      }[basis] || 'ongoing financial impact of this loss';
+
+      const claimNum = claimData.initial?.claimNumber || '[CLAIM NUMBER]';
+      const insurer  = claimData.initial?.insurer || '[INSURER NAME]';
+      const insured  = claimData.initial?.insuredName || '[INSURED NAME]';
+      const dateOfLoss = claimData.lossNotice?.date || '[DATE OF LOSS]';
+      const amtStr = amount ? '$' + Number(amount).toLocaleString() : '[AMOUNT]';
+
+      const contextLine = context ? context + '\n\n' : '';
+      const letter = `${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}
+
+${insurer}
+Claims Department
+
+Re: Request for Advance Payment
+Claim No.: ${claimNum}
+Date of Loss: ${dateOfLoss}
+Insured: ${insured}
+
+Dear Claims Representative,
+
+I am writing to formally request an advance payment of ${amtStr} against the above-referenced claim, based on ${basisText}.
+
+${contextLine}This request is made pursuant to my policy rights and does not constitute acceptance of any settlement amount, nor does it waive any rights to dispute, supplement, or negotiate the full and final resolution of this claim.
+
+I expect this advance to be issued without any release of claims, final settlement language, or waiver of rights. Any document presented in connection with this payment must be reviewed by me prior to execution. I will not sign any document containing the words "final," "full and complete," or "release of all claims."
+
+Please confirm receipt of this request and advise of the timeline for issuance.
+
+Sincerely,
+
+${insured}
+[Phone Number]
+[Email Address]
+
+Note: This advance request does not close, settle, or limit this claim in any way.`;
+
+      const output = document.getElementById('advanceLetterOutput');
+      const text   = document.getElementById('advanceLetterText');
+      if (output && text) { text.textContent = letter; output.style.display = 'block'; }
+    }
+
+    function copyAdvanceLetter() {
+      const text = document.getElementById('advanceLetterText');
+      if (text) navigator.clipboard.writeText(text.textContent).then(() => alert('Copied to clipboard.'));
+    }
+
     function toggleAdvance() {
       const body = document.getElementById('advanceBody');
       const toggle = document.getElementById('advanceToggle');
@@ -6812,6 +6982,8 @@ Generated using expert claim methodology and structured for carrier review`;
       }
     });
   </script>
+
+
 
 </body>
 </html>
