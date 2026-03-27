@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Claim Command Center | Claim Command Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,14 @@
     /* ── RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
+
     :root {
+      --ccc-page-pad: 28px;
       --navy:        #0f172a;
       --navy-light:  #182840;
       --navy-border: #1e293b;
@@ -40,10 +47,16 @@
       font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #dde4ec;
       color: #0f172a;
+      width: 100%;
+      max-width: 100vw;
+      min-height: 100vh;
+      min-height: 100dvh;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      margin: 0;
     }
 
     /* ── TOP NAV ── */
@@ -52,9 +65,12 @@
       z-index: 1100;
       background: #0f172a;
       border-bottom: 1px solid #1e293b;
-      padding: 0 28px;
+      padding: 0 var(--ccc-page-pad);
       height: 50px;
       flex-shrink: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
     .nav-header { height: 100%; display: flex; align-items: center; justify-content: space-between; width: 100%; }
     .nav-left { display: flex; align-items: center; gap: 0; }
@@ -74,11 +90,17 @@
       display: flex; flex: 1; flex-direction: column;
       overflow: hidden; min-height: 0;
       padding: 0; background: #dde4ec;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
     .ccc-main-row {
       display: flex; flex: 1; overflow: hidden; min-height: 0;
       border-radius: 0;
       box-shadow: none;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
     }
 
     /* ── SIDEBAR ── */
@@ -140,7 +162,12 @@
     .nv-cta-btn:hover { background: var(--teal-dark); }
 
     /* ── VIEWS STACK ── */
-    .ccc-views-stack { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; background: #f4f7fb; border-radius: 0; }
+    .ccc-views-stack {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0;
+      background: #f4f7fb; border-radius: 0;
+      width: 100%;
+      max-width: 100%;
+    }
 
     /* ── FINANCIAL CARDS ── */
     .nv-fin-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; padding: 0; flex-shrink: 0; }
@@ -153,13 +180,20 @@
     .nv-fin-delta { font-size: 10px; color: #10b981; background: rgba(16,185,129,0.12); display: inline-block; padding: 1px 7px; border-radius: 999px; margin-top: 3px; }
 
     /* ── VIEW CONTAINERS ── */
-    #view-overview { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+    #view-overview { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; width: 100%; max-width: 100%; min-width: 0; }
     #view-overview.hidden { display: none !important; }
-    .overview-scroll { flex: 1; overflow-y: auto; background: #f4f7fb; }
-    .overview-inner { max-width: 1000px; margin: 0 auto; padding: 18px 28px 40px; }
-    #view-step { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; background: #f4f7fb; }
+    .overview-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; background: #f4f7fb; width: 100%; max-width: 100%; min-width: 0; }
+    .overview-inner {
+      width: 100%;
+      max-width: min(1000px, 100%);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 18px var(--ccc-page-pad) 40px;
+      box-sizing: border-box;
+    }
+    #view-step { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; background: #f4f7fb; width: 100%; max-width: 100%; min-width: 0; }
     #view-step.hidden { display: none !important; }
-    #view-summary { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; color: var(--gray-900); }
+    #view-summary { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; color: var(--gray-900); width: 100%; max-width: 100%; min-width: 0; }
     #view-summary.hidden { display: none !important; }
     .view.hidden { display: none !important; }
     .hidden { display: none !important; }
@@ -175,11 +209,11 @@
     .resume-btn { background: var(--navy); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
 
     /* ── OVERVIEW ── */
-    .overview-page-head { margin-bottom: 20px; padding: 40px 28px 0; text-align: center; }
+    .overview-page-head { margin-bottom: 20px; padding: 40px var(--ccc-page-pad) 0; text-align: center; box-sizing: border-box; width: 100%; max-width: 100%; }
     .overview-title { font-size: 26px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.4px; margin-bottom: 6px; }
     .overview-sub { font-size: 13px; color: var(--gray-500); }
     .phase-section { margin-bottom: 22px; }
-    .phase-section-header { display: flex; align-items: center; gap: 10px; padding: 10px 28px; border-bottom: 1px solid var(--gray-200); margin-bottom: 10px; }
+    .phase-section-header { display: flex; align-items: center; gap: 10px; padding: 10px var(--ccc-page-pad); border-bottom: 1px solid var(--gray-200); margin-bottom: 10px; box-sizing: border-box; }
     .phase-progress-bar { height: 3px; background: var(--gray-200); border-radius: 2px; overflow: hidden; margin-bottom: 0; }
     .phase-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
     .phase-pill { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; }
@@ -190,7 +224,7 @@
     .pill-5 { background: rgba(16,185,129,0.12); color: #065f46; }
     .phase-section-name { font-size: 14px; font-weight: 700; color: var(--gray-900); flex: 1; letter-spacing: -0.2px; }
     .phase-section-timeline, .phase-section-count { font-size: 11px; color: var(--gray-400); }
-    .step-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; padding: 0 28px; }
+    .step-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; padding: 0 var(--ccc-page-pad); box-sizing: border-box; width: 100%; max-width: 100%; }
     .step-tile { background: white; border: 1px solid var(--gray-200); border-radius: 10px; padding: 18px 20px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; display: flex; align-items: flex-start; gap: 12px; position: relative; }
     .step-tile:hover { border-color: var(--teal); box-shadow: 0 2px 8px rgba(20,184,166,0.12); }
     .step-tile.current { border-color: var(--teal); background: rgba(20,184,166,0.04); }
@@ -210,7 +244,10 @@
     .step-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f4f7fb; }
     .step-topbar {
       background: #0f172a; border-bottom: 1px solid #1e293b;
-      padding: 0 28px; height: 42px; flex-shrink: 0;
+      padding: 0 var(--ccc-page-pad); height: 42px; flex-shrink: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
       display: flex; align-items: center; gap: 12px;
     }
     .step-topbar-back {
@@ -225,7 +262,10 @@
 
     .step-header {
       background: white; border-bottom: 1px solid #e2e8f0;
-      padding: 20px 28px 16px; flex-shrink: 0;
+      padding: 20px var(--ccc-page-pad) 16px; flex-shrink: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
     }
     .step-header-phase-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .step-header-phase-pill {
@@ -245,7 +285,7 @@
     .step-workspace-content.active { display: block; }
 
     .step-action-zone {
-      margin: 20px 28px 0;
+      margin: 20px var(--ccc-page-pad) 0;
       background: white; border: 1px solid #e2e8f0;
       border-radius: 12px; overflow: hidden;
     }
@@ -261,7 +301,7 @@
     .step-action-body { padding: 20px 24px; }
 
     .step-outcome-zone {
-      margin: 14px 28px 0;
+      margin: 14px var(--ccc-page-pad) 0;
       background: #f0fdf4; border: 1px solid #bbf7d0;
       border-radius: 10px; padding: 14px 20px;
     }
@@ -269,11 +309,14 @@
     .step-outcome-items { display: flex; flex-wrap: wrap; gap: 8px; }
     .step-outcome-item { font-size: 12px; color: #166534; background: white; border: 1px solid #bbf7d0; border-radius: 6px; padding: 4px 10px; }
 
-    .step-body { padding: 20px 28px; }
+    .step-body { padding: 20px var(--ccc-page-pad); box-sizing: border-box; width: 100%; max-width: 100%; }
     .step-footer-nav {
       background: white; border-top: 1px solid #e2e8f0;
-      padding: 12px 28px; display: flex; align-items: center;
+      padding: 12px var(--ccc-page-pad); display: flex; align-items: center;
       gap: 10px; flex-shrink: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
     }
     .step-main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #f4f7fb; }
     .step-topbar { background: white; border-bottom: 1px solid var(--gray-200); padding: 10px 22px; flex-shrink: 0; }
@@ -287,11 +330,17 @@
     .step-subtitle { font-size: 13px; color: var(--gray-500); line-height: 1.55; }
     .step-time-badge { display: inline-block; font-size: 11px; font-weight: 600; color: var(--teal); background: var(--teal-dim); padding: 3px 10px; border-radius: 999px; margin-top: 8px; }
     .step-main-workspace { flex: 1; overflow-y: auto; background: #f4f7fb; }
-    .step-workspace { margin: 18px 26px; padding: 22px; background: white; border: 1px solid var(--gray-200); border-radius: 10px; }
-    .step-do-this-now { background: white; border-left: 3px solid var(--teal); padding: 12px 16px; margin: 14px 26px 0; }
+    .step-workspace { margin: 18px var(--ccc-page-pad); padding: 22px; background: white; border: 1px solid var(--gray-200); border-radius: 10px; box-sizing: border-box; max-width: 100%; }
+    .step-do-this-now { background: white; border-left: 3px solid var(--teal); padding: 12px 16px; margin: 14px var(--ccc-page-pad) 0; box-sizing: border-box; }
     .step-dtn-label { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 4px; }
     .step-dtn-text { font-size: 13px; color: var(--gray-900); line-height: 1.55; }
-    .step-footer-nav, .step-footer { background: white; border-top: 1px solid var(--gray-200); padding: 12px 26px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .step-footer-nav, .step-footer {
+      background: white; border-top: 1px solid var(--gray-200);
+      padding: 12px var(--ccc-page-pad); display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+    }
     .footer-nav { display: flex; gap: 10px; }
     .step-nav-btn, .nav-button { padding: 9px 16px; border: 1px solid var(--gray-200); border-radius: 8px; background: white; font-size: 13px; font-weight: 500; color: var(--gray-600); cursor: pointer; font-family: inherit; transition: all 0.15s; }
     .step-nav-btn:hover:not(:disabled), .nav-button:hover { background: var(--gray-100); border-color: var(--gray-300); }
@@ -383,7 +432,14 @@
 
     /* ── SUMMARY PAGE ── */
     .summary-page-scroll { flex: 1; overflow-y: auto; background: var(--gray-50); }
-    .summary-page-inner { max-width: 900px; margin: 0 auto; padding: 36px 44px 72px; }
+    .summary-page-inner {
+      width: 100%;
+      max-width: min(900px, 100%);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 36px var(--ccc-page-pad) 72px;
+      box-sizing: border-box;
+    }
     .summary-back-row { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
     .summary-back-btn { display: flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--gray-300); border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; color: var(--gray-600); cursor: pointer; font-family: inherit; }
     .summary-page-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 6px; }
@@ -519,6 +575,45 @@
     .ccc-deadline-overdue { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.04); }
     .ccc-sb-val-pending { font-size: 11px; color: var(--gray-500); }
     .ccc-sb-val-money { font-size: 11px; color: var(--emerald); font-weight: 600; }
+    .ccc-horizontal-scroll {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      box-sizing: border-box;
+    }
+    .ccc-horizontal-scroll table { min-width: 420px; }
+    .ccc-horizontal-scroll .ob-result-grid {
+      min-width: 320px;
+    }
+
+    .ccc-dash-row1 {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 14px;
+      margin: 16px 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .ccc-dash-row2 {
+      margin: 14px 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .ccc-dash-row3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.4fr;
+      gap: 14px;
+      margin: 14px 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
     .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
     .data-table th { padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-500); border-bottom: 1px solid var(--gray-200); }
     .data-table td { padding: 9px 10px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
@@ -548,7 +643,7 @@
     .ccc-policy-output-detail { }
 
     /* ── DASHBOARD SECTIONS ── */
-    .dash-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 0 0; box-sizing: border-box; width: 100%; max-width: 100%; }
     .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; }
     .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
     .card-title { font-size: 12px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.07em; }
@@ -591,7 +686,7 @@
 
     /* ── COLLECTED SO FAR BLOCK ── */
     .collected-block {
-      margin: 14px 28px 0;
+      margin: 14px 0 0;
       background: white;
       border: 1px solid #e2e8f0;
       border-left: 4px solid #10b981;
@@ -622,7 +717,7 @@
 
     /* ── ADVANCE REQUEST BLOCK ── */
     .advance-block {
-      margin: 14px 28px 0;
+      margin: 14px 0 0;
       background: white;
       border: 1px solid #e2e8f0;
       border-left: 4px solid #f59e0b;
@@ -674,11 +769,14 @@
       background: linear-gradient(135deg, #0d9488 0%, #0f172a 100%);
       border: none;
       border-radius: 12px;
-      padding: 30px 28px;
+      padding: 30px var(--ccc-page-pad);
       display: flex;
       align-items: center;
       gap: 24px;
-      margin: 16px 28px 0;
+      margin: 16px 0 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
       box-shadow: 0 6px 24px rgba(13,148,136,0.25), 0 2px 8px rgba(0,0,0,0.15);
       position: relative;
       overflow: hidden;
@@ -763,13 +861,19 @@
       position: fixed; inset: 0; z-index: 10000;
       background: rgba(0,0,0,0.55);
       display: flex; align-items: center; justify-content: center;
-      padding: 20px;
+      padding: max(12px, env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+      box-sizing: border-box;
     }
     .ob-overlay.hidden { display: none !important; }
     .ob-shell {
-      display: flex; width: 860px; max-width: 100%;
-      height: 600px; border-radius: 16px; overflow: hidden;
+      display: flex;
+      width: 100%;
+      max-width: min(860px, 100%);
+      height: 600px;
+      max-height: min(600px, 100dvh - 24px);
+      border-radius: 16px; overflow: hidden;
       box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+      box-sizing: border-box;
     }
     .ob-sb {
       width: 210px; flex-shrink: 0; background: #0f172a;
@@ -801,7 +905,8 @@
     }
     .ob-topbar {
       background: #0f172a; height: 46px; display: flex; align-items: center;
-      padding: 0 28px; flex-shrink: 0;
+      padding: 0 var(--ccc-page-pad); flex-shrink: 0;
+      box-sizing: border-box;
     }
     .ob-topbar-title { font-size: 13px; font-weight: 700; color: #f1f5f9; }
     .ob-topbar-sub { font-size: 11px; color: #475569; margin-left: 12px; }
@@ -809,11 +914,14 @@
     .ob-prog-fill { height: 100%; background: #14b8a6; transition: width 0.4s ease; }
     .ob-content {
       flex: 1; display: flex; align-items: center; justify-content: center;
-      padding: 28px; overflow-y: auto;
+      padding: var(--ccc-page-pad); overflow-y: auto;
+      overflow-x: hidden;
+      min-width: 0;
+      box-sizing: border-box;
     }
     .ob-card {
       background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-      padding: 32px 36px; width: 100%; max-width: 500px;
+      padding: 32px 36px; width: 100%; max-width: min(500px, 100%); box-sizing: border-box;
     }
     .ob-eye {
       font-size: 10px; font-weight: 700; color: #14b8a6;
@@ -908,32 +1016,55 @@
     .ccc-mobile-tab.active { color: #14b8a6; }
 
     @media (max-width: 768px) {
+      :root { --ccc-page-pad: 16px; }
       body { padding-bottom: 56px; }
       .ccc-main-row { flex-direction: column; }
       .ccc-sidebar { display: none !important; }
-      .ccc-views-stack { width: 100%; min-height: 0; flex: 1; }
+      .ccc-views-stack { width: 100%; max-width: 100%; min-height: 0; flex: 1; }
       .nv-fin-row { grid-template-columns: repeat(2, 1fr); }
       .nv-fin-value { font-size: 18px; }
-      .top-nav { padding: 0 16px; }
+      .top-nav { padding: 0 var(--ccc-page-pad); }
       .top-nav .nav-pill { display: none !important; }
       .top-nav .nav-pill#pill-fullplan,
       .top-nav .nav-pill.active { display: inline-flex !important; }
-      .step-header { padding: 14px 16px; }
+      .step-header { padding: 14px var(--ccc-page-pad); }
       .step-header-title { font-size: 17px; }
       .step-action-body { padding: 14px 16px; }
       .step-footer-nav, .step-footer { flex-wrap: wrap; gap: 8px; }
+      .step-grid { grid-template-columns: 1fr; }
+      .summary-stat-row,
+      .summary-breakdown-grid { grid-template-columns: 1fr; }
       .ccc-dash-row1,
-      .ccc-dash-row2,
       .ccc-dash-row3 { grid-template-columns: 1fr !important; }
       .advance-block { display: flex; flex-direction: column; }
       .advance-block .advance-body.open { flex-direction: column; }
       .collected-block { flex-direction: column; }
       .next-step-banner-main { flex-direction: column; text-align: center; }
       .next-step-banner-main .nsb-btn { width: 100%; }
-      .ob-shell { flex-direction: column; height: auto; max-height: 95vh; overflow-y: auto; }
+      .ob-overlay {
+        align-items: stretch; justify-content: stretch;
+        padding: max(8px, env(safe-area-inset-top, 0px)) max(8px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+      }
+      .ob-shell {
+        flex-direction: column; height: auto; min-height: min(600px, 100dvh - 16px);
+        max-height: min(95vh, 100dvh - 16px); overflow-y: auto;
+        width: 100%; max-width: 100%; border-radius: 10px;
+      }
       .ob-sb { display: none !important; }
-      .ob-card { padding: 20px; }
+      .ob-card { padding: 20px; max-width: 100%; }
       .ccc-mobile-tabbar { display: flex; }
+    }
+
+    @media (max-width: 480px) {
+      :root { --ccc-page-pad: 12px; }
+      .nv-fin-row { grid-template-columns: 1fr; }
+      .ob-card { padding: 16px; }
+      .overview-page-head { padding-top: 28px; }
+      .ob-overlay {
+        padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+      }
+      .ob-shell { border-radius: 0; min-height: 100dvh; max-height: none; }
+      .ob-opt-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1059,10 +1190,12 @@
             <div class="ob-eye">Step 4 of 4 — Ready</div>
             <div class="ob-h">Here's where you stand</div>
             <div class="ob-sub">Based on your answers. These numbers update as you complete steps.</div>
+            <div class="ccc-horizontal-scroll">
             <div class="ob-result-grid">
               <div class="ob-result-card"><div class="ob-result-lbl">Coverage limit</div><div class="ob-result-val" id="obResLimit" style="color:#0f172a;">—</div><div class="ob-result-sub">Dwelling</div></div>
               <div class="ob-result-card"><div class="ob-result-lbl">Est. recoverable</div><div class="ob-result-val" id="obResRecov" style="color:#14b8a6;">—</div><div class="ob-result-sub">After deductible</div></div>
               <div class="ob-result-card"><div class="ob-result-lbl">ALE status</div><div class="ob-result-val" id="obResALE" style="color:#f59e0b;">—</div><div class="ob-result-sub" id="obResALESub">—</div></div>
+            </div>
             </div>
             <div class="ob-priority" id="obPriorityBox">
               <div class="ob-priority-lbl">Your first priority</div>
@@ -1191,7 +1324,7 @@
       </div>
 
       <!-- ROW 1: Accomplished So Far + Findings So Far -->
-      <div class="ccc-dash-row1" style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0;">
+      <div class="ccc-dash-row1">
 
         <!-- ACCOMPLISHED SO FAR -->
         <div class="card">
@@ -1320,7 +1453,7 @@
       </div>
 
       <!-- ROW 2: What's Missing (full width) -->
-      <div class="card ccc-dash-row2" style="margin: 14px 28px 0;">
+      <div class="card ccc-dash-row2">
         <div class="card-header">
           <div class="card-title">What's Missing From Your Claim</div>
         </div>
@@ -1347,7 +1480,7 @@
       </div>
 
       <!-- ROW 3: Document Checklist + Recent Activity + Policy Coverage -->
-      <div class="ccc-dash-row3" style="display:grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 14px; margin: 14px 28px 0;">
+      <div class="ccc-dash-row3">
 
         <!-- DOCUMENT CHECKLIST -->
         <div class="card">
@@ -1404,6 +1537,7 @@
             <div class="card-title">Policy Coverage</div>
             <span class="card-link" onclick="goToStep(2)">Upload policy →</span>
           </div>
+          <div class="ccc-horizontal-scroll">
           <table style="width:100%; border-collapse:collapse; font-size:12px;" id="dashPolicyTable">
             <thead>
               <tr style="border-bottom:1px solid #e2e8f0;">
@@ -1416,6 +1550,7 @@
               <tr><td colspan="3" style="padding:16px 0; text-align:center; color:#94a3b8; font-size:12px;">Upload your policy in Step 2 to populate coverage details.</td></tr>
             </tbody>
           </table>
+          </div>
         </div>
 
       </div>
@@ -2694,6 +2829,7 @@
               <!-- INVENTORY TABLE -->
               <div class="workspace-section hidden" id="contentsInventoryTable">
                 <div class="workspace-label">📦 Your Contents Inventory</div>
+                <div class="ccc-horizontal-scroll">
                 <table class="data-table">
                   <thead>
                     <tr>
@@ -2706,6 +2842,7 @@
                   </thead>
                   <tbody id="contentsTableBody"></tbody>
                 </table>
+                </div>
                 <div class="value-display" style="text-align: right; margin-top: 16px;">
                   Total: <span id="contentsTotalValue">$0</span>
                 </div>
