@@ -104,11 +104,11 @@
     .nv-gap-val { font-size: 26px; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: -1px; }
     .nv-gap-badge { font-size: 10px; color: var(--emerald); background: rgba(16,185,129,0.14); padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(16,185,129,0.2); white-space: nowrap; }
     .nv-gap-sub { font-size: 11px; color: var(--gray-600); margin-top: 8px; line-height: 1.45; }
-    .nv-collected-card { margin: 10px 14px 0; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 12px 16px; flex-shrink: 0; }
-    .nv-collected-lbl { font-size: 10px; color: #10b981; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 600; }
-    .nv-collected-val { font-size: 22px; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: -0.5px; }
-    .nv-collected-sub { font-size: 11px; color: var(--gray-600); margin-top: 6px; }
-    .nv-collected-bar-outer { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+    .nv-collected-card { margin: 10px 14px 0; background: rgba(16,185,129,0.14); border: 2px solid rgba(16,185,129,0.35); border-radius: 10px; padding: 16px 18px; flex-shrink: 0; }
+    .nv-collected-lbl { font-size: 11px; color: #34d399; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; font-weight: 700; }
+    .nv-collected-val { font-size: 32px; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: -1px; }
+    .nv-collected-sub { font-size: 11px; color: #64748b; margin-top: 6px; }
+    .nv-collected-bar-outer { height: 5px; background: rgba(255,255,255,0.12); border-radius: 2px; margin-top: 10px; overflow: hidden; }
     .nv-collected-bar-fill { height: 100%; background: #10b981; border-radius: 2px; transition: width 0.5s ease; }
     .nv-phases-scroll { flex: 1; overflow-y: auto; padding: 14px 0 0; }
     .nv-progress-lbl { font-size: 10px; font-weight: 700; color: #253d5a; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 20px; margin-bottom: 8px; }
@@ -518,6 +518,38 @@
     .missing-action:hover { text-decoration: underline; }
     .sb-gap-progress { font-size: 11px; color: #64748b; margin-top: 6px; }
     .milestone-item { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+
+    /* ── COLLECTED SO FAR BLOCK ── */
+    .collected-block {
+      margin: 14px 28px 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #10b981;
+      border-radius: 10px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .collected-left { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+    .collected-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; color: #10b981; flex-shrink: 0;
+    }
+    .collected-lbl { font-size: 11px; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .collected-sub { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .collected-center { flex: 1; text-align: center; }
+    .collected-val { font-size: 40px; font-weight: 700; color: #059669; letter-spacing: -1.5px; line-height: 1; margin-bottom: 10px; }
+    .collected-bar-outer { height: 5px; background: #f1f5f9; border-radius: 3px; overflow: hidden; max-width: 260px; margin: 0 auto; }
+    .collected-bar-fill { height: 100%; background: linear-gradient(90deg,#10b981,#34d399); border-radius: 3px; transition: width 0.6s ease; }
+    .collected-right { flex-shrink: 0; }
+    .collected-breakdown { display: flex; flex-direction: column; gap: 6px; }
+    .collected-item { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .collected-item-lbl { font-size: 11px; color: #64748b; }
+    .collected-item-val { font-size: 12px; font-weight: 700; color: #059669; }
+
     /* ── ADVANCE REQUEST BLOCK ── */
     .advance-block {
       margin: 14px 28px 0;
@@ -655,9 +687,260 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 14px rgba(0,0,0,0.25);
     }
+
+    /* ── ONBOARDING OVERLAY ── */
+    .ob-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.55);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .ob-overlay.hidden { display: none !important; }
+    .ob-shell {
+      display: flex; width: 860px; max-width: 100%;
+      height: 600px; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    }
+    .ob-sb {
+      width: 210px; flex-shrink: 0; background: #0f172a;
+      display: flex; flex-direction: column; padding: 28px 22px;
+    }
+    .ob-logo {
+      font-size: 13px; font-weight: 700; color: #f1f5f9;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 36px;
+    }
+    .ob-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: #14b8a6; flex-shrink: 0; }
+    .ob-step-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; }
+    .ob-step-num {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700;
+    }
+    .ob-step-num.done { background: #10b981; color: white; }
+    .ob-step-num.cur  { background: #14b8a6; color: white; }
+    .ob-step-num.next { background: #1e293b; color: #475569; border: 1px solid #253d5a; }
+    .ob-step-lbl { font-size: 12px; }
+    .ob-step-lbl.done { color: #475569; }
+    .ob-step-lbl.cur  { color: #e2e8f0; font-weight: 600; }
+    .ob-step-lbl.next { color: #253d5a; }
+    .ob-step-line { width: 1px; height: 14px; background: #1e293b; margin: 0 0 0 10px; }
+    .ob-foot { margin-top: auto; font-size: 11px; color: #253d5a; line-height: 1.55; }
+    .ob-main {
+      flex: 1; background: #f4f7fb;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .ob-topbar {
+      background: #0f172a; height: 46px; display: flex; align-items: center;
+      padding: 0 28px; flex-shrink: 0;
+    }
+    .ob-topbar-title { font-size: 13px; font-weight: 700; color: #f1f5f9; }
+    .ob-topbar-sub { font-size: 11px; color: #475569; margin-left: 12px; }
+    .ob-prog { height: 3px; background: #1e293b; flex-shrink: 0; }
+    .ob-prog-fill { height: 100%; background: #14b8a6; transition: width 0.4s ease; }
+    .ob-content {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 28px; overflow-y: auto;
+    }
+    .ob-card {
+      background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+      padding: 32px 36px; width: 100%; max-width: 500px;
+    }
+    .ob-eye {
+      font-size: 10px; font-weight: 700; color: #14b8a6;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 8px;
+    }
+    .ob-eye::before { content: ''; width: 18px; height: 2px; background: #14b8a6; display: inline-block; }
+    .ob-h { font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.3px; line-height: 1.25; }
+    .ob-sub { font-size: 12px; color: #64748b; line-height: 1.6; margin-bottom: 22px; }
+    .ob-opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 20px; }
+    .ob-opt {
+      border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px 14px;
+      cursor: pointer; transition: all 0.15s; background: white;
+    }
+    .ob-opt:hover { border-color: #14b8a6; background: rgba(20,184,166,0.04); }
+    .ob-opt.sel { border-color: #14b8a6; background: rgba(20,184,166,0.07); }
+    .ob-opt-icon { font-size: 18px; margin-bottom: 5px; }
+    .ob-opt-label { font-size: 13px; font-weight: 600; color: #0f172a; }
+    .ob-opt-desc { font-size: 11px; color: #94a3b8; }
+    .ob-lbl { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; display: block; }
+    .ob-inp {
+      width: 100%; padding: 10px 13px; border: 1.5px solid #e2e8f0;
+      border-radius: 8px; font-size: 13px; color: #0f172a;
+      font-family: inherit; margin-bottom: 14px; background: white;
+    }
+    .ob-inp:focus { outline: none; border-color: #14b8a6; }
+    .ob-inp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ob-yn { display: flex; gap: 8px; margin-bottom: 14px; }
+    .ob-yn-btn {
+      flex: 1; padding: 9px; border: 1.5px solid #e2e8f0; border-radius: 7px;
+      font-size: 12px; font-weight: 600; cursor: pointer; background: white;
+      color: #475569; font-family: inherit; transition: all 0.15s;
+    }
+    .ob-yn-btn.sel { border-color: #14b8a6; background: rgba(20,184,166,0.07); color: #0f172a; }
+    .ob-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+    .ob-btn-back {
+      background: none; border: 1px solid #e2e8f0; border-radius: 7px;
+      padding: 9px 16px; font-size: 12px; font-weight: 600; color: #64748b;
+      cursor: pointer; font-family: inherit;
+    }
+    .ob-btn-next {
+      background: #0f172a; border: none; border-radius: 8px;
+      padding: 10px 22px; font-size: 13px; font-weight: 700; color: white;
+      cursor: pointer; font-family: inherit; transition: background 0.15s;
+    }
+    .ob-btn-next:hover { background: #1e293b; }
+    .ob-btn-next.teal { background: #14b8a6; }
+    .ob-btn-next.teal:hover { background: #0d9488; }
+    .ob-result-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .ob-result-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; }
+    .ob-result-lbl { font-size: 10px; color: #94a3b8; margin-bottom: 3px; }
+    .ob-result-val { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+    .ob-result-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+    .ob-priority { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
+    .ob-priority-lbl { font-size: 10px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .ob-priority-text { font-size: 12px; color: #166534; line-height: 1.55; }
   </style>
 </head>
 <body>
+
+  <!-- ── ONBOARDING OVERLAY ── -->
+  <div class="ob-overlay" id="obOverlay">
+    <div class="ob-shell">
+
+      <div class="ob-sb">
+        <div class="ob-logo"><div class="ob-logo-dot"></div>Claim Command Pro</div>
+        <div class="ob-step-row"><div class="ob-step-num cur" id="ob-sn1">1</div><div class="ob-step-lbl cur" id="ob-sl1">Your loss</div></div>
+        <div class="ob-step-line"></div>
+        <div class="ob-step-row"><div class="ob-step-num next" id="ob-sn2">2</div><div class="ob-step-lbl next" id="ob-sl2">Your policy</div></div>
+        <div class="ob-step-line"></div>
+        <div class="ob-step-row"><div class="ob-step-num next" id="ob-sn3">3</div><div class="ob-step-lbl next" id="ob-sl3">Where you stand</div></div>
+        <div class="ob-step-line"></div>
+        <div class="ob-step-row"><div class="ob-step-num next" id="ob-sn4">4</div><div class="ob-step-lbl next" id="ob-sl4">Your dashboard</div></div>
+        <div class="ob-foot">Takes about 2 minutes.<br>Your answers stay on your device.</div>
+      </div>
+
+      <div class="ob-main">
+        <div class="ob-topbar">
+          <div class="ob-topbar-title">Claim Command Pro</div>
+          <div class="ob-topbar-sub" id="obTopSub">Step 1 of 4 — Tell us about your loss</div>
+        </div>
+        <div class="ob-prog"><div class="ob-prog-fill" id="obProg" style="width:25%"></div></div>
+
+        <div class="ob-content">
+
+          <!-- STEP 1 -->
+          <div class="ob-card" id="ob-s1">
+            <div class="ob-eye">Step 1 of 4</div>
+            <div class="ob-h">What happened?</div>
+            <div class="ob-sub">Select your loss type so we can tailor the claim process to your situation.</div>
+            <div class="ob-opt-grid">
+              <div class="ob-opt sel" id="ob-type-fire" onclick="obSelType(this,'fire')"><div class="ob-opt-icon">🔥</div><div class="ob-opt-label">Fire</div><div class="ob-opt-desc">Structure, smoke, contents</div></div>
+              <div class="ob-opt" id="ob-type-water" onclick="obSelType(this,'water')"><div class="ob-opt-icon">💧</div><div class="ob-opt-label">Water / flood</div><div class="ob-opt-desc">Pipe burst, flooding, storm</div></div>
+              <div class="ob-opt" id="ob-type-wind" onclick="obSelType(this,'wind')"><div class="ob-opt-icon">🌪️</div><div class="ob-opt-label">Wind / storm</div><div class="ob-opt-desc">Hurricane, hail, tornado</div></div>
+              <div class="ob-opt" id="ob-type-other" onclick="obSelType(this,'other')"><div class="ob-opt-icon">🏚️</div><div class="ob-opt-label">Other</div><div class="ob-opt-desc">Theft, vandalism, collapse</div></div>
+            </div>
+            <label class="ob-lbl">Date of loss</label>
+            <input type="date" class="ob-inp" id="obDateOfLoss">
+            <label class="ob-lbl">Brief description <span style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+            <input type="text" class="ob-inp" id="obDescription" placeholder="e.g. Kitchen fire started in oven" style="margin-bottom:0;">
+            <div class="ob-actions"><div></div><button class="ob-btn-next" onclick="obGoTo(2)">Next →</button></div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="ob-card" id="ob-s2" style="display:none;">
+            <div class="ob-eye">Step 2 of 4</div>
+            <div class="ob-h">Tell us about your policy</div>
+            <div class="ob-sub">Estimates only — upload your policy document later for an exact analysis.</div>
+            <div class="ob-inp-row">
+              <div>
+                <label class="ob-lbl">Property type</label>
+                <select class="ob-inp" id="obPropertyType" style="margin-bottom:0;">
+                  <option value="residential">Residential — single family</option>
+                  <option value="condo">Residential — condo / townhome</option>
+                  <option value="commercial">Commercial</option>
+                </select>
+              </div>
+              <div>
+                <label class="ob-lbl">Settlement type</label>
+                <select class="ob-inp" id="obSettlementType" style="margin-bottom:0;">
+                  <option value="RCV">Replacement Cost (RCV)</option>
+                  <option value="ACV">Actual Cash Value (ACV)</option>
+                  <option value="unknown">Not sure</option>
+                </select>
+              </div>
+            </div>
+            <div style="height:12px;"></div>
+            <div class="ob-inp-row">
+              <div>
+                <label class="ob-lbl">Dwelling coverage ($)</label>
+                <input type="number" class="ob-inp" id="obDwelling" placeholder="e.g. 350000" style="margin-bottom:0;" min="0">
+              </div>
+              <div>
+                <label class="ob-lbl">Deductible ($)</label>
+                <input type="number" class="ob-inp" id="obDeductible" placeholder="e.g. 2500" style="margin-bottom:0;" min="0">
+              </div>
+            </div>
+            <div style="height:12px;"></div>
+            <label class="ob-lbl">Has your insurer provided an estimate yet?</label>
+            <div class="ob-yn">
+              <button class="ob-yn-btn" id="obEstYes" onclick="obSelYN('obEstYes','obEstNo','obEstUnk'); obData.hasEstimate=true;">Yes</button>
+              <button class="ob-yn-btn sel" id="obEstNo" onclick="obSelYN('obEstNo','obEstYes','obEstUnk'); obData.hasEstimate=false;">No — not yet</button>
+              <button class="ob-yn-btn" id="obEstUnk" onclick="obSelYN('obEstUnk','obEstYes','obEstNo'); obData.hasEstimate=false;">Not sure</button>
+            </div>
+            <div class="ob-actions"><button class="ob-btn-back" onclick="obGoTo(1)">← Back</button><button class="ob-btn-next" onclick="obGoTo(3)">Next →</button></div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="ob-card" id="ob-s3" style="display:none;">
+            <div class="ob-eye">Step 3 of 4</div>
+            <div class="ob-h">Where do things stand?</div>
+            <div class="ob-sub">Quick yes/no questions — we'll use these to pre-check your milestones and set your first step.</div>
+            <label class="ob-lbl">Have you reported the loss to your insurer?</label>
+            <div class="ob-yn">
+              <button class="ob-yn-btn" id="obReportedYes" onclick="obSelYN('obReportedYes','obReportedNo'); obData.reported=true;">Yes</button>
+              <button class="ob-yn-btn sel" id="obReportedNo" onclick="obSelYN('obReportedNo','obReportedYes'); obData.reported=false;">No</button>
+            </div>
+            <label class="ob-lbl">Has a carrier adjuster inspected the property?</label>
+            <div class="ob-yn">
+              <button class="ob-yn-btn" id="obAdjYes" onclick="obSelYN('obAdjYes','obAdjNo'); obData.adjusterInspected=true;">Yes</button>
+              <button class="ob-yn-btn sel" id="obAdjNo" onclick="obSelYN('obAdjNo','obAdjYes'); obData.adjusterInspected=false;">No</button>
+            </div>
+            <label class="ob-lbl">Do you have a contractor estimate?</label>
+            <div class="ob-yn">
+              <button class="ob-yn-btn" id="obContrYes" onclick="obSelYN('obContrYes','obContrNo'); obData.hasContractor=true;">Yes</button>
+              <button class="ob-yn-btn sel" id="obContrNo" onclick="obSelYN('obContrNo','obContrYes'); obData.hasContractor=false;">No</button>
+            </div>
+            <label class="ob-lbl">Are you currently displaced from your home?</label>
+            <div class="ob-yn">
+              <button class="ob-yn-btn" id="obDispYes" onclick="obSelYN('obDispYes','obDispNo'); obData.displaced=true;">Yes</button>
+              <button class="ob-yn-btn sel" id="obDispNo" onclick="obSelYN('obDispNo','obDispYes'); obData.displaced=false;">No</button>
+            </div>
+            <div class="ob-actions"><button class="ob-btn-back" onclick="obGoTo(2)">← Back</button><button class="ob-btn-next" onclick="obGoTo(4)">Next →</button></div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div class="ob-card" id="ob-s4" style="display:none;">
+            <div class="ob-eye">Step 4 of 4 — Ready</div>
+            <div class="ob-h">Here's where you stand</div>
+            <div class="ob-sub">Based on your answers. These numbers update as you complete steps.</div>
+            <div class="ob-result-grid">
+              <div class="ob-result-card"><div class="ob-result-lbl">Coverage limit</div><div class="ob-result-val" id="obResLimit" style="color:#0f172a;">—</div><div class="ob-result-sub">Dwelling</div></div>
+              <div class="ob-result-card"><div class="ob-result-lbl">Est. recoverable</div><div class="ob-result-val" id="obResRecov" style="color:#14b8a6;">—</div><div class="ob-result-sub">After deductible</div></div>
+              <div class="ob-result-card"><div class="ob-result-lbl">ALE status</div><div class="ob-result-val" id="obResALE" style="color:#f59e0b;">—</div><div class="ob-result-sub" id="obResALESub">—</div></div>
+            </div>
+            <div class="ob-priority" id="obPriorityBox">
+              <div class="ob-priority-lbl">Your first priority</div>
+              <div class="ob-priority-text" id="obPriorityText">Loading...</div>
+            </div>
+            <div class="ob-actions"><button class="ob-btn-back" onclick="obGoTo(3)">← Back</button><button class="ob-btn-next teal" onclick="obLaunch()">Launch my dashboard →</button></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Top Nav -->
   <div class="top-nav">
@@ -746,6 +1029,28 @@
           <div class="advance-actions">
             <button class="advance-btn" onclick="goToStep(12)">Request an advance →</button>
             <div class="advance-hint">Generates a formal advance request letter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLLECTED SO FAR BLOCK -->
+      <div class="collected-block" id="collectedBlock">
+        <div class="collected-left">
+          <div class="collected-icon">$</div>
+          <div>
+            <div class="collected-lbl">Collected So Far</div>
+            <div class="collected-sub" id="metricCollectedSub">Complete steps to begin tracking your recovery</div>
+          </div>
+        </div>
+        <div class="collected-center">
+          <div class="collected-val" id="metricCollected">$0</div>
+          <div class="collected-bar-outer"><div class="collected-bar-fill" id="collectedBarFill" style="width:0%"></div></div>
+        </div>
+        <div class="collected-right">
+          <div class="collected-breakdown" id="collectedBreakdown">
+            <div class="collected-item"><span class="collected-item-lbl">Carrier payments</span><span class="collected-item-val" id="collectedPayments">$0</span></div>
+            <div class="collected-item"><span class="collected-item-lbl">ALE reimbursed</span><span class="collected-item-val" id="collectedALE">$0</span></div>
+            <div class="collected-item"><span class="collected-item-lbl">Contents recovered</span><span class="collected-item-val" id="collectedContents">$0</span></div>
           </div>
         </div>
       </div>
@@ -3635,13 +3940,7 @@
               '<span>Day 85</span>' +
             '</div>' +
           '</div>' +
-          '<div class="nv-gap-card">' +
-            '<div class="nv-gap-lbl">Recoverable Gap</div>' +
-            '<div class="nv-gap-row">' +
-              '<div class="nv-gap-val" id="cccSidebarGapValue">' + gapDisplay + '</div>' +
-            '</div>' +
-            '<div class="nv-gap-sub">Insurer $' + Number(insAmt).toLocaleString() + ' &middot; Your estimate $' + Number(usrAmt).toLocaleString() + '</div>' +
-          '</div>' +
+
           (function() {
             const recovered = (claimData.contents && claimData.contents.recovered) || 0;
             const aleTotal  = (claimData.ALE && claimData.ALE.total) || 0;
@@ -3650,12 +3949,7 @@
             const totalRecov = gapNum + payments;
             const pct = totalRecov > 0 ? Math.min(100, Math.round((totalCollected / totalRecov) * 100)) : 0;
             const fmt = n => '$' + Number(n).toLocaleString();
-            return '<div class="nv-collected-card">' +
-              '<div class="nv-collected-lbl">Collected So Far</div>' +
-              '<div class="nv-collected-val" id="cccSidebarCollected">' + fmt(totalCollected) + '</div>' +
-              '<div class="nv-collected-sub">' + pct + '% of estimated total recovery</div>' +
-              '<div class="nv-collected-bar-outer"><div class="nv-collected-bar-fill" id="cccCollectedBar" style="width:' + pct + '%"></div></div>' +
-            '</div>';
+            return '';
           })() +
           '<div class="nv-phases-scroll">' +
             '<div class="nv-progress-lbl">Your Progress</div>' +
@@ -4973,6 +5267,30 @@ Generated using expert claim methodology and structured for carrier review`;
 
       const sidebarGapEl = document.getElementById('cccSidebarGapValue');
       if (sidebarGapEl) sidebarGapEl.textContent = `$${totalGap.toLocaleString()}`;
+
+      // Sync Collected So Far block
+      const collEl  = document.getElementById('metricCollected');
+      const collSub = document.getElementById('metricCollectedSub');
+      const collBar = document.getElementById('collectedBarFill');
+      const collPay = document.getElementById('collectedPayments');
+      const collALE = document.getElementById('collectedALE');
+      const collCon = document.getElementById('collectedContents');
+      if (collEl) {
+        const ins      = claimData.structure?.insurerEstimate || 0;
+        const aleT     = claimData.ALE?.total || 0;
+        const contR    = claimData.contents?.recovered || 0;
+        const collected = ins + aleT + contR;
+        collEl.textContent = '$' + Number(collected).toLocaleString();
+        if (collPay) collPay.textContent = '$' + Number(ins).toLocaleString();
+        if (collALE) collALE.textContent = '$' + Number(aleT).toLocaleString();
+        if (collCon) collCon.textContent = '$' + Number(contR).toLocaleString();
+        if (collBar) {
+          const totalEst = totalGap + ins;
+          const pct = totalEst > 0 ? Math.min(100, Math.round((collected / totalEst) * 100)) : 0;
+          collBar.style.width = pct + '%';
+          if (collSub) collSub.textContent = pct > 0 ? pct + '% of estimated total recovery' : 'Complete steps to begin tracking your recovery';
+        }
+      }
 
       const recEl = document.getElementById('policyCompleteRecovery');
       if (recEl && claimData.policyUploaded) {
@@ -6293,6 +6611,154 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     // Initialize on load
+
+    // ── ONBOARDING ────────────────────────────────────────────────────────────
+    var obData = {
+      lossType: 'fire', dateOfLoss: '', description: '',
+      propertyType: 'residential', settlementType: 'RCV',
+      dwelling: 0, deductible: 0,
+      hasEstimate: false,
+      reported: false, adjusterInspected: false,
+      hasContractor: false, displaced: false
+    };
+
+    function obSelType(el, type) {
+      document.querySelectorAll('.ob-opt').forEach(o => o.classList.remove('sel'));
+      el.classList.add('sel');
+      obData.lossType = type;
+    }
+
+    function obSelYN() {
+      var ids = Array.from(arguments);
+      var first = ids[0];
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.remove('sel');
+      });
+      var firstEl = document.getElementById(first);
+      if (firstEl) firstEl.classList.add('sel');
+    }
+
+    function obGoTo(n) {
+      for (var i = 1; i <= 4; i++) {
+        var card = document.getElementById('ob-s' + i);
+        if (card) card.style.display = i === n ? 'block' : 'none';
+        var sn = document.getElementById('ob-sn' + i);
+        var sl = document.getElementById('ob-sl' + i);
+        if (!sn || !sl) continue;
+        if (i < n) { sn.className = 'ob-step-num done'; sn.textContent = '✓'; sl.className = 'ob-step-lbl done'; }
+        else if (i === n) { sn.className = 'ob-step-num cur'; sn.textContent = i; sl.className = 'ob-step-lbl cur'; }
+        else { sn.className = 'ob-step-num next'; sn.textContent = i; sl.className = 'ob-step-lbl next'; }
+      }
+      var subs = ['Step 1 of 4 — Tell us about your loss', 'Step 2 of 4 — Your policy', 'Step 3 of 4 — Where you stand', 'Step 4 of 4 — Review & launch'];
+      var topSub = document.getElementById('obTopSub');
+      if (topSub) topSub.textContent = subs[n - 1];
+      var prog = document.getElementById('obProg');
+      if (prog) prog.style.width = (n / 4 * 100) + '%';
+
+      if (n === 2) {
+        obData.dateOfLoss = document.getElementById('obDateOfLoss').value;
+        obData.description = document.getElementById('obDescription').value;
+      }
+      if (n === 3) {
+        obData.propertyType = document.getElementById('obPropertyType').value;
+        obData.settlementType = document.getElementById('obSettlementType').value;
+        obData.dwelling = parseFloat(document.getElementById('obDwelling').value) || 0;
+        obData.deductible = parseFloat(document.getElementById('obDeductible').value) || 0;
+      }
+      if (n === 4) {
+        obBuildSummary();
+      }
+    }
+
+    function obBuildSummary() {
+      var fmt = function(n) { return '$' + Number(n).toLocaleString(); };
+      var dwelling = obData.dwelling || 0;
+      var deductible = obData.deductible || 0;
+      var recoverable = Math.max(0, dwelling - deductible);
+
+      var limitEl = document.getElementById('obResLimit');
+      var recovEl = document.getElementById('obResRecov');
+      var aleEl = document.getElementById('obResALE');
+      var aleSubEl = document.getElementById('obResALESub');
+      var prioEl = document.getElementById('obPriorityText');
+
+      if (limitEl) limitEl.textContent = dwelling > 0 ? fmt(dwelling) : 'Not set';
+      if (recovEl) recovEl.textContent = dwelling > 0 ? fmt(recoverable) : 'Enter coverage';
+      if (aleEl) aleEl.textContent = obData.displaced ? 'Active' : 'N/A';
+      if (aleSubEl) aleSubEl.textContent = obData.displaced ? 'Start tracking today' : 'Not displaced';
+
+      var priority = '';
+      if (!obData.reported) {
+        priority = 'Report your loss to your insurer first — use the exact language from Step 3 so your claim is positioned correctly from day one.';
+      } else if (obData.displaced) {
+        priority = 'You are displaced — start logging ALE expenses today. Hotels, meals, and storage are all reimbursable. Every day you do not track is money you cannot recover.';
+      } else if (!obData.dwelling) {
+        priority = 'Upload your policy document in Step 2 so we can identify your coverage limits and calculate your full recoverable amount.';
+      } else if (!obData.hasEstimate) {
+        priority = 'Your insurer has not issued an estimate yet. Document all damage thoroughly before their adjuster arrives — what they do not see, they will not pay for.';
+      } else {
+        priority = 'Upload your insurer estimate in Step 9 so we can audit it for missing line items, low pricing, and unapplied coverages.';
+      }
+      if (prioEl) prioEl.textContent = priority;
+    }
+
+    function obLaunch() {
+      // Pre-populate claimData with onboarding answers
+      if (obData.dwelling > 0) claimData.dwellingCoverage = obData.dwelling;
+      if (obData.deductible > 0) claimData.deductible = obData.deductible;
+      if (obData.settlementType !== 'unknown') claimData.settlementType = obData.settlementType;
+      if (obData.description) {
+        if (!claimData.initial) claimData.initial = {};
+        claimData.initial.description = obData.description;
+        claimData.initial.claimType = obData.lossType;
+      }
+      if (obData.dateOfLoss) {
+        if (!claimData.lossNotice) claimData.lossNotice = {};
+        claimData.lossNotice.date = obData.dateOfLoss;
+      }
+
+      // Pre-check milestones based on answers
+      if (obData.reported && !completedSteps.includes(3)) completedSteps.push(3);
+      if (obData.adjusterInspected && !completedSteps.includes(8)) completedSteps.push(8);
+      if (obData.hasContractor) claimData.contractorEstimate = { preloaded: true };
+
+      // Set smart starting step
+      var startStep = 1;
+      if (obData.reported && !claimData.policyUploaded) startStep = 2;
+      if (obData.reported && obData.adjusterInspected && !claimData.estimateUploaded) startStep = 9;
+      currentStep = startStep;
+
+      // Mark onboarding complete
+      localStorage.setItem('ccc_onboarded', '1');
+      saveState();
+      updateMoneyBar();
+      updateDashboard();
+      renderStepSidebar();
+
+      // Hide overlay
+      var overlay = document.getElementById('obOverlay');
+      if (overlay) overlay.classList.add('hidden');
+
+      showOverviewView();
+      renderStepPage(currentStep);
+    }
+
+    function obCheckAndShow() {
+      var done = localStorage.getItem('ccc_onboarded');
+      var hasSavedSteps = localStorage.getItem('ccc_completed_steps');
+      var hasData = localStorage.getItem('ccc_claim_data');
+      // Show onboarding only on first visit (no saved state)
+      if (!done && !hasSavedSteps && !hasData) {
+        var overlay = document.getElementById('obOverlay');
+        if (overlay) overlay.classList.remove('hidden');
+      } else {
+        var overlay = document.getElementById('obOverlay');
+        if (overlay) overlay.classList.add('hidden');
+      }
+    }
+    // ── END ONBOARDING ─────────────────────────────────────────────────────────
+
     function toggleAdvance() {
       const body = document.getElementById('advanceBody');
       const toggle = document.getElementById('advanceToggle');
@@ -6331,7 +6797,6 @@ Generated using expert claim methodology and structured for carrier review`;
       }
 
       if (startParam === 'estimate') {
-        // Suppress welcome/onboarding modal
         const modal = document.getElementById('guideModal');
         if (modal) modal.classList.add('hidden');
 
@@ -6341,6 +6806,7 @@ Generated using expert claim methodology and structured for carrier review`;
         // Skip overview, go directly to the estimate analysis step
         goToStep(9);
       } else {
+        obCheckAndShow();
         showOverviewView();
         renderStepPage(currentStep);
       }
