@@ -50,35 +50,35 @@
     .top-nav {
       position: relative;
       z-index: 1100;
-      background: white;
-      border-bottom: 1px solid var(--gray-200);
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
       padding: 0 28px;
       height: 50px;
       flex-shrink: 0;
     }
     .nav-header { height: 100%; display: flex; align-items: center; justify-content: space-between; width: 100%; }
     .nav-left { display: flex; align-items: center; gap: 0; }
-    .nav-brand { font-size: 15px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.3px; }
+    .nav-brand { font-size: 15px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.3px; }
     .nav-divider, .nav-claim-num, .nav-current-step, .overview-toggle-btn { display: none !important; }
     .nav-pills { display: flex; align-items: center; gap: 6px; }
     .nav-pill {
-      padding: 5px 13px; border-radius: 7px; font-size: 12px; font-weight: 500;
-      color: var(--gray-600); background: transparent; border: 1px solid var(--gray-200);
+      padding: 5px 13px; border-radius: 7px; font-size: 12px; font-weight: 600;
+      color: #f1f5f9; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
       cursor: pointer; font-family: inherit; transition: all 0.15s; height: auto;
     }
-    .nav-pill:hover { background: var(--gray-100); color: var(--gray-900); border-color: var(--gray-300); }
-    .nav-pill.active { color: var(--teal); border-color: var(--teal); background: var(--teal-dim); }
+    .nav-pill:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); color: white; }
+    .nav-pill.active { background: var(--teal); border-color: var(--teal); color: white; }
 
     /* ── SHELL ── */
     .main-layout {
       display: flex; flex: 1; flex-direction: column;
       overflow: hidden; min-height: 0;
-      padding: 16px; background: #dde4ec;
+      padding: 0; background: #dde4ec;
     }
     .ccc-main-row {
       display: flex; flex: 1; overflow: hidden; min-height: 0;
-      border-radius: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.08);
+      border-radius: 0;
+      box-shadow: none;
     }
 
     /* ── SIDEBAR ── */
@@ -86,19 +86,30 @@
       width: 240px; flex-shrink: 0;
       background: var(--navy);
       display: flex; flex-direction: column; overflow: hidden;
-      border-radius: 14px 0 0 14px;
+      border-radius: 0;
+      border-right: 1px solid #1e293b;
     }
     .nv-sb-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
     .nv-sb-top { padding: 18px 20px 14px; border-bottom: 1px solid var(--navy-border); flex-shrink: 0; }
-    .nv-brand-row { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #f1f5f9; }
+    .nv-brand-row { display: flex; align-items: center; gap: 8px; }
     .nv-brand-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+    .nv-brand-claim { font-size: 14px; font-weight: 700; color: #f1f5f9; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .nv-brand-meta { font-size: 11px; color: var(--gray-600); margin-top: 3px; padding-left: 15px; }
+    .nv-brand-meta-row { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--gray-500); margin-top: 5px; padding-left: 15px; }
+    .nv-brand-sep { color: #334155; }
+    .nv-brand-tag { background: rgba(20,184,166,0.12); color: #14b8a6; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; text-transform: capitalize; letter-spacing: 0.03em; }
     .nv-gap-card { margin: 14px 14px 0; background: var(--navy-light); border: 1px solid var(--navy-mid); border-radius: 10px; padding: 14px 16px; flex-shrink: 0; }
     .nv-gap-lbl { font-size: 10px; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; font-weight: 600; }
     .nv-gap-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 8px; }
     .nv-gap-val { font-size: 26px; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: -1px; }
     .nv-gap-badge { font-size: 10px; color: var(--emerald); background: rgba(16,185,129,0.14); padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(16,185,129,0.2); white-space: nowrap; }
     .nv-gap-sub { font-size: 11px; color: var(--gray-600); margin-top: 8px; line-height: 1.45; }
+    .nv-collected-card { margin: 10px 14px 0; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 12px 16px; flex-shrink: 0; }
+    .nv-collected-lbl { font-size: 10px; color: #10b981; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; font-weight: 600; }
+    .nv-collected-val { font-size: 22px; font-weight: 700; color: #34d399; line-height: 1; letter-spacing: -0.5px; }
+    .nv-collected-sub { font-size: 11px; color: var(--gray-600); margin-top: 6px; }
+    .nv-collected-bar-outer { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+    .nv-collected-bar-fill { height: 100%; background: #10b981; border-radius: 2px; transition: width 0.5s ease; }
     .nv-phases-scroll { flex: 1; overflow-y: auto; padding: 14px 0 0; }
     .nv-progress-lbl { font-size: 10px; font-weight: 700; color: #253d5a; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 20px; margin-bottom: 8px; }
     .nv-phase { cursor: pointer; }
@@ -108,10 +119,10 @@
     .nv-ph-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
     .nv-ph-icon.done   { background: var(--emerald); color: white; }
     .nv-ph-icon.active { background: var(--teal); color: white; }
-    .nv-ph-icon.locked { background: var(--navy-border); color: #253d5a; border: 1px solid var(--navy-mid); }
+    .nv-ph-icon.locked { background: #1e293b; color: #64748b; border: 1px solid #334155; }
     .nv-ph-name { flex: 1; font-size: 12px; color: #e2e8f0; font-weight: 500; }
-    .nv-ph-name.locked { color: var(--gray-600); font-weight: 400; }
-    .nv-ph-ct { font-size: 11px; color: #253d5a; }
+    .nv-ph-name.locked { color: #94a3b8; font-weight: 400; }
+    .nv-ph-ct { font-size: 11px; color: #64748b; }
     .nv-ph-ct.active { color: var(--teal); }
     .nv-steps-list { padding: 2px 0 6px 50px; }
     .nv-step-row { display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 0; background: none; border: none; width: 100%; cursor: pointer; font-family: inherit; text-align: left; transition: background 0.1s; }
@@ -129,22 +140,23 @@
     .nv-cta-btn:hover { background: var(--teal-dark); }
 
     /* ── VIEWS STACK ── */
-    .ccc-views-stack { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; background: #f4f7fb; border-radius: 0 14px 14px 0; }
+    .ccc-views-stack { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; background: #f4f7fb; border-radius: 0; }
 
     /* ── FINANCIAL CARDS ── */
-    .nv-fin-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; padding: 18px 22px 0; flex-shrink: 0; }
-    .nv-fin-card { background: white; border: 1px solid var(--gray-200); border-radius: 12px; padding: 16px 20px; }
-    .nv-fin-label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 9px; font-weight: 600; }
-    .nv-fin-value { font-size: 28px; font-weight: 700; color: var(--gray-900); line-height: 1; letter-spacing: -1px; }
-    .nv-fin-value.nv-gap { color: #059669; }
-    .nv-fin-sub { font-size: 11px; color: var(--gray-400); margin-top: 7px; }
-    .nv-fin-delta { font-size: 11px; color: #059669; background: rgba(5,150,105,0.08); display: inline-block; padding: 2px 9px; border-radius: 999px; margin-top: 7px; }
+    .nv-fin-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; padding: 0; flex-shrink: 0; }
+    .nv-fin-card { background: #0f172a; border: none; border-right: 1px solid #1e293b; border-bottom: 1px solid #1e293b; border-radius: 0; padding: 8px 22px; }
+    .nv-fin-card:last-child { border-right: none; }
+    .nv-fin-label { font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; font-weight: 600; }
+    .nv-fin-value { font-size: 20px; font-weight: 700; color: #f1f5f9; line-height: 1; letter-spacing: -0.5px; }
+    .nv-fin-value.nv-gap { color: #34d399; }
+    .nv-fin-sub { font-size: 10px; color: #475569; margin-top: 3px; }
+    .nv-fin-delta { font-size: 10px; color: #10b981; background: rgba(16,185,129,0.12); display: inline-block; padding: 1px 7px; border-radius: 999px; margin-top: 3px; }
 
     /* ── VIEW CONTAINERS ── */
     #view-overview { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
     #view-overview.hidden { display: none !important; }
     .overview-scroll { flex: 1; overflow-y: auto; background: #f4f7fb; }
-    .overview-inner { max-width: 1000px; margin: 0 auto; padding: 18px 22px 40px; }
+    .overview-inner { max-width: 1000px; margin: 0 auto; padding: 18px 28px 40px; }
     #view-step { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; background: #f4f7fb; }
     #view-step.hidden { display: none !important; }
     #view-summary { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; color: var(--gray-900); }
@@ -153,7 +165,7 @@
     .hidden { display: none !important; }
 
     /* ── RESUME BANNER ── */
-    .resume-banner { display: flex; align-items: center; gap: 16px; background: white; border: 1px solid var(--gray-200); border-left: 3px solid var(--teal); border-radius: 10px; padding: 14px 18px; margin: 14px 22px 0; flex-shrink: 0; }
+    .resume-banner { display: none !important; }
     .resume-banner.hidden { display: none !important; }
     .resume-icon { width: 30px; height: 30px; border-radius: 50%; background: var(--teal); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
     .resume-content { flex: 1; }
@@ -163,13 +175,13 @@
     .resume-btn { background: var(--navy); color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
 
     /* ── OVERVIEW ── */
-    .overview-page-head { margin-bottom: 18px; padding-top: 2px; }
-    .overview-title { font-size: 17px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.3px; margin-bottom: 4px; }
+    .overview-page-head { margin-bottom: 20px; padding: 40px 28px 0; text-align: center; }
+    .overview-title { font-size: 26px; font-weight: 700; color: var(--gray-900); letter-spacing: -0.4px; margin-bottom: 6px; }
     .overview-sub { font-size: 13px; color: var(--gray-500); }
     .phase-section { margin-bottom: 22px; }
+    .phase-section-header { display: flex; align-items: center; gap: 10px; padding: 10px 28px; border-bottom: 1px solid var(--gray-200); margin-bottom: 10px; }
     .phase-progress-bar { height: 3px; background: var(--gray-200); border-radius: 2px; overflow: hidden; margin-bottom: 0; }
     .phase-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
-    .phase-section-header { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--gray-200); margin-bottom: 10px; }
     .phase-pill { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; }
     .pill-1 { background: rgba(20,184,166,0.12); color: #0d9488; }
     .pill-2 { background: rgba(59,130,246,0.12); color: #1d4ed8; }
@@ -178,8 +190,8 @@
     .pill-5 { background: rgba(16,185,129,0.12); color: #065f46; }
     .phase-section-name { font-size: 14px; font-weight: 700; color: var(--gray-900); flex: 1; letter-spacing: -0.2px; }
     .phase-section-timeline, .phase-section-count { font-size: 11px; color: var(--gray-400); }
-    .step-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 10px; }
-    .step-tile { background: white; border: 1px solid var(--gray-200); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; display: flex; align-items: flex-start; gap: 10px; position: relative; }
+    .step-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; padding: 0 28px; }
+    .step-tile { background: white; border: 1px solid var(--gray-200); border-radius: 10px; padding: 18px 20px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; display: flex; align-items: flex-start; gap: 12px; position: relative; }
     .step-tile:hover { border-color: var(--teal); box-shadow: 0 2px 8px rgba(20,184,166,0.12); }
     .step-tile.current { border-color: var(--teal); background: rgba(20,184,166,0.04); }
     .step-tile.done { opacity: 0.65; }
@@ -187,8 +199,8 @@
     .step-tile.done .tile-done-check { display: flex; }
     .tile-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
     .tile-body { flex: 1; min-width: 0; }
-    .tile-title { font-size: 13px; font-weight: 600; color: var(--gray-900); line-height: 1.35; margin-bottom: 4px; }
-    .tile-sub { font-size: 11px; color: var(--gray-500); line-height: 1.5; }
+    .tile-title { font-size: 15px; font-weight: 700; color: var(--gray-900); line-height: 1.35; margin-bottom: 5px; }
+    .tile-sub { font-size: 12px; color: var(--gray-500); line-height: 1.55; }
     .tile-ai { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 6px; }
     .tile-badge-col { display: none; }
 
@@ -464,6 +476,185 @@
     .step-position-label { font-size: 11px; color: var(--gray-500); }
     .metric-strip { display: none !important; }
     .ccc-policy-output-detail { }
+
+    /* ── DASHBOARD SECTIONS ── */
+    .dash-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 18px; }
+    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .card-title { font-size: 12px; font-weight: 700; color: #0f172a; text-transform: uppercase; letter-spacing: 0.07em; }
+    .card-link { font-size: 11px; font-weight: 500; color: #14b8a6; cursor: pointer; text-transform: none; letter-spacing: 0; }
+    .file-item { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 12px; border-bottom: 1px solid #f1f5f9; }
+    .file-item:last-child { border-bottom: none; }
+    .file-item-label { color: #1e293b; flex: 1; }
+    .file-status-ok  { color: #059669; font-weight: 600; font-size: 11px; margin: 0 10px; }
+    .file-status-bad { color: #dc2626; font-weight: 600; font-size: 11px; margin: 0 10px; }
+    .file-item button { background: none; border: none; color: #14b8a6; cursor: pointer; font-weight: 600; font-size: 11px; font-family: inherit; white-space: nowrap; padding: 0; }
+    .file-item button:hover { text-decoration: underline; }
+    .findings-total { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+    .findings-total-val { font-size: 26px; font-weight: 700; color: #059669; letter-spacing: -1px; }
+    .findings-total-sub { font-size: 12px; color: #94a3b8; }
+    .finding-item { padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; background: #f8fafc; }
+    .finding-row { display: flex; align-items: center; gap: 8px; }
+    .finding-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .finding-name { flex: 1; font-size: 12px; color: #1e293b; }
+    .finding-amt { font-size: 13px; font-weight: 700; color: #059669; white-space: nowrap; }
+    .finding-amt.tbd { color: #94a3b8; }
+    .finding-desc { font-size: 11px; color: #94a3b8; margin-top: 3px; padding-left: 15px; }
+    .recovery-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+    .recovery-item:last-child { border-bottom: none; }
+    .recovery-item span:first-child { color: #475569; }
+    .money { color: #059669; font-weight: 700; }
+    .money.tbd { color: #94a3b8; font-weight: 500; }
+    .act-item { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f1f5f9; align-items: flex-start; }
+    .act-item:last-child { border-bottom: none; }
+    .act-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .act-text { font-size: 12px; color: #1e293b; line-height: 1.4; }
+    .act-time { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+    .missing-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f5f9; }
+    .missing-item:last-child { border-bottom: none; }
+    .missing-dot { width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; margin-top: 4px; }
+    .missing-text { flex: 1; font-size: 12px; color: #1e293b; line-height: 1.45; }
+    .missing-action { font-size: 11px; font-weight: 600; color: #14b8a6; cursor: pointer; white-space: nowrap; background: none; border: none; font-family: inherit; padding: 0; }
+    .missing-action:hover { text-decoration: underline; }
+    .sb-gap-progress { font-size: 11px; color: #64748b; margin-top: 6px; }
+    .milestone-item { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+    /* ── ADVANCE REQUEST BLOCK ── */
+    .advance-block {
+      margin: 14px 28px 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #f59e0b;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .advance-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 18px; cursor: pointer;
+      user-select: none;
+    }
+    .advance-header:hover { background: #fffbeb; }
+    .advance-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #f59e0b; flex-shrink: 0;
+    }
+    .advance-title { flex: 1; font-size: 16px; font-weight: 700; color: #0f172a; line-height: 1.3; }
+    .advance-toggle { font-size: 11px; color: #94a3b8; flex-shrink: 0; transition: transform 0.2s; }
+    .advance-toggle.open { transform: rotate(180deg); }
+    .advance-body {
+      display: none; padding: 0 18px 14px 58px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .advance-body.open { display: flex; gap: 16px; align-items: flex-start; padding-top: 12px; }
+    .advance-desc { flex: 1; font-size: 12px; color: #64748b; line-height: 1.6; }
+    .advance-desc strong { color: #b45309; font-weight: 700; }
+    .advance-warning { font-size: 11px; color: #92400e; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 6px 10px; line-height: 1.5; margin-top: 8px; }
+    .advance-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .advance-btn {
+      padding: 8px 14px; background: #f59e0b; border: none; border-radius: 7px;
+      font-size: 12px; font-weight: 700; color: #0f172a; cursor: pointer;
+      font-family: inherit; white-space: nowrap; transition: background 0.15s;
+    }
+    .advance-btn:hover { background: #d97706; }
+    .advance-hint { font-size: 10px; color: #94a3b8; text-align: right; max-width: 130px; line-height: 1.4; }
+    .milestone-item:last-child { border-bottom: none; }
+    .ms-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .ms-dot.done { background: #10b981; }
+    .ms-dot.pending { background: #e2e8f0; }
+    .ms-text { flex: 1; font-size: 12px; color: #1e293b; line-height: 1.35; }
+    .ms-status { font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .ms-status.done { color: #10b981; }
+    .ms-status.pending { color: #cbd5e1; }
+    .sb-progress-bar-outer { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+    .sb-progress-bar-fill { height: 100%; background: #14b8a6; border-radius: 2px; transition: width 0.4s ease; }
+    .next-step-banner-main {
+      background: linear-gradient(135deg, #0d9488 0%, #0f172a 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 30px 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin: 16px 28px 0;
+      box-shadow: 0 6px 24px rgba(13,148,136,0.25), 0 2px 8px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    .next-step-banner-main::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+    .next-step-banner-main .nsb-pulse {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: white;
+      flex-shrink: 0;
+      opacity: 0.9;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); }
+      50%       { box-shadow: 0 0 0 8px rgba(255,255,255,0); }
+    }
+    .next-step-banner-main .nsb-body { flex: 1; min-width: 0; text-align: center; }
+    .next-step-banner-main .nsb-eye {
+      font-size: 15px; font-weight: 800;
+      color: #ffffff;
+      text-transform: uppercase; letter-spacing: 0.2em;
+      margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .next-step-banner-main .nsb-eye::before {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 2px;
+      background: #14b8a6;
+      flex-shrink: 0;
+    }
+    .next-step-banner-main .nsb-eye::after {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 2px;
+      background: #14b8a6;
+      flex-shrink: 0;
+    }
+    .next-step-banner-main .nsb-title {
+      font-size: 26px; font-weight: 700;
+      color: white;
+      margin-bottom: 5px;
+      letter-spacing: 0.04em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+    .next-step-banner-main .nsb-why {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.5;
+    }
+    .next-step-banner-main .nsb-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      background: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px; font-weight: 700;
+      color: #0d9488;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .next-step-banner-main .nsb-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+    }
   </style>
 </head>
 <body>
@@ -528,8 +719,270 @@
       </div>
       <div class="overview-scroll">
     <div class="overview-inner">
+
+      <!-- ── NEXT STEP BANNER (overview) ── -->
+      <div class="next-step-banner-main" id="overviewNextStepBanner">
+        <div class="nsb-body">
+          <div class="nsb-eye">Your Next Step</div>
+          <div class="nsb-title" id="overviewNextTitle">Loading...</div>
+          <div class="nsb-why" id="overviewNextWhy">Complete this step to continue building your claim.</div>
+        </div>
+        <button class="nsb-btn" id="overviewNextBtn" onclick="resumeCurrentStep()">Continue →</button>
+      </div>
+
+      <!-- ── DASHBOARD GRID ── -->
+      <!-- ADVANCE REQUEST BLOCK -->
+      <div class="advance-block" id="advanceBlock">
+        <div class="advance-header" onclick="toggleAdvance()">
+          <div class="advance-icon">$</div>
+          <div class="advance-title">You may be entitled to a partial advance payment — right now</div>
+          <div class="advance-toggle" id="advanceToggle">▼</div>
+        </div>
+        <div class="advance-body" id="advanceBody">
+          <div style="flex:1; min-width:0;">
+            <div class="advance-desc">Most policies allow you to request an advance on your claim before a final settlement is reached. <strong>Requesting an advance is not a settlement. It does not close your claim. It does not mean you accept the insurer's estimate.</strong> You retain all rights to dispute, supplement, and negotiate after receiving an advance.</div>
+            <div class="advance-warning">⚠ Do not sign any document that uses the words "final," "full and complete," or "release of all claims" in connection with an advance payment — that converts it into a settlement.</div>
+          </div>
+          <div class="advance-actions">
+            <button class="advance-btn" onclick="goToStep(12)">Request an advance →</button>
+            <div class="advance-hint">Generates a formal advance request letter</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 1: Accomplished So Far + Findings So Far -->
+      <div style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0;">
+
+        <!-- ACCOMPLISHED SO FAR -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Accomplished So Far</div>
+            <span class="card-link" onclick="showOverviewView()">Full plan</span>
+          </div>
+          <div id="dashAccomplishedList">
+            <div class="milestone-item" id="ms-claim-filed">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Claim filed with insurer</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-policy-analyzed">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Policy analyzed &amp; coverages identified</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-damage-documented">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Damage documented with photos</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-adjuster-inspected">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Site inspected by carrier adjuster</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-carrier-estimate">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Carrier estimate received &amp; audited</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-contractor-estimate">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Independent contractor estimate secured</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-contents-inventory">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Contents inventory completed</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-ale-tracked">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Living expenses (ALE) being tracked</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-proof-of-loss">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Proof of Loss submitted to carrier</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-supplement-submitted">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Supplement / demand submitted</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-settlement-reached">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Settlement negotiated &amp; agreed</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-depreciation-recovered">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Depreciation (RCV holdback) recovered</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-final-payment">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Final payment received &amp; verified</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+            <div class="milestone-item" id="ms-claim-closed">
+              <div class="ms-dot pending"></div>
+              <div class="ms-text">Claim file archived &amp; records secured</div>
+              <div class="ms-status pending">Pending</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINDINGS SO FAR -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Findings So Far</div>
+            <span class="card-link" onclick="showFinancialSummary()">Details</span>
+          </div>
+          <div class="findings-total">
+            <div class="findings-total-val" id="dashFindingsTotal">$0</div>
+            <div class="findings-total-sub">identified so far</div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-row">
+              <div class="finding-dot" style="background:#059669;"></div>
+              <div class="finding-name">Policy coverage gaps</div>
+              <div class="finding-amt" id="dashPolicyGap">$0</div>
+            </div>
+            <div class="finding-desc">ALE, code upgrade coverage — complete Step 2</div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-row">
+              <div class="finding-dot" style="background:#f59e0b;"></div>
+              <div class="finding-name">Estimate deficiencies</div>
+              <div class="finding-amt" id="dashEstimateGap">$0</div>
+            </div>
+            <div class="finding-desc">Missing line items &amp; pricing — complete Step 9</div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-row">
+              <div class="finding-dot" style="background:#cbd5e1;"></div>
+              <div class="finding-name">Contents gap</div>
+              <div class="finding-amt tbd" id="dashContentsGap">TBD</div>
+            </div>
+            <div class="finding-desc">Inventory incomplete — complete Step 6</div>
+          </div>
+          <div class="finding-item">
+            <div class="finding-row">
+              <div class="finding-dot" style="background:#14b8a6;"></div>
+              <div class="finding-name">ALE (living expenses)</div>
+              <div class="finding-amt" id="dashALETotal">$0</div>
+            </div>
+            <div class="finding-desc">Track daily expenses in Step 7</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW 2: What's Missing (full width) -->
+      <div class="card" style="margin: 14px 28px 0;">
+        <div class="card-header">
+          <div class="card-title">What's Missing From Your Claim</div>
+        </div>
+        <div class="missing-item">
+          <div class="missing-dot"></div>
+          <div class="missing-text"><strong>Carrier estimate not uploaded</strong> — Without it, we can't calculate the gap or generate a supplement request.</div>
+          <button class="missing-action" onclick="goToStep(9)">Fix →</button>
+        </div>
+        <div class="missing-item">
+          <div class="missing-dot"></div>
+          <div class="missing-text"><strong>Contents inventory is empty</strong> — Personal property is often 20–40% of claim value and is being left on the table.</div>
+          <button class="missing-action" onclick="goToStep(6)">Fix →</button>
+        </div>
+        <div class="missing-item">
+          <div class="missing-dot" style="background:#ef4444;"></div>
+          <div class="missing-text"><strong>ALE not being tracked</strong> — Every day you don't log expenses is money you can't claim. This accrues daily.</div>
+          <button class="missing-action" onclick="goToStep(7)">Fix →</button>
+        </div>
+        <div class="missing-item">
+          <div class="missing-dot" style="background:#ef4444;"></div>
+          <div class="missing-text"><strong>Contractor estimate missing</strong> — You have no pricing leverage without an independent estimate to compare against the insurer's.</div>
+          <button class="missing-action" onclick="goToStep(5)">Fix →</button>
+        </div>
+      </div>
+
+      <!-- ROW 3: Document Checklist + Recent Activity + Policy Coverage -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 14px; margin: 14px 28px 0;">
+
+        <!-- DOCUMENT CHECKLIST -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Document Checklist</div>
+            <span class="card-link" onclick="showDocuments()">View all</span>
+          </div>
+          <div class="file-item">
+            <span class="file-item-label">Photos</span>
+            <span class="file-status-ok" id="file-photos-status">&#10004; Uploaded</span>
+          </div>
+          <div class="file-item">
+            <span class="file-item-label">Policy</span>
+            <span class="file-status-bad" id="file-policy-status">&#10006; Missing</span>
+            <button onclick="goToStep(2)">Upload →</button>
+          </div>
+          <div class="file-item">
+            <span class="file-item-label">Carrier estimate</span>
+            <span class="file-status-bad" id="file-estimate-status">&#10006; Missing</span>
+            <button onclick="goToStep(9)">Add →</button>
+          </div>
+          <div class="file-item">
+            <span class="file-item-label">Contents inventory</span>
+            <span class="file-status-bad" id="file-contents-status">&#10006; Incomplete</span>
+            <button onclick="goToStep(6)">Start →</button>
+          </div>
+          <div class="file-item">
+            <span class="file-item-label">Contractor estimate</span>
+            <span class="file-status-bad" id="file-contractor-status">&#10006; Missing</span>
+            <button onclick="goToStep(5)">Add →</button>
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Recent Activity</div>
+            <span class="card-link" onclick="showClaimJournal()">Full log</span>
+          </div>
+          <div id="dashActivityList">
+            <div class="act-item">
+              <div class="act-dot" style="background:#cbd5e1;"></div>
+              <div>
+                <div class="act-text">No activity yet</div>
+                <div class="act-time">Complete a step to begin</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- POLICY COVERAGE -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Policy Coverage</div>
+            <span class="card-link" onclick="goToStep(2)">Upload policy →</span>
+          </div>
+          <table style="width:100%; border-collapse:collapse; font-size:12px;" id="dashPolicyTable">
+            <thead>
+              <tr style="border-bottom:1px solid #e2e8f0;">
+                <th style="text-align:left; font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.07em; padding:0 0 8px;">Coverage</th>
+                <th style="text-align:right; font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.07em; padding:0 0 8px;">Limit</th>
+                <th style="text-align:right; font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.07em; padding:0 0 8px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="dashPolicyTableBody">
+              <tr><td colspan="3" style="padding:16px 0; text-align:center; color:#94a3b8; font-size:12px;">Upload your policy in Step 2 to populate coverage details.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+
       <div class="overview-page-head">
-        <h2 class="overview-title">The step-by-step claim process</h2>
+        <h2 class="overview-title">The Step-By-Step Claim Process</h2>
         <p class="overview-sub">Follow this system to document, prove, and recover your full claim value</p>
       </div>
       <section class="phase-section" data-phase="1">
@@ -560,7 +1013,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📄</div>
             <div class="tile-body">
-              <div class="tile-title">Identify All Available Coverages — Expert-Driven AI Policy Analysis ⚡</div>
+              <div class="tile-title">Identify All Available Coverages — Expert-Driven AI Policy Analysis</div>
               <div class="tile-sub">Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -576,7 +1029,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📞</div>
             <div class="tile-body">
-              <div class="tile-title">Report the Loss Correctly ⚡</div>
+              <div class="tile-title">Report the Loss Correctly</div>
               <div class="tile-sub">Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -604,7 +1057,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📸</div>
             <div class="tile-body">
-              <div class="tile-title">Document All Damage ⚡</div>
+              <div class="tile-title">Document All Damage</div>
               <div class="tile-sub">Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -620,7 +1073,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🏗️</div>
             <div class="tile-body">
-              <div class="tile-title">Establish Repair Costs — Secure an Independent Contractor Estimate ⚡</div>
+              <div class="tile-title">Establish Repair Costs — Secure an Independent Contractor Estimate</div>
               <div class="tile-sub">Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -636,7 +1089,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📦</div>
             <div class="tile-body">
-              <div class="tile-title">Build Contents Inventory ⚡</div>
+              <div class="tile-title">Build Contents Inventory</div>
               <div class="tile-sub">Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -652,7 +1105,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">💳</div>
             <div class="tile-body">
-              <div class="tile-title">Track Living Expenses (ALE) ⚡</div>
+              <div class="tile-title">Track Living Expenses (ALE)</div>
               <div class="tile-sub">Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -695,7 +1148,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🧮</div>
             <div class="tile-body">
-              <div class="tile-title">Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡</div>
+              <div class="tile-title">Audit the Insurance Estimate — Expert AI Estimate Review & Analysis</div>
               <div class="tile-sub">Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -711,7 +1164,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">💰</div>
             <div class="tile-body">
-              <div class="tile-title">Identify Low-Balled Labor & Material Costs ⚡</div>
+              <div class="tile-title">Identify Low-Balled Labor & Material Costs</div>
               <div class="tile-sub">Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -727,7 +1180,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">🔎</div>
             <div class="tile-body">
-              <div class="tile-title">Identify Unapplied Policy Benefits ⚡</div>
+              <div class="tile-title">Identify Unapplied Policy Benefits</div>
               <div class="tile-sub">Identify coverages and policy benefits that were not applied to your claim but should have been.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -755,7 +1208,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">✉️</div>
             <div class="tile-body">
-              <div class="tile-title">Submit a Demand for Payment ⚡</div>
+              <div class="tile-title">Submit a Demand for Payment</div>
               <div class="tile-sub">Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -771,7 +1224,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">⚖️</div>
             <div class="tile-body">
-              <div class="tile-title">Send Dispute Letters ⚡</div>
+              <div class="tile-title">Send Dispute Letters</div>
               <div class="tile-sub">Generate formal dispute letters to challenge denials, underpayments, and incorrect claim decisions at any stage of your claim.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -787,7 +1240,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">💲</div>
             <div class="tile-body">
-              <div class="tile-title">Negotiate the Settlement ⚡</div>
+              <div class="tile-title">Negotiate the Settlement</div>
               <div class="tile-sub">Use structured negotiation language and documentation to support your position and increase your settlement.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -828,9 +1281,9 @@
 
           <div class="step-tile p5" id="tile-16" onclick="goToStep(16)">
             <div class="tile-done-check">✓</div>
-            <div class="tile-icon">⚡</div>
+            <div class="tile-icon"></div>
             <div class="tile-body">
-              <div class="tile-title">Review the Final Offer ⚡</div>
+              <div class="tile-title">Review the Final Offer</div>
               <div class="tile-sub">Analyze the final settlement offer to ensure all amounts, coverages, and payments are correct before acceptance.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -846,7 +1299,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">📝</div>
             <div class="tile-body">
-              <div class="tile-title">Complete Repairs & Recover Remaining Funds ⚡</div>
+              <div class="tile-title">Complete Repairs & Recover Remaining Funds</div>
               <div class="tile-sub">Track repair completion and monitor remaining claim payments so all funds are properly released and collected.</div>
               <div class="tile-ai">AI Powered</div>
 </div>
@@ -862,7 +1315,7 @@
             <div class="tile-done-check">✓</div>
             <div class="tile-icon">✅</div>
             <div class="tile-body">
-              <div class="tile-title">Recover Depreciation (RCV) ⚡</div>
+              <div class="tile-title">Recover Depreciation (RCV)</div>
               <div class="tile-sub">Generate and submit the required documentation to recover withheld depreciation after repairs are completed.</div>
               </div>
             <div class="tile-badge-col">
@@ -988,19 +1441,19 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 4 — Document All Damage ⚡:</strong> Upload and organize complete photo and video evidence of all damage.</div>
+                <div class="provides-text"><strong>Step 4 — Document All Damage:</strong> Upload and organize complete photo and video evidence of all damage.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 5 — Establish Repair Costs — Secure an Independent Contractor Estimate ⚡:</strong> Document your independent contractor estimate so true repair scope and cost are defensible.</div>
+                <div class="provides-text"><strong>Step 5 — Establish Repair Costs — Secure an Independent Contractor Estimate:</strong> Document your independent contractor estimate so true repair scope and cost are defensible.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 6 — Build Contents Inventory ⚡:</strong> Capture and value your full contents inventory within your claim.</div>
+                <div class="provides-text"><strong>Step 6 — Build Contents Inventory:</strong> Capture and value your full contents inventory within your claim.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 7 — Track Living Expenses (ALE) ⚡:</strong> Log every reimbursable additional living expense with support.</div>
+                <div class="provides-text"><strong>Step 7 — Track Living Expenses (ALE):</strong> Log every reimbursable additional living expense with support.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
@@ -1014,15 +1467,15 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 9 — Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡:</strong> Find missing scope, quantity errors, pricing mistakes, and incomplete line items.</div>
+                <div class="provides-text"><strong>Step 9 — Audit the Insurance Estimate — Expert AI Estimate Review & Analysis:</strong> Find missing scope, quantity errors, pricing mistakes, and incomplete line items.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 10 — Identify Low-Balled Labor & Material Costs ⚡:</strong> Compare carrier pricing to real market rates.</div>
+                <div class="provides-text"><strong>Step 10 — Identify Low-Balled Labor & Material Costs:</strong> Compare carrier pricing to real market rates.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 11 — Identify Unapplied Policy Benefits ⚡:</strong> Surface coverages and benefits that should have been applied.</div>
+                <div class="provides-text"><strong>Step 11 — Identify Unapplied Policy Benefits:</strong> Surface coverages and benefits that should have been applied.</div>
               </li>
             </ul>
 
@@ -1032,15 +1485,15 @@
             <ul class="provides-list">
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 12 — Submit a Demand for Payment ⚡:</strong> Request payment for underpaid, omitted, and incorrectly evaluated items.</div>
+                <div class="provides-text"><strong>Step 12 — Submit a Demand for Payment:</strong> Request payment for underpaid, omitted, and incorrectly evaluated items.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 13 — Send Dispute Letters ⚡:</strong> Formal letters challenging denials, underpayments, and incorrect decisions.</div>
+                <div class="provides-text"><strong>Step 13 — Send Dispute Letters:</strong> Formal letters challenging denials, underpayments, and incorrect decisions.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 14 — Negotiate the Settlement ⚡:</strong> Support your position with structured negotiation documentation.</div>
+                <div class="provides-text"><strong>Step 14 — Negotiate the Settlement:</strong> Support your position with structured negotiation documentation.</div>
               </li>
             </ul>
 
@@ -1054,15 +1507,15 @@
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 16 — Review the Final Offer ⚡:</strong> Confirm amounts, coverages, and payments before you accept.</div>
+                <div class="provides-text"><strong>Step 16 — Review the Final Offer:</strong> Confirm amounts, coverages, and payments before you accept.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 17 — Complete Repairs & Recover Remaining Funds ⚡:</strong> Track repairs and remaining payments until fully collected.</div>
+                <div class="provides-text"><strong>Step 17 — Complete Repairs & Recover Remaining Funds:</strong> Track repairs and remaining payments until fully collected.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
-                <div class="provides-text"><strong>Step 18 — Recover Depreciation (RCV) ⚡:</strong> Submit documentation to recover withheld depreciation after repairs.</div>
+                <div class="provides-text"><strong>Step 18 — Recover Depreciation (RCV):</strong> Submit documentation to recover withheld depreciation after repairs.</div>
               </li>
               <li class="provides-item">
                 <div class="provides-bullet"></div>
@@ -2732,23 +3185,23 @@
 
     const STEP_META = {
       1: { title: 'Understand the Claim Process', subtitle: 'Claim Command Pro walks you through how insurance claims work so you avoid early mistakes that reduce your payout.', short: 'Claim Guide', time: '5 min read' },
-      2: { title: 'Identify All Available Coverages — Expert-Driven AI Policy Analysis ⚡', subtitle: 'Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.', short: 'Policy Coverage', time: '10–15 min' },
-      3: { title: 'Report the Loss Correctly ⚡', subtitle: 'Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.', short: 'Report Loss', time: '5 min' },
-      4: { title: 'Document All Damage ⚡', subtitle: 'Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.', short: 'Document Damage', time: '15–20 min' },
-      5: { title: 'Establish Repair Costs — Secure an Independent Contractor Estimate ⚡', subtitle: "Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.", short: 'Contractor Est.', time: '10–15 min' },
-      6: { title: 'Build Contents Inventory ⚡', subtitle: 'Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.', short: 'Contents', time: '20–30 min' },
-      7: { title: 'Track Living Expenses (ALE) ⚡', subtitle: 'Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.', short: 'Track ALE', time: '5 min/day' },
+      2: { title: 'Identify All Available Coverages — Expert-Driven AI Policy Analysis', subtitle: 'Claim Command Pro analyzes your policy using expert-driven AI to identify every available coverage, benefit, limit, exclusion, and applicable provision relevant to your claim.', short: 'Policy Coverage', time: '10–15 min' },
+      3: { title: 'Report the Loss Correctly', subtitle: 'Claim Command Pro generates the exact reporting language you should use to properly notify your carrier and position your claim correctly from the start.', short: 'Report Loss', time: '5 min' },
+      4: { title: 'Document All Damage', subtitle: 'Upload and organize complete photo and video evidence of all damage — including property/building and personal property/contents — so everything is captured and properly documented within your claim.', short: 'Document Damage', time: '15–20 min' },
+      5: { title: 'Establish Repair Costs — Secure an Independent Contractor Estimate', subtitle: "Upload and document your independent contractor estimate (not the carrier's vendor) so the full scope and true cost of repair are captured and defensible.", short: 'Contractor Est.', time: '10–15 min' },
+      6: { title: 'Build Contents Inventory', subtitle: 'Enter and document all damaged or lost items so your full contents inventory is captured, structured, and valued within your claim.', short: 'Contents', time: '20–30 min' },
+      7: { title: 'Track Living Expenses (ALE)', subtitle: 'Log and organize all additional living expenses so every reimbursable cost is recorded and supported for reimbursement.', short: 'Track ALE', time: '5 min/day' },
       8: { title: 'Prepare for the Adjuster Inspection', subtitle: 'Claim Command Pro prepares you for the adjuster visit so damage is properly presented and nothing is overlooked during inspection.', short: 'Adjuster Prep', time: '10 min' },
-      9: { title: 'Audit the Insurance Estimate — Expert AI Estimate Review & Analysis ⚡', subtitle: "Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.", short: 'Audit Estimate', time: '10–15 min' },
-      10: { title: 'Identify Low-Balled Labor & Material Costs ⚡', subtitle: "Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.", short: 'Labor & Material', time: '10 min' },
-      11: { title: 'Identify Unapplied Policy Benefits ⚡', subtitle: 'Identify coverages and policy benefits that were not applied to your claim but should have been.', short: 'Unapplied Benefits', time: '10 min' },
-      12: { title: 'Submit a Demand for Payment ⚡', subtitle: 'Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.', short: 'Demand Payment', time: '10–15 min' },
-      13: { title: 'Send Dispute Letters ⚡', subtitle: 'Generate formal dispute letters to challenge denials, underpayments, and incorrect claim decisions at any stage of your claim.', short: 'Dispute Letters', time: '10 min' },
-      14: { title: 'Negotiate the Settlement ⚡', subtitle: 'Use structured negotiation language and documentation to support your position and increase your settlement.', short: 'Negotiate', time: '15–20 min' },
+      9: { title: 'Audit the Insurance Estimate — Expert AI Estimate Review & Analysis', subtitle: "Upload and analyze the carrier's estimate using expert-driven AI to identify missing scope, incorrect quantities, pricing errors, and incomplete line items.", short: 'Audit Estimate', time: '10–15 min' },
+      10: { title: 'Identify Low-Balled Labor & Material Costs', subtitle: "Compare the insurance company's pricing to real market rates to identify where labor and material costs have been undervalued.", short: 'Labor & Material', time: '10 min' },
+      11: { title: 'Identify Unapplied Policy Benefits', subtitle: 'Identify coverages and policy benefits that were not applied to your claim but should have been.', short: 'Unapplied Benefits', time: '10 min' },
+      12: { title: 'Submit a Demand for Payment', subtitle: 'Generate a complete demand package requesting payment for all underpaid, omitted, and incorrectly evaluated items in your claim.', short: 'Demand Payment', time: '10–15 min' },
+      13: { title: 'Send Dispute Letters', subtitle: 'Generate formal dispute letters to challenge denials, underpayments, and incorrect claim decisions at any stage of your claim.', short: 'Dispute Letters', time: '10 min' },
+      14: { title: 'Negotiate the Settlement', subtitle: 'Use structured negotiation language and documentation to support your position and increase your settlement.', short: 'Negotiate', time: '15–20 min' },
       15: { title: 'Escalate the Claim (Appraisal / Mediation)', subtitle: 'Follow guided escalation steps including appraisal and mediation when the carrier refuses to properly adjust the claim.', short: 'Escalate', time: '10 min' },
-      16: { title: 'Review the Final Offer ⚡', subtitle: 'Analyze the final settlement offer to ensure all amounts, coverages, and payments are correct before acceptance.', short: 'Final Offer', time: '15 min' },
-      17: { title: 'Complete Repairs & Recover Remaining Funds ⚡', subtitle: 'Track repair completion and monitor remaining claim payments so all funds are properly released and collected.', short: 'Complete Repairs', time: '10 min' },
-      18: { title: 'Recover Depreciation (RCV) ⚡', subtitle: 'Generate and submit the required documentation to recover withheld depreciation after repairs are completed.', short: 'Recover RCV', time: '5 min' },
+      16: { title: 'Review the Final Offer', subtitle: 'Analyze the final settlement offer to ensure all amounts, coverages, and payments are correct before acceptance.', short: 'Final Offer', time: '15 min' },
+      17: { title: 'Complete Repairs & Recover Remaining Funds', subtitle: 'Track repair completion and monitor remaining claim payments so all funds are properly released and collected.', short: 'Complete Repairs', time: '10 min' },
+      18: { title: 'Recover Depreciation (RCV)', subtitle: 'Generate and submit the required documentation to recover withheld depreciation after repairs are completed.', short: 'Recover RCV', time: '5 min' },
       19: { title: 'Close the Claim & Secure Records', subtitle: 'Organize and preserve your full claim file for future reference, disputes, or legal protection.', short: 'Close Claim', time: '10 min' }
     };
 
@@ -3142,7 +3595,7 @@
         const isActive = p.num === activePhaseNum;
         const lockLevel = p.num - activePhaseNum;
         const opacityStyle = status === 'locked'
-          ? ' style="opacity:' + Math.max(0.15, 0.55 - lockLevel * 0.12) + '"'
+          ? ' style="opacity:' + Math.max(0.55, 0.85 - lockLevel * 0.08) + '"'
           : '';
 
         const iconHtml = status === 'done'
@@ -3175,8 +3628,12 @@
       nav.innerHTML =
         '<div class="nv-sb-inner">' +
           '<div class="nv-sb-top">' +
-            '<div class="nv-brand-row"><span class="nv-brand-dot"></span>Claim Command Center</div>' +
-            '<div class="nv-brand-meta">CLM-2024-0847 &middot; Day 85</div>' +
+            '<div class="nv-brand-row"><span class="nv-brand-dot"></span><span class="nv-brand-claim" id="cccSidebarClaimName">' + (claimData.initial && claimData.initial.description ? claimData.initial.description : 'My Claim') + '</span></div>' +
+            '<div class="nv-brand-meta-row">' +
+              '<span class="nv-brand-tag">' + (claimData.initial && claimData.initial.claimType ? claimData.initial.claimType.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : 'Property Claim') + '</span>' +
+              '<span class="nv-brand-sep">&middot;</span>' +
+              '<span>Day 85</span>' +
+            '</div>' +
           '</div>' +
           '<div class="nv-gap-card">' +
             '<div class="nv-gap-lbl">Recoverable Gap</div>' +
@@ -3185,6 +3642,21 @@
             '</div>' +
             '<div class="nv-gap-sub">Insurer $' + Number(insAmt).toLocaleString() + ' &middot; Your estimate $' + Number(usrAmt).toLocaleString() + '</div>' +
           '</div>' +
+          (function() {
+            const recovered = (claimData.contents && claimData.contents.recovered) || 0;
+            const aleTotal  = (claimData.ALE && claimData.ALE.total) || 0;
+            const payments  = (claimData.structure && claimData.structure.insurerEstimate) || 0;
+            const totalCollected = recovered + aleTotal + payments;
+            const totalRecov = gapNum + payments;
+            const pct = totalRecov > 0 ? Math.min(100, Math.round((totalCollected / totalRecov) * 100)) : 0;
+            const fmt = n => '$' + Number(n).toLocaleString();
+            return '<div class="nv-collected-card">' +
+              '<div class="nv-collected-lbl">Collected So Far</div>' +
+              '<div class="nv-collected-val" id="cccSidebarCollected">' + fmt(totalCollected) + '</div>' +
+              '<div class="nv-collected-sub">' + pct + '% of estimated total recovery</div>' +
+              '<div class="nv-collected-bar-outer"><div class="nv-collected-bar-fill" id="cccCollectedBar" style="width:' + pct + '%"></div></div>' +
+            '</div>';
+          })() +
           '<div class="nv-phases-scroll">' +
             '<div class="nv-progress-lbl">Your Progress</div>' +
             phasesHtml +
@@ -4508,6 +4980,140 @@ Generated using expert claim methodology and structured for carrier review`;
           ? formatMoneyNav(calculateTotalRecoverable())
           : `$${calculateTotalRecoverable().toLocaleString()}`;
       }
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      const fmt = n => '$' + Number(n || 0).toLocaleString();
+
+      // File status
+      const setStatus = (id, ok, okText, badText) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = ok ? ('\u2714 ' + okText) : ('\u2716 ' + badText);
+        el.className = ok ? 'file-status-ok' : 'file-status-bad';
+      };
+      setStatus('file-policy-status',     claimData.policyUploaded,      'Uploaded',  'Missing');
+      setStatus('file-estimate-status',   claimData.estimateUploaded,    'Uploaded',  'Missing');
+      setStatus('file-contractor-status', !!claimData.contractorEstimate,'Uploaded',  'Missing');
+      setStatus('file-contents-status',   claimData.contents?.items?.length > 0, claimData.contents?.items?.length + ' items', 'Incomplete');
+      setStatus('file-photos-status',     claimData.damagePhotos?.length > 0, 'Uploaded', 'Missing');
+
+      // Findings
+      const structureGap = Math.max(0, (claimData.structure?.userEstimate || 0) - (claimData.structure?.insurerEstimate || 0));
+      const contentsVal  = claimData.contents?.totalValue || 0;
+      const aleVal       = claimData.ALE?.total || 0;
+      const estGap       = claimData.estimateReview?.gap || 0;
+      const total        = structureGap + contentsVal + aleVal;
+
+      const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
+      setEl('dashFindingsTotal', fmt(total));
+      setEl('dashPolicyGap',     fmt(structureGap));
+      setEl('dashEstimateGap',   estGap ? fmt(estGap) : '$0');
+      setEl('dashALETotal',      fmt(aleVal));
+      const cg = document.getElementById('dashContentsGap');
+      if (cg) { cg.textContent = contentsVal > 0 ? fmt(contentsVal) : 'TBD'; cg.className = contentsVal > 0 ? 'finding-amt' : 'finding-amt tbd'; }
+
+      // Next step banner
+      const nTitle = document.getElementById('overviewNextTitle');
+      const nWhy   = document.getElementById('overviewNextWhy');
+      const nBtn   = document.getElementById('overviewNextBtn');
+      if (nTitle && STEP_META && STEP_META[currentStep]) {
+        nTitle.textContent = 'Step ' + currentStep + ' \u2014 ' + STEP_META[currentStep].title;
+        nWhy.textContent   = STEP_META[currentStep].subtitle || 'Complete this step to continue building your claim.';
+        if (nBtn) nBtn.onclick = () => goToStep(currentStep);
+      }
+
+      // Activity log — last 5 journal entries
+      const actList = document.getElementById('dashActivityList');
+      if (actList && claimJournal && claimJournal.length > 0) {
+        actList.innerHTML = claimJournal.slice(0, 5).map(e => {
+          const d = new Date(e.timestamp);
+          const t = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          return '<div class="act-item"><div class="act-dot" style="background:#14b8a6;"></div><div><div class="act-text">' + (e.description || e.action || '') + '</div><div class="act-time">' + dateStr + ' ' + t + '</div></div></div>';
+        }).join('');
+      }
+
+      // Milestones
+      const setMs = (id, done) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const dot = el.querySelector('.ms-dot');
+        const status = el.querySelector('.ms-status');
+        const text = el.querySelector('.ms-text');
+        if (done) {
+          dot.className = 'ms-dot done';
+          status.textContent = '✓ Done';
+          status.className = 'ms-status done';
+          text.style.color = '#64748b';
+          text.style.textDecoration = 'line-through';
+        } else {
+          dot.className = 'ms-dot pending';
+          status.textContent = 'Pending';
+          status.className = 'ms-status pending';
+          text.style.color = '#1e293b';
+          text.style.textDecoration = 'none';
+        }
+      };
+
+      const hasPhotos       = claimData.damagePhotos?.length > 0;
+      const hasClaim        = completedSteps.includes(3) || !!claimData.lossNotice;
+      const policyDone      = claimData.policyUploaded;
+      const damageDone      = completedSteps.includes(4) || hasPhotos;
+      const adjusterDone    = completedSteps.includes(8) || !!claimData.adjusterRequests?.length;
+      const carrierEstDone  = claimData.estimateUploaded || !!claimData.estimateReview;
+      const contractorDone  = !!claimData.contractorEstimate;
+      const contentsDone    = claimData.contents?.items?.length > 0;
+      const aleDone         = claimData.ALE?.entries?.length > 0;
+      const supplementDone  = completedSteps.includes(12) || completedSteps.includes(13);
+      const settlementDone  = completedSteps.includes(15) || completedSteps.includes(16) || completedSteps.includes(17);
+
+      const proofOfLossDone  = completedSteps.includes(3) && !!claimData.lossNotice;
+      const deprecDone       = completedSteps.includes(18);
+      const finalPaymentDone = completedSteps.includes(19);
+      const claimClosedDone  = completedSteps.includes(19) && completedSteps.length >= 19;
+
+      setMs('ms-claim-filed',         hasClaim);
+      setMs('ms-policy-analyzed',     policyDone);
+      setMs('ms-damage-documented',   damageDone);
+      setMs('ms-adjuster-inspected',  adjusterDone);
+      setMs('ms-carrier-estimate',    carrierEstDone);
+      setMs('ms-contractor-estimate', contractorDone);
+      setMs('ms-contents-inventory',  contentsDone);
+      setMs('ms-ale-tracked',         aleDone);
+      setMs('ms-proof-of-loss',       proofOfLossDone);
+      setMs('ms-supplement-submitted',supplementDone);
+      setMs('ms-settlement-reached',  settlementDone);
+      setMs('ms-depreciation-recovered', deprecDone);
+      setMs('ms-final-payment',       finalPaymentDone);
+      setMs('ms-claim-closed',        claimClosedDone);
+
+      const msDone = [hasClaim, policyDone, damageDone, adjusterDone, carrierEstDone, contractorDone, contentsDone, aleDone, proofOfLossDone, supplementDone, settlementDone, deprecDone, finalPaymentDone, claimClosedDone].filter(Boolean).length;
+      const msCount = document.getElementById('dashMilestonesCompleted');
+      const msBar   = document.getElementById('dashMilestonesBar');
+      if (msCount) msCount.textContent = msDone + ' / 14';
+      if (msBar)   msBar.style.width = Math.round((msDone / 14) * 100) + '%';
+
+      // Policy coverage table
+      const tbody = document.getElementById('dashPolicyTableBody');
+      if (tbody && claimData.policyUploaded) {
+        const rows = [
+          { label: 'Dwelling Coverage',   val: claimData.dwellingCoverage  ? '$' + Number(claimData.dwellingCoverage).toLocaleString()  : '—', status: claimData.dwellingCoverage  ? 'Active' : 'Unknown', ok: !!claimData.dwellingCoverage },
+          { label: 'Deductible',          val: claimData.deductible        ? '$' + Number(claimData.deductible).toLocaleString()         : '—', status: claimData.deductible        ? 'Applied' : 'Unknown', ok: true },
+          { label: 'Settlement Type',     val: claimData.settlementType    || '—', status: claimData.settlementType === 'RCV' ? 'RCV'   : claimData.settlementType || 'Unknown', ok: claimData.settlementType === 'RCV' },
+          { label: 'Contents Coverage',   val: claimData.contentsCoverage  ? '$' + Number(claimData.contentsCoverage).toLocaleString()  : '—', status: claimData.contentsCoverage  ? 'Active' : 'Check policy', ok: !!claimData.contentsCoverage },
+          { label: 'ALE Coverage',        val: claimData.aleCoverage       || '—', status: claimData.aleCoverage        ? 'Active' : 'Check policy', ok: !!claimData.aleCoverage },
+          { label: 'Key Endorsements',    val: claimData.endorsements      || '—', status: claimData.endorsements       ? 'Present' : 'None noted',  ok: !!claimData.endorsements },
+        ];
+        tbody.innerHTML = rows.map(r =>
+          '<tr style="border-bottom:1px solid #f1f5f9;">' +
+          '<td style="padding:7px 0;color:#334155;font-weight:500;">' + r.label + '</td>' +
+          '<td style="padding:7px 0;text-align:right;color:#0f172a;font-weight:700;">' + r.val + '</td>' +
+          '<td style="padding:7px 0;text-align:right;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;background:' + (r.ok ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)') + ';color:' + (r.ok ? '#059669' : '#b45309') + ';">' + r.status + '</span></td>' +
+          '</tr>'
+        ).join('');
+      }
     }
 
     function updateSummary() {
@@ -5687,6 +6293,15 @@ Generated using expert claim methodology and structured for carrier review`;
     }
 
     // Initialize on load
+    function toggleAdvance() {
+      const body = document.getElementById('advanceBody');
+      const toggle = document.getElementById('advanceToggle');
+      if (!body || !toggle) return;
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      toggle.classList.toggle('open', !isOpen);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       // URL parameter detection for alternate entry paths
       const urlParams = new URLSearchParams(window.location.search);
