@@ -870,6 +870,71 @@
     .ob-priority { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px; }
     .ob-priority-lbl { font-size: 10px; font-weight: 700; color: #15803d; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
     .ob-priority-text { font-size: 12px; color: #166534; line-height: 1.55; }
+
+    /* ── MOBILE (Claim Command Center) ── */
+    .ccc-mobile-tabbar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #0f172a;
+      border-top: 1px solid #1e293b;
+      z-index: 1000;
+      justify-content: space-around;
+      align-items: stretch;
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0));
+      gap: 2px;
+    }
+    .ccc-mobile-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 6px 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      color: #94a3b8;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1.2;
+      min-width: 0;
+    }
+    .ccc-mobile-tab .ccc-mtab-ico { font-size: 16px; line-height: 1; }
+    .ccc-mobile-tab.active { color: #14b8a6; }
+
+    @media (max-width: 768px) {
+      body { padding-bottom: 56px; }
+      .ccc-main-row { flex-direction: column; }
+      .ccc-sidebar { display: none !important; }
+      .ccc-views-stack { width: 100%; min-height: 0; flex: 1; }
+      .nv-fin-row { grid-template-columns: repeat(2, 1fr); }
+      .nv-fin-value { font-size: 18px; }
+      .top-nav { padding: 0 16px; }
+      .top-nav .nav-pill { display: none !important; }
+      .top-nav .nav-pill#pill-fullplan,
+      .top-nav .nav-pill.active { display: inline-flex !important; }
+      .step-header { padding: 14px 16px; }
+      .step-header-title { font-size: 17px; }
+      .step-action-body { padding: 14px 16px; }
+      .step-footer-nav, .step-footer { flex-wrap: wrap; gap: 8px; }
+      .ccc-dash-row1,
+      .ccc-dash-row2,
+      .ccc-dash-row3 { grid-template-columns: 1fr !important; }
+      .advance-block { display: flex; flex-direction: column; }
+      .advance-block .advance-body.open { flex-direction: column; }
+      .collected-block { flex-direction: column; }
+      .next-step-banner-main { flex-direction: column; text-align: center; }
+      .next-step-banner-main .nsb-btn { width: 100%; }
+      .ob-shell { flex-direction: column; height: auto; max-height: 95vh; overflow-y: auto; }
+      .ob-sb { display: none !important; }
+      .ob-card { padding: 20px; }
+      .ccc-mobile-tabbar { display: flex; }
+    }
   </style>
 </head>
 <body>
@@ -1126,7 +1191,7 @@
       </div>
 
       <!-- ROW 1: Accomplished So Far + Findings So Far -->
-      <div style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0;">
+      <div class="ccc-dash-row1" style="display:grid; grid-template-columns: 1fr 1.4fr; gap: 14px; margin: 16px 28px 0;">
 
         <!-- ACCOMPLISHED SO FAR -->
         <div class="card">
@@ -1255,7 +1320,7 @@
       </div>
 
       <!-- ROW 2: What's Missing (full width) -->
-      <div class="card" style="margin: 14px 28px 0;">
+      <div class="card ccc-dash-row2" style="margin: 14px 28px 0;">
         <div class="card-header">
           <div class="card-title">What's Missing From Your Claim</div>
         </div>
@@ -1282,7 +1347,7 @@
       </div>
 
       <!-- ROW 3: Document Checklist + Recent Activity + Policy Coverage -->
-      <div style="display:grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 14px; margin: 14px 28px 0;">
+      <div class="ccc-dash-row3" style="display:grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 14px; margin: 14px 28px 0;">
 
         <!-- DOCUMENT CHECKLIST -->
         <div class="card">
@@ -1730,14 +1795,26 @@
         <div id="step-workspace-1" class="step-workspace-content hidden">
           <div class="step-body">
 <!-- DO THIS NOW -->
-            <div class="step-do-this-now">
+            <div class="step-do-this-now" id="step1DoThisNow">
               <div class="step-dtn-label">DO THIS NOW</div>
-              <div class="step-dtn-text">Enter your claim details to initialize the system</div>
+              <div class="step-dtn-text" id="step1DtnText">Enter your claim details to initialize the system</div>
+            </div>
+
+            <div class="step-output-box success hidden" id="step1OnboardingConfirmCard" style="margin: 14px 26px 0;">
+              <div class="output-summary">Your claim details (from setup)</div>
+              <p class="output-detail" style="margin-bottom: 14px;">We already have the basics from your onboarding. Review below, then continue to the guide — or edit if anything changed.</p>
+              <div style="display: grid; gap: 10px; font-size: 14px; color: var(--gray-700); margin-bottom: 14px;">
+                <div><strong style="color: var(--gray-900);">Claim type:</strong> <span id="step1ConfirmClaimType">—</span></div>
+                <div><strong style="color: var(--gray-900);">Date of loss:</strong> <span id="step1ConfirmDate">—</span></div>
+                <div><strong style="color: var(--gray-900);">Description:</strong> <span id="step1ConfirmDescription">—</span></div>
+                <div><strong style="color: var(--gray-900);">Settlement type:</strong> <span id="step1ConfirmSettlement">—</span></div>
+              </div>
+              <button type="button" class="output-action-btn" onclick="step1EditFromOnboarding()">Edit</button>
             </div>
 
             <!-- Claim Initialization Form -->
-            <div class="step-workspace">
-              <div class="workspace-section">
+            <div class="step-workspace" id="step1WorkspaceCard">
+              <div class="workspace-section" id="step1InitFormShell">
                 <div class="workspace-label">Enter Your Claim Details</div>
 
                 <div class="step-input-group">
@@ -4332,8 +4409,13 @@
       });
 
       // Show confirmation
-      document.querySelector('#step-1 .step-workspace').style.display = 'none';
+      const step1ObCard = document.getElementById('step1OnboardingConfirmCard');
+      if (step1ObCard) step1ObCard.classList.add('hidden');
+      const step1FormShell = document.getElementById('step1InitFormShell');
+      if (step1FormShell) step1FormShell.style.display = 'none';
       document.getElementById('claimInitializedOutput').classList.remove('hidden');
+      const step1Dtn = document.getElementById('step1DtnText');
+      if (step1Dtn) step1Dtn.textContent = 'Claim initialized — review the guide below or continue to Step 2';
 
       // Update asset builder
       claimData.meta.documentsGenerated++;
@@ -6353,6 +6435,48 @@ Generated using expert claim methodology and structured for carrier review`;
       pills.forEach((pill, i) => {
         pill.classList.toggle('active', i === index);
       });
+      const mobileMap = { 0: 'dashboard', 1: 'summary', 4: 'messages', 5: 'documents' };
+      if (mobileMap[index] && typeof window.matchMedia !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) {
+        cccSetMobileTab(mobileMap[index]);
+      }
+    }
+
+    function cccSetMobileTab(name) {
+      document.querySelectorAll('.ccc-mobile-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-mtab') === name);
+      });
+    }
+
+    function cccMobileNavDashboard() {
+      closeAllNavSidePanels();
+      document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+      const fp = document.getElementById('pill-fullplan');
+      if (fp) fp.classList.add('active');
+      showOverviewView();
+      cccSetMobileTab('dashboard');
+    }
+
+    function cccMobileNavSteps() {
+      closeAllNavSidePanels();
+      document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+      showStepView();
+      renderStepPage(currentStep);
+      cccSetMobileTab('steps');
+    }
+
+    function cccMobileNavSummary() {
+      showSummaryView();
+      cccSetMobileTab('summary');
+    }
+
+    function cccMobileNavMessages() {
+      showMessages();
+      cccSetMobileTab('messages');
+    }
+
+    function cccMobileNavDocuments() {
+      showDocuments();
+      cccSetMobileTab('documents');
     }
 
     function showStepView() {
@@ -6435,6 +6559,83 @@ Generated using expert claim methodology and structured for carrier review`;
       `;
     }
 
+    function hasOnboardingClaimDetailsStep1() {
+      const init = claimData.initial;
+      return !!(init && init.description && init.claimType && claimData.lossNotice && claimData.lossNotice.date);
+    }
+
+    function formatStep1ClaimTypeLabel(ct) {
+      if (!ct) return '—';
+      return String(ct).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function mapOnboardingClaimTypeToSelect(raw) {
+      const m = { fire: 'fire', water: 'water-loss', wind: 'storm', other: 'other', hail: 'storm' };
+      return m[raw] || raw || '';
+    }
+
+    function populateStep1FormFromClaimData() {
+      const init = claimData.initial || {};
+      const ct = document.getElementById('claimType');
+      if (ct && init.claimType) ct.value = mapOnboardingClaimTypeToSelect(init.claimType) || init.claimType;
+      const dol = document.getElementById('dateOfLoss');
+      if (dol && claimData.lossNotice && claimData.lossNotice.date) dol.value = claimData.lossNotice.date;
+      const desc = document.getElementById('claimDescription');
+      if (desc && init.description) desc.value = init.description;
+      const pt = document.getElementById('propertyType');
+      if (pt && init.propertyType) pt.value = init.propertyType;
+    }
+
+    function step1EditFromOnboarding() {
+      const confirmCard = document.getElementById('step1OnboardingConfirmCard');
+      const formShell = document.getElementById('step1InitFormShell');
+      if (confirmCard) confirmCard.classList.add('hidden');
+      if (formShell) formShell.style.display = '';
+      populateStep1FormFromClaimData();
+      const dtnText = document.getElementById('step1DtnText');
+      if (dtnText) dtnText.textContent = 'Update your claim details below, then initialize';
+    }
+
+    function initStep1Workspace() {
+      const confirmCard = document.getElementById('step1OnboardingConfirmCard');
+      const formShell = document.getElementById('step1InitFormShell');
+      const initOutput = document.getElementById('claimInitializedOutput');
+      const dtnText = document.getElementById('step1DtnText');
+      if (!formShell || !confirmCard || !initOutput) return;
+
+      const step1FullyInitialized = !!(claimData.initial && claimData.initial.propertyType);
+
+      if (step1FullyInitialized) {
+        confirmCard.classList.add('hidden');
+        formShell.style.display = 'none';
+        initOutput.classList.remove('hidden');
+        if (dtnText) dtnText.textContent = 'Claim initialized — review the guide below or continue to Step 2';
+        return;
+      }
+
+      if (hasOnboardingClaimDetailsStep1()) {
+        confirmCard.classList.remove('hidden');
+        formShell.style.display = 'none';
+        initOutput.classList.add('hidden');
+        const elType = document.getElementById('step1ConfirmClaimType');
+        const elDate = document.getElementById('step1ConfirmDate');
+        const elDesc = document.getElementById('step1ConfirmDescription');
+        const elSettle = document.getElementById('step1ConfirmSettlement');
+        if (elType) elType.textContent = formatStep1ClaimTypeLabel(claimData.initial.claimType);
+        if (elDate) elDate.textContent = claimData.lossNotice.date || '—';
+        if (elDesc) elDesc.textContent = claimData.initial.description || '—';
+        const st = claimData.settlementType;
+        if (elSettle) elSettle.textContent = st && st !== 'unknown' ? st : '—';
+        if (dtnText) dtnText.textContent = 'Your claim details are on file from setup — scroll down for the full claim guide';
+        return;
+      }
+
+      confirmCard.classList.add('hidden');
+      formShell.style.display = '';
+      initOutput.classList.add('hidden');
+      if (dtnText) dtnText.textContent = 'Enter your claim details to initialize the system';
+    }
+
     function renderStepWorkspace(stepNum) {
       const banner = document.getElementById('nextStepBanner');
       if (banner) banner.classList.add('hidden');
@@ -6445,6 +6646,7 @@ Generated using expert claim methodology and structured for carrier review`;
       if (ws) ws.scrollTop = 0;
       const sm = document.getElementById('stepMain');
       if (sm) sm.scrollTop = 0;
+      if (stepNum === 1) initStep1Workspace();
     }
 
     function renderStepFooter(stepNum) {
@@ -6541,6 +6743,9 @@ Generated using expert claim methodology and structured for carrier review`;
       saveState();
 
       trackActivity('nav_click', { destination: STEP_META[num]?.title, stepNum: num });
+      if (typeof window.matchMedia !== 'undefined' && window.matchMedia('(max-width: 768px)').matches) {
+        cccSetMobileTab('steps');
+      }
     }
 
     function renderToolsPanel(stepNum) {
@@ -6983,7 +7188,13 @@ Note: This advance request does not close, settle, or limit this claim in any wa
     });
   </script>
 
-
+  <nav class="ccc-mobile-tabbar" id="cccMobileTabbar" aria-label="Main navigation">
+    <button type="button" class="ccc-mobile-tab active" data-mtab="dashboard" onclick="cccMobileNavDashboard()"><span class="ccc-mtab-ico" aria-hidden="true">🏠</span><span>Dashboard</span></button>
+    <button type="button" class="ccc-mobile-tab" data-mtab="steps" onclick="cccMobileNavSteps()"><span class="ccc-mtab-ico" aria-hidden="true">📋</span><span>Steps</span></button>
+    <button type="button" class="ccc-mobile-tab" data-mtab="summary" onclick="cccMobileNavSummary()"><span class="ccc-mtab-ico" aria-hidden="true">📊</span><span>Summary</span></button>
+    <button type="button" class="ccc-mobile-tab" data-mtab="messages" onclick="cccMobileNavMessages()"><span class="ccc-mtab-ico" aria-hidden="true">✉️</span><span>Messages</span></button>
+    <button type="button" class="ccc-mobile-tab" data-mtab="documents" onclick="cccMobileNavDocuments()"><span class="ccc-mtab-ico" aria-hidden="true">📎</span><span>Documents</span></button>
+  </nav>
 
 </body>
 </html>

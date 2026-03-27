@@ -66,6 +66,43 @@
       line-height: 1.6;
     }
 
+    .acv-rcv-callout {
+      background: #fff8e6;
+      border: 1px solid #f0d78c;
+      border-left: 4px solid #e6a800;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      font-size: 0.95em;
+      color: #5c4a00;
+      line-height: 1.55;
+    }
+
+    .estimate-hint {
+      font-size: 0.88em;
+      color: #6c757d;
+      margin-top: 6px;
+      line-height: 1.45;
+    }
+
+    .resume-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #0575e6;
+      border: 2px solid #0575e6;
+    }
+
+    .btn-outline:hover {
+      background: #f0f7ff;
+    }
+
     .summary-bar {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -126,10 +163,26 @@
       transition: border-color 0.2s;
     }
 
+    .form-group input.field-invalid,
+    .form-group select.field-invalid {
+      border-color: #dc3545;
+    }
+
     .form-group input:focus,
     .form-group select:focus {
       outline: none;
       border-color: #0575e6;
+    }
+
+    .field-error {
+      display: none;
+      font-size: 0.85em;
+      color: #dc3545;
+      margin-top: 6px;
+    }
+
+    .field-error.visible {
+      display: block;
     }
 
     .form-row {
@@ -221,8 +274,24 @@
       color: white;
     }
 
+    .badge-needs-estimate {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 0.7em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffc107;
+      vertical-align: middle;
+    }
+
     .export-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-top: 30px;
       padding-top: 30px;
@@ -254,6 +323,21 @@
     .error.active {
       display: block;
     }
+
+    .save-toast {
+      display: none;
+      padding: 12px 16px;
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 0.95em;
+    }
+
+    .save-toast.visible {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -273,6 +357,10 @@
         </p>
       </div>
 
+      <div class="acv-rcv-callout">
+        Your insurer will depreciate your items under ACV — your replacement cost entries establish the ceiling for recovery. Enter replacement cost, not what you paid.
+      </div>
+
       <div class="summary-bar">
         <div class="summary-card">
           <div class="number" id="totalItems">0</div>
@@ -288,7 +376,12 @@
         </div>
       </div>
 
+      <div class="save-toast" id="saveToast" role="status"></div>
       <div class="error" id="error"></div>
+
+      <div class="resume-bar" id="resumeBar" style="display: none;">
+        <button type="button" class="btn btn-outline btn-small" id="resumeInventoryBtn">Resume saved inventory</button>
+      </div>
 
       <div class="form-section">
         <h3>Add Item to Inventory</h3>
@@ -296,7 +389,8 @@
         <div class="form-row">
           <div class="form-group">
             <label for="itemName">Item Description *</label>
-            <input type="text" id="itemName" placeholder="Samsung 65-inch TV">
+            <input type="text" id="itemName" placeholder="Samsung 65-inch TV" autocomplete="off">
+            <div class="field-error" id="err-itemName">Enter a description for this item.</div>
           </div>
 
           <div class="form-group">
@@ -310,16 +404,20 @@
               <option value="Tools">Tools</option>
               <option value="Other">Other</option>
             </select>
+            <div class="field-error" id="err-category">Choose a category.</div>
           </div>
 
           <div class="form-group">
-            <label for="originalCost">Original Cost *</label>
-            <input type="number" id="originalCost" placeholder="1200">
+            <label for="originalCost">Original Cost</label>
+            <input type="number" id="originalCost" placeholder="1200" min="0" step="any">
+            <div class="estimate-hint">Don't know the exact cost? Enter your best estimate — something is always better than nothing.</div>
+            <div class="field-error" id="err-originalCost"></div>
           </div>
 
           <div class="form-group">
             <label for="replacementCost">Replacement *</label>
-            <input type="number" id="replacementCost" placeholder="1500">
+            <input type="number" id="replacementCost" placeholder="1500" min="0" step="any">
+            <div class="field-error" id="err-replacementCost">Enter a replacement cost (estimate is OK).</div>
           </div>
 
           <div class="form-group">
@@ -358,13 +456,17 @@
       </div>
 
       <div class="export-actions">
-        <button class="btn btn-secondary" onclick="exportToExcel()">
+        <button type="button" class="btn btn-secondary" onclick="exportToExcel()">
           📊 Export to Excel
         </button>
-        <button class="btn btn-primary" onclick="saveInventory()">
+        <button type="button" class="btn btn-secondary" onclick="exportToCSV()">
+          Download CSV
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveInventory()">
           💾 Save Inventory
         </button>
       </div>
+      <div class="field-error" id="exportSaveError" style="margin-top: 12px; display: none;"></div>
 
       <a href="../../claim-command-center.html" class="back-link">← Back to Command Center</a>
     </div>
@@ -373,17 +475,62 @@
   <script>
     let inventory = [];
 
+    function clearAddItemErrors() {
+      ['itemName', 'replacementCost'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('field-invalid');
+      });
+      ['err-itemName', 'err-replacementCost'].forEach(id => {
+        const e = document.getElementById(id);
+        if (e) e.classList.remove('visible');
+      });
+    }
+
+    function showFieldError(inputId, errId, message) {
+      const input = document.getElementById(inputId);
+      const err = document.getElementById(errId);
+      if (input) input.classList.add('field-invalid');
+      if (err) {
+        err.textContent = message;
+        err.classList.add('visible');
+      }
+    }
+
+    ['itemName', 'replacementCost', 'originalCost'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          el.classList.remove('field-invalid');
+          const map = { itemName: 'err-itemName', replacementCost: 'err-replacementCost', originalCost: 'err-originalCost' };
+          const errEl = document.getElementById(map[id]);
+          if (errEl) errEl.classList.remove('visible');
+        });
+      }
+    });
+
     function addItem() {
+      clearAddItemErrors();
       const itemName = document.getElementById('itemName').value.trim();
       const category = document.getElementById('category').value;
-      const originalCost = parseFloat(document.getElementById('originalCost').value);
-      const replacementCost = parseFloat(document.getElementById('replacementCost').value);
+      const originalRaw = document.getElementById('originalCost').value.trim();
+      const replacementRaw = document.getElementById('replacementCost').value.trim();
       const itemNotes = document.getElementById('itemNotes').value.trim();
 
-      if (!itemName || !originalCost || !replacementCost) {
-        alert('Please fill in all required fields');
-        return;
+      let ok = true;
+      if (!itemName) {
+        showFieldError('itemName', 'err-itemName', 'Enter a description for this item.');
+        ok = false;
       }
+      if (!replacementRaw || isNaN(parseFloat(replacementRaw))) {
+        showFieldError('replacementCost', 'err-replacementCost', 'Enter a replacement cost (estimate is OK).');
+        ok = false;
+      }
+      if (!ok) return;
+
+      const originalProvided = originalRaw !== '' && !isNaN(parseFloat(originalRaw));
+      const originalCost = originalProvided ? parseFloat(originalRaw) : 0;
+      const replacementCost = parseFloat(replacementRaw);
+      const original_missing = !originalProvided;
 
       const item = {
         id: Date.now(),
@@ -392,6 +539,7 @@
         original_cost: originalCost,
         replacement_cost: replacementCost,
         notes: itemNotes,
+        original_missing,
         added_at: new Date().toISOString()
       };
 
@@ -404,7 +552,6 @@
       document.getElementById('replacementCost').value = '';
       document.getElementById('itemNotes').value = '';
 
-      // Send update to command center
       if (window.opener && !window.opener.closed && inventory.length > 0) {
         const totalRCV = inventory.reduce((sum, i) => sum + i.replacement_cost, 0);
         window.opener.postMessage({
@@ -430,6 +577,14 @@
       updateSummary();
     }
 
+    function originalCellHtml(item) {
+      const amt = `$${item.original_cost.toLocaleString()}`;
+      const badge = item.original_missing
+        ? '<span class="badge-needs-estimate">Needs estimate</span>'
+        : '';
+      return amt + badge;
+    }
+
     function renderInventory() {
       const tbody = document.getElementById('inventoryBody');
       
@@ -448,7 +603,7 @@
         <tr>
           <td>${item.name}</td>
           <td>${item.category}</td>
-          <td>$${item.original_cost.toLocaleString()}</td>
+          <td>${originalCellHtml(item)}</td>
           <td>$${item.replacement_cost.toLocaleString()}</td>
           <td>${item.notes || '-'}</td>
           <td>
@@ -470,9 +625,65 @@
       document.getElementById('totalReplacement').textContent = `$${totalReplacement.toLocaleString()}`;
     }
 
-    async function exportToExcel() {
+    function showExportSaveError(msg) {
+      const el = document.getElementById('exportSaveError');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function hideExportSaveError() {
+      const el = document.getElementById('exportSaveError');
+      if (el) el.style.display = 'none';
+    }
+
+    function escapeCsvField(val) {
+      const s = String(val == null ? '' : val);
+      if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+
+    function exportToCSV() {
+      hideExportSaveError();
+      document.getElementById('error').classList.remove('active');
       if (inventory.length === 0) {
-        alert('Add items to your inventory before exporting');
+        showExportSaveError('Add items to your inventory before downloading CSV.');
+        return;
+      }
+
+      const totalOriginal = inventory.reduce((sum, item) => sum + item.original_cost, 0);
+      const totalReplacement = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
+
+      const headers = ['Item Description', 'Category', 'Original Cost', 'Replacement Cost', 'Notes', 'Original cost needs estimate'];
+      const rows = inventory.map(i => [
+        i.name,
+        i.category,
+        i.original_cost,
+        i.replacement_cost,
+        i.notes || '',
+        i.original_missing ? 'Yes' : 'No'
+      ]);
+      rows.push(['TOTAL', '', totalOriginal, totalReplacement, '', '']);
+
+      const csv = [headers.map(escapeCsvField).join(',')]
+        .concat(rows.map(r => r.map(escapeCsvField).join(',')))
+        .join('\r\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contents-inventory-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    async function exportToExcel() {
+      hideExportSaveError();
+      if (inventory.length === 0) {
+        showExportSaveError('Add items to your inventory before exporting.');
         return;
       }
 
@@ -492,16 +703,18 @@
         const totalOriginal = inventory.reduce((sum, item) => sum + item.original_cost, 0);
         const totalReplacement = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
 
-        const exportData = [
-          ...inventory,
-          {
-            name: 'TOTAL',
-            category: '',
-            original_cost: totalOriginal,
-            replacement_cost: totalReplacement,
-            notes: ''
-          }
-        ];
+        const exportData = inventory.map(i => ({
+          ...i,
+          notes: i.notes || ''
+        }));
+
+        exportData.push({
+          name: 'TOTAL',
+          category: '',
+          original_cost: totalOriginal,
+          replacement_cost: totalReplacement,
+          notes: ''
+        });
 
         if (token) {
           const response = await fetch('/.netlify/functions/export-excel', {
@@ -535,7 +748,8 @@
           }
         }
 
-        alert('Excel export requires authentication. Please log in or save as CSV instead.');
+        document.getElementById('error').textContent = 'Excel export requires authentication. Use Download CSV for a file without logging in.';
+        document.getElementById('error').classList.add('active');
 
       } catch (error) {
         console.error('Export error:', error);
@@ -544,14 +758,26 @@
       }
     }
 
+    function showSaveToast(msg) {
+      const t = document.getElementById('saveToast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('visible');
+      clearTimeout(window._invSaveToastT);
+      window._invSaveToastT = setTimeout(() => t.classList.remove('visible'), 3500);
+    }
+
     function saveInventory() {
+      hideExportSaveError();
       if (inventory.length === 0) {
-        alert('Add items to your inventory before saving');
+        showExportSaveError('Add items to your inventory before saving.');
         return;
       }
 
-      const claimNumber = prompt('Enter claim number (optional):');
-      const key = claimNumber ? `inventory_${claimNumber}` : 'inventory_latest';
+      const claimNumber = window.prompt('Enter claim number (optional):');
+      if (claimNumber === null) return;
+
+      const key = claimNumber.trim() ? `inventory_${claimNumber.trim()}` : 'inventory_latest';
       
       localStorage.setItem(key, JSON.stringify({
         timestamp: new Date().toISOString(),
@@ -560,10 +786,11 @@
         total_value: inventory.reduce((sum, item) => sum + item.replacement_cost, 0)
       }));
 
-      alert('Inventory saved successfully!');
+      showSaveToast('Inventory saved successfully.');
       
       const totalValue = inventory.reduce((sum, item) => sum + item.replacement_cost, 0);
-      logToJournal(claimNumber || 'local', inventory.length, totalValue);
+      logToJournal(claimNumber.trim() || 'local', inventory.length, totalValue);
+      updateResumeBar();
     }
 
     function logToJournal(reference, itemCount, totalValue) {
@@ -579,7 +806,69 @@
       localStorage.setItem('claimJournal', JSON.stringify(journal));
     }
 
-    // Load saved inventory
+    function listInventoryStorageKeys() {
+      const keys = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k === 'inventory_latest' || (k && k.startsWith('inventory_'))) keys.push(k);
+        }
+      } catch (e) { /* ignore */ }
+      return keys;
+    }
+
+    function parseSavedInventory(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.inventory)) return null;
+        return { key, data };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getMostRecentSavedInventory() {
+      const keys = listInventoryStorageKeys();
+      let best = null;
+      keys.forEach(key => {
+        const parsed = parseSavedInventory(key);
+        if (!parsed) return;
+        const ts = parsed.data.timestamp || '';
+        if (!best || ts > (best.data.timestamp || '')) best = parsed;
+      });
+      return best;
+    }
+
+    function normalizeLoadedItem(raw) {
+      const oc = parseFloat(raw.original_cost);
+      const rc = parseFloat(raw.replacement_cost);
+      return {
+        id: raw.id || Date.now() + Math.random(),
+        name: raw.name || '',
+        category: raw.category || 'Other',
+        original_cost: isNaN(oc) ? 0 : oc,
+        replacement_cost: isNaN(rc) ? 0 : rc,
+        notes: raw.notes || '',
+        original_missing: raw.original_missing === true,
+        added_at: raw.added_at || new Date().toISOString()
+      };
+    }
+
+    function applyInventoryFromStorage(entry) {
+      if (!entry || !entry.data.inventory) return;
+      inventory = entry.data.inventory.map(normalizeLoadedItem);
+      renderInventory();
+      updateSummary();
+    }
+
+    function updateResumeBar() {
+      const bar = document.getElementById('resumeBar');
+      if (!bar) return;
+      bar.style.display = listInventoryStorageKeys().length ? 'flex' : 'none';
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const claimNumber = urlParams.get('claim');
@@ -588,10 +877,24 @@
         const saved = localStorage.getItem(`inventory_${claimNumber}`);
         if (saved) {
           const data = JSON.parse(saved);
-          inventory = data.inventory || [];
+          inventory = (data.inventory || []).map(normalizeLoadedItem);
           renderInventory();
           updateSummary();
         }
+      } else {
+        const recent = getMostRecentSavedInventory();
+        if (recent) {
+          applyInventoryFromStorage(recent);
+        }
+      }
+
+      updateResumeBar();
+      const resumeBtn = document.getElementById('resumeInventoryBtn');
+      if (resumeBtn) {
+        resumeBtn.addEventListener('click', () => {
+          const recent = getMostRecentSavedInventory();
+          if (recent) applyInventoryFromStorage(recent);
+        });
       }
     });
   </script>
