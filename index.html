@@ -1115,18 +1115,22 @@
 
     /* DASHBOARD VISUAL */
     .dashboard-section {
-      padding: 6rem 0;
-      background: var(--gray-50);
+      padding: 6rem 0 5rem;
+      background: var(--navy);
+    }
+
+    .dashboard-section .section-title {
+      color: white;
     }
 
     .dashboard-visual {
-      max-width: 1100px;
+      max-width: 1280px;
       margin: 3rem auto 0;
-      background: white;
-      border: 2px solid var(--gray-200);
-      border-radius: 20px;
-      padding: 3rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
     }
 
     .dashboard-placeholder {
@@ -1146,14 +1150,18 @@
       height: auto;
       max-height: none;
       display: block;
-      background: #0b1220;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.08);
+      margin-bottom: 3.5rem;
     }
 
     .ccc-dashboard-screenshot {
       display: block;
       width: 100%;
-      max-width: max-content;
+      max-width: 100%;
       height: auto;
       margin-left: auto;
       margin-right: auto;
@@ -1539,18 +1547,21 @@
     .platform-callout {
       text-align: center;
       padding: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
     }
 
     .platform-callout-title {
       font-size: 1.125rem;
       font-weight: 700;
-      color: var(--navy);
+      color: white;
       margin-bottom: 0.75rem;
     }
 
     .platform-callout-desc {
       font-size: 0.95rem;
-      color: var(--gray-600);
+      color: rgba(255,255,255,0.65);
       line-height: 1.6;
     }
 
@@ -2562,7 +2573,7 @@
       <h2 class="section-title">The Claim Command Center</h2>
       
       <p style="text-align: center; font-size: 1.3rem; color: #14b8a6; font-weight: 700; margin-bottom: 1rem;">This puts you in control of your claim — not just responding to it.</p>
-      <p style="text-align: center; font-size: 1.1rem; color: #4b5563; margin-bottom: 3rem;">Start here. This is where your claim process begins.</p>
+      <p style="text-align: center; font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-bottom: 3rem;">Start here. This is where your claim process begins.</p>
       
       <div class="dashboard-visual">
         <div class="dashboard-placeholder dashboard-placeholder--screenshot">
@@ -2587,23 +2598,23 @@
         </div>
         
         <!-- Output Reframe -->
-        <div style="background: rgba(20,184,166,0.1); border: 2px solid #14b8a6; border-radius: 12px; padding: 2.5rem; margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-          <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: #111827; margin-bottom: 1.5rem; text-align: center;">What You Actually Get</h3>
-          <p style="font-size: 1.2rem; color: #4b5563; line-height: 1.8; text-align: center; margin-bottom: 1.5rem;">
+        <div style="background: rgba(20,184,166,0.12); border: 2px solid rgba(20,184,166,0.5); border-radius: 12px; padding: 2.5rem; margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+          <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: white; margin-bottom: 1.5rem; text-align: center;">What You Actually Get</h3>
+          <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.8; text-align: center; margin-bottom: 1.5rem;">
             Not just reports. Not just advice.<br>
-            <strong style="color: #111827;">Claim-ready documentation you can send directly to your insurer.</strong>
+            <strong style="color: white;">Claim-ready documentation you can send directly to your insurer.</strong>
           </p>
           <ul style="list-style: none; padding: 0; text-align: left; max-width: 600px; margin: 0 auto;">
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: #4b5563; font-size: 1.1rem;">✓ Professional supplement requests</li>
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: #4b5563; font-size: 1.1rem;">✓ Formatted dispute letters</li>
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: #4b5563; font-size: 1.1rem;">✓ Organized damage documentation</li>
-            <li style="padding: 0.75rem 0; color: #4b5563; font-size: 1.1rem;">✓ Step-by-step claim guidance</li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Professional supplement requests</li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Formatted dispute letters</li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Organized damage documentation</li>
+            <li style="padding: 0.75rem 0; color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Step-by-step claim guidance</li>
           </ul>
         </div>
         
         <div style="text-align: center; margin-top: 2rem;">
-          <p style="font-size: 1.1rem; color: #6b7280;">What isn't documented doesn't get paid.</p>
-          <p style="font-size: 1.1rem; color: #6b7280; margin-top: 0.5rem;">What you don't question doesn't get reviewed.</p>
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.45);">What isn't documented doesn't get paid.</p>
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.45); margin-top: 0.5rem;">What you don't question doesn't get reviewed.</p>
         </div>
       </div>
     </div>
