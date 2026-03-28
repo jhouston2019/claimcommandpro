@@ -3,6 +3,17 @@
   publish = "."
   functions = "netlify/functions"
 
+# Avoid long-lived cached HTML without viewport updates (mobile layout)
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/claim-command-center.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 [functions]
   directory = "netlify/functions"
   included_files = ["netlify/functions/data/**"]
