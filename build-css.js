@@ -221,5 +221,9 @@ tfoot td{font-weight:700}
 `;
 
 // Write the CSS file
-fs.writeFileSync(path.join(__dirname, 'dist', 'style.css'), customCSS);
+const distDir = path.join(__dirname, 'dist');
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir, { recursive: true });
+}
+fs.writeFileSync(path.join(distDir, 'style.css'), customCSS);
 console.log('✅ CSS built successfully to dist/style.css');

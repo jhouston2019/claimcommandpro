@@ -8,6 +8,11 @@ const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const { sendSuccess, sendError, validateAuth, parseBody, getClientIP, getUserAgent, logAPIRequest } = require('./api/lib/api-utils');
 const { buildPolicyAnalysisPrompt } = require('./lib/ai-prompts');
+const {
+  cccJsonResponse,
+  extractTextFromUrl,
+  anthropicJsonObject,
+} = require('./lib/ccc-anthropic-helpers');
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -17,6 +22,55 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+/**
+ * Claim Command Center v3: unauthenticated analyze from public fileUrl (Supabase public URL).
+ * Does not persist to DB. Legacy flow below still uses claim_id + auth.
+ */
+async function handleCccV3AnalyzePolicy(body) {
+  try {
+    if (!body.fileUrl || typeof body.fileUrl !== 'string' || !body.fileUrl.startsWith('http')) {
+      return cccJsonResponse(400, { error: 'fileUrl must be an http(s) URL' });
+    }
+    const docText = await extractTextFromUrl(body.fileUrl);
+    const userText = `Extract policy coverage figures from this policy document text. Use only what is stated; if a value is not found, use 0 for numbers and [] for arrays.
+
+Document text:
+---
+${docText.slice(0, 100000)}
+---
+
+Return a single JSON object with exactly these keys:
+- dwellingCoverage (number, Coverage A / dwelling limit)
+- deductible (number)
+- settlementType (string, "RCV" or "ACV" or the policy wording)
+- contentsCoverage (number, Coverage C)
+- aleCoverage (number, Coverage D / loss of use)
+- endorsements (string[], short names of endorsements found)
+- unappliedCoverages (string[], 2–6 items that often need carrier clarification for a water/property claim; may include endorsements from the list)`;
+
+    const out = await anthropicJsonObject({
+      system: 'You are an expert insurance policy analyst. Output valid JSON only.',
+      userText,
+      maxTokens: 2048,
+    });
+
+    const result = {
+      dwellingCoverage: Number(out.dwellingCoverage) || 0,
+      deductible: Number(out.deductible) || 0,
+      settlementType: typeof out.settlementType === 'string' ? out.settlementType : 'RCV',
+      contentsCoverage: Number(out.contentsCoverage) || 0,
+      aleCoverage: Number(out.aleCoverage) || 0,
+      endorsements: Array.isArray(out.endorsements) ? out.endorsements : [],
+      unappliedCoverages: Array.isArray(out.unappliedCoverages) ? out.unappliedCoverages : [],
+    };
+
+    return cccJsonResponse(200, result);
+  } catch (err) {
+    console.error('handleCccV3AnalyzePolicy', err);
+    return cccJsonResponse(500, { error: err.message || 'Policy analysis failed' });
+  }
+}
 
 exports.handler = async (event) => {
   const startTime = Date.now();
@@ -34,6 +88,16 @@ exports.handler = async (event) => {
         },
         body: ''
       };
+    }
+
+    const bodyPreview = parseBody(event.body);
+    if (
+      event.httpMethod === 'POST' &&
+      bodyPreview.fileUrl &&
+      typeof bodyPreview.fileUrl === 'string' &&
+      !bodyPreview.claim_id
+    ) {
+      return handleCccV3AnalyzePolicy(bodyPreview);
     }
 
     // Validate authentication

@@ -1,5 +1,6 @@
 [build]
   node_version = "18.20.2"
+  command = "npm run build"
   publish = "."
   functions = "netlify/functions"
 
@@ -11,6 +12,11 @@
 
 [[headers]]
   for = "/claim-command-center.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/claim-command-center-v3.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
