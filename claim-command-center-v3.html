@@ -113,7 +113,7 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--na
 }
 /* Substep bar */
 #substep-bar{
-  background:var(--teal);height:58px;display:flex;align-items:center;justify-content:center;
+  background:var(--teal);height:36px;display:flex;align-items:center;justify-content:center;
   padding:0 24px;gap:0;flex-shrink:0;border-bottom:2px solid var(--teal-dark);
   overflow-x:auto;z-index:1;
   box-shadow:0 4px 12px rgba(20,184,166,.25);
@@ -121,16 +121,16 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--na
 .substep-item{display:flex;align-items:center;gap:0;flex-shrink:0;cursor:pointer;padding:4px 2px}
 .substep-item:hover .substep-circle:not(.active):not(.done){border-color:rgba(255,255,255,.8);color:#fff;background:rgba(255,255,255,.2)}
 .substep-circle{
-  width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);
-  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:rgba(255,255,255,.7);
+  width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:rgba(255,255,255,.7);
   transition:all .2s;flex-shrink:0;
 }
 .substep-circle.done{background:rgba(255,255,255,.25);border-color:rgba(255,255,255,.6);color:#fff}
-.substep-circle.active{background:#fff;border-color:#fff;color:var(--teal);box-shadow:0 0 0 3px rgba(255,255,255,.3)}
-.substep-label{font-size:14px;font-weight:500;color:rgba(255,255,255,.7);margin-left:9px;white-space:nowrap;}
+.substep-circle.active{background:#fff;border-color:#fff;color:var(--teal);box-shadow:0 0 0 2px rgba(255,255,255,.3)}
+.substep-label{font-size:11px;font-weight:500;color:rgba(255,255,255,.7);margin-left:7px;white-space:nowrap;}
 .substep-label.active{color:#fff;font-weight:700}
 .substep-label.done{color:rgba(255,255,255,.6)}
-.substep-arrow{color:rgba(255,255,255,.4);margin:0 14px;font-size:13px;flex-shrink:0}
+.substep-arrow{color:rgba(255,255,255,.4);margin:0 10px;font-size:10px;flex-shrink:0}
 /* Main content */
 #main-content{flex:1;overflow-y:auto;background:var(--page-bg);min-height:0}
 #content-view{max-width:900px;margin:0 auto;padding:20px 24px}
