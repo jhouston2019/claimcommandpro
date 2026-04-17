@@ -95,6 +95,17 @@
     }
   }
 
+  async function getToken() {
+    try {
+      const supabase = await window.getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token ?? null;
+    } catch (err) {
+      console.error('CNError (getToken):', err);
+      return null;
+    }
+  }
+
   // Initialize on load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initAuth);
@@ -107,7 +118,8 @@
     currentUser,
     requireAuth,
     logout,
-    onAuthStateChanged
+    onAuthStateChanged,
+    getToken
   };
 })();
 

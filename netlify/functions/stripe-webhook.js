@@ -86,11 +86,19 @@ exports.handler = async (event, context) => {
       }
 
       // Update user metadata
+      const { data: metaRow } = await supabase
+        .from('users_metadata')
+        .select('total_claims_created')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      const nextTotalClaims = (metaRow?.total_claims_created ?? 0) + 1;
+
       const { error: updateError } = await supabase
         .from('users_metadata')
         .update({
           active_claim_id: newClaim.id,
-          total_claims_created: supabase.raw('total_claims_created + 1')
+          total_claims_created: nextTotalClaims
         })
         .eq('user_id', userId);
 

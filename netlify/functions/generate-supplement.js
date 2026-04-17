@@ -212,12 +212,21 @@ Document ID: ${claim.claim_number}-SUP-${Date.now()}
     }
 
     // Update financial summary with supplement amount
+    const rawDelta = Number(supplementResult.total_supplement_amount);
+    const delta = Number.isFinite(rawDelta) ? rawDelta : 0;
+
+    const { data: finRow } = await supabase
+      .from('claim_financial_summary')
+      .select('supplement_count, supplement_total, supplement_pending')
+      .eq('claim_id', body.claim_id)
+      .maybeSingle();
+
     await supabase
       .from('claim_financial_summary')
       .update({
-        supplement_count: supabase.raw('supplement_count + 1'),
-        supplement_total: supabase.raw(`supplement_total + ${supplementResult.total_supplement_amount || 0}`),
-        supplement_pending: supabase.raw(`supplement_pending + ${supplementResult.total_supplement_amount || 0}`)
+        supplement_count: (finRow?.supplement_count ?? 0) + 1,
+        supplement_total: (finRow?.supplement_total ?? 0) + delta,
+        supplement_pending: (finRow?.supplement_pending ?? 0) + delta
       })
       .eq('claim_id', body.claim_id);
 
