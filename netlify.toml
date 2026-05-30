@@ -40,6 +40,16 @@ package = "@netlify/plugin-functions-install-core"
     Access-Control-Allow-Credentials = "true"
 
 [[redirects]]
+  from = "/claim-command-center.html"
+  to = "/claim-command-center-v3.html"
+  status = 301
+
+[[redirects]]
+  from = "/app/claim-command-center.html"
+  to = "/claim-command-center-v3.html"
+  status = 301
+
+[[redirects]]
   from = "/admin/console/check-admin"
   to = "/.netlify/functions/admin-check-admin"
   status = 200

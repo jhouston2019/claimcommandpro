@@ -474,6 +474,13 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
 .sc-desc{font-size:12px;color:var(--gray-500);line-height:1.5;margin-bottom:8px}
 .sc-outcome{font-size:11px;color:var(--teal-dark);font-weight:600}
 </style>
+<script>
+  window.SUPABASE_URL = '__CCC_SUPABASE_URL__';
+  window.SUPABASE_ANON_KEY = '__CCC_SUPABASE_ANON_KEY__';
+</script>
+<script src="/app/assets/js/supabase-client.js"></script>
+<script src="/app/assets/js/auth-session.js"></script>
+<script src="/app/assets/js/paywall-enforcement.js"></script>
 </head>
 <body>
 <div id="app">
@@ -707,7 +714,8 @@ function fmt(n){return '$'+(n||0).toLocaleString('en-US',{maximumFractionDigits:
 function fmtDate(){return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 function fmtTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
 
-function saveState(){
+async function saveState(){
+  // Always write to localStorage as cache
   try{
     localStorage.setItem('ccc_claim_data',JSON.stringify(claimData));
     localStorage.setItem('ccc_completed_substeps',JSON.stringify(completedSubsteps));
@@ -718,17 +726,93 @@ function saveState(){
     localStorage.setItem('ccc_activity_log',JSON.stringify(activityLog));
     localStorage.setItem('ccc_onboarded','true');
   }catch(e){}
+
+  // Write to Supabase if claim_id is available
+  if (!window.CCC_CLAIM_ID) return;
+  try {
+    const supabase = await window.getSupabaseClient();
+    const token = await window.CNAuth.getToken();
+    if (!token) return;
+
+    // Persist progress and journal to custom_fields JSONB on claims row
+    await supabase
+      .from('claims')
+      .update({
+        custom_fields: {
+          completedSubsteps: completedSubsteps,
+          completedPhases: completedPhases,
+          activePhase: activePhase,
+          activeSubstep: activeSubstep,
+          onboarded: true
+        }
+      })
+      .eq('id', window.CCC_CLAIM_ID);
+
+    // Persist financial summary
+    if (claimData.structure || claimData.contents || claimData.ALE) {
+      const { data: existing } = await supabase
+        .from('claim_financial_summary')
+        .select('id')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .single();
+
+      const financialData = {
+        claim_id: window.CCC_CLAIM_ID,
+        insurer_estimate: claimData.structure?.insurerEstimate || 0,
+        claimant_estimate: claimData.structure?.userEstimate || 0,
+        gap_amount: claimData.structure?.gap || 0,
+        contents_total: claimData.contents?.totalValue || 0,
+        ale_total: claimData.ALE?.total || 0,
+        updated_at: new Date().toISOString()
+      };
+
+      if (existing) {
+        await supabase
+          .from('claim_financial_summary')
+          .update(financialData)
+          .eq('claim_id', window.CCC_CLAIM_ID);
+      } else {
+        await supabase
+          .from('claim_financial_summary')
+          .insert(financialData);
+      }
+    }
+  } catch(e) {
+    console.warn('Supabase saveState failed, localStorage preserved:', e);
+  }
 }
 
-function loadState(){
+async function callNetlify(functionName, body) {
+  const token = await window.CNAuth.getToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = 'Bearer ' + token;
+  const res = await fetch('/.netlify/functions/' + functionName, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({ ...body, claim_id: window.CCC_CLAIM_ID })
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(errText || 'Function error ' + res.status);
+  }
+  return res.json();
+}
+
+function showNetlifyError(containerId, message) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '<div style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px;border-radius:6px;color:#991b1b;margin-top:12px"><strong>Error:</strong> ' + message + '<br><small>Please try again. If the problem continues, refresh the page.</small></div>';
+}
+
+async function loadState(){
+  // First load from localStorage (fast, synchronous cache)
+  let onboarded = false;
   try{
     const d=localStorage.getItem('ccc_claim_data');
     if(d){
       const parsed=JSON.parse(d);
-      // Deep merge — only overwrite if parsed has valid initial object
       if(parsed && parsed.initial && parsed.initial.insurer){
         claimData=Object.assign({},claimData,parsed);
-        // Ensure initial is always complete
         claimData.initial=Object.assign({},claimData.initial,parsed.initial);
       }
     }
@@ -744,11 +828,71 @@ function loadState(){
     if(cj)correspondenceJournal=JSON.parse(cj);
     const al=localStorage.getItem('ccc_activity_log');
     if(al)activityLog=JSON.parse(al);
-    return localStorage.getItem('ccc_onboarded')==='true';
+    onboarded = localStorage.getItem('ccc_onboarded')==='true';
   }catch(e){
-    console.warn('loadState error, using defaults:',e);
-    return false;
+    console.warn('loadState localStorage error:', e);
   }
+
+  // Then hydrate from Supabase if claim_id available (authoritative source)
+  if (window.CCC_CLAIM_ID) {
+    try {
+      const supabase = await window.getSupabaseClient();
+
+      // Load progress from custom_fields
+      const { data: claim } = await supabase
+        .from('claims')
+        .select('custom_fields')
+        .eq('id', window.CCC_CLAIM_ID)
+        .single();
+
+      if (claim?.custom_fields) {
+        const cf = claim.custom_fields;
+        if (cf.completedSubsteps) completedSubsteps = cf.completedSubsteps;
+        if (cf.completedPhases) completedPhases = cf.completedPhases;
+        if (cf.activePhase !== undefined) activePhase = cf.activePhase;
+        if (cf.activeSubstep !== undefined) activeSubstep = cf.activeSubstep;
+        if (cf.onboarded) onboarded = true;
+      }
+
+      // Load correspondence journal from generated_letters
+      const { data: letters } = await supabase
+        .from('generated_letters')
+        .select('id, letter_type, created_at, content, phase_number')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .order('created_at', { ascending: false });
+
+      if (letters && letters.length > 0) {
+        correspondenceJournal = letters.map(l => ({
+          id: l.id,
+          type: l.letter_type,
+          phase: l.phase_number,
+          date: l.created_at,
+          content: l.content,
+          status: 'sent'
+        }));
+      }
+
+      // Load financial summary
+      const { data: financial } = await supabase
+        .from('claim_financial_summary')
+        .select('*')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .single();
+
+      if (financial) {
+        claimData.structure.insurerEstimate = financial.insurer_estimate || 0;
+        claimData.structure.userEstimate = financial.claimant_estimate || 0;
+        claimData.structure.gap = financial.gap_amount || 0;
+        claimData.contents.totalValue = financial.contents_total || 0;
+        claimData.ALE.total = financial.ale_total || 0;
+      }
+
+    } catch(e) {
+      console.warn('Supabase loadState failed, using localStorage cache:', e);
+    }
+  }
+
+  return onboarded;
 }
 
 function logActivity(icon,text,amount=null){
@@ -758,45 +902,81 @@ function logActivity(icon,text,amount=null){
   renderActivityStrip();
 }
 
-function logCorrespondence(type, phase){
-  correspondenceJournal.unshift({
-    id: Date.now(),
-    direction: 'sent',
+function logCorrespondence(type, content){
+  const entry={
+    id: 'ltr-' + Date.now(),
+    direction: 'outbound',
     type: type,
-    phase: phase,
-    date: fmtDate(),
-    status: 'sent'
-  });
-  claimData.meta.documentsGenerated++;
+    phase: activePhase,
+    phaseNum: phases[activePhase]?.num || activePhase + 1,
+    date: new Date().toLocaleDateString(),
+    status: 'drafted',
+    content: content || ''
+  };
+  correspondenceJournal.unshift(entry);
+  claimData.meta.documentsGenerated = (claimData.meta.documentsGenerated || 0) + 1;
+  logActivity('✉️', type + ' generated');
   saveState();
-  logActivity('✉️', 'Letter logged: '+type);
 }
 
 function renderJournalTab(){
-  const filter=document.getElementById('journal-filter')?.value||'all';
-  let entries=correspondenceJournal;
-  if(filter==='sent')entries=entries.filter(e=>e.direction==='sent');
-  if(filter==='received')entries=entries.filter(e=>e.direction==='received');
-
-  const listHtml=entries.length===0
-    ?`<div class="empty-state"><div class="empty-icon">✉️</div><div class="empty-title">No correspondence logged yet</div><div class="empty-sub">Generate your first letter from any phase or use Compose above.</div></div>`
-    :entries.map(e=>`
-      <div class="journal-entry">
-        <div class="je-header">
-          <span class="je-direction ${e.direction==='sent'?'je-sent':'je-received'}">${e.direction==='sent'?'SENT':'RECEIVED'}</span>
-          <span class="je-type">${e.type}</span>
-          <span class="je-date">${e.date}</span>
+  const el = document.getElementById('correspondence-journal-list');
+  if (!el) return;
+  if (!correspondenceJournal || correspondenceJournal.length === 0) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--slate)">No letters generated yet. Complete a correspondence substep (✉) to generate your first letter.</div>';
+    return;
+  }
+  el.innerHTML = correspondenceJournal.map(entry => `
+    <div class="journal-entry" style="background:white;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div style="font-weight:600;color:var(--navy)">${entry.type}</div>
+          <div style="font-size:12px;color:var(--slate)">Phase ${entry.phaseNum || entry.phase + 1} · ${entry.date}</div>
         </div>
-        <div class="je-phase">${e.phase}</div>
-        <div class="je-actions">
-          <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="alert('Viewing letter...')">View</button>
-          <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="alert('Downloading...')">⬇️ Download</button>
-          ${e.direction==='received'?`<button class="btn btn-primary" style="font-size:11px;padding:4px 10px" onclick="showView('correspondence')">Compose Response →</button>`:''}
-        </div>
-      </div>`).join('');
+        <span style="font-size:11px;background:#d1fae5;color:#065f46;padding:3px 8px;border-radius:4px;font-weight:600">${entry.status || 'drafted'}</span>
+      </div>
+      ${entry.content ? `<pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--text);background:var(--bg);padding:12px;border-radius:6px;max-height:200px;overflow-y:auto;margin-bottom:10px">${entry.content.substring(0, 500)}${entry.content.length > 500 ? '...' : ''}</pre>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm" onclick="copyLetterToClipboard('${entry.id}')">📋 Copy</button>
+        <button class="btn btn-sm" onclick="downloadLetterPDF('${entry.id}')">📄 Download PDF</button>
+      </div>
+    </div>
+  `).join('');
+}
 
-  const journalEl=document.getElementById('journal-list');
-  if(journalEl)journalEl.innerHTML=listHtml;
+function copyLetterToClipboard(entryId) {
+  const entry = correspondenceJournal.find(e => e.id === entryId);
+  if (!entry || !entry.content) return;
+  navigator.clipboard.writeText(entry.content).then(() => {
+    if (window.CNToast) window.CNToast.success('Letter copied to clipboard');
+    else alert('Letter copied to clipboard');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = entry.content;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Letter copied to clipboard');
+  });
+}
+
+function downloadLetterPDF(entryId) {
+  const entry = correspondenceJournal.find(e => e.id === entryId);
+  if (!entry || !entry.content) return;
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'in', format: 'letter' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    const lines = doc.splitTextToSize(entry.content, 6.5);
+    doc.text(lines, 1, 1.25);
+    doc.save((entry.type || 'letter').replace(/\s+/g,'-') + '-' + entry.date.replace(/\//g,'-') + '.pdf');
+  } catch(e) {
+    console.error('PDF generation failed:', e);
+    alert('PDF download failed: ' + e.message);
+  }
 }
 
 // ============================
@@ -1025,31 +1205,157 @@ function claimInfoStrip(){
   </div>`;
 }
 
-function uploadZone(id,label){
-  return `<div class="upload-zone" id="${id}" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'${id}')">
+function uploadZone(id,label,docType){
+  return `<div class="upload-zone" id="${id}" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'${docType||id}')">
     <div class="upload-icon">📂</div>
     <div class="upload-title">${label||'Drag & drop your file here'}</div>
     <div class="upload-sub">PDF, JPG, PNG, DOCX accepted · Max 50MB</div>
     <button class="btn-upload" onclick="document.getElementById('fi-${id}').click()">Choose File</button>
-    <input type="file" id="fi-${id}" style="display:none" accept=".pdf,.jpg,.jpeg,.png,.docx" onchange="handleFileInput(event,'${id}')">
+    <input type="file" id="fi-${id}" style="display:none" accept=".pdf,.jpg,.jpeg,.png,.docx" onchange="handleFileInput(event,'${docType||id}')">
   </div>
   <div style="text-align:center"><button class="btn btn-ghost" style="font-size:11px" onclick="document.getElementById('fi-${id}').click()">+ Add another file</button></div>`;
 }
 
-function handleFileInput(e,zoneId){
-  const f=e.target.files[0];if(!f)return;
-  const zone=document.getElementById(zoneId);
-  zone.innerHTML=`<div class="upload-icon">✅</div><div class="upload-title" style="color:var(--emerald)">File uploaded: ${f.name}</div><div class="upload-sub" style="color:var(--gray-400)">${(f.size/1024).toFixed(0)} KB · Ready to analyze</div>`;
-  logActivity('📎','File uploaded: '+f.name);
+async function handleFileInput(event, docType){
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+  await uploadClaimFile(file, docType);
 }
 
-function handleDrop(e,zoneId){
-  e.preventDefault();
-  const zone=document.getElementById(zoneId);
-  zone.classList.remove('drag');
-  const f=e.dataTransfer.files[0];if(!f)return;
-  zone.innerHTML=`<div class="upload-icon">✅</div><div class="upload-title" style="color:var(--emerald)">File uploaded: ${f.name}</div><div class="upload-sub" style="color:var(--gray-400)">${(f.size/1024).toFixed(0)} KB · Ready to analyze</div>`;
-  logActivity('📎','File dropped: '+f.name);
+async function handleDrop(event, docType){
+  event.preventDefault();
+  event.stopPropagation();
+  const file = event.dataTransfer?.files?.[0];
+  if (!file) return;
+  await uploadClaimFile(file, docType);
+}
+
+async function uploadClaimFile(file, docType) {
+  // Validate file type
+  const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    alert('Only PDF and image files are accepted (PDF, JPG, PNG, HEIC, WEBP).');
+    return;
+  }
+
+  // Validate file size (20MB max)
+  if (file.size > 20 * 1024 * 1024) {
+    alert('File size must be under 20MB.');
+    return;
+  }
+
+  // Find the upload zone for this docType and show progress
+  const uploadZone = document.querySelector(`[data-doc-type="${docType}"]`) || document.querySelector('.upload-zone');
+  if (uploadZone) {
+    uploadZone.innerHTML = '<div style="padding:16px;text-align:center;color:var(--slate)">⏳ Uploading ' + file.name + '...</div>';
+  }
+
+  try {
+    // If no claim_id, store in localStorage only
+    if (!window.CCC_CLAIM_ID) {
+      claimData.documents.push({
+        id: 'doc-' + Date.now(),
+        name: file.name,
+        type: docType,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        stored: 'local'
+      });
+      logActivity('📎', file.name + ' attached (' + docType + ')');
+      saveState();
+      if (uploadZone) uploadZone.innerHTML = '<div style="padding:16px;color:#059669">✅ ' + file.name + ' attached</div>';
+      return;
+    }
+
+    // Upload to Supabase Storage
+    const supabase = await window.getSupabaseClient();
+    const token = await window.CNAuth.getToken();
+    const user = await window.CNAuth.currentUser();
+
+    const ext = file.name.split('.').pop();
+    const storagePath = `${user.id}/${window.CCC_CLAIM_ID}/${docType}/${Date.now()}.${ext}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('claim-documents')
+      .upload(storagePath, file, {
+        contentType: file.type,
+        upsert: false
+      });
+
+    if (uploadError) throw new Error(uploadError.message);
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('claim-documents')
+      .getPublicUrl(storagePath);
+
+    // Insert record into claim_documents
+    const { data: docRecord, error: dbError } = await supabase
+      .from('claim_documents')
+      .insert({
+        claim_id: window.CCC_CLAIM_ID,
+        user_id: user.id,
+        document_type: docType,
+        file_name: file.name,
+        file_path: storagePath,
+        file_url: publicUrl,
+        file_size: file.size,
+        mime_type: file.type,
+        created_at: new Date().toISOString()
+      })
+      .select('id')
+      .single();
+
+    if (dbError) console.warn('DB insert failed but file uploaded:', dbError);
+
+    // Store raw text for AI analysis if PDF (via text-extract function)
+    if (file.type === 'application/pdf' && (docType === 'policy' || docType === 'contractor_estimate' || docType === 'carrier_estimate')) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('claim_id', window.CCC_CLAIM_ID);
+        formData.append('doc_type', docType);
+        const textRes = await fetch('/.netlify/functions/text-extract', {
+          method: 'POST',
+          headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+          body: formData
+        });
+        if (textRes.ok) {
+          const { text } = await textRes.json();
+          if (docType === 'policy') claimData.policy.rawText = text;
+          if (docType === 'contractor_estimate') claimData.structure.contractorEstimateText = text;
+          if (docType === 'carrier_estimate') claimData.structure.carrierEstimateText = text;
+        }
+      } catch(e) { console.warn('Text extraction failed:', e); }
+    }
+
+    // Update local claimData
+    claimData.documents.push({
+      id: docRecord?.id || 'doc-' + Date.now(),
+      name: file.name,
+      type: docType,
+      path: storagePath,
+      url: publicUrl,
+      size: file.size,
+      uploadedAt: new Date().toISOString(),
+      stored: 'supabase'
+    });
+
+    if (docType === 'policy') claimData.policy.uploaded = true;
+
+    logActivity('📎', file.name + ' uploaded (' + docType + ')');
+    saveState();
+
+    if (uploadZone) {
+      uploadZone.innerHTML = `<div style="padding:16px;color:#059669">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`;
+    }
+
+  } catch(err) {
+    console.error('File upload failed:', err);
+    if (uploadZone) {
+      uploadZone.innerHTML = `<div style="padding:16px;background:#fee2e2;border-radius:6px;color:#991b1b">❌ Upload failed: ${err.message}<br><button onclick="this.closest('.upload-zone').innerHTML=''" style="margin-top:8px;padding:4px 12px;cursor:pointer">Try Again</button></div>`;
+    }
+  }
 }
 
 function showSpinner(id,delay,callback){
@@ -1144,57 +1450,34 @@ function renderP01S1(){
     </div>`;
 }
 
-function generateNotice(){
-  const res=document.getElementById('notice-result');
-  if(!res)return;
-  showSpinner('notice-result',2200,function(el){
-    logActivity('📄','Generated Written Notice of Loss');
-    el.innerHTML=`
-      <hr class="divider">
-      <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Written Notice of Loss — Ready to Send</div></div>
-        <div class="ar-body">
-          <div class="letter-display">
-${fmtDate()}
+async function generateNotice(){
+  const res = document.getElementById('notice-result');
+  if (!res) return;
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating...'; }
+  res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">✉️ Generating your written notice — this takes 10–20 seconds...</div>';
 
-State Farm Insurance Company
-Claims Department — Property Claims Division
-Re: Notice of Loss — Claim No. CLM-2024-089456
+  try {
+    const result = await callNetlify('generate-written-notice', {
+      insured_name: claimData.initial.insuredName,
+      claim_number: claimData.initial.claimNumber,
+      insurer: claimData.initial.insurer,
+      date_of_loss: claimData.initial.dateOfLoss,
+      description: claimData.initial.description,
+      property_type: claimData.initial.propertyType
+    });
 
-To Whom It May Concern:
+    const letterContent = result.letter || result.content || '';
+    logCorrespondence('Written Notice of Loss', letterContent);
+    saveState();
 
-This letter serves as formal written notice of a covered loss occurring at the insured property at [Property Address], occurring on November 15, 2024.
-
-INSURED INFORMATION:
-  Name: James Davidson
-  Policy Number: [Policy Number]
-  Property Address: [Property Address]
-
-LOSS INFORMATION:
-  Date of Loss: November 15, 2024
-  Cause: Water damage / burst plumbing pipe
-  Description: ${document.getElementById('desc-input').value}
-
-I am formally notifying you of this claim and requesting:
-  1. Written acknowledgment of this notice within 10 days
-  2. Assignment of a licensed claims adjuster
-  3. Scheduling of property inspection within 15 business days
-  4. Written explanation of any coverage limitations or exclusions
-
-I am preserving all evidence and will make the property available for inspection upon reasonable notice.
-
-Respectfully,
-${claimData.initial.insuredName}
-[Phone Number]
-[Email Address]</div>
-          <div class="flex gap-8">
-            <button class="btn btn-primary" onclick="logCorrespondence('Written Notice of Loss','Phase 01');alert('Letter logged to Correspondence Journal')">📋 Log to Journal</button>
-            <button class="btn btn-secondary" onclick="alert('PDF download triggered')">⬇️ Download PDF</button>
-            <button class="btn btn-secondary" onclick="navigator.clipboard&&navigator.clipboard.writeText('Letter copied!');alert('Copied to clipboard')">📋 Copy</button>
-          </div>
-        </div>
-      </div>`;
-  });
+    res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Written Notice Generated</div></div><div class="ar-body"><pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6">${letterContent}</pre><div class="flex gap-8" style="margin-top:12px"><button class="btn btn-primary" onclick="copyToClipboard('${encodeURIComponent(letterContent)}')">📋 Copy Letter</button></div></div></div>`;
+  } catch(err) {
+    console.error('Notice generation failed:', err);
+    showNetlifyError('notice-result', err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✉️ Generate Written Notice'; }
+  }
 }
 
 // ============================
@@ -1220,12 +1503,12 @@ function renderP02S0(){
         <div class="panel-subtitle">Upload your complete policy. AI extracts every coverage, limit, endorsement, and exclusion — then flags what the carrier hasn't applied to your claim.</div>
       </div>
       ${claimInfoStrip()}
-      <div class="upload-zone" id="policy-upload" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'policy-upload')">
+      <div class="upload-zone" id="policy-upload" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'policy')">
         <div class="upload-icon">📄</div>
         <div class="upload-title">Drag & drop your policy PDF here</div>
         <div class="upload-sub">Full policy, declarations page, or endorsements · PDF, JPG, PNG accepted</div>
         <button class="btn-upload" onclick="document.getElementById('fi-policy-upload').click()">Choose File</button>
-        <input type="file" id="fi-policy-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileInput(event,'policy-upload')">
+        <input type="file" id="fi-policy-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileInput(event,'policy')">
       </div>
       <div style="text-align:center;margin-bottom:12px">
         <button class="btn btn-ghost" style="font-size:11px" onclick="document.getElementById('fi-policy-upload').click()">+ Add endorsement or rider</button>
@@ -1251,35 +1534,74 @@ function loadSamplePolicy(){
   if(zone){zone.innerHTML='<div class="upload-icon">✅</div><div class="upload-title" style="color:var(--emerald)">Sample policy loaded: HO3_StateFarm_Sample.pdf</div><div class="upload-sub" style="color:var(--gray-400)">847 KB · Ready to analyze</div>';}
 }
 
-function analyzePolicyDoc(){
-  const res=document.getElementById('policy-result');
-  if(!res)return;
-  showSpinner('policy-result',2500,function(el){
-    claimData.policy.uploaded=true;claimData.policy.dwellingCoverage=350000;
-    claimData.policy.contentsCoverage=262500;claimData.policy.aleCoverage=70000;
-    claimData.policy.deductible=2500;claimData.policy.settlementType='RCV';
+async function analyzePolicyDoc(){
+  const res = document.getElementById('policy-result');
+  if (!res) return;
+  const btn = res.closest('.step-content')?.querySelector('button[onclick*="analyzePolicyDoc"]');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyzing...'; }
+  res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">🔍 Analyzing your policy with AI — this takes 15–30 seconds...</div>';
+
+  try {
+    const policyText = claimData.policy.rawText || '';
+    const result = await callNetlify('ai-policy-review', {
+      policy_text: policyText,
+      claim_type: claimData.initial.claimType,
+      insurer: claimData.initial.insurer,
+      date_of_loss: claimData.initial.dateOfLoss
+    });
+
+    // Store results
+    if (result.dwelling_coverage) claimData.policy.dwellingCoverage = result.dwelling_coverage;
+    if (result.contents_coverage) claimData.policy.contentsCoverage = result.contents_coverage;
+    if (result.ale_coverage) claimData.policy.aleCoverage = result.ale_coverage;
+    if (result.deductible) claimData.policy.deductible = result.deductible;
+    if (result.settlement_type) claimData.policy.settlementType = result.settlement_type;
+    if (result.endorsements) claimData.policy.endorsements = result.endorsements;
+    claimData.policy.uploaded = true;
+    claimData.policy.analysisResult = result;
+
+    // Persist to Supabase claim_outputs
+    try {
+      const supabase = await window.getSupabaseClient();
+      await supabase.from('claim_outputs').insert({
+        claim_id: window.CCC_CLAIM_ID,
+        output_type: 'policy_analysis',
+        content: result,
+        created_at: new Date().toISOString()
+      });
+    } catch(e) { console.warn('Could not persist policy analysis:', e); }
+
     updateNavMetrics();
-    logActivity('🔍','Policy analyzed — coverages extracted');
-    el.innerHTML=`
+    logActivity('🔍', 'Policy analyzed — coverages extracted');
+    saveState();
+
+    // Render results
+    const coverageCards = (result.coverages || []).map(c =>
+      `<div class="cov-card" style="${c.not_applied ? 'border-color:var(--amber)' : ''}">
+        <div class="cov-type">${c.label}${c.not_applied ? ' ⚠️' : ''}</div>
+        <div class="cov-amount">${c.amount}</div>
+        <div class="cov-desc">${c.description}</div>
+      </div>`
+    ).join('');
+
+    res.innerHTML = `
       <hr class="divider">
       <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Policy Analysis Complete — 3 Coverages Not Applied by Carrier</div></div>
+        <div class="ar-header"><div class="ar-header-text">✅ Policy Analysis Complete${result.gaps_found ? ' — ' + result.gaps_found + ' Coverages Not Applied by Carrier' : ''}</div></div>
         <div class="ar-body">
-          <div class="coverage-grid">
-            <div class="cov-card"><div class="cov-type">Dwelling Coverage</div><div class="cov-amount">$350,000</div><div class="cov-desc">Replacement cost · No co-insurance</div></div>
-            <div class="cov-card"><div class="cov-type">Deductible</div><div class="cov-amount">$2,500</div><div class="cov-desc">Per-occurrence · Applied to dwelling</div></div>
-            <div class="cov-card"><div class="cov-type">Contents / Personal Property</div><div class="cov-amount">$262,500</div><div class="cov-desc">75% of dwelling limit · RCV basis</div></div>
-            <div class="cov-card"><div class="cov-type">ALE / Loss of Use</div><div class="cov-amount">$70,000</div><div class="cov-desc">20% of dwelling · Up to 24 months</div></div>
-            <div class="cov-card" style="border-color:var(--amber)"><div class="cov-type">Ordinance & Law ⚠️</div><div class="cov-amount">$35,000</div><div class="cov-desc">Endorsed · Not yet applied by carrier</div></div>
-            <div class="cov-card" style="border-color:var(--amber)"><div class="cov-type">Water Backup ⚠️</div><div class="cov-amount">$25,000</div><div class="cov-desc">Endorsed · Not yet applied by carrier</div></div>
-          </div>
-          <div class="warn-amber"><strong>⚠️ Coverages Not Applied by Carrier</strong><div class="warn-amber-text">Ordinance & Law ($35,000) · Water Backup ($25,000) · Equipment Breakdown. These are covered under your endorsements but have not been acknowledged by State Farm in their initial communication.</div></div>
+          <div class="coverage-grid">${coverageCards}</div>
+          ${result.gaps_summary ? `<div class="warn-amber"><strong>⚠️ Coverages Not Applied by Carrier</strong><div class="warn-amber-text">${result.gaps_summary}</div></div>` : ''}
           <div class="flex gap-8">
             <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar()">View Coverage Analysis →</button>
           </div>
         </div>
       </div>`;
-  });
+  } catch(err) {
+    console.error('Policy analysis failed:', err);
+    showNetlifyError('policy-result', err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔍 Analyze Policy'; }
+  }
 }
 
 function renderP02S1(){
@@ -1385,7 +1707,7 @@ function renderP03S0(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Upload Damage Photos & Video</div><div class="panel-subtitle">Upload all photos and video of damage. The more documentation you have, the stronger your claim.</div></div>
       <div class="warn-red"><strong>⛔ Do Not Throw Away Damaged Items or Begin Repairs</strong><div class="warn-red-text">Do not discard any damaged materials, make repairs, or allow anyone to remove evidence until you have thoroughly photographed everything and the adjuster has completed their inspection.</div></div>
-      ${uploadZone('photo-upload','Drag & drop photos or video files here (multi-file supported)')}
+      ${uploadZone('photo-upload','Drag & drop photos or video files here (multi-file supported)','photo')}
       <div id="photo-count" style="font-size:12px;color:var(--gray-500);text-align:center;margin-top:8px">0 photos uploaded</div>
       <div class="warn-amber"><strong>📸 Documentation Tips</strong><div class="warn-amber-text">Take wide shots, medium shots, and close-ups of every damage area · Photograph from multiple angles · Include a ruler or common object for scale · Capture room overview before individual items · Document pre-existing conditions separately to avoid confusion</div></div>
       ${actionRow("setPhase(1)","Organize Documentation →","markComplete()",'true')}
@@ -1479,7 +1801,7 @@ function renderP03S2(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Evidence Organizer</div><div class="panel-subtitle">All uploaded files organized by category. Tag and organize your evidence package.</div></div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Upload Additional File</label>${uploadZone('evidence-upload','Upload evidence file')}</div>
+        <div class="form-group"><label class="form-label">Upload Additional File</label>${uploadZone('evidence-upload','Upload evidence file','evidence')}</div>
         <div class="form-group"><label class="form-label">Category</label>
           <select class="form-select"><option>Structural Damage</option><option>Contents</option><option>Pre-Loss Condition</option><option>Receipts</option><option>Correspondence</option><option>Other</option></select>
         </div>
@@ -1578,7 +1900,7 @@ function renderP05S0(){
       <div class="panel-header"><div class="panel-title">Upload Contractor Estimate</div><div class="panel-subtitle">Upload your independent contractor's detailed, line-item estimate. This becomes your primary negotiation baseline.</div></div>
       ${claimInfoStrip()}
       <div class="warn-amber"><strong>⚠️ Do Not Sign Any Contractor Agreement Yet</strong><div class="warn-amber-text">Upload the estimate for analysis before signing any work authorization. Compare it to the carrier estimate first.</div></div>
-      ${uploadZone('contractor-est-upload','Drag & drop your contractor estimate PDF here')}
+      ${uploadZone('contractor-est-upload','Drag & drop your contractor estimate PDF here','contractor_estimate')}
       ${pasteAccordion()}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);gap:8px">
         <button class="btn btn-secondary" onclick="setPhase(3)">← Back</button>
@@ -1592,27 +1914,43 @@ function renderP05S0(){
     </div>`;
 }
 
-function analyzeContractorEst(){
-  const res=document.getElementById('ce-result');
-  if(!res)return;
-  showSpinner('ce-result',2300,function(el){
-    claimData.structure.userEstimate=68450;updateNavMetrics();
-    logActivity('📊','Contractor estimate analyzed',68450);
-    el.innerHTML=`
-      <hr class="divider">
-      <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Estimate Analysis Complete — 47 Line Items Extracted</div></div>
-        <div class="ar-body">
-          <div class="coverage-grid">
-            <div class="cov-card"><div class="cov-type">Total Estimate</div><div class="cov-amount" style="color:var(--emerald)">$68,450</div><div class="cov-desc">47 line items · Full scope</div></div>
-            <div class="cov-card"><div class="cov-type">Scope Rating</div><div class="cov-amount">87%</div><div class="cov-desc">Complete — minor items flagged</div></div>
-            <div class="cov-card"><div class="cov-type">Labor Rates</div><div class="cov-amount">Market</div><div class="cov-desc">Rates align with local market</div></div>
-          </div>
-          <div class="warn-teal"><div class="warn-teal-text">💡 3 potential scope gaps identified: HVAC inspection/cleaning ($1,200), mold remediation assessment ($800), code compliance upgrades ($4,500). Consider adding these with supporting documentation.</div></div>
-          <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar()">Review Scope →</button>
-        </div>
-      </div>`;
-  });
+async function analyzeContractorEst(){
+    const res = document.getElementById('ce-result');
+  if (!res) return;
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyzing...'; }
+  res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">🔍 Analyzing contractor estimate — this takes 15–30 seconds...</div>';
+
+  try {
+    const result = await callNetlify('contractor-estimate-interpreter', {
+      estimate_text: claimData.structure.contractorEstimateText || '',
+      claim_type: claimData.initial.claimType,
+      property_type: claimData.initial.propertyType
+    });
+
+    if (result.total_estimate) claimData.structure.userEstimate = result.total_estimate;
+    claimData.structure.contractorAnalysis = result;
+    updateNavMetrics();
+    logActivity('📋', 'Contractor estimate analyzed');
+    saveState();
+
+    try {
+      const supabase = await window.getSupabaseClient();
+      await supabase.from('claim_outputs').insert({
+        claim_id: window.CCC_CLAIM_ID,
+        output_type: 'contractor_estimate_analysis',
+        content: result,
+        created_at: new Date().toISOString()
+      });
+    } catch(e) { console.warn('Could not persist contractor analysis:', e); }
+
+    res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Contractor Estimate Analyzed — Total: ${fmt(result.total_estimate || 0)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p></div></div>`;
+  } catch(err) {
+    console.error('Contractor estimate analysis failed:', err);
+    showNetlifyError('contractor-result', err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📋 Analyze Estimate'; }
+  }
 }
 
 function renderP05S1(){
@@ -1666,7 +2004,7 @@ function renderP06S0(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Upload Carrier Estimate</div><div class="panel-subtitle">Upload the estimate provided by State Farm. This will be compared line-by-line to your contractor's estimate.</div></div>
       ${claimInfoStrip()}
-      ${uploadZone('carrier-est-upload','Drag & drop the carrier estimate PDF here')}
+      ${uploadZone('carrier-est-upload','Drag & drop the carrier estimate PDF here','carrier_estimate')}
       <div class="form-grid" style="margin-top:12px">
         <div class="form-group"><label class="form-label">Or Enter Carrier Total Manually</label><input class="form-input" id="carrier-total-input" placeholder="$0" type="number"></div>
       </div>
@@ -1682,28 +2020,44 @@ function renderP06S0(){
     </div>`;
 }
 
-function analyzeCarrierEst(){
-  const manualVal=parseInt(document.getElementById('carrier-total-input')?.value)||0;
-  const res=document.getElementById('ce2-result');
-  if(!res)return;
-  showSpinner('ce2-result',2000,function(el){
-    claimData.structure.insurerEstimate=manualVal||38200;updateNavMetrics();
-    logActivity('📊','Carrier estimate analyzed',claimData.structure.insurerEstimate);
-    const gap=claimData.structure.userEstimate-claimData.structure.insurerEstimate;
-    el.innerHTML=`
-      <hr class="divider">
-      <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Carrier Estimate Analyzed — Gap Identified</div></div>
-        <div class="ar-body">
-          <div class="coverage-grid">
-            <div class="cov-card"><div class="cov-type">Carrier Estimate</div><div class="cov-amount" style="color:var(--red)">${fmt(claimData.structure.insurerEstimate)}</div><div class="cov-desc">32 line items found</div></div>
-            <div class="cov-card"><div class="cov-type">Your Contractor</div><div class="cov-amount" style="color:var(--emerald)">${fmt(claimData.structure.userEstimate)}</div><div class="cov-desc">47 line items</div></div>
-            <div class="cov-card"><div class="cov-type">Identified Gap</div><div class="cov-amount" style="color:var(--amber)">${fmt(Math.max(0,gap))}</div><div class="cov-desc">Current underpayment</div></div>
-          </div>
-          <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar()">Run Line-Item Comparison →</button>
-        </div>
-      </div>`;
-  });
+async function analyzeCarrierEst(){
+    const res = document.getElementById('ce2-result');
+  if (!res) return;
+  const btn = event?.target;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyzing...'; }
+  res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">🔍 Analyzing carrier estimate — this takes 15–30 seconds...</div>';
+
+  try {
+    const result = await callNetlify('analyze-estimates-v2', {
+      carrier_estimate_text: claimData.structure.carrierEstimateText || '',
+      contractor_estimate: claimData.structure.userEstimate || 0,
+      claim_type: claimData.initial.claimType
+    });
+
+    if (result.carrier_total) claimData.structure.insurerEstimate = result.carrier_total;
+    claimData.structure.gap = Math.max(0, (claimData.structure.userEstimate || 0) - (claimData.structure.insurerEstimate || 0));
+    claimData.structure.carrierAnalysis = result;
+    updateNavMetrics();
+    logActivity('📊', 'Carrier estimate analyzed — gap calculated');
+    saveState();
+
+    try {
+      const supabase = await window.getSupabaseClient();
+      await supabase.from('claim_outputs').insert({
+        claim_id: window.CCC_CLAIM_ID,
+        output_type: 'carrier_estimate_analysis',
+        content: result,
+        created_at: new Date().toISOString()
+      });
+    } catch(e) { console.warn('Could not persist carrier analysis:', e); }
+
+    res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Carrier Estimate Analyzed — Gap: ${fmt(claimData.structure.gap)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p></div></div>`;
+  } catch(err) {
+    console.error('Carrier estimate analysis failed:', err);
+    showNetlifyError('carrier-result', err.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '📊 Analyze Carrier Estimate'; }
+  }
 }
 
 function renderP06S1(){
@@ -2256,7 +2610,7 @@ function renderP10S1(){
         <div class="form-group"><label class="form-label">Contractor Name</label><input class="form-input" id="rcv-contractor" placeholder="Contractor name"></div>
         <div class="form-group"><label class="form-label">Contract/Invoice Number</label><input class="form-input" id="rcv-invoice" placeholder="Invoice #"></div>
       </div>
-      ${uploadZone('rcv-receipts-upload','Upload repair receipts and completion certificate')}
+      ${uploadZone('rcv-receipts-upload','Upload repair receipts and completion certificate','rcv_receipts')}
       <button class="btn btn-primary" style="margin-top:8px" onclick="submitRCV()">Submit RCV Request →</button>
       <div id="rcv-result" style="margin-top:12px"></div>
       ${actionRow("setSubstep(0)","Mark Complete & Continue →","markComplete()")}
@@ -2325,7 +2679,7 @@ function renderCorrespondenceWizard(substepLabel){
   renderWizardStep(1,letterType);
 }
 
-function renderWizardStep(step, letterType){
+async function renderWizardStep(step, letterType){
   const wc=document.getElementById('wizard-container');
   if(!wc)return;
   wizardStep=step;
@@ -2367,10 +2721,10 @@ function renderWizardStep(step, letterType){
             <textarea class="form-textarea" id="wz-context" placeholder="Add any specific details, amounts, dates, or context that should be included in this letter..."></textarea>
           </div>
         </div>
-        <div class="upload-zone" id="wz-upload" style="padding:16px" ondragover="event.preventDefault()" ondrop="handleDrop(event,'wz-upload')">
+        <div class="upload-zone" id="wz-upload" style="padding:16px" ondragover="event.preventDefault()" ondrop="handleDrop(event,'supporting_document')">
           <div class="upload-sub">Optional: Upload incoming carrier letter to reference in response</div>
           <button class="btn-upload" style="margin-top:6px" onclick="document.getElementById('fi-wz-upload').click()">Upload Carrier Letter</button>
-          <input type="file" id="fi-wz-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileInput(event,'wz-upload')">
+          <input type="file" id="fi-wz-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileInput(event,'supporting_document')">
         </div>
         <div class="action-row">
           <button class="btn btn-secondary" onclick="setSubstep(activeSubstep)">← Cancel</button>
@@ -2448,9 +2802,11 @@ function renderWizardStep(step, letterType){
       <div class="action-panel">
         <div id="wz-letter-spinner"></div>
       </div>`;
-    showSpinner('wz-letter-spinner',2000,function(el){
-      const letter=generateLetterContent(letterType);
-      el.innerHTML=`
+    const wzEl = document.getElementById('wz-letter-spinner');
+    if (wzEl) wzEl.innerHTML = '<div class="processing"><div class="spinner"></div><div class="processing-text">Generating your letter with AI — this takes 15–30 seconds...</div></div>';
+    const letter = await generateLetterContent(letterType);
+    if (wzEl) {
+      wzEl.innerHTML=`
         <div class="panel-header"><div class="panel-title">Step 4 — Your Letter</div><div class="panel-subtitle">${letterType} · Review, fill placeholders, then log or download.</div></div>
         <div class="letter-display">${letter}</div>
         <div style="margin-bottom:16px">
@@ -2472,7 +2828,7 @@ function renderWizardStep(step, letterType){
           </div>
         </div>
         <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>`;
-    });
+    }
   }
 }
 
@@ -2480,133 +2836,61 @@ function selectStrategy(n){
   document.querySelectorAll('.strategy-card').forEach((c,i)=>{c.classList.toggle('selected',i===n-1);});
 }
 
-function generateLetterContent(letterType){
-  const d=claimData.initial;
-  const date=fmtDate();
-  const carrier=fmt(claimData.structure.insurerEstimate||38200);
-  const user=fmt(claimData.structure.userEstimate||68450);
-  const gap=fmt(Math.max(0,(claimData.structure.userEstimate||68450)-(claimData.structure.insurerEstimate||38200)));
+async function generateLetterContent(letterType){
+  // Show generating state in wizard container step 4 area
+  const wizardEl = document.getElementById('wizard-container');
+  if (wizardEl) {
+    const genBtn = wizardEl.querySelector('button[onclick*="generateLetterContent"]');
+    if (genBtn) { genBtn.disabled = true; genBtn.textContent = '⏳ Generating...'; }
+  }
 
-  const letters={
-    'Written Notice of Loss':`${date}
+  try {
+    const d = claimData.initial;
+    const result = await callNetlify('generate-letter', {
+      letter_type: letterType,
+      insured_name: d.insuredName,
+      claim_number: d.claimNumber,
+      insurer: d.insurer,
+      adjuster_name: d.adjusterName,
+      date_of_loss: d.dateOfLoss,
+      description: d.description,
+      property_type: d.propertyType,
+      carrier_estimate: claimData.structure?.insurerEstimate || 0,
+      user_estimate: claimData.structure?.userEstimate || 0,
+      gap: claimData.structure?.gap || 0,
+      endorsements: claimData.policy?.endorsements || [],
+      phase_number: phases[activePhase]?.num || activePhase + 1
+    });
 
-${d.insurer} Insurance Company
-Claims Department
-Re: Written Notice of Loss — Claim No. ${d.claimNumber}
+    const letterContent = result.letter || result.content || result.text || '';
 
-Dear Claims Department,
+    // Persist to Supabase generated_letters
+    if (window.CCC_CLAIM_ID && letterContent) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        await supabase.from('generated_letters').insert({
+          claim_id: window.CCC_CLAIM_ID,
+          letter_type: letterType,
+          content: letterContent,
+          phase_number: phases[activePhase]?.num || activePhase + 1,
+          created_at: new Date().toISOString()
+        });
+      } catch(e) { console.warn('Could not persist letter to Supabase:', e); }
+    }
 
-This letter constitutes formal written notice of a covered loss at the insured property, occurring on ${d.dateOfLoss}.
+    // Log to correspondence journal
+    logCorrespondence(letterType, letterContent);
+    saveState();
 
-INSURED: ${d.insuredName}
-CLAIM NUMBER: ${d.claimNumber}
-DATE OF LOSS: ${d.dateOfLoss}
-CAUSE OF LOSS: ${d.description||'Water damage — burst plumbing pipe'}
+    return letterContent;
 
-I am invoking all applicable coverages under my policy including dwelling coverage, contents coverage, additional living expenses, and all applicable endorsements.
-
-I request written acknowledgment of this notice within 10 business days, assignment of a licensed adjuster, and scheduling of the property inspection within 15 business days.
-
-I am preserving all evidence and will provide full access upon reasonable notice.
-
-Respectfully,
-${d.insuredName}
-[Phone Number]
-[Email Address]`,
-
-    'Coverage Clarification Request':`${date}
-
-${d.insurer} Insurance Company
-Claims Department
-Re: Coverage Clarification Request — Claim No. ${d.claimNumber}
-
-Dear Claims Manager,
-
-Following my policy analysis, I have identified several coverages applicable to my claim that have not been acknowledged or applied in your communications to date.
-
-COVERAGES REQUIRING WRITTEN CLARIFICATION:
-1. Ordinance & Law Endorsement — $35,000 limit
-2. Water Backup Endorsement — $25,000 limit
-3. Equipment Breakdown Coverage — $50,000 limit
-
-Please provide written explanation within 15 business days of:
-(a) Whether each coverage applies to this loss, and
-(b) If not, the specific policy provision or exclusion supporting denial.
-
-I reserve all rights under my policy, including the right to invoke appraisal.
-
-Respectfully,
-${d.insuredName}
-Claim No.: ${d.claimNumber}`,
-
-    'Supplement Request Letter':`${date}
-
-${d.insurer} Insurance Company
-Claims Department
-Re: Supplement Request — Claim No. ${d.claimNumber}
-
-Dear Claims Manager,
-
-I am submitting a formal supplement request for the above-referenced claim. After obtaining an independent estimate from a licensed, insured contractor, I have identified significant discrepancies requiring your review.
-
-SUMMARY OF DISCREPANCIES:
-- Carrier Estimate: ${carrier}
-- Independent Contractor Estimate: ${user}
-- Total Underpayment Identified: ${gap}
-
-Specific items requiring correction are detailed in the attached line-item comparison. These include missing scope items, below-market labor rates, and coverage provisions not yet applied.
-
-I request written response within 15 business days confirming how each item will be addressed.
-
-Respectfully,
-${d.insuredName}
-Claim No.: ${d.claimNumber}`,
-
-    'Formal Demand for Payment':`${date}
-
-${d.insurer} Insurance Company
-Claims Department
-Re: Formal Demand for Payment — Claim No. ${d.claimNumber}
-
-Dear Claims Manager,
-
-This letter constitutes a formal demand for full payment of my documented claim. Despite providing comprehensive documentation, your company has failed to properly evaluate and pay this claim.
-
-DEMAND SUMMARY:
-- Total Documented Claim Value: ${user}
-- Amount Paid to Date: ${carrier}
-- Outstanding Balance Demanded: ${gap}
-
-This demand encompasses all structure, contents, and ALE amounts documented and submitted. I reserve all rights under my policy and applicable state law, including the right to invoke appraisal, file a DOI complaint, and pursue all available legal remedies.
-
-RESPONSE REQUIRED WITHIN 15 BUSINESS DAYS.
-
-Respectfully,
-${d.insuredName}
-Claim No.: ${d.claimNumber}`,
-  };
-
-  return letters[letterType]||`${date}
-
-${d.insurer} Insurance Company
-Claims Department
-Re: ${letterType} — Claim No. ${d.claimNumber}
-
-Dear Claims Manager,
-
-I am writing regarding the above-referenced claim. This letter addresses: ${letterType}.
-
-[Complete letter body based on your specific situation and the context provided.]
-
-Total documented claim value: ${user}
-Carrier offer to date: ${carrier}
-Identified gap: ${gap}
-
-I request written response within 15 business days.
-
-Respectfully,
-${d.insuredName}
-Claim No.: ${d.claimNumber}`;
+  } catch(err) {
+    console.error('Letter generation failed:', err);
+    // Return a structured fallback so the wizard does not break
+    const d = claimData.initial;
+    const fallback = `[Letter generation failed: ${err.message}]\n\nPlease try again or contact support.\n\nClaim: ${d.claimNumber}\nInsurer: ${d.insurer}`;
+    return fallback;
+  }
 }
 
 // ============================
@@ -2730,7 +3014,7 @@ function renderComposeWizard(){
             ${phases.map(p=>`<option>Phase ${p.num} — ${p.title}</option>`).join('')}
           </select>
         </div>
-        <div class="form-group full">${uploadZone('compose-upload','Upload incoming carrier letter (optional)')}</div>
+        <div class="form-group full">${uploadZone('compose-upload','Upload incoming carrier letter (optional)','supporting_document')}</div>
         <div class="form-group full"><label class="form-label">Additional Context</label><textarea class="form-textarea" id="compose-context" placeholder="Add context, specific points to address, or relevant details..."></textarea></div>
       </div>
       <div class="action-row">
@@ -2981,26 +3265,79 @@ function hardReset(){
 // ============================
 // INIT
 // ============================
-function init(){
-  const onboarded=loadState();
-  // Validate claimData integrity — if initial is missing, wipe and restart
+async function init(){
+  // Step 1: Auth gate — redirect to login if not authenticated
+  const authed = await window.CNAuth.requireAuth(true);
+  if (!authed) return;
+
+  // Step 2: Paywall gate — redirect to /paywall/locked.html if no active claim
+  const access = await window.checkPaywall();
+  if (!access) return;
+
+  // Step 3: Resolve claim_id — from URL param or Supabase lookup
+  const urlParams = new URLSearchParams(window.location.search);
+  let claimId = urlParams.get('claim_id');
+  if (!claimId) {
+    const supabase = await window.getSupabaseClient();
+    const user = await window.CNAuth.currentUser();
+    const { data: claims } = await supabase
+      .from('claims')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (claims && claims.length > 0) {
+      claimId = claims[0].id;
+      // Update URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.set('claim_id', claimId);
+      window.history.replaceState({}, '', url.toString());
+    }
+  }
+  // Store claim_id globally for all subsequent Supabase calls
+  window.CCC_CLAIM_ID = claimId;
+
+  // Step 4: Load state (localStorage cache + Supabase hydration)
+    const onboarded = await loadState();
+
+  // Step 5: Validate claimData integrity
   if(!claimData || !claimData.initial || !claimData.initial.insurer){
     console.warn('claimData.initial missing or corrupt — resetting');
     claimData={
-      initial:{insuredName:'James Davidson',claimNumber:'CLM-2024-089456',insurer:'State Farm',adjusterName:'Mike Johnson',dateOfLoss:'November 15, 2024',propertyType:'Single Family Home',claimType:'property-claim',description:'Burst pipe caused water damage.',daysSinceLoss:85},
-      policy:{uploaded:false,dwellingCoverage:350000,deductible:2500,settlementType:'RCV',contentsCoverage:262500,aleCoverage:70000,endorsements:['Ordinance & Law','Water Backup','Equipment Breakdown']},
+      initial:{insuredName:'',claimNumber:'',insurer:'',adjusterName:'',dateOfLoss:'',propertyType:'Single Family Home',claimType:'property-claim',description:'',daysSinceLoss:0},
+      policy:{uploaded:false,dwellingCoverage:0,deductible:0,settlementType:'RCV',contentsCoverage:0,aleCoverage:0,endorsements:[]},
       structure:{insurerEstimate:0,userEstimate:0,gap:0},
       contents:{items:[],totalValue:0,recovered:0},
-      ALE:{entries:[],total:0,dailyRate:132,baseline:75},
-      documents:[],messages:[
-        {id:'m1',from:'Mike Johnson — State Farm',subject:'Acknowledgment of Claim CLM-2024-089456',preview:'We have received your claim and assigned adjuster Mike Johnson. An inspection is scheduled...',date:'Dec 2, 2024',read:true},
-        {id:'m2',from:'State Farm Claims Department',subject:'Inspection Scheduled — November 28, 2024',preview:'Your inspection has been scheduled for November 28, 2024 between 10am–12pm. Please ensure all areas...',date:'Nov 22, 2024',read:true},
-      ],
-      deadlines:[],
+      ALE:{entries:[],total:0,dailyRate:0,baseline:0},
+      documents:[],messages:[],deadlines:[],
       meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null}
     };
   }
-  // Clamp phase/substep to valid ranges
+
+  // Step 6: Hydrate claimData from Supabase claims row
+  if (window.CCC_CLAIM_ID) {
+    try {
+      const supabase = await window.getSupabaseClient();
+      const { data: claim } = await supabase
+        .from('claims')
+        .select('*')
+        .eq('id', window.CCC_CLAIM_ID)
+        .single();
+      if (claim) {
+        claimData.initial.insuredName = claim.insured_name || claimData.initial.insuredName;
+        claimData.initial.claimNumber = claim.claim_number || claimData.initial.claimNumber;
+        claimData.initial.insurer = claim.insurer || claimData.initial.insurer;
+        claimData.initial.adjusterName = claim.adjuster_name || claimData.initial.adjusterName;
+        claimData.initial.dateOfLoss = claim.date_of_loss || claimData.initial.dateOfLoss;
+        claimData.initial.propertyType = claim.property_type || claimData.initial.propertyType;
+        claimData.initial.description = claim.type_of_loss || claimData.initial.description;
+      }
+    } catch(e) {
+      console.warn('Supabase claim hydration failed, using localStorage:', e);
+    }
+  }
+
   if(activePhase<0||activePhase>=phases.length)activePhase=0;
   if(activeSubstep<0||activeSubstep>=phases[activePhase].substeps.length)activeSubstep=0;
   updateNavMetrics();
@@ -3012,7 +3349,6 @@ function init(){
     document.getElementById('onboarding-overlay').style.display='none';
     showView('fullplan');
   }
-  // Close drops on escape
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllDrops();});
 }
 
