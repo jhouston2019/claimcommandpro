@@ -4,161 +4,491 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Register - Claim Command Pro</title>
-  
-  <!-- Sentry Loader Script -->
+
   <script
     src="https://js.sentry-cdn.com/0c1da5bb8247f021348e7b67a0a6b96.min.js"
     crossorigin="anonymous"
   ></script>
-  
-  <link rel="stylesheet" href="/app/assets/css/tool-visual-alignment.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: linear-gradient(145deg, #0b1120 0%, #0f172a 45%, #1e293b 100%);
+      color: #f8fafc;
+    }
+
+    .register-shell {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .register-brand {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .register-brand-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    .register-brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+
+    .register-brand p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .register-card {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      backdrop-filter: blur(12px);
+    }
+
+    /* Step indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 1.75rem;
+    }
+
+    .step-indicator .step {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64748b;
+      font-size: 0.8125rem;
+      font-weight: 500;
+    }
+
+    .step-indicator .step.active { color: #38bdf8; }
+    .step-indicator .step.completed { color: #34d399; }
+
+    .step-number {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 2px solid rgba(148, 163, 184, 0.35);
+      background: rgba(15, 23, 42, 0.6);
+      flex-shrink: 0;
+    }
+
+    .step.active .step-number {
+      border-color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+    }
+
+    .step.completed .step-number {
+      border-color: #34d399;
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+    }
+
+    .step-connector {
+      width: 3rem;
+      height: 2px;
+      background: rgba(148, 163, 184, 0.25);
+      margin: 0 0.75rem;
+    }
+
+    .step.completed + .step-connector,
+    .step-indicator .step.completed ~ .step-connector {
+      background: rgba(52, 211, 153, 0.4);
+    }
+
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+
+    .form-step h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-step > p {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .form-field {
+      margin-bottom: 1rem;
+    }
+
+    .form-field label,
+    .form-step > label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 0.375rem;
+    }
+
+    .required { color: #f87171; }
+
+    .form-field input,
+    .form-field select,
+    .form-step > input,
+    .form-step > select {
+      width: 100%;
+      padding: 0.75rem 0.875rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 0.5rem;
+      background: rgba(15, 23, 42, 0.8);
+      color: #f8fafc;
+      font-size: 0.9375rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-step > input,
+    .form-step > select {
+      margin-bottom: 1rem;
+    }
+
+    .form-field input::placeholder,
+    .form-step > input::placeholder {
+      color: #64748b;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-step > input:focus,
+    .form-step > select:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    .form-field select option,
+    .form-step > select option {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 0;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr 0.6fr;
+      gap: 0.75rem;
+      margin-bottom: 0;
+    }
+
+    .form-row-3 label,
+    .form-row label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 0.25rem;
+    }
+
+    .location-block {
+      margin-bottom: 1rem;
+    }
+
+    .location-block > label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+    }
+
+    .zip-field {
+      max-width: 140px;
+      margin-top: 0.75rem;
+    }
+
+    .error-message,
+    .success-message {
+      display: none;
+      padding: 0.75rem 0.875rem;
+      border-radius: 0.5rem;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+      margin-bottom: 1rem;
+    }
+
+    .error-message.visible {
+      display: block;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .success-message.visible {
+      display: block;
+      background: rgba(52, 211, 153, 0.12);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      color: #6ee7b7;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .btn-primary {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+      color: #0f172a;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      padding: 0.75rem 1.25rem;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      border-radius: 0.5rem;
+      background: transparent;
+      color: #cbd5e1;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(148, 163, 184, 0.08);
+      border-color: rgba(148, 163, 184, 0.5);
+    }
+
+    .register-footer {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .register-footer a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 540px) {
+      .form-row,
+      .form-row-3 {
+        grid-template-columns: 1fr;
+      }
+      .form-actions {
+        flex-direction: column-reverse;
+      }
+      .form-actions button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="register-container">
-    <h1>Create Your Account</h1>
-    
-    <!-- Step Indicator -->
-    <div class="step-indicator">
-      <div class="step active" id="step-1-indicator">
-        <div class="step-number">1</div>
-        <div class="step-label">Account</div>
-      </div>
-      <div class="step" id="step-2-indicator">
-        <div class="step-number">2</div>
-        <div class="step-label">Claim Info</div>
-      </div>
+  <div class="register-shell">
+    <div class="register-brand">
+      <div class="register-brand-icon">🛡️</div>
+      <h1>Claim Command Pro</h1>
+      <p>Create your account and start your claim</p>
     </div>
 
-    <div id="error-message" class="error" style="display: none;"></div>
-    <div id="success-message" class="success" style="display: none;"></div>
-
-    <form id="register-form">
-      <!-- Step 1: Account Information -->
-      <div class="form-step active" id="step-1">
-        <h2>Account Information</h2>
-        <label for="email">Email <span class="required">*</span></label>
-        <input type="email" id="email" required />
-        
-        <label for="password">Password <span class="required">*</span></label>
-        <input type="password" id="password" required />
-        
-        <div class="form-actions">
-          <div></div>
-          <button type="button" id="next-step-1">Next: Claim Information</button>
+    <div class="register-card">
+      <div class="step-indicator">
+        <div class="step active" id="step-1-indicator">
+          <div class="step-number">1</div>
+          <div class="step-label">Account</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step" id="step-2-indicator">
+          <div class="step-number">2</div>
+          <div class="step-label">Claim Info</div>
         </div>
       </div>
 
-      <!-- Step 2: Claim Information -->
-      <div class="form-step" id="step-2">
-        <h2>Your Claim Information</h2>
-        <p >Help us understand your claim so we can provide the best assistance.</p>
-        
-        <label for="date_of_loss">Date of Loss <span class="required">*</span></label>
-        <input type="date" id="date_of_loss" required>
+      <div id="error-message" class="error-message" role="alert"></div>
+      <div id="success-message" class="success-message" role="status"></div>
 
-        <label for="type_of_loss">Type of Loss <span class="required">*</span></label>
-        <select id="type_of_loss" required>
-          <option value="">Select type of loss</option>
-          <option value="fire">Fire</option>
-          <option value="water">Water Damage</option>
-          <option value="hurricane">Hurricane/Windstorm</option>
-          <option value="flood">Flood</option>
-          <option value="auto">Auto Accident</option>
-          <option value="health">Health/Medical</option>
-          <option value="theft">Theft/Vandalism</option>
-          <option value="liability">Liability</option>
-          <option value="business">Business Interruption</option>
-          <option value="other">Other</option>
-        </select>
-
-        <label>Loss Location <span class="required">*</span></label>
-        <div class="form-row-3">
-          <div>
-            <label for="address">Address</label>
-            <input type="text" id="address" placeholder="123 Main Street" required>
+      <form id="register-form">
+        <div class="form-step active" id="step-1">
+          <h2>Account Information</h2>
+          <div class="form-field">
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" required autocomplete="email" placeholder="you@example.com" />
           </div>
-          <div>
-            <label for="city">City</label>
-            <input type="text" id="city" placeholder="Anytown" required>
+          <div class="form-field">
+            <label for="password">Password <span class="required">*</span></label>
+            <input type="password" id="password" required autocomplete="new-password" placeholder="At least 6 characters" />
           </div>
-          <div>
-            <label for="state">State</label>
-            <input type="text" id="state" placeholder="CA" maxlength="2" required>
-          </div>
-        </div>
-        <div style="margin-top: 1rem;">
-          <label for="zip">ZIP Code</label>
-          <input type="text" id="zip" placeholder="12345" required>
-        </div>
-
-        <label for="insured_name">Insured Name <span class="required">*</span></label>
-        <input type="text" id="insured_name" placeholder="John Doe" required>
-
-        <label for="phone_number">Phone Number <span class="required">*</span></label>
-        <input type="tel" id="phone_number" placeholder="(555) 123-4567" required>
-
-        <div class="form-row">
-          <div>
-            <label for="policy_number">Policy Number <span class="required">*</span></label>
-            <input type="text" id="policy_number" placeholder="POL123456" required>
-          </div>
-          <div>
-            <label for="insurer">Insurance Company <span class="required">*</span></label>
-            <input type="text" id="insurer" placeholder="State Farm" required>
+          <div class="form-actions">
+            <div></div>
+            <button type="button" id="next-step-1" class="btn-primary">Next: Claim Information →</button>
           </div>
         </div>
 
-        <div class="form-row">
-          <div>
-            <label for="status">Status <span class="required">*</span></label>
-            <select id="status" required>
-              <option value="">Select status</option>
-              <option value="new">New</option>
-              <option value="pending">Pending</option>
-              <option value="settled">Settled</option>
-              <option value="disputed">Disputed</option>
-              <option value="litigation">Litigation</option>
+        <div class="form-step" id="step-2">
+          <h2>Your Claim Information</h2>
+          <p>Help us understand your claim so we can provide the best assistance.</p>
+
+          <div class="form-field">
+            <label for="date_of_loss">Date of Loss <span class="required">*</span></label>
+            <input type="date" id="date_of_loss" required>
+          </div>
+
+          <div class="form-field">
+            <label for="type_of_loss">Type of Loss <span class="required">*</span></label>
+            <select id="type_of_loss" required>
+              <option value="">Select type of loss</option>
+              <option value="fire">Fire</option>
+              <option value="water">Water Damage</option>
+              <option value="hurricane">Hurricane/Windstorm</option>
+              <option value="flood">Flood</option>
+              <option value="auto">Auto Accident</option>
+              <option value="health">Health/Medical</option>
+              <option value="theft">Theft/Vandalism</option>
+              <option value="liability">Liability</option>
+              <option value="business">Business Interruption</option>
+              <option value="other">Other</option>
             </select>
           </div>
-          <div>
-            <label for="property_type">Property Type <span class="required">*</span></label>
-            <select id="property_type" required>
-              <option value="">Select property type</option>
-              <option value="residential">Residential</option>
-              <option value="commercial">Commercial</option>
-              <option value="industrial">Industrial</option>
-            </select>
+
+          <div class="location-block">
+            <label>Loss Location <span class="required">*</span></label>
+            <div class="form-row-3">
+              <div class="form-field" style="margin-bottom:0">
+                <label for="address">Address</label>
+                <input type="text" id="address" placeholder="123 Main Street" required>
+              </div>
+              <div class="form-field" style="margin-bottom:0">
+                <label for="city">City</label>
+                <input type="text" id="city" placeholder="Anytown" required>
+              </div>
+              <div class="form-field" style="margin-bottom:0">
+                <label for="state">State</label>
+                <input type="text" id="state" placeholder="CA" maxlength="2" required>
+              </div>
+            </div>
+            <div class="form-field zip-field">
+              <label for="zip">ZIP Code</label>
+              <input type="text" id="zip" placeholder="12345" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="insured_name">Insured Name <span class="required">*</span></label>
+            <input type="text" id="insured_name" placeholder="John Doe" required>
+          </div>
+
+          <div class="form-field">
+            <label for="phone_number">Phone Number <span class="required">*</span></label>
+            <input type="tel" id="phone_number" placeholder="(555) 123-4567" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field" style="margin-bottom:0">
+              <label for="policy_number">Policy Number <span class="required">*</span></label>
+              <input type="text" id="policy_number" placeholder="POL123456" required>
+            </div>
+            <div class="form-field" style="margin-bottom:0">
+              <label for="insurer">Insurance Company <span class="required">*</span></label>
+              <input type="text" id="insurer" placeholder="State Farm" required>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:1rem">
+            <div class="form-field" style="margin-bottom:0">
+              <label for="status">Status <span class="required">*</span></label>
+              <select id="status" required>
+                <option value="">Select status</option>
+                <option value="new">New</option>
+                <option value="pending">Pending</option>
+                <option value="settled">Settled</option>
+                <option value="disputed">Disputed</option>
+                <option value="litigation">Litigation</option>
+              </select>
+            </div>
+            <div class="form-field" style="margin-bottom:0">
+              <label for="property_type">Property Type <span class="required">*</span></label>
+              <select id="property_type" required>
+                <option value="">Select property type</option>
+                <option value="residential">Residential</option>
+                <option value="commercial">Commercial</option>
+                <option value="industrial">Industrial</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="prev-step-2" class="btn-secondary">← Back</button>
+            <button type="submit" id="register-btn" class="btn-primary">Create Account & Claim</button>
           </div>
         </div>
+      </form>
 
-        <div class="form-actions">
-          <button type="button" id="prev-step-2" class="btn-secondary">Back</button>
-          <button type="submit" id="register-btn">Create Account & Claim</button>
-        </div>
+      <div class="register-footer">
+        <p>Already have an account? <a href="login.html">Sign in</a></p>
       </div>
-    </form>
-
-    <div class="alt">
-      <p>Already have an account? <a href="login.html">Login</a></p>
     </div>
   </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Initialize Sentry
     Sentry.init({
-      dsn: "{{ SENTRY_DSN }}", // Netlify will inject this env var, or replace with full DSN for testing
+      dsn: "{{ SENTRY_DSN }}",
       integrations: [new Sentry.BrowserTracing()],
-      tracesSampleRate: 1.0,             // capture 100% of traces
-      replaysSessionSampleRate: 0.1,     // capture 10% of normal sessions
-      replaysOnErrorSampleRate: 1.0,     // capture 100% of sessions with errors
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
     });
 
-    // Test error (uncomment to verify)
-    // myUndefinedFunction();
-
-    // ✅ Initialize Supabase client
     const supabase = createClient(
       "{{ SUPABASE_URL }}",
       "{{ SUPABASE_ANON_KEY }}"
@@ -169,36 +499,35 @@
     const errorEl = document.getElementById('error-message');
     const successEl = document.getElementById('success-message');
 
-    // Step navigation
     document.getElementById('next-step-1').addEventListener('click', () => {
       if (validateStep1()) {
+        clearMessages();
         goToStep(2);
       }
     });
 
     document.getElementById('prev-step-2').addEventListener('click', () => {
+      clearMessages();
       goToStep(1);
     });
 
     function goToStep(step) {
-      // Hide all steps
       document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'completed'));
-      
-      // Show current step
+      document.querySelectorAll('.step-indicator .step').forEach(s => s.classList.remove('active', 'completed'));
+
       document.getElementById(`step-${step}`).classList.add('active');
       document.getElementById(`step-${step}-indicator`).classList.add('active');
-      
-      // Mark previous steps as completed
+
       for (let i = 1; i < step; i++) {
         document.getElementById(`step-${i}-indicator`).classList.add('completed');
       }
-      
+
       currentStep = step;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function validateStep1() {
-      const email = document.getElementById('email').value;
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
       if (!email || !password) {
@@ -214,39 +543,41 @@
       return true;
     }
 
+    function clearMessages() {
+      errorEl.classList.remove('visible');
+      successEl.classList.remove('visible');
+      errorEl.textContent = '';
+      successEl.textContent = '';
+    }
+
     function showError(message) {
       errorEl.textContent = message;
-      errorEl.style.display = 'block';
-      successEl.style.display = 'none';
+      errorEl.classList.add('visible');
+      successEl.classList.remove('visible');
     }
 
     function showSuccess(message) {
       successEl.textContent = message;
-      successEl.style.display = 'block';
-      errorEl.style.display = 'none';
+      successEl.classList.add('visible');
+      errorEl.classList.remove('visible');
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (currentStep === 1) {
-        if (validateStep1()) {
-          goToStep(2);
-        }
+        if (validateStep1()) goToStep(2);
         return;
       }
 
-      // Step 2: Complete registration and create claim
       const registerBtn = document.getElementById('register-btn');
       registerBtn.disabled = true;
-      registerBtn.textContent = 'Creating Account...';
+      registerBtn.textContent = 'Creating account…';
 
       try {
-        // Get account information
-        const email = document.getElementById('email').value;
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        // Get claim information
         const claimData = {
           date_of_loss: document.getElementById('date_of_loss').value,
           type_of_loss: document.getElementById('type_of_loss').value,
@@ -264,10 +595,9 @@
           property_type: document.getElementById('property_type').value
         };
 
-        // Validate claim data
-        if (!claimData.date_of_loss || !claimData.type_of_loss || 
-            !claimData.loss_location.address || !claimData.loss_location.city || 
-            !claimData.loss_location.state || !claimData.loss_location.zip || 
+        if (!claimData.date_of_loss || !claimData.type_of_loss ||
+            !claimData.loss_location.address || !claimData.loss_location.city ||
+            !claimData.loss_location.state || !claimData.loss_location.zip ||
             !claimData.insured_name || !claimData.phone_number ||
             !claimData.policy_number || !claimData.insurer ||
             !claimData.status || !claimData.property_type) {
@@ -277,44 +607,31 @@
           return;
         }
 
-        // Create user account
-        const { data: authData, error: authError } = await supabase.auth.signUp({ 
-          email, 
-          password 
-        });
+        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
 
         if (authError) {
-          showError("Registration failed: " + authError.message);
+          showError('Registration failed: ' + authError.message);
           registerBtn.disabled = false;
           registerBtn.textContent = 'Create Account & Claim';
           return;
         }
 
         if (authData.user) {
-          console.log("Registered user:", authData.user.email);
-          
-          // Wait a moment for the user to be created
           await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // Create the claim
+
           try {
             const { data: claim, error: claimError } = await supabase
               .from('claims')
-              .insert([{
-                user_id: authData.user.id,
-                ...claimData
-              }])
+              .insert([{ user_id: authData.user.id, ...claimData }])
               .select()
               .single();
 
             if (claimError) {
               console.error('Claim creation error:', claimError);
-              // Don't fail the registration if claim creation fails
-              showSuccess("Account created successfully! You can add your claim information later.");
+              showSuccess('Account created! You can add your claim information later.');
             } else {
-              showSuccess("Account and claim created successfully!");
-              
-              // Save user data to localStorage for AI Response Agent and other tools
+              showSuccess('Account and claim created successfully! Redirecting…');
+
               const userData = {
                 name: claimData.insured_name,
                 email: email,
@@ -327,16 +644,14 @@
                 typeOfLoss: claimData.type_of_loss,
                 propertyType: claimData.property_type
               };
-              
-              // Save to both localStorage and sessionStorage for compatibility
+
               localStorage.setItem('ClaimCommandProUserData', JSON.stringify(userData));
               sessionStorage.setItem('ClaimCommandProUserData', JSON.stringify(userData));
             }
           } catch (claimError) {
             console.error('Claim creation error:', claimError);
-            showSuccess("Account created successfully! You can add your claim information later.");
-            
-            // Still save basic user data even if claim creation fails
+            showSuccess('Account created! You can add your claim information later.');
+
             const userData = {
               name: claimData.insured_name,
               email: email,
@@ -349,26 +664,24 @@
               typeOfLoss: claimData.type_of_loss,
               propertyType: claimData.property_type
             };
-            
+
             localStorage.setItem('ClaimCommandProUserData', JSON.stringify(userData));
             sessionStorage.setItem('ClaimCommandProUserData', JSON.stringify(userData));
           }
 
-          // Redirect after a short delay
           setTimeout(() => {
-            window.location.href = "response-center.html";
+            window.location.href = 'response-center.html';
           }, 2000);
         }
-
       } catch (error) {
         console.error('Registration error:', error);
-        showError("Registration failed. Please try again.");
+        showError('Registration failed. Please try again.');
         registerBtn.disabled = false;
         registerBtn.textContent = 'Create Account & Claim';
       }
     });
   </script>
-<script type="module" src="/app/assets/js/diagnostics.js"></script>
-<script type="module" src="/app/assets/js/window-bridge.js"></script>
+  <script type="module" src="/app/assets/js/diagnostics.js"></script>
+  <script type="module" src="/app/assets/js/window-bridge.js"></script>
 </body>
 </html>
