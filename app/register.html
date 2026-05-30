@@ -606,6 +606,12 @@
         }
 
         if (authData.user) {
+          if (!authData.session) {
+            showSuccess('Account created! Please check your email to confirm your account, then sign in.');
+            setTimeout(() => { window.location.href = '/app/login.html'; }, 3000);
+            return;
+          }
+
           await new Promise(resolve => setTimeout(resolve, 1000));
 
           try {
@@ -659,7 +665,7 @@
           }
 
           setTimeout(() => {
-            window.location.href = '/claim-command-center-v3.html?claim_id=' + (claim?.id || '');
+            window.location.href = '/claim-command-center-v3.html';
           }, 2000);
         }
       } catch (error) {
