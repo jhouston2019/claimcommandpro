@@ -19,7 +19,7 @@ window.checkPaywall = async function() {
       // Not authenticated - block access
       console.warn('CN Access Denied: No authenticated user');
       logAccessAttempt('no_auth', window.location.pathname);
-      window.location.href = '/app/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '/auth/login.html?redirect=' + encodeURIComponent(window.location.pathname);
       return false;
     }
 
@@ -120,7 +120,7 @@ if (window.CNAuth) {
       // No user - block immediately
       console.warn('CN Access Denied: Auth state changed to no user');
       logAccessAttempt('auth_state_no_user', window.location.pathname);
-      window.location.href = '/app/login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      window.location.href = '/auth/login.html?redirect=' + encodeURIComponent(window.location.pathname);
     }
   });
 }
