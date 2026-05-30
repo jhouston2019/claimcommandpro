@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Claim Command Pro</title>
 
-  <script
-    src="https://js.sentry-cdn.com/0c1da5bb8247f021348e7b67a0a6b96.min.js"
-    crossorigin="anonymous"
-  ></script>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -195,14 +190,6 @@
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-    Sentry.init({
-      dsn: "{{ SENTRY_DSN }}",
-      integrations: [new Sentry.BrowserTracing()],
-      tracesSampleRate: 1.0,
-      replaysSessionSampleRate: 0.1,
-      replaysOnErrorSampleRate: 1.0,
-    });
 
     window.SUPABASE_URL = '__CCC_SUPABASE_URL__';
     window.SUPABASE_ANON_KEY = '__CCC_SUPABASE_ANON_KEY__';
