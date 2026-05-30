@@ -784,6 +784,7 @@ async function saveState(){
 
 async function callNetlify(functionName, body) {
   const token = await window.CNAuth.getToken();
+  console.log('callNetlify token:', token ? 'present (' + token.substring(0,20) + '...)' : 'NULL - no token retrieved');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   const res = await fetch('/.netlify/functions/' + functionName, {
@@ -1543,6 +1544,7 @@ async function analyzePolicyDoc(){
 
   try {
     const policyText = claimData.policy.rawText || '';
+    console.log('CNAuth available:', !!window.CNAuth, 'getToken:', typeof window.CNAuth?.getToken);
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
       claim_type: claimData.initial.claimType,
