@@ -4,52 +4,224 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Claim Command Pro</title>
-  
-  <!-- Sentry Loader Script -->
+
   <script
     src="https://js.sentry-cdn.com/0c1da5bb8247f021348e7b67a0a6b96.min.js"
     crossorigin="anonymous"
   ></script>
-  
-  <link rel="stylesheet" href="/app/assets/css/tool-visual-alignment.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: linear-gradient(145deg, #0b1120 0%, #0f172a 45%, #1e293b 100%);
+      color: #f8fafc;
+    }
+
+    .login-shell {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-brand {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .login-brand-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+
+    .login-brand p {
+      margin-top: 0.35rem;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .login-card {
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+      backdrop-filter: blur(12px);
+    }
+
+    .login-card h2 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 1.25rem;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 0.375rem;
+    }
+
+    .form-field input {
+      width: 100%;
+      padding: 0.75rem 0.875rem;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 0.5rem;
+      background: rgba(15, 23, 42, 0.8);
+      color: #f8fafc;
+      font-size: 0.9375rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-field input::placeholder {
+      color: #64748b;
+    }
+
+    .form-field input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    .error-message {
+      display: none;
+      padding: 0.75rem 0.875rem;
+      border-radius: 0.5rem;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      font-size: 0.8125rem;
+      line-height: 1.45;
+    }
+
+    .error-message.visible {
+      display: block;
+    }
+
+    .login-btn {
+      width: 100%;
+      margin-top: 0.25rem;
+      padding: 0.8125rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 100%);
+      color: #0f172a;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+    }
+
+    .login-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .login-footer {
+      margin-top: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      text-align: center;
+      font-size: 0.875rem;
+      color: #94a3b8;
+    }
+
+    .login-footer a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-  <div class="login-container">
-    <h1>Login</h1>
-    <form id="login-form">
-      <label>Email</label>
-      <input type="email" id="email" required />
-      <label>Password</label>
-      <input type="password" id="password" required />
-      <button type="submit">Login</button>
-    </form>
-    <div class="alt">
-      <p>Don’t have an account? <a href="register.html">Register</a></p>
+  <div class="login-shell">
+    <div class="login-brand">
+      <div class="login-brand-icon">🛡️</div>
+      <h1>Claim Command Pro</h1>
+      <p>Sign in to access your claim workspace</p>
+    </div>
+
+    <div class="login-card">
+      <h2>Login</h2>
+      <div id="error-message" class="error-message" role="alert"></div>
+      <form id="login-form" class="login-form">
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" id="email" required autocomplete="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="login-btn" id="login-btn">Sign In</button>
+      </form>
+      <div class="login-footer">
+        <p>Don’t have an account? <a href="register.html">Register</a></p>
+      </div>
     </div>
   </div>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    // Initialize Sentry
     Sentry.init({
-      dsn: "{{ SENTRY_DSN }}", // Netlify will inject this env var, or replace with full DSN for testing
+      dsn: "{{ SENTRY_DSN }}",
       integrations: [new Sentry.BrowserTracing()],
-      tracesSampleRate: 1.0,             // capture 100% of traces
-      replaysSessionSampleRate: 0.1,     // capture 10% of normal sessions
-      replaysOnErrorSampleRate: 1.0,     // capture 100% of sessions with errors
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
     });
 
-    // Test error (uncomment to verify)
-    // myUndefinedFunction();
-
-    // ✅ Initialize Supabase client
     const supabase = createClient(
       "{{ SUPABASE_URL }}",
       "{{ SUPABASE_ANON_KEY }}"
     );
 
     const form = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const errorEl = document.getElementById('error-message');
+
+    function showError(message) {
+      errorEl.textContent = message;
+      errorEl.classList.add('visible');
+    }
+
+    function clearError() {
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+    }
 
     /** Safe in-app redirects only (prevents open redirects). */
     function getAllowedRedirect() {
@@ -57,40 +229,40 @@
       if (!raw || typeof raw !== 'string') return null;
       if (raw.includes('..')) return null;
       const path = raw.split('?')[0];
-      if (!path.startsWith('/app/')) return null;
       if (path.startsWith('/app/admin/')) return raw;
+      if (path.startsWith('/app/')) return raw;
+      if (path === '/claim-command-center-v3.html') return raw;
+      if (path === '/claim-command-center.html') return raw;
       if (path === '/app/settings.html') return raw;
       return null;
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      clearError();
 
-      const email = document.getElementById('email').value;
+      const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in…';
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        alert("Login failed: " + error.message);
+        showError('Login failed: ' + error.message);
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
         return;
       }
 
-      // ✅ Store session automatically (supabase-js does this by default)
-      const { user, session } = data;
-      if (user) {
-        console.log("Logged in user:", user.email);
-        // Optional: test JWT
-        console.log("Access token:", session?.access_token);
-      }
-
+      const { user } = data;
       const safeRedirect = getAllowedRedirect();
       if (safeRedirect) {
         window.location.href = safeRedirect;
         return;
       }
 
-      // PART 3: Check payment status and redirect accordingly
       try {
         const { data: paymentData, error: paymentError } = await supabase
           .from('payments')
@@ -100,20 +272,17 @@
           .single();
 
         if (paymentData && !paymentError) {
-          // Paid user: redirect to Claim Management Center
           window.location.href = "/app/claim-management-center.html";
         } else {
-          // Not paid: redirect to checkout
           window.location.href = "/app/checkout.html?tier=pro";
         }
       } catch (err) {
         console.error('Payment check error:', err);
-        // Default to checkout on error
         window.location.href = "/app/checkout.html?tier=pro";
       }
     });
   </script>
-<script type="module" src="/app/assets/js/diagnostics.js"></script>
-<script type="module" src="/app/assets/js/window-bridge.js"></script>
+  <script type="module" src="/app/assets/js/diagnostics.js"></script>
+  <script type="module" src="/app/assets/js/window-bridge.js"></script>
 </body>
 </html>
