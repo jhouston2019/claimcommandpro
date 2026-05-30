@@ -3280,19 +3280,21 @@ async function init(){
   if (!claimId) {
     const supabase = await window.getSupabaseClient();
     const user = await window.CNAuth.currentUser();
-    const { data: claims } = await supabase
-      .from('claims')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .order('created_at', { ascending: false })
-      .limit(1);
-    if (claims && claims.length > 0) {
-      claimId = claims[0].id;
-      // Update URL without reload
-      const url = new URL(window.location.href);
-      url.searchParams.set('claim_id', claimId);
-      window.history.replaceState({}, '', url.toString());
+    if (user) {
+      const { data: claims } = await supabase
+        .from('claims')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      if (claims && claims.length > 0) {
+        claimId = claims[0].id;
+        // Update URL without reload
+        const url = new URL(window.location.href);
+        url.searchParams.set('claim_id', claimId);
+        window.history.replaceState({}, '', url.toString());
+      }
     }
   }
   // Store claim_id globally for all subsequent Supabase calls

@@ -3,8 +3,17 @@
  * FAIL CLOSED: All errors block access
  */
 
+function isAdminOwnerSession() {
+  return sessionStorage.getItem('adminAuthenticated') === 'true';
+}
+
 window.checkPaywall = async function() {
   try {
+    // Site owner preview from admin dashboard — skip paywall
+    if (isAdminOwnerSession()) {
+      return true;
+    }
+
     const user = await window.CNAuth?.currentUser();
     if (!user) {
       // Not authenticated - block access
@@ -106,6 +115,7 @@ window.enforcePaywall = async function() {
 // Auto-check on pages that require it
 if (window.CNAuth) {
   window.CNAuth.onAuthStateChanged(async (user) => {
+    if (isAdminOwnerSession()) return;
     if (!user) {
       // No user - block immediately
       console.warn('CN Access Denied: Auth state changed to no user');

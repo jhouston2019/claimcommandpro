@@ -60,6 +60,10 @@
   }
 
   async function requireAuth(redirectToLogin = false) {
+    // Site owner already authenticated via admin dashboard — skip customer login
+    if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+      return true;
+    }
     const user = await currentUser();
     if (!user) {
       if (redirectToLogin) {
