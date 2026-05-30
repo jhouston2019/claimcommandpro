@@ -489,9 +489,11 @@
       replaysOnErrorSampleRate: 1.0,
     });
 
+    window.SUPABASE_URL = '__CCC_SUPABASE_URL__';
+    window.SUPABASE_ANON_KEY = '__CCC_SUPABASE_ANON_KEY__';
     const supabase = createClient(
-      "{{ SUPABASE_URL }}",
-      "{{ SUPABASE_ANON_KEY }}"
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY
     );
 
     let currentStep = 1;
@@ -670,7 +672,7 @@
           }
 
           setTimeout(() => {
-            window.location.href = 'response-center.html';
+            window.location.href = '/claim-command-center-v3.html?claim_id=' + (claim?.id || '');
           }, 2000);
         }
       } catch (error) {
