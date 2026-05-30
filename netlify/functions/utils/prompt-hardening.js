@@ -55,7 +55,7 @@ ANALYSIS FORMAT REQUIREMENTS:
  * @param {string} outputType - Type of output (letter, analysis, email, report, etc.)
  * @returns {string} Hardened prompt with professional guidelines
  */
-export function hardenPrompt(basePrompt, outputType = 'analysis') {
+function hardenPrompt(basePrompt, outputType = 'analysis') {
   let hardenedPrompt = basePrompt;
 
   // Add professional tone guidelines to all prompts
@@ -84,7 +84,7 @@ export function hardenPrompt(basePrompt, outputType = 'analysis') {
 /**
  * Create system message for claim-grade output
  */
-export function getClaimGradeSystemMessage(outputType = 'analysis') {
+function getClaimGradeSystemMessage(outputType = 'analysis') {
   return {
     role: 'system',
     content: `You are a professional insurance claim analyst and documentation specialist. Your role is to produce claim-grade, professional outputs that can be used directly in insurance claim proceedings.
@@ -116,7 +116,7 @@ Remember: This output will be saved to the claimant's permanent claim journal an
  * @param {string} outputType - Expected output type
  * @returns {Object} Validation result with pass/fail and issues
  */
-export function validateProfessionalOutput(response, outputType = 'analysis') {
+function validateProfessionalOutput(response, outputType = 'analysis') {
   const issues = [];
 
   // Check for casual language
@@ -169,7 +169,7 @@ export function validateProfessionalOutput(response, outputType = 'analysis') {
  * @param {string} outputType - Output type
  * @returns {string} Cleaned and formatted response
  */
-export function postProcessResponse(response, outputType = 'analysis') {
+function postProcessResponse(response, outputType = 'analysis') {
   let processed = response;
 
   // Remove any system-generated disclaimers (we add our own)
@@ -200,7 +200,7 @@ export function postProcessResponse(response, outputType = 'analysis') {
  * @param {string} outputType - Output type
  * @returns {string} Enhanced prompt with context
  */
-export function enhancePromptWithContext(basePrompt, claimInfo = {}, outputType = 'analysis') {
+function enhancePromptWithContext(basePrompt, claimInfo = {}, outputType = 'analysis') {
   let enhanced = basePrompt;
 
   // Add claim context if available
@@ -237,7 +237,7 @@ export function enhancePromptWithContext(basePrompt, claimInfo = {}, outputType 
  * @param {string} outputType - Expected output type
  * @returns {Function} Wrapped function with validation
  */
-export function withProfessionalOutput(aiCallFunction, outputType = 'analysis') {
+function withProfessionalOutput(aiCallFunction, outputType = 'analysis') {
   return async (...args) => {
     // Call original AI function
     const response = await aiCallFunction(...args);
@@ -257,5 +257,12 @@ export function withProfessionalOutput(aiCallFunction, outputType = 'analysis') 
   };
 }
 
-
+module.exports = {
+  hardenPrompt,
+  getClaimGradeSystemMessage,
+  validateProfessionalOutput,
+  postProcessResponse,
+  enhancePromptWithContext,
+  withProfessionalOutput
+};
 
