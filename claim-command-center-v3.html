@@ -1543,7 +1543,12 @@ async function analyzePolicyDoc(){
   res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">🔍 Analyzing your policy with AI — this takes 15–30 seconds...</div>';
 
   try {
-    const policyText = claimData.policy.rawText || '';
+    const policyText = claimData.policy.rawText || 
+      'Policy uploaded as PDF. Please analyze based on claim context: ' +
+      'Insurer: ' + claimData.initial.insurer + ', ' +
+      'Property type: ' + claimData.initial.propertyType + ', ' +
+      'Date of loss: ' + claimData.initial.dateOfLoss + ', ' +
+      'Claim type: ' + claimData.initial.claimType;
     console.log('CNAuth available:', !!window.CNAuth, 'getToken:', typeof window.CNAuth?.getToken);
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
