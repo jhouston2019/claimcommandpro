@@ -159,14 +159,14 @@ exports.handler = async (event) => {
 
     const startTime = Date.now();
 
-    // POLICY INTELLIGENCE ENGINE: Extract structured policy data
-    const policySections = extractPolicySections(sanitizedText);
-    const coverageLimits = extractCoverageLimits(sanitizedText);
+    // POLICY INTELLIGENCE ENGINE: skip text parsing when PDF is attached (avoids garbled extracted text)
+    const policySections = policyPdfDataUrl ? {} : extractPolicySections(sanitizedText);
+    const coverageLimits = policyPdfDataUrl ? {} : extractCoverageLimits(sanitizedText);
     const policyForm = STANDARD_POLICY_FORMS[policy_type] || STANDARD_POLICY_FORMS['HO-3'];
 
     // POLICY INTELLIGENCE ENGINE: Detect coverage gaps using rule-based logic
     let engineGaps = [];
-    if (claim_scenario && Object.keys(claim_scenario).length > 0) {
+    if (!policyPdfDataUrl && claim_scenario && Object.keys(claim_scenario).length > 0) {
       engineGaps = detectCoverageGaps(coverageLimits, policy_type, {
         ...claim_scenario,
         damageType: damage_type || claim_scenario.damageType,
@@ -176,7 +176,7 @@ exports.handler = async (event) => {
 
     // POLICY INTELLIGENCE ENGINE: Analyze coverage for specific damage type
     let coverageAnalysis = null;
-    if (damage_type) {
+    if (!policyPdfDataUrl && damage_type) {
       coverageAnalysis = analyzeCoverageForDamage(policySections, damage_type, policy_type);
     }
 
@@ -213,6 +213,9 @@ ${Object.keys(COMMON_ENDORSEMENTS).join(', ')}`
 
     // Build prompt based on analysis mode
     let userPrompt;
+    const coverageLimitsBlock = policyPdfDataUrl
+      ? 'EXTRACTED COVERAGE LIMITS: Not available - read directly from attached PDF.'
+      : `EXTRACTED COVERAGE LIMITS (from rule-based parser):\n${JSON.stringify(coverageLimits, null, 2)}`;
     
     switch (analysis_mode) {
       case 'sublimit':
@@ -352,8 +355,7 @@ Deductible: ${deductible}
 
 ${policySourceBlock}
 
-EXTRACTED COVERAGE LIMITS (from rule-based parser):
-${JSON.stringify(coverageLimits, null, 2)}
+${coverageLimitsBlock}
 
 Instructions:
 1. Find Dwelling/Coverage A limit — set as dwelling_coverage
