@@ -33,30 +33,34 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
   } = options;
 
   if (pdfFileDataUrl) {
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      {
-        role: 'user',
-        content: [
-          { type: 'text', text: userPrompt },
-          {
-            type: 'image_url',
-            image_url: {
-              url: pdfFileDataUrl,
-              detail: 'high'
-            }
-          }
-        ]
-      }
-    ];
+    const base64Data = pdfFileDataUrl.replace('data:application/pdf;base64,', '');
+    const buffer = Buffer.from(base64Data, 'base64');
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages,
-      max_tokens: 4000
+    const { toFile } = require('openai');
+    const file = await openai.files.create({
+      file: await toFile(buffer, 'policy.pdf', { type: 'application/pdf' }),
+      purpose: 'assistants'
     });
 
-    return completion.choices[0].message.content;
+    try {
+      const response = await openai.responses.create({
+        model,
+        input: [
+          { role: 'system', content: systemPrompt },
+          {
+            role: 'user',
+            content: [
+              { type: 'input_text', text: userPrompt },
+              { type: 'input_file', file_id: file.id }
+            ]
+          }
+        ]
+      });
+
+      return response.output_text;
+    } finally {
+      await openai.files.del(file.id);
+    }
   }
 
   const messages = [
