@@ -7,7 +7,6 @@
  */
 
 const { runOpenAI, sanitizeInput, validateRequired } = require('./lib/ai-utils');
-const pdfParse = require('pdf-parse');
 const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
 const { LOG_EVENT, LOG_ERROR, LOG_USAGE, LOG_COST } = require('./_utils');
 const { 
@@ -123,9 +122,9 @@ exports.handler = async (event) => {
     } = body;
     const sanitizedText = sanitizeInput(policy_text);
 
-    // If policy_text is a storage path (starts with user UUID pattern) or is 
-    // the fallback placeholder, fetch the actual PDF from Supabase Storage
-    let finalPolicyText = sanitizedText;
+    // If policy_text is missing/placeholder, fetch PDF from storage and send to OpenAI directly
+    const finalPolicyText = sanitizedText;
+    let policyPdfDataUrl = null;
     const isPlaceholder = sanitizedText.includes('Policy uploaded as PDF. Please analyze based on claim context');
     const storagePath = body.storage_path || null;
 
@@ -145,14 +144,19 @@ exports.handler = async (event) => {
         } else if (fileData) {
           const arrayBuffer = await fileData.arrayBuffer();
           const buffer = Buffer.from(arrayBuffer);
-          const parsed = await pdfParse(buffer);
-          finalPolicyText = parsed.text;
-          console.log('PDF extracted in ai-policy-review, length:', finalPolicyText.length);
+          console.log('PDF header check:', buffer.slice(0, 5).toString('ascii'));
+          const base64PDF = buffer.toString('base64');
+          policyPdfDataUrl = `data:application/pdf;base64,${base64PDF}`;
+          console.log('PDF attached for OpenAI direct read, size bytes:', buffer.length);
         }
-      } catch(pdfErr) {
-        console.error('PDF extraction in ai-policy-review failed:', pdfErr.message);
+      } catch (pdfErr) {
+        console.error('PDF download in ai-policy-review failed:', pdfErr.message);
       }
     }
+
+    const policySourceBlock = policyPdfDataUrl
+      ? 'The full insurance policy is attached as a PDF. Read the document directly and extract all values from it.'
+      : `Policy Text:\n${finalPolicyText}`;
 
     const startTime = Date.now();
 
@@ -231,8 +235,7 @@ Policy Type: ${policy_type}
 Jurisdiction: ${jurisdiction}
 Deductible: ${deductible}
 
-Policy Text:
-${finalPolicyText}
+${policySourceBlock}
 
 Focus on:
 1. Sublimits that restrict coverage amounts
@@ -264,8 +267,7 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
 Policy Type: ${policy_type}
 Jurisdiction: ${jurisdiction}
 
-Policy Text:
-${finalPolicyText}
+${policySourceBlock}
 
 Map each potential claim item to its corresponding policy coverage section. Include:
 1. Whether the item is covered (true/false)
@@ -295,8 +297,7 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
 Policy Type: ${policy_type}
 Claim Type: ${body.claimType || 'general'}
 
-Policy Text:
-${finalPolicyText}
+${policySourceBlock}
 
 Context: ${body.context || 'None provided'}
 
@@ -317,7 +318,7 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
           ? `\n\nRULE-BASED GAP DETECTION RESULTS:\n${JSON.stringify(engineGaps, null, 2)}\n\nUse these as your foundation and add any additional gaps you identify from the policy text.`
           : '';
 
-        userPrompt = `You are analyzing a real insurance policy document. Extract the actual coverage values from the policy text provided. Do NOT use placeholder or example values.
+        userPrompt = `You are analyzing a real insurance policy document. Extract the actual coverage values from the policy document provided. Do NOT use placeholder or example values.
 
 Return ONLY this exact JSON structure with no markdown, no code blocks:
 
@@ -342,7 +343,7 @@ Return ONLY this exact JSON structure with no markdown, no code blocks:
   "summary": "Brief overview"
 }
 
-CRITICAL: Extract the ACTUAL dollar amounts from the policy text below. 
+CRITICAL: Extract the ACTUAL dollar amounts from the policy document. 
 Do not invent numbers. If you cannot find a value, use 0.
 
 Policy Type: ${policy_type}
@@ -350,8 +351,7 @@ Insurer: ${body.insurer || 'Unknown'}
 Jurisdiction: ${jurisdiction}
 Deductible: ${deductible}
 
-Policy Text:
-${finalPolicyText}
+${policySourceBlock}
 
 EXTRACTED COVERAGE LIMITS (from rule-based parser):
 ${JSON.stringify(coverageLimits, null, 2)}
@@ -377,7 +377,8 @@ Return ONLY the JSON. No other text.`;
     const rawAnalysis = await runOpenAI(systemMessage.content, userPrompt, {
       model: 'gpt-4o',
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 2000,
+      pdfFileDataUrl: policyPdfDataUrl
     });
 
     // Parse JSON response

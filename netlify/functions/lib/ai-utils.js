@@ -28,12 +28,26 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
     model = 'gpt-4o',
     temperature = 0.7,
     max_tokens = 2000,
-    response_format = null
+    response_format = null,
+    pdfFileDataUrl = null
   } = options;
+
+  const userContent = pdfFileDataUrl
+    ? [
+        { type: 'text', text: userPrompt },
+        {
+          type: 'file',
+          file: {
+            filename: 'policy.pdf',
+            file_data: pdfFileDataUrl
+          }
+        }
+      ]
+    : userPrompt;
 
   const messages = [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: userPrompt }
+    { role: 'user', content: userContent }
   ];
 
   const params = {
