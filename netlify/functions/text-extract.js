@@ -41,8 +41,14 @@ exports.handler = async (event) => {
     }
 
     // Convert Blob to Buffer
+    console.log('Downloaded data type:', typeof data);
+    console.log('Downloaded data constructor:', data?.constructor?.name);
     const arrayBuffer = await data.arrayBuffer();
+    console.log('ArrayBuffer byteLength:', arrayBuffer.byteLength);
     const buffer = Buffer.from(arrayBuffer);
+    console.log('Buffer length:', buffer.length);
+    console.log('Buffer first 20 bytes:', buffer.slice(0, 20));
+    console.log('PDF header check:', buffer.slice(0, 5).toString('ascii'));
 
     // Extract text
     let extractedText = '';
