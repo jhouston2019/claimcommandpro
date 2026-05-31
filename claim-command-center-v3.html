@@ -1561,6 +1561,7 @@ async function analyzePolicyDoc(){
     console.log('policyText being sent:', policyText.substring(0, 200));
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
+      storage_path: claimData.documents.find(d => d.type === 'policy')?.path || '',
       policy_type: 'HO-3',
       analysis_mode: 'coverage-gap',
       claim_type: claimData.initial.claimType,

@@ -7,7 +7,8 @@
  */
 
 const { runOpenAI, sanitizeInput, validateRequired } = require('./lib/ai-utils');
-const { createClient } = require('@supabase/supabase-js');
+const pdfParse = require('pdf-parse');
+const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
 const { LOG_EVENT, LOG_ERROR, LOG_USAGE, LOG_COST } = require('./_utils');
 const { 
   getClaimGradeSystemMessage,
@@ -60,7 +61,7 @@ exports.handler = async (event) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const supabase = createClient(
+    const supabase = createSupabaseClient(
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
@@ -121,6 +122,37 @@ exports.handler = async (event) => {
       claim_scenario = {}
     } = body;
     const sanitizedText = sanitizeInput(policy_text);
+
+    // If policy_text is a storage path (starts with user UUID pattern) or is 
+    // the fallback placeholder, fetch the actual PDF from Supabase Storage
+    let finalPolicyText = sanitizedText;
+    const isPlaceholder = sanitizedText.includes('Policy uploaded as PDF. Please analyze based on claim context');
+    const storagePath = body.storage_path || null;
+
+    if ((isPlaceholder || !sanitizedText || sanitizedText.length < 100) && storagePath) {
+      try {
+        console.log('Fetching PDF from storage:', storagePath);
+        const supabaseAdmin = createSupabaseClient(
+          process.env.SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+        const { data: fileData, error: fileError } = await supabaseAdmin.storage
+          .from('claim-documents')
+          .download(storagePath);
+        
+        if (fileError) {
+          console.error('Storage download error:', fileError.message);
+        } else if (fileData) {
+          const arrayBuffer = await fileData.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          const parsed = await pdfParse(buffer);
+          finalPolicyText = parsed.text;
+          console.log('PDF extracted in ai-policy-review, length:', finalPolicyText.length);
+        }
+      } catch(pdfErr) {
+        console.error('PDF extraction in ai-policy-review failed:', pdfErr.message);
+      }
+    }
 
     const startTime = Date.now();
 
@@ -200,7 +232,7 @@ Jurisdiction: ${jurisdiction}
 Deductible: ${deductible}
 
 Policy Text:
-${sanitizedText}
+${finalPolicyText}
 
 Focus on:
 1. Sublimits that restrict coverage amounts
@@ -233,7 +265,7 @@ Policy Type: ${policy_type}
 Jurisdiction: ${jurisdiction}
 
 Policy Text:
-${sanitizedText}
+${finalPolicyText}
 
 Map each potential claim item to its corresponding policy coverage section. Include:
 1. Whether the item is covered (true/false)
@@ -264,7 +296,7 @@ Policy Type: ${policy_type}
 Claim Type: ${body.claimType || 'general'}
 
 Policy Text:
-${sanitizedText}
+${finalPolicyText}
 
 Context: ${body.context || 'None provided'}
 
@@ -319,7 +351,7 @@ Jurisdiction: ${jurisdiction}
 Deductible: ${deductible}
 
 Policy Text:
-${sanitizedText}
+${finalPolicyText}
 
 EXTRACTED COVERAGE LIMITS (from rule-based parser):
 ${JSON.stringify(coverageLimits, null, 2)}
