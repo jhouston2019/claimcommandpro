@@ -1556,6 +1556,9 @@ async function analyzePolicyDoc(){
       'Date of loss: ' + claimData.initial.dateOfLoss + ', ' +
       'Claim type: ' + claimData.initial.claimType;
     console.log('CNAuth available:', !!window.CNAuth, 'getToken:', typeof window.CNAuth?.getToken);
+    console.log('rawText length:', (claimData.policy.rawText || '').length);
+    console.log('rawText preview:', (claimData.policy.rawText || '').substring(0, 200));
+    console.log('policyText being sent:', policyText.substring(0, 200));
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
       claim_type: claimData.initial.claimType,
