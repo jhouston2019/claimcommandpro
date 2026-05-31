@@ -125,10 +125,9 @@ exports.handler = async (event) => {
     // If policy_text is missing/placeholder, fetch PDF from storage and send to OpenAI directly
     const finalPolicyText = sanitizedText;
     let policyPdfDataUrl = null;
-    const isPlaceholder = sanitizedText.includes('Policy uploaded as PDF. Please analyze based on claim context');
     const storagePath = body.storage_path || null;
 
-    if ((isPlaceholder || !sanitizedText || sanitizedText.length < 100) && storagePath) {
+    if (storagePath) {
       try {
         console.log('Fetching PDF from storage:', storagePath);
         const supabaseAdmin = createSupabaseClient(

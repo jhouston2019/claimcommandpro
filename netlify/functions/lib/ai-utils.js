@@ -32,22 +32,40 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
     pdfFileDataUrl = null
   } = options;
 
-  const userContent = pdfFileDataUrl
-    ? [
-        { type: 'text', text: userPrompt },
-        {
-          type: 'file',
-          file: {
-            filename: 'policy.pdf',
-            file_data: pdfFileDataUrl
+  if (pdfFileDataUrl) {
+    const base64Data = pdfFileDataUrl.replace('data:application/pdf;base64,', '');
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    const { toFile } = require('openai');
+    const file = await openai.files.create({
+      file: await toFile(buffer, 'policy.pdf', { type: 'application/pdf' }),
+      purpose: 'assistants'
+    });
+
+    try {
+      const response = await openai.responses.create({
+        model,
+        input: [
+          { role: 'system', content: systemPrompt },
+          {
+            role: 'user',
+            content: [
+              { type: 'input_text', text: userPrompt },
+              { type: 'input_file', file_id: file.id }
+            ]
           }
-        }
-      ]
-    : userPrompt;
+        ]
+      });
+
+      return response.output_text;
+    } finally {
+      await openai.files.del(file.id);
+    }
+  }
 
   const messages = [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: userContent }
+    { role: 'user', content: userPrompt }
   ];
 
   const params = {
