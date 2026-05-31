@@ -47,8 +47,14 @@ exports.handler = async (event) => {
     // Extract text
     let extractedText = '';
     if (storage_path.endsWith('.pdf')) {
-      const parsed = await pdfParse(buffer);
-      extractedText = parsed.text;
+      try {
+        const parsed = await pdfParse(buffer);
+        extractedText = parsed.text;
+        console.log('PDF parsed successfully, text length:', extractedText.length, 'preview:', extractedText.substring(0, 100));
+      } catch(parseError) {
+        console.error('pdf-parse failed:', parseError.message);
+        return { statusCode: 500, headers, body: JSON.stringify({ error: 'PDF parsing failed: ' + parseError.message }) };
+      }
     } else if (storage_path.endsWith('.txt')) {
       extractedText = buffer.toString('utf-8');
     } else {

@@ -1561,20 +1561,31 @@ async function analyzePolicyDoc(){
     console.log('policyText being sent:', policyText.substring(0, 200));
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
+      policy_type: 'HO-3',
+      analysis_mode: 'coverage-gap',
       claim_type: claimData.initial.claimType,
       insurer: claimData.initial.insurer,
-      date_of_loss: claimData.initial.dateOfLoss
+      date_of_loss: claimData.initial.dateOfLoss,
+      jurisdiction: claimData.initial.state || 'GA',
+      deductible: claimData.policy.deductible || '',
+      claimInfo: {
+        insurer: claimData.initial.insurer,
+        date_of_loss: claimData.initial.dateOfLoss,
+        property_type: claimData.initial.propertyType,
+        claim_type: claimData.initial.claimType
+      }
     });
 
     // Store results
-    if (result.dwelling_coverage) claimData.policy.dwellingCoverage = result.dwelling_coverage;
-    if (result.contents_coverage) claimData.policy.contentsCoverage = result.contents_coverage;
-    if (result.ale_coverage) claimData.policy.aleCoverage = result.ale_coverage;
-    if (result.deductible) claimData.policy.deductible = result.deductible;
-    if (result.settlement_type) claimData.policy.settlementType = result.settlement_type;
-    if (result.endorsements) claimData.policy.endorsements = result.endorsements;
+    const data = result.data || result;
+    if (data.dwelling_coverage) claimData.policy.dwellingCoverage = data.dwelling_coverage;
+    if (data.contents_coverage) claimData.policy.contentsCoverage = data.contents_coverage;
+    if (data.ale_coverage) claimData.policy.aleCoverage = data.ale_coverage;
+    if (data.deductible) claimData.policy.deductible = data.deductible;
+    if (data.settlement_type) claimData.policy.settlementType = data.settlement_type;
+    if (data.endorsements) claimData.policy.endorsements = data.endorsements;
     claimData.policy.uploaded = true;
-    claimData.policy.analysisResult = result;
+    claimData.policy.analysisResult = data;
 
     // Persist to Supabase claim_outputs
     try {
@@ -1582,7 +1593,7 @@ async function analyzePolicyDoc(){
       await supabase.from('claim_outputs').insert({
         claim_id: window.CCC_CLAIM_ID,
         output_type: 'policy_analysis',
-        content: result,
+        content: data,
         created_at: new Date().toISOString()
       });
     } catch(e) { console.warn('Could not persist policy analysis:', e); }
@@ -1592,7 +1603,7 @@ async function analyzePolicyDoc(){
     saveState();
 
     // Render results
-    const coverageCards = (result.coverages || []).map(c =>
+    const coverageCards = (data.coverages || []).map(c =>
       `<div class="cov-card" style="${c.not_applied ? 'border-color:var(--amber)' : ''}">
         <div class="cov-type">${c.label}${c.not_applied ? ' ⚠️' : ''}</div>
         <div class="cov-amount">${c.amount}</div>
@@ -1603,10 +1614,10 @@ async function analyzePolicyDoc(){
     res.innerHTML = `
       <hr class="divider">
       <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Policy Analysis Complete${result.gaps_found ? ' — ' + result.gaps_found + ' Coverages Not Applied by Carrier' : ''}</div></div>
+        <div class="ar-header"><div class="ar-header-text">✅ Policy Analysis Complete${data.gaps_found ? ' — ' + data.gaps_found + ' Coverages Not Applied by Carrier' : ''}</div></div>
         <div class="ar-body">
           <div class="coverage-grid">${coverageCards}</div>
-          ${result.gaps_summary ? `<div class="warn-amber"><strong>⚠️ Coverages Not Applied by Carrier</strong><div class="warn-amber-text">${result.gaps_summary}</div></div>` : ''}
+          ${data.gaps_summary ? `<div class="warn-amber"><strong>⚠️ Coverages Not Applied by Carrier</strong><div class="warn-amber-text">${data.gaps_summary}</div></div>` : ''}
           <div class="flex gap-8">
             <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar()">View Coverage Analysis →</button>
           </div>

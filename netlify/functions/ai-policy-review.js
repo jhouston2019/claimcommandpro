@@ -285,54 +285,57 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
           ? `\n\nRULE-BASED GAP DETECTION RESULTS:\n${JSON.stringify(engineGaps, null, 2)}\n\nUse these as your foundation and add any additional gaps you identify from the policy text.`
           : '';
 
-        userPrompt = `Analyze this insurance policy and return ONLY valid JSON with this exact structure:
+        userPrompt = `You are analyzing a real insurance policy document. Extract the actual coverage values from the policy text provided. Do NOT use placeholder or example values.
+
+Return ONLY this exact JSON structure with no markdown, no code blocks:
 
 {
-  "gaps": [
+  "dwelling_coverage": 0,
+  "contents_coverage": 0,
+  "ale_coverage": 0,
+  "deductible": 0,
+  "settlement_type": "RCV",
+  "endorsements": [],
+  "coverages": [
     {
-      "name": "Coverage gap or limitation name",
-      "section": "Policy section reference (e.g., 3.2.4)",
-      "severity": "HIGH|MEDIUM|LOW",
-      "impact": "Description of financial or coverage impact",
-      "cost": 15000,
-      "recommendation": "Specific action to address this gap"
+      "label": "Coverage name",
+      "amount": "$0",
+      "amount_raw": 0,
+      "description": "Brief description",
+      "not_applied": false
     }
   ],
-  "completeness_score": 85,
-  "summary": "Brief overview of policy coverage and key findings"
+  "gaps_found": 0,
+  "gaps_summary": "Summary of coverages not yet applied by carrier",
+  "summary": "Brief overview"
 }
 
+CRITICAL: Extract the ACTUAL dollar amounts from the policy text below. 
+Do not invent numbers. If you cannot find a value, use 0.
+
 Policy Type: ${policy_type}
+Insurer: ${body.insurer || 'Unknown'}
 Jurisdiction: ${jurisdiction}
 Deductible: ${deductible}
 
 Policy Text:
 ${sanitizedText}
-${engineGapsSummary}
 
-EXTRACTED COVERAGE LIMITS:
+EXTRACTED COVERAGE LIMITS (from rule-based parser):
 ${JSON.stringify(coverageLimits, null, 2)}
 
-POLICY FORM ANALYSIS:
-- Form Type: ${policy_type}
-- Coverage Basis: ${JSON.stringify(policyForm.coverage_basis)}
-- Standard Exclusions: ${policyForm.common_exclusions.join(', ')}
+Instructions:
+1. Find Dwelling/Coverage A limit — set as dwelling_coverage
+2. Find Personal Property/Coverage B or C limit — set as contents_coverage  
+3. Find Loss of Use/Coverage C or D limit — set as ale_coverage
+4. Find the deductible amount — set as deductible
+5. Find settlement type (RCV or ACV) — set as settlement_type
+6. List all endorsements found — set as endorsements array
+7. For each coverage, set not_applied: true if carrier has not yet acknowledged it
+8. Count unapplied coverages — set as gaps_found
+9. Summarize unapplied coverages — set as gaps_summary
 
-Focus on:
-1. Coverage gaps and limitations (prioritize rule-based gaps identified above)
-2. Key exclusions that could impact claims
-3. Sublimits that may restrict payouts
-4. Missing endorsements or riders
-5. Deadline requirements
-6. Deviations from standard policy form language
-7. Ambiguous language requiring contra proferentem interpretation
-
-Severity Guidelines:
-- HIGH: Could result in claim denial or >$10k impact
-- MEDIUM: Could reduce payout by $5k-$10k
-- LOW: Minor limitation, <$5k impact
-
-Return ONLY the JSON object. Do not include markdown formatting, code blocks, or any text outside the JSON.`;
+Return ONLY the JSON. No other text.`;
         break;
     }
 
@@ -357,13 +360,8 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
       result = JSON.parse(cleanedResponse);
       
       // Validate required fields exist
-      if (!result.gaps || !Array.isArray(result.gaps)) {
-        throw new Error('Missing or invalid gaps array');
-      }
-      
-      // Ensure completeness_score exists
-      if (result.completeness_score === undefined) {
-        result.completeness_score = 0;
+      if (!result.coverages || !Array.isArray(result.coverages)) {
+        throw new Error('Missing or invalid coverages array');
       }
       
       // Ensure summary exists
@@ -381,8 +379,16 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
       
       // Fallback to generic response
       result = {
+        dwelling_coverage: 0,
+        contents_coverage: 0,
+        ale_coverage: 0,
+        deductible: 0,
+        settlement_type: 'RCV',
+        endorsements: [],
+        coverages: [],
+        gaps_found: 0,
+        gaps_summary: '',
         gaps: [],
-        completeness_score: 0,
         summary: "Unable to parse policy analysis. Please review the policy manually or try again.",
         error: "JSON parsing failed"
       };
@@ -419,36 +425,29 @@ Return ONLY the JSON object. Do not include markdown formatting, code blocks, or
       estimated_cost_usd: 0.002
     });
 
-    // Enrich result with policy intelligence data
-    const enrichedResult = {
-      ...result,
-      policy_intelligence: {
-        policy_form: policy_type,
-        extracted_limits: coverageLimits,
-        standard_exclusions: policyForm.common_exclusions,
-        rule_based_gaps: engineGaps,
-        coverage_analysis: coverageAnalysis,
-        recommended_endorsements: Object.entries(COMMON_ENDORSEMENTS)
-          .filter(([key, end]) => !claim_scenario.endorsements?.includes(key))
-          .map(([key, end]) => ({ name: key, ...end }))
-          .slice(0, 5)
+    const parsedAnalysis = result;
+
+    const responseData = {
+      success: true,
+      data: {
+        dwelling_coverage: parsedAnalysis.dwelling_coverage || 0,
+        contents_coverage: parsedAnalysis.contents_coverage || 0,
+        ale_coverage: parsedAnalysis.ale_coverage || 0,
+        deductible: parsedAnalysis.deductible || 0,
+        settlement_type: parsedAnalysis.settlement_type || 'RCV',
+        endorsements: parsedAnalysis.endorsements || [],
+        coverages: parsedAnalysis.coverages || [],
+        gaps_found: parsedAnalysis.gaps_found || 0,
+        gaps_summary: parsedAnalysis.gaps_summary || '',
+        summary: parsedAnalysis.summary || '',
+        gaps: parsedAnalysis.gaps || []
       }
     };
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ 
-        success: true, 
-        data: enrichedResult,
-        metadata: {
-          quality_score: validation.score,
-          validation_passed: validation.pass,
-          engine_powered: true,
-          rule_based_gaps_detected: engineGaps.length
-        },
-        error: null 
-      })
+      body: JSON.stringify(responseData)
     };
 
   } catch (error) {
