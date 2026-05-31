@@ -1559,6 +1559,8 @@ async function analyzePolicyDoc(){
     console.log('rawText length:', (claimData.policy.rawText || '').length);
     console.log('rawText preview:', (claimData.policy.rawText || '').substring(0, 200));
     console.log('policyText being sent:', policyText.substring(0, 200));
+    console.log('policy text being sent length:', policyText?.length);
+    console.log('policy text preview:', policyText?.substring(0, 500));
     const result = await callNetlify('ai-policy-review', {
       policy_text: policyText,
       storage_path: claimData.documents.find(d => d.type === 'policy')?.path || '',
@@ -1576,6 +1578,8 @@ async function analyzePolicyDoc(){
         claim_type: claimData.initial.claimType
       }
     });
+
+    console.log('ai-policy-review RAW RESPONSE:', JSON.stringify(result, null, 2));
 
     // Store results
     const data = result.data || result;
