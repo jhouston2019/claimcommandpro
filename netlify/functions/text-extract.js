@@ -18,6 +18,9 @@ exports.handler = async (event) => {
     }
 
     const { storage_path, claim_id } = JSON.parse(event.body);
+    console.log('text-extract called with storage_path:', storage_path, 'claim_id:', claim_id);
+    console.log('SUPABASE_URL present:', !!process.env.SUPABASE_URL);
+    console.log('SERVICE_ROLE_KEY present:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
     if (!storage_path) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'storage_path required' }) };
     }
@@ -31,6 +34,7 @@ exports.handler = async (event) => {
     const { data, error } = await supabase.storage
       .from('claim-documents')
       .download(storage_path);
+    console.log('Storage download result - data present:', !!data, 'error:', error?.message || 'none');
 
     if (error || !data) {
       return { statusCode: 404, headers, body: JSON.stringify({ error: 'File not found in storage: ' + (error?.message || '') }) };
