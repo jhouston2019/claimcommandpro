@@ -1,8 +1,3 @@
-/**
- * Text Extraction Function
- * Extracts text from PDF, DOCX, and other document formats
- */
-
 const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
 
@@ -13,113 +8,66 @@ exports.handler = async (event) => {
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   try {
-    // Validate auth
     const authHeader = event.headers.authorization || event.headers.Authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ error: 'Authorization required' })
-      };
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Authorization required' }) };
     }
 
-    // Parse multipart form data
-    const contentType = event.headers['content-type'] || '';
-    if (!contentType.includes('multipart/form-data')) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Multipart form data required' })
-      };
+    const { storage_path, claim_id } = JSON.parse(event.body);
+    if (!storage_path) {
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'storage_path required' }) };
     }
 
-    // Extract file from form data
-    // Note: This is simplified - in production, use a proper multipart parser
-    const boundary = contentType.split('boundary=')[1];
-    const parts = event.body.split(`--${boundary}`);
-    
-    let fileBuffer = null;
-    let fileName = '';
-    
-    for (const part of parts) {
-      if (part.includes('Content-Disposition') && part.includes('filename=')) {
-        const filenameMatch = part.match(/filename="([^"]+)"/);
-        if (filenameMatch) {
-          fileName = filenameMatch[1];
-        }
-        
-        // Extract file content (simplified - use proper parser in production)
-        const contentStart = part.indexOf('\r\n\r\n') + 4;
-        const contentEnd = part.lastIndexOf('\r\n');
-        const content = part.substring(contentStart, contentEnd);
-        fileBuffer = Buffer.from(content, 'base64');
-        break;
-      }
+    const supabase = createClient(
+      process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    // Download file from Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('claim-documents')
+      .download(storage_path);
+
+    if (error || !data) {
+      return { statusCode: 404, headers, body: JSON.stringify({ error: 'File not found in storage: ' + (error?.message || '') }) };
     }
 
-    if (!fileBuffer) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'No file found in request' })
-      };
-    }
+    // Convert Blob to Buffer
+    const arrayBuffer = await data.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    // Extract text based on file type
+    // Extract text
     let extractedText = '';
-
-    if (fileName.endsWith('.pdf')) {
-      const data = await pdfParse(fileBuffer);
-      extractedText = data.text;
-    } else if (fileName.endsWith('.txt')) {
-      extractedText = fileBuffer.toString('utf-8');
-    } else if (fileName.endsWith('.docx') || fileName.endsWith('.doc')) {
-      // DOCX extraction would require mammoth or similar library
-      // For now, return error
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'DOCX extraction not yet implemented. Please use PDF or TXT.' })
-      };
+    if (storage_path.endsWith('.pdf')) {
+      const parsed = await pdfParse(buffer);
+      extractedText = parsed.text;
+    } else if (storage_path.endsWith('.txt')) {
+      extractedText = buffer.toString('utf-8');
     } else {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Unsupported file type' })
-      };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Unsupported file type. Use PDF or TXT.' }) };
+    }
+
+    // Optionally store extracted text in claim_documents
+    if (claim_id) {
+      await supabase
+        .from('claim_documents')
+        .update({ extracted_text: extractedText })
+        .eq('file_path', storage_path)
+        .eq('claim_id', claim_id);
     }
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({
-        text: extractedText,
-        filename: fileName
-      })
+      body: JSON.stringify({ text: extractedText, storage_path })
     };
 
   } catch (error) {
     console.error('Text extraction error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: error.message })
-    };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: error.message }) };
   }
 };
-
-
-

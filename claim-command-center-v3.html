@@ -1312,22 +1312,28 @@ async function uploadClaimFile(file, docType) {
     // Store raw text for AI analysis if PDF (via text-extract function)
     if (file.type === 'application/pdf' && (docType === 'policy' || docType === 'contractor_estimate' || docType === 'carrier_estimate')) {
       try {
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('claim_id', window.CCC_CLAIM_ID);
-        formData.append('doc_type', docType);
         const textRes = await fetch('/.netlify/functions/text-extract', {
           method: 'POST',
-          headers: token ? { 'Authorization': 'Bearer ' + token } : {},
-          body: formData
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+          },
+          body: JSON.stringify({
+            storage_path: storagePath,
+            claim_id: window.CCC_CLAIM_ID
+          })
         });
         if (textRes.ok) {
           const { text } = await textRes.json();
           if (docType === 'policy') claimData.policy.rawText = text;
           if (docType === 'contractor_estimate') claimData.structure.contractorEstimateText = text;
           if (docType === 'carrier_estimate') claimData.structure.carrierEstimateText = text;
+          console.log('Text extracted successfully:', text.substring(0, 100));
+        } else {
+          const errBody = await textRes.text();
+          console.warn('Text extraction failed:', textRes.status, errBody);
         }
-      } catch(e) { console.warn('Text extraction failed:', e); }
+      } catch(e) { console.warn('Text extraction error:', e); }
     }
 
     // Update local claimData
