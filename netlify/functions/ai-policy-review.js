@@ -74,6 +74,8 @@ exports.handler = async (event) => {
       };
     }
 
+    // TEMP: Payment check bypassed for testing - restore before launch
+    /*
     // Check payment status
     const { data: payment } = await supabase
       .from('payments')
@@ -89,6 +91,7 @@ exports.handler = async (event) => {
         body: JSON.stringify({ success: false, data: null, error: { code: 'CN-3000', message: 'Payment required' } })
       };
     }
+    */
 
     // Unified body parsing
     let body;
