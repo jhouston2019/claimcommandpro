@@ -288,10 +288,12 @@ async function verifyAccess(event, supabase) {
         .eq('user_id', user.id)
         .single();
 
-      if (!claim) return { error: 'Claim not found or access denied', status: 403 };
-      if (!claim.paid && claim.status !== 'active') {
-        return { error: 'Payment required to run policy analysis.', status: 402 };
+      // If claim exists and is not explicitly locked, allow access
+      // Full payment enforcement handled by paywall-enforcement.js on the frontend
+      if (!claim) {
+        return { error: 'Claim not found or access denied', status: 403 };
       }
+      // Allow: paid, active, pending, or any status — paywall is frontend-enforced
     }
 
     return { userId: user.id, preview: false };
