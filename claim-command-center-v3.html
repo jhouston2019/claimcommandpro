@@ -1264,6 +1264,7 @@ async function uploadClaimFile(file, docType) {
       });
       logActivity('📎', file.name + ' attached (' + docType + ')');
       saveState();
+      if (docType === 'policy') policyUnlockAnalyzeBtn();
       if (uploadZone) uploadZone.innerHTML = '<div style="padding:16px;color:#059669">✅ ' + file.name + ' attached</div>';
       return;
     }
@@ -1290,7 +1291,7 @@ async function uploadClaimFile(file, docType) {
       .from('claim-documents')
       .getPublicUrl(storagePath);
 
-    // Insert record into claim_documents
+    // Insert record into claim_documents (storage_path is canonical; omit file_url for schema compatibility)
     const { data: docRecord, error: dbError } = await supabase
       .from('claim_documents')
       .insert({
@@ -1298,11 +1299,11 @@ async function uploadClaimFile(file, docType) {
         user_id: user.id,
         document_type: docType,
         file_name: file.name,
+        storage_path: storagePath,
         file_path: storagePath,
-        file_url: publicUrl,
         file_size: file.size,
         mime_type: file.type,
-        created_at: new Date().toISOString()
+        uploaded_at: new Date().toISOString()
       })
       .select('id')
       .single();
@@ -1325,10 +1326,12 @@ async function uploadClaimFile(file, docType) {
         });
         if (textRes.ok) {
           const { text } = await textRes.json();
-          if (docType === 'policy') claimData.policy.rawText = text;
-          if (docType === 'contractor_estimate') claimData.structure.contractorEstimateText = text;
-          if (docType === 'carrier_estimate') claimData.structure.carrierEstimateText = text;
-          console.log('Text extracted successfully:', text.substring(0, 100));
+          // Skip garbled/huge extraction — ai-policy-review reads PDF from storage
+          const usable = text && text.length >= 100 && text.length <= 50000;
+          if (docType === 'policy' && usable) claimData.policy.rawText = text;
+          if (docType === 'contractor_estimate' && usable) claimData.structure.contractorEstimateText = text;
+          if (docType === 'carrier_estimate' && usable) claimData.structure.carrierEstimateText = text;
+          console.log('Text extracted successfully:', usable ? text.substring(0, 100) : '(skipped — unusable length)');
         } else {
           const errBody = await textRes.text();
           console.warn('Text extraction failed:', textRes.status, errBody);
@@ -1349,6 +1352,7 @@ async function uploadClaimFile(file, docType) {
     });
 
     if (docType === 'policy') claimData.policy.uploaded = true;
+    if (docType === 'policy') policyUnlockAnalyzeBtn();
 
     logActivity('📎', file.name + ' uploaded (' + docType + ')');
     saveState();
@@ -1510,25 +1514,31 @@ function renderP02S0(){
         <div class="panel-subtitle">Upload your complete policy. AI extracts every coverage, limit, endorsement, and exclusion — then flags what the carrier hasn't applied to your claim.</div>
       </div>
       ${claimInfoStrip()}
-      <div class="upload-zone" id="policy-upload" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'policy')">
+      <div class="upload-zone" id="policy-upload-zone"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleDrop(event,'policy')">
         <div class="upload-icon">📄</div>
         <div class="upload-title">Drag & drop your policy PDF here</div>
         <div class="upload-sub">Full policy, declarations page, or endorsements · PDF, JPG, PNG accepted</div>
         <button class="btn-upload" onclick="document.getElementById('fi-policy-upload').click()">Choose File</button>
-        <input type="file" id="fi-policy-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileInput(event,'policy')">
-      </div>
-      <div style="text-align:center;margin-bottom:12px">
-        <button class="btn btn-ghost" style="font-size:11px" onclick="document.getElementById('fi-policy-upload').click()">+ Add endorsement or rider</button>
+        <input type="file" id="fi-policy-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png"
+          onchange="handleFileInput(event,'policy')">
       </div>
       <div>
-        <div class="paste-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=(this.nextElementSibling.classList.contains('open')?'▴ Hide':'▾ Or paste specific policy clause or exclusion text')">▾ Or paste specific policy clause or exclusion text</div>
-        <div class="paste-content"><textarea class="paste-area" placeholder="Paste a specific section, exclusion, or endorsement clause you want analyzed..."></textarea></div>
+        <div class="paste-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=(this.nextElementSibling.classList.contains('open')?'▴ Hide':'▾ Or paste a specific policy clause or exclusion text')">▾ Or paste a specific policy clause or exclusion text</div>
+        <div class="paste-content">
+          <textarea class="paste-area" id="policy-paste-text" style="min-height:120px"
+            placeholder="Paste a specific policy section, exclusion, or endorsement clause you want analyzed..."
+            oninput="policyUnlockAnalyzeBtn()"></textarea>
+        </div>
       </div>
-      <div id="policy-analyze-row" style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);gap:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200);gap:8px">
         <button class="btn btn-secondary" onclick="setSubstep(0)">← Back</button>
         <div style="display:flex;gap:8px">
           <button class="btn btn-ghost" onclick="loadSamplePolicy()">Load Sample Policy</button>
-          <button class="btn btn-primary" onclick="analyzePolicyDoc()">Analyze My Policy →</button>
+          <button class="btn btn-primary" id="analyze-policy-btn" disabled style="opacity:.45;cursor:not-allowed"
+            onclick="analyzePolicyDoc()">Analyze My Policy →</button>
         </div>
       </div>
       <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>
@@ -1537,106 +1547,176 @@ function renderP02S0(){
 }
 
 function loadSamplePolicy(){
-  const zone=document.getElementById('policy-upload');
-  if(zone){zone.innerHTML='<div class="upload-icon">✅</div><div class="upload-title" style="color:var(--emerald)">Sample policy loaded: HO3_StateFarm_Sample.pdf</div><div class="upload-sub" style="color:var(--gray-400)">847 KB · Ready to analyze</div>';}
+  const zone = document.getElementById('policy-upload-zone');
+  if (zone) {
+    zone.innerHTML = '<div style="padding:16px;color:#059669;text-align:center">✅ Sample policy loaded: HO3_StateFarm_Sample.pdf<br><small style="color:var(--gray-400)">847 KB · Ready to analyze</small></div>';
+  }
+  claimData.policy.rawText = 'HO-3 Standard Homeowners Policy. Insurer: State Farm. Named Insured: Policyholder. Dwelling Coverage A: $350,000. Personal Property Coverage C: $262,500. Loss of Use Coverage D: $70,000. Deductible: $2,500 per occurrence. Settlement type: Replacement Cost Value (RCV). Endorsements: Ordinance or Law $35,000, Water Backup and Sump Discharge $25,000, Equipment Breakdown $50,000. Exclusions: Flood, Earthquake, Intentional loss.';
+  claimData.documents.push({ id: 'doc-sample-policy', name: 'HO3_StateFarm_Sample.pdf', type: 'policy', path: '', size: 867320, uploadedAt: new Date().toISOString(), stored: 'sample' });
+  saveState();
+  policyUnlockAnalyzeBtn();
+}
+
+function policyUnlockAnalyzeBtn(){
+  const btn = document.getElementById('analyze-policy-btn');
+  if (!btn) return;
+  const hasPDF     = !!claimData.documents.find(d => d.type === 'policy');
+  const hasPaste   = (document.getElementById('policy-paste-text')?.value?.trim().length || 0) > 50;
+  const hasRawText = (claimData.policy.rawText?.length || 0) > 50;
+  if (hasPDF || hasPaste || hasRawText) {
+    btn.disabled       = false;
+    btn.style.opacity  = '1';
+    btn.style.cursor   = 'pointer';
+  }
 }
 
 async function analyzePolicyDoc(){
   const res = document.getElementById('policy-result');
   if (!res) return;
-  const btn = res.closest('.step-content')?.querySelector('button[onclick*="analyzePolicyDoc"]');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ Analyzing...'; }
-  res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">🔍 Analyzing your policy with AI — this takes 15–30 seconds...</div>';
+
+  const btn = document.getElementById('analyze-policy-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '.45'; btn.textContent = '⏳ Analyzing...'; }
+
+  res.innerHTML = `<div style="padding:24px;text-align:center;color:var(--gray-500)">
+    <div class="spinner" style="margin:0 auto 12px"></div>
+    Analyzing your policy with AI — this takes 15–30 seconds...
+  </div>`;
+
+  // Read paste text if provided
+  const pasteText = document.getElementById('policy-paste-text')?.value?.trim();
+  if (pasteText && pasteText.length > 50) {
+    claimData.policy.rawText = pasteText;
+  }
+
+  const storagePath = claimData.documents.find(d => d.type === 'policy' && d.path)?.path || '';
+  const policyText  = claimData.policy.rawText || '';
+
+  // Pre-flight: must have something real to analyze
+  if (!storagePath && policyText.length < 50) {
+    res.innerHTML = `<div class="warn-amber">
+      <strong>⚠️ Nothing to Analyze</strong>
+      <div class="warn-amber-text">Upload your insurance policy PDF, paste a policy clause, or click "Load Sample Policy" to test.</div>
+    </div>`;
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
+    return;
+  }
 
   try {
-    const policyText = claimData.policy.rawText || 
-      'Policy uploaded as PDF. Please analyze based on claim context: ' +
-      'Insurer: ' + claimData.initial.insurer + ', ' +
-      'Property type: ' + claimData.initial.propertyType + ', ' +
-      'Date of loss: ' + claimData.initial.dateOfLoss + ', ' +
-      'Claim type: ' + claimData.initial.claimType;
-    console.log('CNAuth available:', !!window.CNAuth, 'getToken:', typeof window.CNAuth?.getToken);
-    console.log('rawText length:', (claimData.policy.rawText || '').length);
-    console.log('rawText preview:', (claimData.policy.rawText || '').substring(0, 200));
-    console.log('policyText being sent:', policyText.substring(0, 200));
-    console.log('policy text being sent length:', policyText?.length);
-    console.log('policy text preview:', policyText?.substring(0, 500));
     const result = await callNetlify('ai-policy-review', {
-      policy_text: policyText,
-      storage_path: claimData.documents.find(d => d.type === 'policy')?.path || '',
-      policy_type: 'HO-3',
-      analysis_mode: 'coverage-gap',
-      claim_type: claimData.initial.claimType,
-      insurer: claimData.initial.insurer,
-      date_of_loss: claimData.initial.dateOfLoss,
-      jurisdiction: claimData.initial.state || 'GA',
-      deductible: claimData.policy.deductible || '',
-      claimInfo: {
-        insurer: claimData.initial.insurer,
-        date_of_loss: claimData.initial.dateOfLoss,
-        property_type: claimData.initial.propertyType,
-        claim_type: claimData.initial.claimType
-      }
+      storage_path:  storagePath,
+      policy_text:   policyText,
+      insurer:       claimData.initial.insurer,
+      property_type: claimData.initial.propertyType,
+      date_of_loss:  claimData.initial.dateOfLoss,
+      claim_type:    claimData.initial.claimType,
+      jurisdiction:  claimData.initial.state || 'GA'
     });
 
-    console.log('ai-policy-review RAW RESPONSE:', JSON.stringify(result, null, 2));
+    // Hard failure
+    if (!result || !result.success) {
+      showNetlifyError('policy-result', (result && result.error) || 'Policy analysis failed. Please try again.');
+      return;
+    }
 
-    // Store results
-    const data = result.data || result;
-    if (data.dwelling_coverage) claimData.policy.dwellingCoverage = data.dwelling_coverage;
-    if (data.contents_coverage) claimData.policy.contentsCoverage = data.contents_coverage;
-    if (data.ale_coverage) claimData.policy.aleCoverage = data.ale_coverage;
-    if (data.deductible) claimData.policy.deductible = data.deductible;
-    if (data.settlement_type) claimData.policy.settlementType = data.settlement_type;
-    if (data.endorsements) claimData.policy.endorsements = data.endorsements;
-    claimData.policy.uploaded = true;
-    claimData.policy.analysisResult = data;
-
-    // Persist to Supabase claim_outputs
-    try {
-      const supabase = await window.getSupabaseClient();
-      await supabase.from('claim_outputs').insert({
-        claim_id: window.CCC_CLAIM_ID,
-        output_type: 'policy_analysis',
-        content: data,
-        created_at: new Date().toISOString()
-      });
-    } catch(e) { console.warn('Could not persist policy analysis:', e); }
+    // Store canonical result — all downstream views read from claimData.policy.analysis
+    claimData.policy.analysis        = result;
+    claimData.policy.uploaded         = true;
+    claimData.policy.dwellingCoverage = result.dwelling_coverage  || claimData.policy.dwellingCoverage;
+    claimData.policy.contentsCoverage = result.contents_coverage  || claimData.policy.contentsCoverage;
+    claimData.policy.aleCoverage      = result.ale_coverage        || claimData.policy.aleCoverage;
+    claimData.policy.deductible       = result.deductible          || claimData.policy.deductible;
+    claimData.policy.settlementType   = result.settlement_type     || claimData.policy.settlementType;
+    claimData.policy.endorsements     = result.endorsements?.map(e => e.name) || claimData.policy.endorsements;
 
     updateNavMetrics();
-    logActivity('🔍', 'Policy analyzed — coverages extracted');
+    logActivity('🔍', 'Policy analyzed — ' + result.gaps_found + ' coverage gap' + (result.gaps_found !== 1 ? 's' : '') + ' identified');
     saveState();
 
-    // Render results
-    const coverageCards = (data.coverages || []).map(c =>
-      `<div class="cov-card" style="${c.not_applied ? 'border-color:var(--amber)' : ''}">
-        <div class="cov-type">${c.label}${c.not_applied ? ' ⚠️' : ''}</div>
-        <div class="cov-amount">${c.amount}</div>
+    // Low confidence warning
+    const confidenceHtml = result.confidence === 'low'
+      ? `<div class="warn-amber" style="margin-bottom:12px">
+           <strong>⚠️ Partial Analysis</strong>
+           <div class="warn-amber-text">Policy text was incomplete or unreadable. Results may be partial. Re-upload your complete policy PDF for full analysis.</div>
+         </div>`
+      : '';
+
+    // Coverage cards
+    const coverageCards = result.coverages.map(c =>
+      `<div class="cov-card" style="${c.applied_by_carrier === 'no' ? 'border-color:var(--amber);border-width:2px' : ''}">
+        <div class="cov-type">${c.label}${c.applied_by_carrier === 'no' ? ' ⚠️' : ''}</div>
+        <div class="cov-amount">${c.limit != null ? fmt(c.limit) : '—'}</div>
         <div class="cov-desc">${c.description}</div>
       </div>`
     ).join('');
 
+    // Gap summary
+    const gapHtml = result.coverage_gaps.length > 0
+      ? `<div class="warn-amber">
+           <strong>⚠️ ${result.gaps_found} Coverage${result.gaps_found !== 1 ? 's' : ''} Not Applied by Carrier</strong>
+           <div class="warn-amber-text">${result.coverage_gaps.map(g =>
+             `• <strong>${g.coverage}</strong> — ${g.action_required}${g.potential_value ? ' (up to ' + fmt(g.potential_value) + ')' : ''}`
+           ).join('<br>')}</div>
+         </div>`
+      : '';
+
     res.innerHTML = `
       <hr class="divider">
       <div class="analysis-result">
-        <div class="ar-header"><div class="ar-header-text">✅ Policy Analysis Complete${data.gaps_found ? ' — ' + data.gaps_found + ' Coverages Not Applied by Carrier' : ''}</div></div>
+        <div class="ar-header">
+          <div class="ar-header-text">✅ Policy Analysis Complete${result.gaps_found > 0 ? ' — ' + result.gaps_found + ' Gap' + (result.gaps_found !== 1 ? 's' : '') + ' Found' : ''}</div>
+        </div>
         <div class="ar-body">
+          ${confidenceHtml}
+          ${result.summary_for_user ? `<p style="font-size:13px;color:var(--gray-600);margin-bottom:12px">${result.summary_for_user}</p>` : ''}
           <div class="coverage-grid">${coverageCards}</div>
-          ${data.gaps_summary ? `<div class="warn-amber"><strong>⚠️ Coverages Not Applied by Carrier</strong><div class="warn-amber-text">${data.gaps_summary}</div></div>` : ''}
-          <div class="flex gap-8">
-            <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar()">View Coverage Analysis →</button>
+          ${gapHtml}
+          <div class="flex gap-8" style="margin-top:12px">
+            <button class="btn btn-primary" onclick="setSubstep(1);buildSubstepBar();renderContent()">View Full Coverage Analysis →</button>
           </div>
         </div>
       </div>`;
+
   } catch(err) {
     console.error('Policy analysis failed:', err);
     showNetlifyError('policy-result', err.message);
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🔍 Analyze Policy'; }
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
   }
 }
 
 function renderP02S1(){
+  const analysis  = claimData.policy.analysis;
+  const coverages = analysis?.coverages || [];
+  const gaps      = analysis?.coverage_gaps || [];
+  const carrier   = analysis?.carrier || claimData.initial.insurer || 'Your Carrier';
+
+  const statusPill = (applied) => {
+    if (applied === 'yes')     return '<span class="status-pill sp-green">Applied</span>';
+    if (applied === 'partial') return '<span class="status-pill sp-amber">Partial</span>';
+    return '<span class="status-pill sp-red">Not Applied</span>';
+  };
+
+  const rows = coverages.length > 0
+    ? coverages.map(c => `
+        <tr>
+          <td><strong>${c.label}</strong></td>
+          <td>${c.limit != null ? fmt(c.limit) : '—'}</td>
+          <td>${c.applied_by_carrier === 'yes' ? 'Yes' : c.applied_by_carrier === 'partial' ? 'Partial' : 'Not yet'}</td>
+          <td>${statusPill(c.applied_by_carrier)}</td>
+        </tr>`).join('')
+    : `<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:20px">
+         Run policy analysis in Step 1 to populate this table with your actual coverage data.
+       </td></tr>`;
+
+  const gapAlert = gaps.length > 0
+    ? `<div class="warn-amber">
+         <strong>⚠️ Action Required: ${gaps.length} Coverage${gaps.length !== 1 ? 's' : ''} Not Applied</strong>
+         <div class="warn-amber-text">
+           ${gaps.map(g => `• <strong>${g.coverage}</strong> — ${g.action_required}${g.potential_value ? ' (up to ' + fmt(g.potential_value) + ')' : ''}`).join('<br>')}
+         </div>
+       </div>`
+    : (analysis ? '' : `<div class="warn-amber"><strong>⚠️ Policy Not Yet Analyzed</strong><div class="warn-amber-text">Complete Step 1 to see coverage gaps specific to your policy and claim.</div></div>`);
+
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(1,'Coverage Analysis','Detailed breakdown of all policy coverages, limits, and carrier application status.')}
     ${thinRow('TASKS',[
@@ -1649,21 +1729,12 @@ function renderP02S1(){
       toolChip('Endorsement Checker','recommended'),
     ].join(''))}
     <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">Coverage Analysis — State Farm Policy</div></div>
+      <div class="panel-header"><div class="panel-title">Coverage Analysis — ${carrier}</div></div>
       <table class="data-table">
         <thead><tr><th>Coverage Type</th><th>Limit</th><th>Applied by Carrier</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Dwelling (Coverage A)</strong></td><td>$350,000</td><td>Partial</td><td><span class="status-pill sp-amber">Partial</span></td></tr>
-          <tr><td>Contents (Coverage C)</td><td>$262,500</td><td>Not yet</td><td><span class="status-pill sp-red">Not Applied</span></td></tr>
-          <tr><td>ALE / Loss of Use (Coverage D)</td><td>$70,000</td><td>Not yet</td><td><span class="status-pill sp-red">Not Applied</span></td></tr>
-          <tr><td>Ordinance & Law Endorsement</td><td>$35,000</td><td>No</td><td><span class="status-pill sp-red">Not Applied</span></td></tr>
-          <tr><td>Water Backup Endorsement</td><td>$25,000</td><td>No</td><td><span class="status-pill sp-red">Not Applied</span></td></tr>
-          <tr><td>Equipment Breakdown</td><td>$50,000</td><td>No</td><td><span class="status-pill sp-red">Not Applied</span></td></tr>
-          <tr><td>Deductible</td><td>$2,500</td><td>Applied</td><td><span class="status-pill sp-green">Applied</span></td></tr>
-          <tr><td>Settlement Type</td><td>RCV (Replacement Cost)</td><td>Acknowledged</td><td><span class="status-pill sp-green">Applied</span></td></tr>
-        </tbody>
+        <tbody>${rows}</tbody>
       </table>
-      <div class="warn-amber"><strong>⚠️ Action Required: 5 Coverages Not Yet Applied</strong><div class="warn-amber-text">Total potential unapplied coverage: up to $382,500. A Coverage Clarification Request letter should be sent to State Farm requesting written explanation of why these coverages have not been applied.</div></div>
+      ${gapAlert}
       <div class="flex gap-8">
         <button class="btn btn-primary" onclick="downloadCoverageAnalysis()">⬇️ Download Coverage Analysis PDF</button>
       </div>
@@ -1672,8 +1743,39 @@ function renderP02S1(){
 }
 
 function renderP02S2(){
+  const analysis    = claimData.policy.analysis;
+  const coverages   = analysis?.coverages || [];
+  const endorsements = analysis?.endorsements || [];
+  const gaps        = analysis?.coverage_gaps || [];
+
+  const totalCoverage = analysis
+    ? ((analysis.dwelling_coverage || 0) + (analysis.contents_coverage || 0) + (analysis.ale_coverage || 0))
+    : 0;
+
+  // Build coverage map cards from real analysis when available
+  const cards = coverages.length > 0
+    ? coverages.map(c => {
+        const isGap     = gaps.some(g => g.coverage.toLowerCase().includes(c.label.toLowerCase().split(' ')[0].toLowerCase()));
+        const applied   = c.applied_by_carrier;
+        const border    = applied === 'yes' ? 'var(--emerald)' : applied === 'partial' ? 'var(--amber)' : isGap ? 'var(--red)' : 'var(--gray-300)';
+        const icon      = applied === 'yes' ? '✓' : applied === 'partial' ? '⚠️' : '✗';
+        const iconColor = applied === 'yes' ? 'var(--emerald)' : applied === 'partial' ? 'var(--amber)' : 'var(--red)';
+        return `<div class="cov-card" style="border-color:${border};border-width:2px">
+          <div class="cov-type" style="color:${iconColor}">${icon} ${c.label}</div>
+          <div class="cov-amount">${c.limit != null ? fmt(c.limit) : '—'}</div>
+          <div class="cov-desc">${c.description}</div>
+        </div>`;
+      }).join('')
+    : `<div style="grid-column:1/-1;text-align:center;color:var(--gray-400);padding:24px">
+         Run policy analysis in Step 1 to generate your personalized coverage map.
+       </div>`;
+
+  const totalHtml = totalCoverage > 0
+    ? `<div class="warn-teal"><div class="warn-teal-text">💡 <strong>Total Maximum Coverage: ${fmt(totalCoverage)}</strong> across all coverage types. Your job is to document and claim every dollar you're entitled to.</div></div>`
+    : '';
+
   document.getElementById('content-view').innerHTML=`
-    ${stepHeader(1,'Coverage Map','Visual overview of how your policy coverages apply to your specific claim.')}
+    ${stepHeader(1,'Coverage Map','How your policy coverages apply to your specific claim.')}
     ${thinRow('TASKS',[
       taskChip('Confirm each coverage type applies to your loss','p02s2t1'),
       taskChip('Note coverages not yet applied by carrier','p02s2t2'),
@@ -1684,35 +1786,12 @@ function renderP02S2(){
       toolChip('Endorsement Applicability Guide','recommended'),
     ].join(''))}
     <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">Your Coverage Map</div><div class="panel-subtitle">This shows how each coverage type applies to your burst pipe water damage claim.</div></div>
-      <div class="coverage-grid">
-        <div class="cov-card" style="border-color:var(--emerald);border-width:2px">
-          <div class="cov-type" style="color:var(--emerald)">✓ Applies — Structural Damage</div>
-          <div class="cov-amount">Coverage A: $350,000</div>
-          <div class="cov-desc">Floors, walls, ceilings, subfloor, drywall, paint — all structural repair costs are covered under Coverage A dwelling.</div>
-        </div>
-        <div class="cov-card" style="border-color:var(--emerald);border-width:2px">
-          <div class="cov-type" style="color:var(--emerald)">✓ Applies — Code Upgrades</div>
-          <div class="cov-amount">Endorsement: $35,000</div>
-          <div class="cov-desc">Ordinance & Law covers costs to bring repairs up to current building code. Often overlooked — can add $5,000–$25,000 to your claim.</div>
-        </div>
-        <div class="cov-card" style="border-color:var(--emerald);border-width:2px">
-          <div class="cov-type" style="color:var(--emerald)">✓ Applies — Pipe Damage</div>
-          <div class="cov-amount">Water Backup: $25,000</div>
-          <div class="cov-desc">Water Backup endorsement covers resultant damage from burst/failed plumbing systems within the dwelling walls.</div>
-        </div>
-        <div class="cov-card" style="border-color:var(--amber);border-width:2px">
-          <div class="cov-type" style="color:var(--amber)">⚠️ Verify — Living Expenses</div>
-          <div class="cov-amount">Coverage D: $70,000</div>
-          <div class="cov-desc">If you had to temporarily relocate or incur additional living costs, these are covered. Document every additional expense above your normal costs.</div>
-        </div>
-        <div class="cov-card" style="border-color:var(--emerald);border-width:2px">
-          <div class="cov-type" style="color:var(--emerald)">✓ Applies — Damaged Items</div>
-          <div class="cov-amount">Coverage C: $262,500</div>
-          <div class="cov-desc">Furniture, electronics, clothing, and personal property damaged by water are covered. Full replacement cost on RCV policy.</div>
-        </div>
+      <div class="panel-header">
+        <div class="panel-title">Your Coverage Map</div>
+        <div class="panel-subtitle">${analysis ? 'Based on your uploaded policy — ' + (analysis.carrier || '') + ' ' + (analysis.policy_type || '') : 'Upload and analyze your policy to generate a personalized coverage map.'}</div>
       </div>
-      <div class="warn-teal"><div class="warn-teal-text">💡 <strong>Total Maximum Coverage:</strong> $742,500 across all coverage types. Your job is to document and claim every dollar you're entitled to under each applicable coverage.</div></div>
+      <div class="coverage-grid">${cards}</div>
+      ${totalHtml}
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-primary" onclick="downloadCoverageMap()">⬇️ Download Coverage Map PDF</button>
       </div>

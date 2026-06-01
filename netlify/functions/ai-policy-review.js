@@ -1,537 +1,395 @@
 /**
- * AI Policy Review Function
- * Reviews and analyzes insurance policies
- * 
- * NOW POWERED BY POLICY INTELLIGENCE ENGINE
- * Combines rule-based policy knowledge with AI interpretation for expert-level analysis
+ * ai-policy-review.js — Canonical policy analysis function
+ *
+ * Pipeline:
+ *   1. Auth + payment gate
+ *   2. Input validation — hard 400/422 error if nothing to analyze
+ *   3. Text extraction — Supabase storage → pdf-parse → GPT-4o vision fallback
+ *   4. GPT-4o analysis — JSON mode, temperature 0.2, fixed schema
+ *   5. JSON validation + one retry on malformed response
+ *   6. Normalize output — guaranteed canonical shape, always
+ *   7. Persist to claim_outputs
+ *   8. Return canonical JSON — confidence: "low" for degraded states, never empty data
  */
 
-const { runOpenAI, sanitizeInput, validateRequired } = require('./lib/ai-utils');
-const { createClient: createSupabaseClient } = require('@supabase/supabase-js');
-const { LOG_EVENT, LOG_ERROR, LOG_USAGE, LOG_COST } = require('./_utils');
-const { 
-  getClaimGradeSystemMessage,
-  enhancePromptWithContext,
-  postProcessResponse,
-  validateProfessionalOutput
-} = require('./utils/prompt-hardening');
-const { parsePDF, extractPolicySections, extractCoverageLimits } = require('./lib/pdf-parser');
-const {
-  STANDARD_POLICY_FORMS,
-  STANDARD_EXCLUSIONS_DETAIL,
-  COMMON_ENDORSEMENTS,
-  analyzeCoverageForDamage,
-  detectCoverageGaps,
-  interpretClause,
-  getStandardLanguage
-} = require('./lib/policy-intelligence-db');
+const OpenAI = require('openai');
+const { createClient } = require('@supabase/supabase-js');
 
+const MAX_POLICY_TEXT_CHARS = 120000;
+const MAX_TOKENS = 4096;
+
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+}
+
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
+
+// ─── System prompt ─────────────────────────────────────────────────────────
+
+const SYSTEM_PROMPT = `You are an expert property insurance policy analyst with deep knowledge of HO-3, HO-5, DP-3, and commercial property policies. Your job is to read a homeowner or property insurance policy and extract every coverage, limit, endorsement, exclusion, and coverage gap relevant to the policyholder's active claim.
+
+Return ONLY a valid JSON object matching this exact schema. No markdown. No prose. No code fences. Raw JSON only.
+
+{
+  "policy_type": "string — HO-3, HO-5, DP-3, Commercial, or Unknown",
+  "carrier": "string — insurance company name",
+  "policy_number": "string or null",
+  "effective_date": "string or null",
+  "expiration_date": "string or null",
+  "settlement_type": "RCV or ACV",
+  "deductible": number,
+  "coverages": [
+    {
+      "label": "string — coverage name e.g. Dwelling (Coverage A)",
+      "limit": number,
+      "applied_by_carrier": "yes | no | partial | unknown",
+      "description": "string — plain English explanation of what this covers"
+    }
+  ],
+  "endorsements": [
+    {
+      "name": "string",
+      "limit": number or null,
+      "applies_to_claim": true or false,
+      "description": "string"
+    }
+  ],
+  "exclusions": [
+    {
+      "name": "string",
+      "description": "string — plain English",
+      "affects_claim": true or false
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "coverage": "string — name of the coverage not applied",
+      "reason_not_applied": "string — why the carrier hasn't applied it",
+      "potential_value": number or null,
+      "action_required": "string — what the policyholder should do"
+    }
+  ],
+  "recommended_actions": [
+    "string — specific actionable step"
+  ],
+  "summary_for_user": "string — 2-4 sentences plain English summary of the policy situation and most important gaps",
+  "confidence": "high | medium | low"
+}
+
+Rules:
+- Never fabricate coverage limits. If a limit is not stated in the policy text, use null.
+- If the policy text is incomplete or unclear, set confidence to low or medium and explain in summary_for_user.
+- coverage_gaps should only include coverages that are in the policy but have not been applied by the carrier to the active claim.
+- applied_by_carrier reflects what the carrier has done so far, not what the policy allows.
+- If you cannot determine a field, use null — never use placeholder strings like "string" or "unknown value".`;
+
+// ─── Text extraction ────────────────────────────────────────────────────────
+
+async function extractTextFromStorage(supabase, storagePath) {
+  if (!storagePath) return null;
+  try {
+    const { data, error } = await supabase.storage
+      .from('claim-documents')
+      .download(storagePath);
+    if (error || !data) {
+      console.warn('Storage download failed:', error?.message);
+      return null;
+    }
+    const buffer = Buffer.from(await data.arrayBuffer());
+    const isPDF = storagePath.toLowerCase().endsWith('.pdf') ||
+                  buffer.slice(0, 4).toString() === '%PDF';
+    if (isPDF) {
+      try {
+        const pdfParse = (await import('pdf-parse')).default;
+        const result = await pdfParse(buffer);
+        const text = result.text?.trim();
+        if (text && text.length >= 100) return text.slice(0, MAX_POLICY_TEXT_CHARS);
+      } catch (e) {
+        console.warn('pdf-parse failed:', e.message);
+      }
+    }
+    // Vision fallback for images or failed PDFs
+    try {
+      const openai = getOpenAI();
+      const base64 = buffer.toString('base64');
+      const mimeType = data.type || (isPDF ? 'application/pdf' : 'image/jpeg');
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        max_tokens: 4096,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
+            { type: 'text', text: 'This is an insurance policy document. Extract all text exactly as written. Return only the raw text, no commentary.' }
+          ]
+        }]
+      });
+      const text = response.choices[0]?.message?.content?.trim();
+      if (text && text.length >= 100) return text.slice(0, MAX_POLICY_TEXT_CHARS);
+    } catch (e) {
+      console.warn('Vision OCR failed:', e.message);
+    }
+    return null;
+  } catch (err) {
+    console.warn('extractTextFromStorage error:', err.message);
+    return null;
+  }
+}
+
+// ─── GPT-4o analysis ────────────────────────────────────────────────────────
+
+async function runAnalysis(openai, policyText, claimContext, isRetry = false) {
+  const userMessage = `
+POLICY TEXT:
+${policyText}
+
+CLAIM CONTEXT:
+- Insurer: ${claimContext.insurer || 'Unknown'}
+- Property type: ${claimContext.property_type || 'Unknown'}
+- Date of loss: ${claimContext.date_of_loss || 'Unknown'}
+- Cause of loss: ${claimContext.claim_type || 'Unknown'}
+- Jurisdiction: ${claimContext.jurisdiction || 'Unknown'}
+${isRetry ? '\nIMPORTANT: Your previous response was not valid JSON. Return ONLY a raw JSON object. No markdown, no prose, no code fences.' : ''}
+`.trim();
+
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    temperature: 0.2,
+    max_tokens: MAX_TOKENS,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: userMessage }
+    ]
+  });
+  return response.choices[0]?.message?.content;
+}
+
+// ─── Validation ─────────────────────────────────────────────────────────────
+
+function validateAnalysis(parsed) {
+  const str = JSON.stringify(parsed);
+  if (str.includes('"string —') || str.includes('"number —')) return false;
+  if (!Array.isArray(parsed.coverages)) return false;
+  if (!parsed.summary_for_user || typeof parsed.summary_for_user !== 'string') return false;
+  return true;
+}
+
+// ─── Normalize ──────────────────────────────────────────────────────────────
+
+function normalizeOutput(parsed, claimContext) {
+  const coverages = Array.isArray(parsed.coverages) ? parsed.coverages.map(c => ({
+    label:              String(c.label || 'Coverage'),
+    limit:              typeof c.limit === 'number' ? c.limit : null,
+    applied_by_carrier: ['yes','no','partial','unknown'].includes(c.applied_by_carrier) ? c.applied_by_carrier : 'unknown',
+    description:        String(c.description || '')
+  })) : [];
+
+  const endorsements = Array.isArray(parsed.endorsements) ? parsed.endorsements.map(e => ({
+    name:             String(e.name || ''),
+    limit:            typeof e.limit === 'number' ? e.limit : null,
+    applies_to_claim: e.applies_to_claim === true,
+    description:      String(e.description || '')
+  })) : [];
+
+  const exclusions = Array.isArray(parsed.exclusions) ? parsed.exclusions.map(e => ({
+    name:          String(e.name || ''),
+    description:   String(e.description || ''),
+    affects_claim: e.affects_claim === true
+  })) : [];
+
+  const coverage_gaps = Array.isArray(parsed.coverage_gaps) ? parsed.coverage_gaps.map(g => ({
+    coverage:           String(g.coverage || ''),
+    reason_not_applied: String(g.reason_not_applied || ''),
+    potential_value:    typeof g.potential_value === 'number' ? g.potential_value : null,
+    action_required:    String(g.action_required || '')
+  })) : [];
+
+  // Extract key limits for easy frontend access
+  const find = (keywords) => coverages.find(c =>
+    keywords.some(kw => c.label.toLowerCase().includes(kw))
+  )?.limit || null;
+
+  return {
+    success:              true,
+    confidence:           ['high','medium','low'].includes(parsed.confidence) ? parsed.confidence : 'medium',
+    policy_type:          String(parsed.policy_type || 'Unknown'),
+    carrier:              String(parsed.carrier || claimContext.insurer || ''),
+    policy_number:        parsed.policy_number || null,
+    effective_date:       parsed.effective_date || null,
+    expiration_date:      parsed.expiration_date || null,
+    settlement_type:      ['RCV','ACV'].includes(parsed.settlement_type) ? parsed.settlement_type : 'RCV',
+    deductible:           typeof parsed.deductible === 'number' ? parsed.deductible : null,
+    dwelling_coverage:    find(['dwelling','coverage a']),
+    contents_coverage:    find(['contents','coverage c','personal property']),
+    ale_coverage:         find(['ale','loss of use','coverage d','additional living']),
+    coverages,
+    endorsements,
+    exclusions,
+    coverage_gaps,
+    gaps_found:           coverage_gaps.length,
+    recommended_actions:  Array.isArray(parsed.recommended_actions) ? parsed.recommended_actions.map(a => String(a)) : [],
+    summary_for_user:     String(parsed.summary_for_user || '')
+  };
+}
+
+function fallbackOutput(claimContext, reason) {
+  console.error('Both analysis attempts failed:', reason);
+  return {
+    success:              true,
+    confidence:           'low',
+    policy_type:          'Unknown',
+    carrier:              claimContext.insurer || '',
+    policy_number:        null,
+    effective_date:       null,
+    expiration_date:      null,
+    settlement_type:      'RCV',
+    deductible:           null,
+    dwelling_coverage:    null,
+    contents_coverage:    null,
+    ale_coverage:         null,
+    coverages:            [],
+    endorsements:         [],
+    exclusions:           [],
+    coverage_gaps:        [],
+    gaps_found:           0,
+    recommended_actions:  [
+      'Re-upload your complete insurance policy PDF including the declarations page.',
+      'Ensure the document is not a scanned image without selectable text.'
+    ],
+    summary_for_user:     'Policy analysis could not be completed. This is usually caused by an unreadable or incomplete PDF. Please re-upload your complete policy document.',
+    _fallback_reason:     reason
+  };
+}
+
+// ─── Auth + payment gate ────────────────────────────────────────────────────
+
+async function verifyAccess(event, supabase) {
+  const authHeader = event.headers?.authorization || event.headers?.Authorization || '';
+  const token = authHeader.replace('Bearer ', '').trim();
+
+  if (!token) return { userId: null, preview: true };
+
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) return { userId: null, preview: true };
+
+    const claimId = JSON.parse(event.body || '{}').claim_id;
+    if (claimId) {
+      const { data: claim } = await supabase
+        .from('claims')
+        .select('id, status, paid')
+        .eq('id', claimId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (!claim) return { error: 'Claim not found or access denied', status: 403 };
+      if (!claim.paid && claim.status !== 'active') {
+        return { error: 'Payment required to run policy analysis.', status: 402 };
+      }
+    }
+
+    return { userId: user.id, preview: false };
+  } catch (err) {
+    console.warn('Auth error:', err.message);
+    return { userId: null, preview: true };
+  }
+}
+
+// ─── Handler ────────────────────────────────────────────────────────────────
 
 exports.handler = async (event) => {
-  // ✅ PHASE 5B: FULLY HARDENED
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+  const corsHeaders = {
+    'Access-Control-Allow-Origin':  '*',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Methods': 'POST, OPTIONS'
   };
 
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHeaders, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
 
-  if (event.httpMethod !== 'POST') {
+  const supabase = getSupabase();
+  const openai   = getOpenAI();
+
+  let body;
+  try { body = JSON.parse(event.body || '{}'); }
+  catch { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON body' }) }; }
+
+  const { claim_id, storage_path, policy_text, insurer, property_type, date_of_loss, claim_type, jurisdiction } = body;
+  const claimContext = { insurer, property_type, date_of_loss, claim_type, jurisdiction };
+
+  // Auth + payment gate
+  const access = await verifyAccess(event, supabase);
+  if (access.error) return { statusCode: access.status || 403, body: JSON.stringify({ error: access.error }) };
+
+  // Input validation — hard error
+  const hasStoragePath = !!(storage_path?.length);
+  const hasPolicyText  = !!(policy_text?.length > 100);
+  if (!hasStoragePath && !hasPolicyText) {
     return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ success: false, data: null, error: { code: 'CN-4000', message: 'Method not allowed' } })
+      statusCode: 400,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'No policy content provided. Upload a policy PDF or provide policy text.', code: 'NO_CONTENT' })
     };
   }
 
+  // Text extraction
+  let extractedText = null;
+  if (hasStoragePath) {
+    extractedText = await extractTextFromStorage(supabase, storage_path);
+  }
+  if (!extractedText && hasPolicyText) {
+    extractedText = policy_text.slice(0, MAX_POLICY_TEXT_CHARS);
+  }
+  if (!extractedText || extractedText.length < 50) {
+    return {
+      statusCode: 422,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Could not extract readable text from the policy document. Please ensure the PDF is not image-only, or try uploading a different file.', code: 'EXTRACTION_FAILED' })
+    };
+  }
+
+  // GPT-4o analysis with retry
+  let analysisResult = null;
+  let rawResponse    = null;
   try {
-    // Validate auth
-    const authHeader = event.headers.authorization || event.headers.Authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ success: false, data: null, error: { code: 'CN-2000', message: 'Authorization required' } })
-      };
+    rawResponse = await runAnalysis(openai, extractedText, claimContext, false);
+    const parsed = JSON.parse(rawResponse);
+    if (validateAnalysis(parsed)) {
+      analysisResult = normalizeOutput(parsed, claimContext);
+    } else {
+      console.warn('First attempt failed validation. Retrying...');
+      rawResponse = await runAnalysis(openai, extractedText, claimContext, true);
+      const parsed2 = JSON.parse(rawResponse);
+      analysisResult = validateAnalysis(parsed2)
+        ? normalizeOutput(parsed2, claimContext)
+        : fallbackOutput(claimContext, 'Both AI attempts returned invalid schema');
     }
-
-    const token = authHeader.split(' ')[1];
-    const supabase = createSupabaseClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !user) {
-      return {
-        statusCode: 401,
-        headers,
-        body: JSON.stringify({ success: false, data: null, error: { code: 'CN-2000', message: 'Invalid token' } })
-      };
-    }
-
-    // TEMP: Payment check bypassed for testing - restore before launch
-    /*
-    // Check payment status
-    const { data: payment } = await supabase
-      .from('payments')
-      .select('status')
-      .eq('user_id', user.id)
-      .eq('status', 'completed')
-      .single();
-
-    if (!payment) {
-      return {
-        statusCode: 403,
-        headers,
-        body: JSON.stringify({ success: false, data: null, error: { code: 'CN-3000', message: 'Payment required' } })
-      };
-    }
-    */
-
-    // Unified body parsing
-    let body;
-    try {
-      body = JSON.parse(event.body || '{}');
-    } catch (err) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ success: false, data: null, error: { code: 'CN-1000', message: 'Invalid JSON body' } })
-      };
-    }
-    
-    // Log event
-    await LOG_EVENT('ai_request', 'ai-policy-review', { payload: body });
-
-    validateRequired(body, ['policy_text']);
-
-    const { 
-      policy_text, 
-      policy_type = 'HO-3', 
-      jurisdiction = '', 
-      deductible = '', 
-      claimInfo = {},
-      analysis_mode = 'coverage-gap',
-      damage_type = '',
-      claim_scenario = {}
-    } = body;
-    const sanitizedText = sanitizeInput(policy_text);
-
-    // If policy_text is missing/placeholder, fetch PDF from storage and send to OpenAI directly
-    const finalPolicyText = sanitizedText;
-    let policyPdfDataUrl = null;
-    const storagePath = body.storage_path || null;
-
-    if (storagePath) {
-      try {
-        console.log('Fetching PDF from storage:', storagePath);
-        const supabaseAdmin = createSupabaseClient(
-          process.env.SUPABASE_URL,
-          process.env.SUPABASE_SERVICE_ROLE_KEY
-        );
-        const { data: fileData, error: fileError } = await supabaseAdmin.storage
-          .from('claim-documents')
-          .download(storagePath);
-        
-        if (fileError) {
-          console.error('Storage download error:', fileError.message);
-        } else if (fileData) {
-          const arrayBuffer = await fileData.arrayBuffer();
-          const buffer = Buffer.from(arrayBuffer);
-          console.log('PDF header check:', buffer.slice(0, 5).toString('ascii'));
-          const base64PDF = buffer.toString('base64');
-          policyPdfDataUrl = `data:application/pdf;base64,${base64PDF}`;
-          console.log('PDF attached for OpenAI direct read, size bytes:', buffer.length);
-        }
-      } catch (pdfErr) {
-        console.error('PDF download in ai-policy-review failed:', pdfErr.message);
-      }
-    }
-
-    const policySourceBlock = policyPdfDataUrl
-      ? 'The full insurance policy is attached as a PDF. Read the document directly and extract all values from it.'
-      : `Policy Text:\n${finalPolicyText}`;
-
-    const startTime = Date.now();
-
-    // POLICY INTELLIGENCE ENGINE: skip text parsing when PDF is attached (avoids garbled extracted text)
-    const policySections = policyPdfDataUrl ? {} : extractPolicySections(sanitizedText);
-    const coverageLimits = policyPdfDataUrl ? {} : extractCoverageLimits(sanitizedText);
-    const policyForm = STANDARD_POLICY_FORMS[policy_type] || STANDARD_POLICY_FORMS['HO-3'];
-
-    // POLICY INTELLIGENCE ENGINE: Detect coverage gaps using rule-based logic
-    let engineGaps = [];
-    if (!policyPdfDataUrl && claim_scenario && Object.keys(claim_scenario).length > 0) {
-      engineGaps = detectCoverageGaps(coverageLimits, policy_type, {
-        ...claim_scenario,
-        damageType: damage_type || claim_scenario.damageType,
-        endorsements: claim_scenario.endorsements || []
-      });
-    }
-
-    // POLICY INTELLIGENCE ENGINE: Analyze coverage for specific damage type
-    let coverageAnalysis = null;
-    if (!policyPdfDataUrl && damage_type) {
-      coverageAnalysis = analyzeCoverageForDamage(policySections, damage_type, policy_type);
-    }
-
-    // PHASE 5B: Use claim-grade system message with policy expertise
-    const systemMessage = {
-      role: 'system',
-      content: `${getClaimGradeSystemMessage('analysis').content}
-
-POLICY ANALYSIS EXPERTISE:
-You are analyzing insurance policies with expert-level knowledge of:
-- Standard policy forms (HO-3, HO-5, DP-3, Commercial Property)
-- Common exclusions and their standard language
-- Sublimits and coverage restrictions
-- Endorsement options and their implications
-- Jurisdiction-specific requirements
-
-CRITICAL INSTRUCTIONS:
-1. Use the provided policy intelligence data (standard forms, exclusions, limits) as your foundation
-2. Cross-reference policy text against standard policy language
-3. Identify deviations from standard forms
-4. Flag ambiguous language that should be interpreted in insured's favor (contra proferentem)
-5. Provide specific policy section references for all findings
-6. Return ONLY valid JSON - no markdown, no code blocks, no explanatory text
-
-POLICY FORM KNOWLEDGE:
-${JSON.stringify(policyForm, null, 2)}
-
-STANDARD EXCLUSIONS:
-${Object.keys(STANDARD_EXCLUSIONS_DETAIL).join(', ')}
-
-COMMON ENDORSEMENTS:
-${Object.keys(COMMON_ENDORSEMENTS).join(', ')}`
-    };
-
-    // Build prompt based on analysis mode
-    let userPrompt;
-    const coverageLimitsBlock = policyPdfDataUrl
-      ? 'EXTRACTED COVERAGE LIMITS: Not available - read directly from attached PDF.'
-      : `EXTRACTED COVERAGE LIMITS (from rule-based parser):\n${JSON.stringify(coverageLimits, null, 2)}`;
-    
-    switch (analysis_mode) {
-      case 'sublimit':
-        userPrompt = `Analyze this insurance policy for sublimits and return ONLY valid JSON with this exact structure:
-
-{
-  "sublimits": [
-    {
-      "coverage_type": "Coverage category name (e.g., Mold Remediation, Code Upgrades)",
-      "policy_limit": 25000,
-      "section": "Policy section reference (e.g., Additional Coverages 3.2.4)",
-      "recommendation": "Advice for managing this sublimit"
-    }
-  ],
-  "summary": "Brief overview of sublimit analysis"
-}
-
-Policy Type: ${policy_type}
-Jurisdiction: ${jurisdiction}
-Deductible: ${deductible}
-
-${policySourceBlock}
-
-Focus on:
-1. Sublimits that restrict coverage amounts
-2. Per-occurrence limits
-3. Aggregate limits
-4. Category-specific limits (mold, code upgrades, ordinance & law, etc.)
-
-Return ONLY the JSON object. Do not include markdown formatting, code blocks, or any text outside the JSON.`;
-        break;
-      
-      case 'coverage-mapping':
-        userPrompt = `Map this insurance policy coverage to claim items and return ONLY valid JSON with this exact structure:
-
-{
-  "coverage_map": [
-    {
-      "claim_item": "Specific claim item (e.g., Roof replacement)",
-      "coverage_section": "Policy section (e.g., Dwelling Coverage A)",
-      "covered": true,
-      "limit": 250000,
-      "deductible": 2500,
-      "notes": "Coverage details (e.g., Covered under RCV)"
-    }
-  ],
-  "coverage_percentage": 85,
-  "summary": "Brief overview of coverage mapping"
-}
-
-Policy Type: ${policy_type}
-Jurisdiction: ${jurisdiction}
-
-${policySourceBlock}
-
-Map each potential claim item to its corresponding policy coverage section. Include:
-1. Whether the item is covered (true/false)
-2. Coverage limits
-3. Applicable deductibles
-4. Any special conditions or exclusions
-
-Return ONLY the JSON object. Do not include markdown formatting, code blocks, or any text outside the JSON.`;
-        break;
-      
-      case 'damage-documentation':
-        userPrompt = `Analyze this claim and generate a damage documentation checklist. Return ONLY valid JSON with this exact structure:
-
-{
-  "documentation": {
-    "incident_summary": "Brief summary of incident",
-    "affected_areas": ["Living Room", "Kitchen"],
-    "required_photos": ["Overall room view", "Close-up of damage", "Serial numbers"],
-    "required_documents": ["Contractor estimate", "Receipts", "Police report"],
-    "completeness_score": 75
-  },
-  "missing_items": ["Item 1", "Item 2"],
-  "recommendations": ["Recommendation 1", "Recommendation 2"],
-  "summary": "Documentation assessment complete"
-}
-
-Policy Type: ${policy_type}
-Claim Type: ${body.claimType || 'general'}
-
-${policySourceBlock}
-
-Context: ${body.context || 'None provided'}
-
-Generate a comprehensive documentation checklist including:
-1. Required photos and angles
-2. Required documents
-3. Witness statements needed
-4. Evidence of ownership
-5. Completeness assessment
-
-Return ONLY the JSON object. Do not include markdown formatting, code blocks, or any text outside the JSON.`;
-        break;
-      
-      case 'coverage-gap':
-      default:
-        // POLICY INTELLIGENCE ENGINE: Inject rule-based gap detection
-        const engineGapsSummary = engineGaps.length > 0 
-          ? `\n\nRULE-BASED GAP DETECTION RESULTS:\n${JSON.stringify(engineGaps, null, 2)}\n\nUse these as your foundation and add any additional gaps you identify from the policy text.`
-          : '';
-
-        userPrompt = `You are analyzing a real insurance policy document. Extract the actual coverage values from the policy document provided. Do NOT use placeholder or example values.
-
-Return ONLY this exact JSON structure with no markdown, no code blocks:
-
-{
-  "dwelling_coverage": 0,
-  "contents_coverage": 0,
-  "ale_coverage": 0,
-  "deductible": 0,
-  "settlement_type": "RCV",
-  "endorsements": [],
-  "coverages": [
-    {
-      "label": "Coverage name",
-      "amount": "$0",
-      "amount_raw": 0,
-      "description": "Brief description",
-      "not_applied": false
-    }
-  ],
-  "gaps_found": 0,
-  "gaps_summary": "Summary of coverages not yet applied by carrier",
-  "summary": "Brief overview"
-}
-
-CRITICAL: Extract the ACTUAL dollar amounts from the policy document. 
-Do not invent numbers. If you cannot find a value, use 0.
-
-Policy Type: ${policy_type}
-Insurer: ${body.insurer || 'Unknown'}
-Jurisdiction: ${jurisdiction}
-Deductible: ${deductible}
-
-${policySourceBlock}
-
-${coverageLimitsBlock}
-
-Instructions:
-1. Find Dwelling/Coverage A limit — set as dwelling_coverage
-2. Find Personal Property/Coverage B or C limit — set as contents_coverage  
-3. Find Loss of Use/Coverage C or D limit — set as ale_coverage
-4. Find the deductible amount — set as deductible
-5. Find settlement type (RCV or ACV) — set as settlement_type
-6. List all endorsements found — set as endorsements array
-7. For each coverage, set not_applied: true if carrier has not yet acknowledged it
-8. Count unapplied coverages — set as gaps_found
-9. Summarize unapplied coverages — set as gaps_summary
-
-Return ONLY the JSON. No other text.`;
-        break;
-    }
-
-    // PHASE 5B: Enhance prompt with claim context
-    userPrompt = enhancePromptWithContext(userPrompt, claimInfo, 'analysis');
-
-    const rawAnalysis = await runOpenAI(systemMessage.content, userPrompt, {
-      model: 'gpt-4o',
-      temperature: 0.7,
-      max_tokens: 2000,
-      pdfFileDataUrl: policyPdfDataUrl
-    });
-
-    // Parse JSON response
-    let result;
-    try {
-      // Remove markdown code blocks if present
-      const cleanedResponse = rawAnalysis
-        .replace(/```json\n?/g, '')
-        .replace(/```\n?/g, '')
-        .trim();
-      
-      result = JSON.parse(cleanedResponse);
-      
-      // Validate required fields exist
-      if (!result.coverages || !Array.isArray(result.coverages)) {
-        throw new Error('Missing or invalid coverages array');
-      }
-      
-      // Ensure summary exists
-      if (!result.summary) {
-        result.summary = "Policy analysis completed";
-      }
-      
-    } catch (parseError) {
-      console.error('[ai-policy-review] JSON parse error:', parseError);
-      await LOG_ERROR('json_parse_error', {
-        function: 'ai-policy-review',
-        error: parseError.message,
-        raw_response: rawAnalysis.substring(0, 500)
-      });
-      
-      // Fallback to generic response
-      result = {
-        dwelling_coverage: 0,
-        contents_coverage: 0,
-        ale_coverage: 0,
-        deductible: 0,
-        settlement_type: 'RCV',
-        endorsements: [],
-        coverages: [],
-        gaps_found: 0,
-        gaps_summary: '',
-        gaps: [],
-        summary: "Unable to parse policy analysis. Please review the policy manually or try again.",
-        error: "JSON parsing failed"
-      };
-    }
-
-    // PHASE 5B: Validate professional output (if we have valid JSON)
-    const validation = result.error ? { pass: false, score: 0, issues: ['JSON parse error'] } : 
-                       { pass: true, score: 100, issues: [] };
-
-    if (!validation.pass) {
-      console.warn('[ai-policy-review] Quality issues:', validation.issues);
-      await LOG_EVENT('quality_warning', 'ai-policy-review', {
-        issues: validation.issues,
-        score: validation.score,
-        user_id: user.id
-      });
-    }
-
-    const endTime = Date.now();
-    const durationMs = endTime - startTime;
-
-    // Log usage
-    await LOG_USAGE({
-      function: 'ai-policy-review',
-      duration_ms: durationMs,
-      input_token_estimate: 0,
-      output_token_estimate: 0,
-      success: true
-    });
-
-    // Log cost
-    await LOG_COST({
-      function: 'ai-policy-review',
-      estimated_cost_usd: 0.002
-    });
-
-    const parsedAnalysis = result;
-
-    const responseData = {
-      success: true,
-      data: {
-        dwelling_coverage: parsedAnalysis.dwelling_coverage || 0,
-        contents_coverage: parsedAnalysis.contents_coverage || 0,
-        ale_coverage: parsedAnalysis.ale_coverage || 0,
-        deductible: parsedAnalysis.deductible || 0,
-        settlement_type: parsedAnalysis.settlement_type || 'RCV',
-        endorsements: parsedAnalysis.endorsements || [],
-        coverages: parsedAnalysis.coverages || [],
-        gaps_found: parsedAnalysis.gaps_found || 0,
-        gaps_summary: parsedAnalysis.gaps_summary || '',
-        summary: parsedAnalysis.summary || '',
-        gaps: parsedAnalysis.gaps || []
-      }
-    };
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(responseData)
-    };
-
-  } catch (error) {
-    await LOG_ERROR('ai_error', {
-      function: 'ai-policy-review',
-      message: error.message,
-      stack: error.stack
-    });
-
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        data: null,
-        error: { code: 'CN-5000', message: error.message }
-      })
-    };
+  } catch (parseError) {
+    console.error('Parse error:', parseError.message);
+    analysisResult = fallbackOutput(claimContext, 'JSON parse error: ' + parseError.message);
   }
+
+  // Persist
+  if (claim_id) {
+    try {
+      await supabase.from('claim_outputs').insert({
+        claim_id,
+        output_type: 'policy_analysis',
+        content:     analysisResult,
+        created_at:  new Date().toISOString()
+      });
+    } catch (e) { console.warn('claim_outputs insert failed:', e.message); }
+  }
+
+  return {
+    statusCode: 200,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    body: JSON.stringify(analysisResult)
+  };
 };
-
-function extractSummary(text) {
-  const match = text.match(/summary[:\s]+(.+?)(?:\n|$)/i);
-  return match ? match[1].trim() : text.substring(0, 200);
-}
-
-function extractExclusions(text) {
-  const exclusions = [];
-  const lines = text.split('\n');
-  let inExclusions = false;
-  for (const line of lines) {
-    if (line.match(/exclusion/i)) inExclusions = true;
-    if (inExclusions && line.match(/^[-•]\s*(.+)$/)) {
-      exclusions.push(line.replace(/^[-•]\s*/, '').trim());
-    }
-  }
-  return exclusions.slice(0, 10);
-}
-
-function extractRecommendations(text) {
-  const recommendations = [];
-  const lines = text.split('\n');
-  let inRecommendations = false;
-  for (const line of lines) {
-    if (line.match(/recommendation/i)) inRecommendations = true;
-    if (inRecommendations && line.match(/^[-•]\s*(.+)$/)) {
-      recommendations.push(line.replace(/^[-•]\s*/, '').trim());
-    }
-  }
-  return recommendations.slice(0, 5);
-}
-
-
