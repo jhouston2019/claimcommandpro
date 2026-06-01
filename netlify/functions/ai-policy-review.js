@@ -330,7 +330,8 @@ exports.handler = async (event) => {
   // Input validation — hard error
   const hasStoragePath = !!(storage_path?.length);
   const hasPolicyText  = !!(policy_text?.length > 100);
-  if (!hasStoragePath && !hasPolicyText) {
+  const hasFileBase64  = !!(body.file_base64?.length > 0);
+  if (!hasStoragePath && !hasPolicyText && !hasFileBase64) {
     return {
       statusCode: 400,
       headers: corsHeaders,
@@ -342,6 +343,39 @@ exports.handler = async (event) => {
   let extractedText = null;
   if (hasStoragePath) {
     extractedText = await extractTextFromStorage(supabase, storage_path);
+  }
+  // Direct base64 upload (local file, no Supabase storage)
+  if (!extractedText && body.file_base64 && body.file_base64.length > 0) {
+    const buffer   = Buffer.from(body.file_base64, 'base64');
+    const mimeType = body.file_mime_type || 'application/pdf';
+    const isPDF    = mimeType === 'application/pdf';
+    if (isPDF) {
+      try {
+        const pdfParse = (await import('pdf-parse')).default;
+        const result   = await pdfParse(buffer);
+        const text     = result.text?.trim();
+        if (text && text.length >= 100) {
+          extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
+          console.log('Extracted from base64 PDF:', extractedText.length, 'chars');
+        }
+      } catch (e) { console.warn('base64 pdf-parse failed:', e.message); }
+    }
+    if (!extractedText) {
+      // Vision fallback
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        max_tokens: 4096,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${body.file_base64}` } },
+            { type: 'text', text: 'This is an insurance policy. Extract all text exactly as written. Return only the raw text.' }
+          ]
+        }]
+      });
+      const text = response.choices[0]?.message?.content?.trim();
+      if (text && text.length >= 100) extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
+    }
   }
   if (!extractedText && hasPolicyText) {
     extractedText = policy_text.slice(0, MAX_POLICY_TEXT_CHARS);

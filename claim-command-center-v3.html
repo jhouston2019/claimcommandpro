@@ -1588,15 +1588,31 @@ async function analyzePolicyDoc(){
     claimData.policy.rawText = pasteText;
   }
 
-  const storagePath = claimData.documents.find(d => d.type === 'policy' && d.path)?.path || '';
+  const policyDoc  = claimData.documents.find(d => d.type === 'policy');
+  const storagePath = policyDoc?.path || '';
   const policyText  = claimData.policy.rawText || '';
 
-  // Pre-flight: must have something real to analyze
-  if (!storagePath && policyText.length < 50) {
-    res.innerHTML = `<div class="warn-amber">
-      <strong>⚠️ Nothing to Analyze</strong>
-      <div class="warn-amber-text">Upload your insurance policy PDF, paste a policy clause, or click "Load Sample Policy" to test.</div>
-    </div>`;
+  // If stored locally, read the file as base64 and send it directly
+  let fileBase64  = '';
+  let fileMimeType = '';
+  if (policyDoc?.stored === 'local' && !storagePath) {
+    const fileInput = document.getElementById('fi-policy-upload');
+    const file = fileInput?.files?.[0];
+    if (file) {
+      fileBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      fileMimeType = file.type;
+    }
+  }
+
+  if (!storagePath && !fileBase64 && policyText.length < 50) {
+    res.innerHTML = `<div class="warn-amber"><strong>⚠️ Nothing to Analyze</strong>
+      <div class="warn-amber-text">Upload your insurance policy PDF, paste a policy clause, 
+      or click "Load Sample Policy" to test.</div></div>`;
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
     return;
   }
@@ -1605,6 +1621,8 @@ async function analyzePolicyDoc(){
     const result = await callNetlify('ai-policy-review', {
       storage_path:  storagePath,
       policy_text:   policyText,
+      file_base64:   fileBase64,
+      file_mime_type: fileMimeType,
       insurer:       claimData.initial.insurer,
       property_type: claimData.initial.propertyType,
       date_of_loss:  claimData.initial.dateOfLoss,
