@@ -1,32 +1,37 @@
 /**
  * ai-policy-review.js — Canonical policy analysis function
  *
- * Pipeline:
+ * Pipeline (Medical Bill Dispute extraction architecture):
  *   1. Auth + payment gate
- *   2. Input validation — hard 400/422 error if nothing to analyze
- *   3. Text extraction — Supabase storage → pdf-parse → GPT-4o vision fallback
+ *   2. Input validation — 400 only when no upload/text at all
+ *   3. extractPolicyText() — pdf-parse → vision fallback → metadata stub (never 422 stop)
  *   4. GPT-4o analysis — JSON mode, temperature 0.2, fixed schema
  *   5. JSON validation + one retry on malformed response
  *   6. Normalize output — guaranteed canonical shape, always
  *   7. Persist to claim_outputs
- *   8. Return canonical JSON — confidence: "low" for degraded states, never empty data
+ *   8. Return canonical JSON — confidence: "low" for degraded extraction, never empty data
  */
 
 const OpenAI = require('openai');
+const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
+const { runOpenAI } = require('./lib/ai-utils');
 
 const MAX_POLICY_TEXT_CHARS = 20000;
 const MAX_TOKENS = 4096;
+const MIN_EXTRACTED_TEXT = 50;
+const POLICY_FALLBACK_PREFIX = '[Policy text could not be extracted';
+
+const VISION_EXTRACT_PROMPT =
+  'Extract all text from this insurance policy document (declarations, coverages, limits, endorsements, exclusions). ' +
+  'Return only the raw text content, preserving line breaks and structure as much as possible. ' +
+  'Include all coverage names, dollar amounts, deductibles, and policy numbers.';
 
 function getSupabase() {
   return createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
-}
-
-function getOpenAI() {
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 }
 
 // ─── System prompt ─────────────────────────────────────────────────────────
@@ -88,110 +93,260 @@ Rules:
 - applied_by_carrier reflects what the carrier has done so far, not what the policy allows.
 - If you cannot determine a field, use null — never use placeholder strings like "string" or "unknown value".`;
 
-// ─── Text extraction ────────────────────────────────────────────────────────
+// ─── PDF ingestion (ported from Medical Bill Dispute extractBillText) ────────
 
-async function extractTextFromStorage(supabase, storagePath) {
-  if (!storagePath) return null;
-  try {
-    const { data, error } = await supabase.storage
-      .from('claim-documents')
-      .download(storagePath);
-    if (error || !data) {
-      console.warn('Storage download failed:', error?.message);
-      return null;
-    }
-    const buffer = Buffer.from(await data.arrayBuffer());
-
-    // Attempt 1: pdf-parse (works on text-based PDFs)
-    try {
-      const pdfParse = (await import('pdf-parse')).default;
-      const result = await pdfParse(buffer);
-      const text = result.text?.trim();
-      if (text && text.length >= 200 && /\$[\d,]+/.test(text)) {
-        console.log('pdf-parse succeeded:', text.length, 'chars');
-        return text.slice(0, MAX_POLICY_TEXT_CHARS);
-      }
-      console.warn('pdf-parse returned unusable text, falling back to vision');
-    } catch (e) {
-      console.warn('pdf-parse failed:', e.message);
-    }
-
-    // Attempt 2: page-by-page GPT-4o vision (works on scanned PDFs)
-    // Requires poppler-utils on the Netlify function runtime
-    try {
-      const { execSync } = require('child_process');
-      const os = require('os');
-      const path = require('path');
-      const fs = require('fs');
-
-      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'policy-'));
-      const pdfPath = path.join(tmpDir, 'policy.pdf');
-      const imgPrefix = path.join(tmpDir, 'page');
-
-      fs.writeFileSync(pdfPath, buffer);
-
-      // Convert first 4 pages to PNG using pdftoppm (available on Netlify)
-      execSync(`pdftoppm -png -r 150 -l 4 "${pdfPath}" "${imgPrefix}"`,
-        { timeout: 30000 });
-
-      const openai = getOpenAI();
-      let allText = '';
-
-      const files = fs.readdirSync(tmpDir)
-        .filter(f => f.endsWith('.png'))
-        .sort();
-
-      for (const file of files) {
-        const imgBuffer = fs.readFileSync(path.join(tmpDir, file));
-        const base64 = imgBuffer.toString('base64');
-        const pageNum = file.replace(/[^0-9]/g, '');
-
-        const response = await openai.chat.completions.create({
-          model: 'gpt-4o',
-          max_tokens: 2000,
-          messages: [{
-            role: 'user',
-            content: [
-              {
-                type: 'image_url',
-                image_url: { url: `data:image/png;base64,${base64}` }
-              },
-              {
-                type: 'text',
-                text: 'This is page ' + pageNum + ' of an insurance policy declarations document. Extract ALL text exactly as written — every coverage name, every dollar amount, every limit. Return only the raw extracted text, nothing else.'
-              }
-            ]
-          }]
-        });
-
-        const pageText = response.choices[0]?.message?.content?.trim();
-        if (pageText) {
-          allText += '\n\n--- PAGE ' + pageNum + ' ---\n' + pageText;
-        }
-      }
-
-      // Cleanup
-      try { fs.rmSync(tmpDir, { recursive: true }); } catch (e) {}
-
-      if (allText.length >= 200) {
-        console.log('Vision page extraction succeeded:', allText.length, 'chars');
-        return allText.slice(0, MAX_POLICY_TEXT_CHARS);
-      }
-    } catch (e) {
-      console.warn('Vision page extraction failed:', e.message);
-    }
-
-    return null;
-  } catch (err) {
-    console.warn('extractTextFromStorage error:', err.message);
-    return null;
-  }
+function detectMime(buf) {
+  if (!buf || buf.length < 4) return 'application/octet-stream';
+  if (buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46) return 'application/pdf';
+  if (buf[0] === 0xff && buf[1] === 0xd8) return 'image/jpeg';
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  return 'application/octet-stream';
 }
 
-// ─── GPT-4o analysis ────────────────────────────────────────────────────────
+function resolveMime(buf, fileMimeType) {
+  const d = detectMime(buf);
+  if (d === 'application/pdf' || d === 'image/jpeg' || d === 'image/png') return d;
+  if (fileMimeType === 'image/jpeg' || fileMimeType === 'image/png' || fileMimeType === 'application/pdf') {
+    return fileMimeType;
+  }
+  return d;
+}
 
-async function runAnalysis(openai, policyText, claimContext, isRetry = false) {
-  const userMessage = `
+/** True when extracted text likely contains policy substance, not only headers/footers. */
+function policyTextLooksUsable(text) {
+  if (!text || typeof text !== 'string') return false;
+  const trimmed = text.trim();
+  if (trimmed.length < MIN_EXTRACTED_TEXT) return false;
+  if (trimmed.startsWith(POLICY_FALLBACK_PREFIX)) return false;
+
+  const hasAmount =
+    /\$\s?\d[\d,]*(\.\d{2})?/.test(trimmed) || /\b\d{1,3}(?:,\d{3})*\.\d{2}\b/.test(trimmed);
+  const hasCoverageKw =
+    /\b(coverage|dwelling|deductible|endorsement|exclusion|declarations|policy|limit|RCV|ACV|HO-?3|HO-?5|personal\s+property|loss\s+of\s+use|insured|premium)\b/i.test(
+      trimmed
+    );
+
+  if (trimmed.length >= 500 && (hasCoverageKw || hasAmount)) return true;
+  if (trimmed.length >= 200 && hasCoverageKw && hasAmount) return true;
+  if (hasCoverageKw || hasAmount) return trimmed.length >= 120;
+  return trimmed.length >= 400;
+}
+
+async function visionExtractPolicyText(openai, fileBase64, mediaType) {
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    max_tokens: 8000,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: {
+              url: `data:${mediaType};base64,${fileBase64}`,
+              detail: 'high'
+            }
+          },
+          { type: 'text', text: VISION_EXTRACT_PROMPT }
+        ]
+      }
+    ]
+  });
+  return completion.choices?.[0]?.message?.content || '';
+}
+
+function policyMetadataFallbackText(ctx) {
+  return (
+    POLICY_FALLBACK_PREFIX +
+    '. Analyze based on claim context: ' +
+    `Insurer: ${ctx.insurer || 'Unknown'}, ` +
+    `Property type: ${ctx.property_type || 'Unknown'}, ` +
+    `Date of loss: ${ctx.date_of_loss || 'Unknown'}, ` +
+    `Cause of loss: ${ctx.claim_type || 'Unknown'}, ` +
+    `Jurisdiction: ${ctx.jurisdiction || 'Unknown'}]`
+  );
+}
+
+/**
+ * Multi-method extraction: pdf-parse (×2), then OpenAI vision (PDF / image / jpeg mime fallback), then metadata stub.
+ * Never throws — returns at least the metadata fallback string.
+ */
+async function extractPolicyText(openai, buffer, mime, fileBase64, ctx) {
+  const b64 = fileBase64 && typeof fileBase64 === 'string' ? fileBase64 : buffer.toString('base64');
+  const fallback = () => policyMetadataFallbackText(ctx);
+
+  const tryPdfParse = async (label, opts) => {
+    try {
+      const pdfData = opts ? await pdfParse(buffer, opts) : await pdfParse(buffer);
+      const text = (pdfData && pdfData.text) || '';
+      return typeof text === 'string' ? text.trim() : '';
+    } catch (e) {
+      console.warn(`[ai-policy-review] pdf-parse ${label} failed:`, e.message);
+      return '';
+    }
+  };
+
+  if (mime === 'image/jpeg' || mime === 'image/png') {
+    try {
+      const t = await visionExtractPolicyText(openai, b64, mime);
+      if (policyTextLooksUsable(t)) return t.trim();
+    } catch (e) {
+      console.warn('[ai-policy-review] vision (image) failed:', e.message);
+    }
+    try {
+      const t = await visionExtractPolicyText(openai, b64, 'image/jpeg');
+      if (policyTextLooksUsable(t)) return t.trim();
+    } catch (e) {
+      console.warn('[ai-policy-review] vision (image as jpeg mime) failed:', e.message);
+    }
+    return fallback();
+  }
+
+  if (mime !== 'application/pdf') {
+    return fallback();
+  }
+
+  let text = await tryPdfParse('attempt1', undefined);
+  if (policyTextLooksUsable(text)) return text;
+
+  const text2 = await tryPdfParse('attempt2', { max: 0 });
+  if (policyTextLooksUsable(text2)) return text2;
+  if (text2.length > text.length) text = text2;
+
+  try {
+    const t = await visionExtractPolicyText(openai, b64, 'application/pdf');
+    if (policyTextLooksUsable(t)) return t.trim();
+  } catch (e) {
+    console.warn('[ai-policy-review] vision (application/pdf) failed:', e.message);
+  }
+  try {
+    const t = await visionExtractPolicyText(openai, b64, 'image/jpeg');
+    if (policyTextLooksUsable(t)) return t.trim();
+  } catch (e) {
+    console.warn('[ai-policy-review] vision (image/jpeg mime fallback) failed:', e.message);
+  }
+
+  if (text.length > 0) return text;
+  return fallback();
+}
+
+async function resolvePolicyFileBuffer(supabase, { storage_path, file_base64, file_mime_type }) {
+  if (storage_path) {
+    try {
+      console.log('Fetching PDF from storage:', storage_path);
+      const { data: fileData, error: fileError } = await supabase.storage
+        .from('claim-documents')
+        .download(storage_path);
+
+      if (fileError) {
+        console.error('Storage download error:', fileError.message);
+        return null;
+      }
+      if (fileData) {
+        const arrayBuffer = await fileData.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        console.log('PDF header check:', buffer.slice(0, 5).toString('ascii'), 'bytes:', buffer.length);
+        return {
+          buffer,
+          mime: resolveMime(buffer, 'application/pdf'),
+          fileBase64: buffer.toString('base64')
+        };
+      }
+    } catch (pdfErr) {
+      console.error('PDF download in ai-policy-review failed:', pdfErr.message);
+    }
+    return null;
+  }
+
+  if (file_base64 && file_base64.length > 0) {
+    const buffer = Buffer.from(file_base64, 'base64');
+    const mime = resolveMime(buffer, file_mime_type || 'application/pdf');
+    return { buffer, mime, fileBase64: file_base64 };
+  }
+
+  return null;
+}
+
+/**
+ * Resolve text for analysis: pasted policy_text, optional PDF extraction ladder, graceful degradation.
+ */
+async function resolvePolicyTextForAnalysis(supabase, body, claimContext) {
+  let policyText = String(body.policy_text || '').trim();
+  let extractionDegraded = false;
+
+  const file = await resolvePolicyFileBuffer(supabase, {
+    storage_path: body.storage_path,
+    file_base64: body.file_base64,
+    file_mime_type: body.file_mime_type
+  });
+
+  if (!file && !policyText) {
+    return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true };
+  }
+
+  if (!file) {
+    if (!policyTextLooksUsable(policyText) && policyText.length > 0) extractionDegraded = true;
+    if (!policyText) {
+      return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true };
+    }
+    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded };
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    console.warn('[ai-policy-review] OPENAI_API_KEY missing; using pasted text or fallback only');
+    if (!policyTextLooksUsable(policyText)) {
+      extractionDegraded = true;
+      if (!policyText) policyText = policyMetadataFallbackText(claimContext);
+    }
+    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded };
+  }
+
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const { buffer, mime, fileBase64 } = file;
+
+  if (mime === 'application/pdf') {
+    try {
+      const pdfData = await pdfParse(buffer);
+      const quick = String(pdfData?.text || '').trim();
+      if (policyTextLooksUsable(quick) && (!policyTextLooksUsable(policyText) || quick.length > policyText.length)) {
+        policyText = quick;
+      }
+    } catch (e) {
+      console.warn('[ai-policy-review] pdf-parse quick pass failed:', e.message);
+    }
+  }
+
+  if (!policyTextLooksUsable(policyText)) {
+    const extracted = await extractPolicyText(openai, buffer, mime, fileBase64, claimContext);
+    const extractedText = String(extracted || '').trim();
+    if (
+      extractedText &&
+      (extractedText.length > policyText.length || !policyTextLooksUsable(policyText))
+    ) {
+      policyText = extractedText;
+    }
+  }
+
+  if (!policyTextLooksUsable(policyText) || policyText.startsWith(POLICY_FALLBACK_PREFIX)) {
+    extractionDegraded = true;
+    if (!policyText) policyText = policyMetadataFallbackText(claimContext);
+  }
+
+  if (policyText.length > MAX_POLICY_TEXT_CHARS) {
+    policyText = policyText.slice(0, MAX_POLICY_TEXT_CHARS) + '\n[TRUNCATED]';
+  }
+
+  return { policyText, extractionDegraded };
+}
+
+// ─── GPT-4o analysis (text → runOpenAI JSON mode) ───────────────────────────
+
+function buildAnalysisUserPrompt(policyText, claimContext, extractionDegraded, isRetry = false) {
+  const degradedNote = extractionDegraded
+    ? '\n\nNOTE: Policy text extraction was partial or unavailable. Use whatever text is provided plus claim context. Set confidence to low and explain limitations in summary_for_user. Do not invent coverage limits.'
+    : '';
+
+  return `
 POLICY TEXT:
 ${policyText}
 
@@ -200,21 +355,19 @@ CLAIM CONTEXT:
 - Property type: ${claimContext.property_type || 'Unknown'}
 - Date of loss: ${claimContext.date_of_loss || 'Unknown'}
 - Cause of loss: ${claimContext.claim_type || 'Unknown'}
-- Jurisdiction: ${claimContext.jurisdiction || 'Unknown'}
+- Jurisdiction: ${claimContext.jurisdiction || 'Unknown'}${degradedNote}
 ${isRetry ? '\nIMPORTANT: Your previous response was not valid JSON. Return ONLY a raw JSON object. No markdown, no prose, no code fences.' : ''}
 `.trim();
+}
 
-  const response = await openai.chat.completions.create({
+async function runPolicyAnalysis(policyText, claimContext, extractionDegraded, isRetry = false) {
+  const userMessage = buildAnalysisUserPrompt(policyText, claimContext, extractionDegraded, isRetry);
+  return runOpenAI(SYSTEM_PROMPT, userMessage, {
     model: 'gpt-4o',
     temperature: 0.2,
     max_tokens: MAX_TOKENS,
-    response_format: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: userMessage }
-    ]
+    response_format: { type: 'json_object' }
   });
-  return response.choices[0]?.message?.content;
 }
 
 // ─── Validation ─────────────────────────────────────────────────────────────
@@ -229,7 +382,7 @@ function validateAnalysis(parsed) {
 
 // ─── Normalize ──────────────────────────────────────────────────────────────
 
-function normalizeOutput(parsed, claimContext) {
+function normalizeOutput(parsed, claimContext, extractionDegraded = false) {
   const coverages = Array.isArray(parsed.coverages) ? parsed.coverages.map(c => ({
     label:              String(c.label || 'Coverage'),
     limit:              typeof c.limit === 'number' ? c.limit : null,
@@ -262,9 +415,15 @@ function normalizeOutput(parsed, claimContext) {
     keywords.some(kw => c.label.toLowerCase().includes(kw))
   )?.limit || null;
 
+  let confidence = ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium';
+  if (extractionDegraded) {
+    confidence = confidence === 'high' ? 'medium' : 'low';
+  }
+
   return {
     success:              true,
-    confidence:           ['high','medium','low'].includes(parsed.confidence) ? parsed.confidence : 'medium',
+    confidence,
+    extraction_degraded:  extractionDegraded,
     policy_type:          String(parsed.policy_type || 'Unknown'),
     carrier:              String(parsed.carrier || claimContext.insurer || ''),
     policy_number:        parsed.policy_number || null,
@@ -290,6 +449,7 @@ function fallbackOutput(claimContext, reason) {
   return {
     success:              true,
     confidence:           'low',
+    extraction_degraded:  true,
     policy_type:          'Unknown',
     carrier:              claimContext.insurer || '',
     policy_number:        null,
@@ -342,7 +502,6 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   const supabase = getSupabase();
-  const openai   = getOpenAI();
 
   let body;
   try { body = JSON.parse(event.body || '{}'); }
@@ -367,69 +526,30 @@ exports.handler = async (event) => {
     };
   }
 
-  // Text extraction
-  let extractedText = null;
-  if (hasStoragePath) {
-    extractedText = await extractTextFromStorage(supabase, storage_path);
-  }
-  // Direct base64 upload (local file, no Supabase storage)
-  if (!extractedText && body.file_base64 && body.file_base64.length > 0) {
-    const buffer   = Buffer.from(body.file_base64, 'base64');
-    const mimeType = body.file_mime_type || 'application/pdf';
-    const isPDF    = mimeType === 'application/pdf';
-    if (isPDF) {
-      try {
-        const pdfParse = (await import('pdf-parse')).default;
-        const result   = await pdfParse(buffer);
-        const text     = result.text?.trim();
-        if (text && text.length >= 10) {
-          extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
-          console.log('Extracted from base64 PDF:', extractedText.length, 'chars');
-        }
-      } catch (e) { console.warn('base64 pdf-parse failed:', e.message); }
-    }
-    if (!extractedText) {
-      // Vision fallback
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        max_tokens: 2000,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${body.file_base64}` } },
-            { type: 'text', text: 'This is an insurance policy. Extract all text exactly as written. Return only the raw text.' }
-          ]
-        }]
-      });
-      const text = response.choices[0]?.message?.content?.trim();
-      if (text && text.length >= 10) extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
-    }
-  }
-  if (!extractedText && hasPolicyText) {
-    extractedText = policy_text.slice(0, MAX_POLICY_TEXT_CHARS);
-  }
-  if (!extractedText || extractedText.length < 10) {
-    return {
-      statusCode: 422,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Could not extract readable text from the policy document. Please ensure the PDF is not image-only, or try uploading a different file.', code: 'EXTRACTION_FAILED' })
-    };
+  const { policyText: policyTextForAnalysis, extractionDegraded } = await resolvePolicyTextForAnalysis(
+    supabase,
+    body,
+    claimContext
+  );
+
+  if (extractionDegraded) {
+    console.warn('[ai-policy-review] extraction degraded — continuing with partial text or claim-context fallback');
   }
 
-  // GPT-4o analysis with retry
+  // GPT-4o analysis with retry (never hard-stop on weak extraction)
   let analysisResult = null;
   let rawResponse    = null;
   try {
-    rawResponse = await runAnalysis(openai, extractedText, claimContext, false);
+    rawResponse = await runPolicyAnalysis(policyTextForAnalysis, claimContext, extractionDegraded, false);
     const parsed = JSON.parse(rawResponse);
     if (validateAnalysis(parsed)) {
-      analysisResult = normalizeOutput(parsed, claimContext);
+      analysisResult = normalizeOutput(parsed, claimContext, extractionDegraded);
     } else {
       console.warn('First attempt failed validation. Retrying...');
-      rawResponse = await runAnalysis(openai, extractedText, claimContext, true);
+      rawResponse = await runPolicyAnalysis(policyTextForAnalysis, claimContext, extractionDegraded, true);
       const parsed2 = JSON.parse(rawResponse);
       analysisResult = validateAnalysis(parsed2)
-        ? normalizeOutput(parsed2, claimContext)
+        ? normalizeOutput(parsed2, claimContext, extractionDegraded)
         : fallbackOutput(claimContext, 'Both AI attempts returned invalid schema');
     }
   } catch (parseError) {
