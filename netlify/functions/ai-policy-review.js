@@ -320,12 +320,33 @@ async function analyzeWithPdf(pdfDataUrl, ctx, retry) {
 
 // ─── Output shape (CCC contract) ───────────────────────────────────────────
 
+function parseJsonFromLlm(raw) {
+  if (!raw || typeof raw !== 'string') throw new Error('empty AI response');
+  let s = raw.trim();
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) s = fence[1].trim();
+  const start = s.indexOf('{');
+  const end = s.lastIndexOf('}');
+  if (start >= 0 && end > start) s = s.slice(start, end + 1);
+  return JSON.parse(s);
+}
+
 function validateParsed(p) {
   if (!p || typeof p !== 'object') return false;
   const s = JSON.stringify(p);
   if (s.includes('"string —') || s.includes('"number —')) return false;
   if (!Array.isArray(p.coverages)) return false;
   return typeof p.summary_for_user === 'string' && p.summary_for_user.length > 0;
+}
+
+function parsedHasSubstance(p) {
+  if ((p.coverages || []).length > 0) return true;
+  if (typeof p.deductible === 'number') return true;
+  const sum = (p.summary_for_user || '').toLowerCase();
+  if (/incomplete|could not extract|does not contain|further information is needed|no specific details/.test(sum)) {
+    return false;
+  }
+  return sum.length > 80;
 }
 
 function normalize(parsed, ctx, extractionDegraded) {
@@ -414,24 +435,48 @@ function safeFallback(ctx, reason) {
   };
 }
 
-async function runAnalysis({ text, degraded, pdfDataUrl }, ctx) {
-  const usePdf = degraded && pdfDataUrl;
-  const run = (retry) => (usePdf ? analyzeWithPdf(pdfDataUrl, ctx, retry) : analyzeWithText(text, ctx, degraded, retry));
+async function tryAnalyze(mode, extracted, ctx, retry) {
+  const { text, degraded, pdfDataUrl } = extracted;
+  const raw =
+    mode === 'pdf'
+      ? await analyzeWithPdf(pdfDataUrl, ctx, retry)
+      : await analyzeWithText(text, ctx, degraded, retry);
+  const parsed = parseJsonFromLlm(raw);
+  if (!validateParsed(parsed) || !parsedHasSubstance(parsed)) return null;
+  return normalize(parsed, ctx, mode !== 'pdf' && degraded);
+}
 
-  let raw = await run(false);
-  let parsed = JSON.parse(raw);
-  if (validateParsed(parsed)) {
-    return normalize(parsed, ctx, usePdf ? false : degraded);
+async function runAnalysis(extracted, ctx) {
+  const { pdfDataUrl } = extracted;
+
+  // Policies are often scanned PDFs — read the file first when we have bytes (not only after text fails).
+  if (pdfDataUrl) {
+    for (const retry of [false, true]) {
+      try {
+        const out = await tryAnalyze('pdf', extracted, ctx, retry);
+        if (out) {
+          console.log('[ai-policy-review] analysis mode: pdf', retry ? '(retry)' : '');
+          return out;
+        }
+      } catch (e) {
+        console.warn('[ai-policy-review] pdf analyze failed:', e.message);
+      }
+    }
   }
 
-  console.warn('[ai-policy-review] retrying after invalid JSON');
-  raw = await run(true);
-  parsed = JSON.parse(raw);
-  if (validateParsed(parsed)) {
-    return normalize(parsed, ctx, usePdf ? false : degraded);
+  for (const retry of [false, true]) {
+    try {
+      const out = await tryAnalyze('text', extracted, ctx, retry);
+      if (out) {
+        console.log('[ai-policy-review] analysis mode: text', retry ? '(retry)' : '');
+        return out;
+      }
+    } catch (e) {
+      console.warn('[ai-policy-review] text analyze failed:', e.message);
+    }
   }
 
-  return safeFallback(ctx, 'invalid schema after retry');
+  return safeFallback(ctx, 'invalid or empty analysis after pdf and text attempts');
 }
 
 // ─── Handler ───────────────────────────────────────────────────────────────
@@ -466,11 +511,17 @@ exports.handler = async (event) => {
   const ctx = claimContext(body);
 
   try {
+    console.log('[ai-policy-review] input:', {
+      storage_path: body.storage_path || null,
+      file_base64_chars: body.file_base64 ? String(body.file_base64).length : 0,
+      policy_text_chars: (body.policy_text || '').length
+    });
+
     const extracted = await resolvePolicyText(supabase, body, ctx);
-    if (extracted.degraded && extracted.pdfDataUrl) {
-      console.log('[ai-policy-review] weak text → analyzing PDF via Files API');
+    if (extracted.pdfDataUrl) {
+      console.log('[ai-policy-review] PDF available for direct read');
     } else if (extracted.degraded) {
-      console.warn('[ai-policy-review] degraded text only — continuing');
+      console.warn('[ai-policy-review] no PDF bytes — text-only path');
     }
 
     const result = await runAnalysis(extracted, ctx);

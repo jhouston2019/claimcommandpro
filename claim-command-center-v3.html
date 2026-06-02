@@ -1674,6 +1674,11 @@ async function analyzePolicyDoc(){
     return;
   }
 
+  const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
+  if (adminPreview && !storagePath && !fileBase64) {
+    console.warn('Admin preview: no PDF bytes in request — re-upload the file before Analyze');
+  }
+
   try {
     const result = await callNetlify('ai-policy-review', {
       storage_path:  storagePath,
@@ -1708,10 +1713,12 @@ async function analyzePolicyDoc(){
     saveState();
 
     // Low confidence warning
-    const confidenceHtml = result.confidence === 'low'
+    const showPartialWarning = result.extraction_degraded === true ||
+      (result.confidence === 'low' && (!result.coverages || result.coverages.length === 0));
+    const confidenceHtml = showPartialWarning
       ? `<div class="warn-amber" style="margin-bottom:12px">
            <strong>⚠️ Partial Analysis</strong>
-           <div class="warn-amber-text">Policy text was incomplete or unreadable. Results may be partial. Re-upload your complete policy PDF for full analysis.</div>
+           <div class="warn-amber-text">The policy PDF could not be fully read. Re-upload your complete policy PDF (or sign in and upload to cloud storage). Admin preview without a file payload cannot analyze scanned documents.</div>
          </div>`
       : '';
 
