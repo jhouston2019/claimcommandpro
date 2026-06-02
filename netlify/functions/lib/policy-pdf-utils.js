@@ -2,7 +2,9 @@
  * Shared policy PDF helpers — stage + analyze paths.
  */
 
-const DECLARATIONS_PDF_BYTES = 400000;
+const { PDFDocument } = require('pdf-lib');
+
+const DECLARATIONS_MAX_PAGES = 12;
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
 
 function detectMime(buf) {
@@ -28,12 +30,61 @@ function decodeBase64Payload(raw) {
   return { buffer, clean, mime: resolveMime(buffer, 'application/pdf') };
 }
 
-function preparePdfBuffer(buffer, declarationsOnly) {
-  if (declarationsOnly !== false) {
-    const truncated = buffer.slice(0, DECLARATIONS_PDF_BYTES);
-    return { uploadBuffer: truncated, bytesStaged: truncated.length, declarationsOnly: true };
+/** Build a valid PDF with only the first N pages (raw byte slice breaks PDF structure). */
+async function extractFirstPages(buffer, maxPages = DECLARATIONS_MAX_PAGES) {
+  const src = await PDFDocument.load(buffer, { ignoreEncryption: true });
+  const total = src.getPageCount();
+  const n = Math.min(maxPages, total);
+  const out = await PDFDocument.create();
+  const pages = await out.copyPages(
+    src,
+    Array.from({ length: n }, (_, i) => i)
+  );
+  pages.forEach((page) => out.addPage(page));
+  const bytes = await out.save();
+  return { buffer: Buffer.from(bytes), pagesUsed: n, totalPages: total };
+}
+
+async function preparePdfBuffer(buffer, declarationsOnly) {
+  if (declarationsOnly === false) {
+    return {
+      uploadBuffer: buffer,
+      bytesStaged: buffer.length,
+      declarationsOnly: false,
+      pagesUsed: null
+    };
   }
-  return { uploadBuffer: buffer, bytesStaged: buffer.length, declarationsOnly: false };
+
+  try {
+    const { buffer: subset, pagesUsed, totalPages } = await extractFirstPages(buffer);
+    console.log(
+      '[policy-pdf-utils] declarations PDF:',
+      subset.length,
+      'bytes, pages',
+      pagesUsed,
+      'of',
+      totalPages
+    );
+    return {
+      uploadBuffer: subset,
+      bytesStaged: subset.length,
+      declarationsOnly: true,
+      pagesUsed
+    };
+  } catch (e) {
+    console.warn('[policy-pdf-utils] page extract failed:', e.message);
+    if (buffer.length <= 8 * 1024 * 1024) {
+      return {
+        uploadBuffer: buffer,
+        bytesStaged: buffer.length,
+        declarationsOnly: true,
+        pagesUsed: null
+      };
+    }
+    throw new Error(
+      'Could not prepare a valid declarations PDF. Uncheck "Declarations only" or re-upload.'
+    );
+  }
 }
 
 async function uploadPdfToOpenAI(openai, uploadBuffer, filename = 'policy.pdf') {
@@ -55,11 +106,12 @@ async function deleteOpenAIFile(openai, fileId) {
 }
 
 module.exports = {
-  DECLARATIONS_PDF_BYTES,
+  DECLARATIONS_MAX_PAGES,
   MAX_FILE_BYTES,
   detectMime,
   resolveMime,
   decodeBase64Payload,
+  extractFirstPages,
   preparePdfBuffer,
   uploadPdfToOpenAI,
   deleteOpenAIFile

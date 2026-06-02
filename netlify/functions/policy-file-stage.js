@@ -81,12 +81,12 @@ exports.handler = async (event) => {
     }
 
     const declarationsOnly = body.declarations_only !== false;
-    const { uploadBuffer, bytesStaged, declarationsOnly: declFlag } = preparePdfBuffer(
+    const { uploadBuffer, bytesStaged, declarationsOnly: declFlag, pagesUsed } = await preparePdfBuffer(
       buffer,
       declarationsOnly
     );
 
-    console.log('[policy-file-stage] staging PDF bytes:', bytesStaged, 'declarations_only:', declFlag);
+    console.log('[policy-file-stage] staging PDF bytes:', bytesStaged, 'declarations_only:', declFlag, 'pages:', pagesUsed);
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY, timeout: 90000 });
     const openai_file_id = await uploadPdfToOpenAI(openai, uploadBuffer);
@@ -120,7 +120,8 @@ exports.handler = async (event) => {
         openai_file_id,
         storage_path,
         bytes_staged: bytesStaged,
-        declarations_only: declFlag
+        declarations_only: declFlag,
+        pages_used: pagesUsed ?? null
       })
     };
   } catch (err) {

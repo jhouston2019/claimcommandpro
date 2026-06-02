@@ -483,8 +483,8 @@ async function tryLargePdfFastPath(openai, body, ctx) {
 
   if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
 
-  const { uploadBuffer } = preparePdfBuffer(buffer, true);
-  console.log('[ai-policy-review] truncated PDF to', uploadBuffer.length, 'bytes for file API');
+  const { uploadBuffer, pagesUsed } = await preparePdfBuffer(buffer, true);
+  console.log('[ai-policy-review] declarations PDF for file API:', uploadBuffer.length, 'bytes, pages:', pagesUsed);
 
   let uploadedId = null;
   try {
