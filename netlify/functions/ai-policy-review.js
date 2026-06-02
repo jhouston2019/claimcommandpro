@@ -146,9 +146,9 @@ async function loadFileFromBody(supabase, body) {
   return null;
 }
 
-async function tryPdfParse(buffer) {
+async function tryPdfParse(buffer, maxPages = 15) {
   try {
-    const data = await pdfParse(buffer);
+    const data = await pdfParse(buffer, { max: maxPages });
     return String(data?.text || '').trim();
   } catch (e) {
     console.warn('[ai-policy-review] pdf-parse failed:', e.message);
@@ -171,16 +171,19 @@ async function resolveExtraction(file, policyTextInput) {
   }
 
   if (file.mime === 'application/pdf') {
-    const parsed = await tryPdfParse(file.buffer);
-    if (textHasPolicySignals(parsed)) {
-      policyText = parsed;
+    const quick = await tryPdfParse(file.buffer, 8);
+    if (textHasPolicySignals(quick)) {
+      const full = quick.length >= 500 ? quick : await tryPdfParse(file.buffer, 30);
+      policyText = textHasPolicySignals(full) ? full : quick;
+      extractionDegraded = false;
     } else if (textHasPolicySignals(policyText)) {
       extractionDegraded = false;
     } else {
       usePdfDirect = true;
       extractionDegraded = true;
       pdfDataUrl = `data:application/pdf;base64,${file.base64}`;
-      if (!policyText) policyText = parsed.slice(0, 2000);
+      console.log('[ai-policy-review] using PDF file API (text extract unusable)');
+      if (!policyText) policyText = quick.slice(0, 1500) || '[Policy PDF attached]';
     }
   } else {
     extractionDegraded = true;
@@ -327,7 +330,8 @@ function bestEffortFromParsed(parsed, ctx, extractionDegraded, reason) {
 
 function emptyShellResponse(ctx, reason) {
   return {
-    success: false,
+    success: true,
+    error: reason,
     confidence: 'low',
     extraction_degraded: true,
     policy_type: 'Unknown',
@@ -410,7 +414,7 @@ async function runPolicyAnalysis(openai, extraction, ctx) {
         return { result: out, lastParsed: parsed };
       }
     } catch (e) {
-      console.warn('[ai-policy-review] analyze attempt failed:', e.message);
+      console.warn('[ai-policy-review] analyze attempt failed:', e.message, usePdfDirect ? '(pdf)' : '(text)');
     }
   }
 
@@ -497,7 +501,11 @@ exports.handler = async (event) => {
       };
     }
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      timeout: 110000,
+      maxRetries: 1
+    });
     const { result: analyzed, lastParsed } = await runPolicyAnalysis(openai, extraction, ctx);
     let result = analyzed;
 

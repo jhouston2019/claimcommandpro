@@ -39,7 +39,7 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
     const { toFile } = require('openai');
     const file = await openai.files.create({
       file: await toFile(buffer, 'policy.pdf', { type: 'application/pdf' }),
-      purpose: 'assistants'
+      purpose: 'user_data'
     });
 
     try {
@@ -59,9 +59,15 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
         max_output_tokens: max_tokens
       });
 
-      return response.output_text;
+      const out = response.output_text;
+      if (!out) throw new Error('Empty response from PDF analysis');
+      return out;
     } finally {
-      await openai.files.del(file.id);
+      try {
+        await openai.files.del(file.id);
+      } catch (e) {
+        console.warn('[ai-utils] file delete:', e.message);
+      }
     }
   }
 

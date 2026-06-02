@@ -32,7 +32,7 @@ package = "@netlify/plugin-functions-install-core"
   schedule = "0 * * * *"  # Run every hour at minute 0
 
 [functions."ai-policy-review"]
-  timeout = 60
+  timeout = 120
 
 [[headers]]
   for = "/.netlify/functions/*"

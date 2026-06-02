@@ -1773,9 +1773,16 @@ async function analyzePolicyDoc(){
       jurisdiction:  claimData.initial.state || 'GA'
     });
 
-    // Hard failure
-    if (!result || !result.success) {
-      showNetlifyError('policy-result', (result && result.error) || 'Policy analysis failed. Please try again.');
+    if (!result) {
+      showNetlifyError('policy-result', 'No response from policy analysis. Check your connection and try again.');
+      return;
+    }
+
+    if (result.success === false) {
+      showNetlifyError(
+        'policy-result',
+        result.summary_for_user || result.error || 'Policy analysis failed. Please try again.'
+      );
       return;
     }
 
@@ -1841,7 +1848,11 @@ async function analyzePolicyDoc(){
 
   } catch(err) {
     console.error('Policy analysis failed:', err);
-    showNetlifyError('policy-result', err.message);
+    let msg = err.message || 'Policy analysis failed.';
+    if (/502|504|timeout|Function error/i.test(msg)) {
+      msg = 'Analysis timed out — large policies can take up to 60 seconds. Try again, or upload only the declarations pages.';
+    }
+    showNetlifyError('policy-result', msg);
   } finally {
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
   }
