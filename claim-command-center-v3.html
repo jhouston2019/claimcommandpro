@@ -714,10 +714,38 @@ function fmt(n){return '$'+(n||0).toLocaleString('en-US',{maximumFractionDigits:
 function fmtDate(){return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 function fmtTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
 
+function claimDataForLocalStorage(){
+  const copy = JSON.parse(JSON.stringify(claimData));
+  if (copy.policy?.fileBase64) {
+    copy.policy = { ...copy.policy, fileBase64: undefined, fileMimeType: undefined };
+  }
+  return copy;
+}
+
+function readFileAsBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1] || '');
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function setUploadZoneStatus(uploadZone, html){
+  if (!uploadZone) return;
+  let status = uploadZone.querySelector('.upload-zone-status');
+  if (!status) {
+    status = document.createElement('div');
+    status.className = 'upload-zone-status';
+    uploadZone.appendChild(status);
+  }
+  status.innerHTML = html;
+}
+
 async function saveState(){
   // Always write to localStorage as cache
   try{
-    localStorage.setItem('ccc_claim_data',JSON.stringify(claimData));
+    localStorage.setItem('ccc_claim_data',JSON.stringify(claimDataForLocalStorage()));
     localStorage.setItem('ccc_completed_substeps',JSON.stringify(completedSubsteps));
     localStorage.setItem('ccc_completed_phases',JSON.stringify(completedPhases));
     localStorage.setItem('ccc_current_phase',activePhase);
@@ -1246,9 +1274,9 @@ async function uploadClaimFile(file, docType) {
   }
 
   // Find the upload zone for this docType and show progress
-  const uploadZone = document.querySelector(`[data-doc-type="${docType}"]`) || document.querySelector('.upload-zone');
+  const uploadZone = document.querySelector(`[data-doc-type="${docType}"]`) || document.getElementById(docType + '-upload-zone') || document.querySelector('.upload-zone');
   if (uploadZone) {
-    uploadZone.innerHTML = '<div style="padding:16px;text-align:center;color:var(--slate)">⏳ Uploading ' + file.name + '...</div>';
+    setUploadZoneStatus(uploadZone, '<div style="padding:16px;text-align:center;color:var(--slate)">⏳ Uploading ' + file.name + '...</div>');
   }
 
   try {
@@ -1262,10 +1290,20 @@ async function uploadClaimFile(file, docType) {
         uploadedAt: new Date().toISOString(),
         stored: 'local'
       });
+      if (docType === 'policy') {
+        claimData.policy.uploaded = true;
+        try {
+          claimData.policy.fileBase64 = await readFileAsBase64(file);
+          claimData.policy.fileMimeType = file.type || 'application/pdf';
+          claimData.policy.fileName = file.name;
+        } catch (e) {
+          console.warn('Could not read policy file as base64:', e);
+        }
+      }
       logActivity('📎', file.name + ' attached (' + docType + ')');
       saveState();
       if (docType === 'policy') policyUnlockAnalyzeBtn();
-      if (uploadZone) uploadZone.innerHTML = '<div style="padding:16px;color:#059669">✅ ' + file.name + ' attached</div>';
+      setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' attached<br><small style="color:var(--slate)">Ready to analyze</small></div>');
       return;
     }
 
@@ -1351,21 +1389,22 @@ async function uploadClaimFile(file, docType) {
       stored: 'supabase'
     });
 
-    if (docType === 'policy') claimData.policy.uploaded = true;
+    if (docType === 'policy') {
+      claimData.policy.uploaded = true;
+      claimData.policy.fileBase64 = undefined;
+      claimData.policy.fileMimeType = undefined;
+      claimData.policy.fileName = file.name;
+    }
     if (docType === 'policy') policyUnlockAnalyzeBtn();
 
     logActivity('📎', file.name + ' uploaded (' + docType + ')');
     saveState();
 
-    if (uploadZone) {
-      uploadZone.innerHTML = `<div style="padding:16px;color:#059669">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`;
-    }
+    setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`);
 
   } catch(err) {
     console.error('File upload failed:', err);
-    if (uploadZone) {
-      uploadZone.innerHTML = `<div style="padding:16px;background:#fee2e2;border-radius:6px;color:#991b1b">❌ Upload failed: ${err.message}<br><button onclick="this.closest('.upload-zone').innerHTML=''" style="margin-top:8px;padding:4px 12px;cursor:pointer">Try Again</button></div>`;
-    }
+    setUploadZoneStatus(uploadZone, `<div style="padding:16px;background:#fee2e2;border-radius:6px;color:#991b1b">❌ Upload failed: ${err.message}<br><button type="button" onclick="var z=this.closest('.upload-zone');if(z){var s=z.querySelector('.upload-zone-status');if(s)s.remove();}" style="margin-top:8px;padding:4px 12px;cursor:pointer">Try Again</button></div>`);
   }
 }
 
@@ -1514,7 +1553,7 @@ function renderP02S0(){
         <div class="panel-subtitle">Upload your complete policy. AI extracts every coverage, limit, endorsement, and exclusion — then flags what the carrier hasn't applied to your claim.</div>
       </div>
       ${claimInfoStrip()}
-      <div class="upload-zone" id="policy-upload-zone"
+      <div class="upload-zone" id="policy-upload-zone" data-doc-type="policy"
         ondragover="event.preventDefault();this.classList.add('drag')"
         ondragleave="this.classList.remove('drag')"
         ondrop="handleDrop(event,'policy')">
@@ -1544,29 +1583,46 @@ function renderP02S0(){
       <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>
       <div id="policy-result"></div>
     </div>`;
+  setTimeout(() => {
+    const policyDoc = claimData.documents.find(d => d.type === 'policy');
+    const zone = document.getElementById('policy-upload-zone');
+    if (policyDoc && zone) {
+      const label = policyDoc.stored === 'local' ? 'attached' : 'ready';
+      setUploadZoneStatus(zone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + policyDoc.name + ' ' + label + '</div>');
+    }
+    policyUnlockAnalyzeBtn();
+  }, 0);
 }
 
 function loadSamplePolicy(){
   const zone = document.getElementById('policy-upload-zone');
-  if (zone) {
-    zone.innerHTML = '<div style="padding:16px;color:#059669;text-align:center">✅ Sample policy loaded: HO3_StateFarm_Sample.pdf<br><small style="color:var(--gray-400)">847 KB · Ready to analyze</small></div>';
-  }
+  setUploadZoneStatus(zone, '<div style="padding:16px;color:#059669;text-align:center">✅ Sample policy loaded: HO3_StateFarm_Sample.pdf<br><small style="color:var(--gray-400)">847 KB · Ready to analyze</small></div>');
   claimData.policy.rawText = 'HO-3 Standard Homeowners Policy. Insurer: State Farm. Named Insured: Policyholder. Dwelling Coverage A: $350,000. Personal Property Coverage C: $262,500. Loss of Use Coverage D: $70,000. Deductible: $2,500 per occurrence. Settlement type: Replacement Cost Value (RCV). Endorsements: Ordinance or Law $35,000, Water Backup and Sump Discharge $25,000, Equipment Breakdown $50,000. Exclusions: Flood, Earthquake, Intentional loss.';
   claimData.documents.push({ id: 'doc-sample-policy', name: 'HO3_StateFarm_Sample.pdf', type: 'policy', path: '', size: 867320, uploadedAt: new Date().toISOString(), stored: 'sample' });
   saveState();
   policyUnlockAnalyzeBtn();
 }
 
+function policyHasAnalyzableContent(){
+  const policyDoc = claimData.documents.find(d => d.type === 'policy');
+  const hasStorage = !!(policyDoc?.path?.length);
+  const hasBase64  = !!(claimData.policy?.fileBase64?.length);
+  const hasPaste   = (document.getElementById('policy-paste-text')?.value?.trim().length || 0) > 50;
+  const hasRawText = (claimData.policy?.rawText?.length || 0) > 50;
+  return hasStorage || hasBase64 || hasPaste || hasRawText;
+}
+
 function policyUnlockAnalyzeBtn(){
   const btn = document.getElementById('analyze-policy-btn');
   if (!btn) return;
-  const hasPDF     = !!claimData.documents.find(d => d.type === 'policy');
-  const hasPaste   = (document.getElementById('policy-paste-text')?.value?.trim().length || 0) > 50;
-  const hasRawText = (claimData.policy.rawText?.length || 0) > 50;
-  if (hasPDF || hasPaste || hasRawText) {
+  if (policyHasAnalyzableContent()) {
     btn.disabled       = false;
     btn.style.opacity  = '1';
     btn.style.cursor   = 'pointer';
+  } else {
+    btn.disabled       = true;
+    btn.style.opacity  = '.45';
+    btn.style.cursor   = 'not-allowed';
   }
 }
 
@@ -1592,20 +1648,17 @@ async function analyzePolicyDoc(){
   const storagePath = policyDoc?.path || '';
   const policyText  = claimData.policy.rawText || '';
 
-  // If stored locally, read the file as base64 and send it directly
-  let fileBase64  = '';
-  let fileMimeType = '';
-  if (policyDoc?.stored === 'local' && !storagePath) {
+  let fileBase64   = claimData.policy?.fileBase64 || '';
+  let fileMimeType = claimData.policy?.fileMimeType || 'application/pdf';
+
+  if (!fileBase64 && policyDoc?.stored === 'local' && !storagePath) {
     const fileInput = document.getElementById('fi-policy-upload');
     const file = fileInput?.files?.[0];
     if (file) {
-      fileBase64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-      fileMimeType = file.type;
+      fileBase64 = await readFileAsBase64(file);
+      fileMimeType = file.type || 'application/pdf';
+      claimData.policy.fileBase64 = fileBase64;
+      claimData.policy.fileMimeType = fileMimeType;
     }
   }
 
