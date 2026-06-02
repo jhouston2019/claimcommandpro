@@ -15,7 +15,7 @@
 const OpenAI = require('openai');
 const { createClient } = require('@supabase/supabase-js');
 
-const MAX_POLICY_TEXT_CHARS = 120000;
+const MAX_POLICY_TEXT_CHARS = 20000;
 const MAX_TOKENS = 4096;
 
 function getSupabase() {
@@ -120,7 +120,7 @@ async function extractTextFromStorage(supabase, storagePath) {
       const mimeType = data.type || (isPDF ? 'application/pdf' : 'image/jpeg');
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
-        max_tokens: 4096,
+        max_tokens: 2000,
         messages: [{
           role: 'user',
           content: [
@@ -345,7 +345,7 @@ exports.handler = async (event) => {
       // Vision fallback
       const response = await openai.chat.completions.create({
         model: 'gpt-4o',
-        max_tokens: 4096,
+        max_tokens: 2000,
         messages: [{
           role: 'user',
           content: [
