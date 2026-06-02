@@ -101,39 +101,86 @@ async function extractTextFromStorage(supabase, storagePath) {
       return null;
     }
     const buffer = Buffer.from(await data.arrayBuffer());
-    const isPDF = storagePath.toLowerCase().endsWith('.pdf') ||
-                  buffer.slice(0, 4).toString() === '%PDF';
-    if (isPDF) {
-      try {
-        const pdfParse = (await import('pdf-parse')).default;
-        const result = await pdfParse(buffer);
-        const text = result.text?.trim();
-        if (text && text.length >= 10) return text.slice(0, MAX_POLICY_TEXT_CHARS);
-      } catch (e) {
-        console.warn('pdf-parse failed:', e.message);
-      }
-    }
-    // Vision fallback for images or failed PDFs
+
+    // Attempt 1: pdf-parse (works on text-based PDFs)
     try {
-      const openai = getOpenAI();
-      const base64 = buffer.toString('base64');
-      const mimeType = data.type || (isPDF ? 'application/pdf' : 'image/jpeg');
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o',
-        max_tokens: 2000,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64}` } },
-            { type: 'text', text: 'This is an insurance policy document. Extract all text exactly as written. Return only the raw text, no commentary.' }
-          ]
-        }]
-      });
-      const text = response.choices[0]?.message?.content?.trim();
-      if (text && text.length >= 10) return text.slice(0, MAX_POLICY_TEXT_CHARS);
+      const pdfParse = (await import('pdf-parse')).default;
+      const result = await pdfParse(buffer);
+      const text = result.text?.trim();
+      if (text && text.length >= 200 && /\$[\d,]+/.test(text)) {
+        console.log('pdf-parse succeeded:', text.length, 'chars');
+        return text.slice(0, MAX_POLICY_TEXT_CHARS);
+      }
+      console.warn('pdf-parse returned unusable text, falling back to vision');
     } catch (e) {
-      console.warn('Vision OCR failed:', e.message);
+      console.warn('pdf-parse failed:', e.message);
     }
+
+    // Attempt 2: page-by-page GPT-4o vision (works on scanned PDFs)
+    // Requires poppler-utils on the Netlify function runtime
+    try {
+      const { execSync } = require('child_process');
+      const os = require('os');
+      const path = require('path');
+      const fs = require('fs');
+
+      const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'policy-'));
+      const pdfPath = path.join(tmpDir, 'policy.pdf');
+      const imgPrefix = path.join(tmpDir, 'page');
+
+      fs.writeFileSync(pdfPath, buffer);
+
+      // Convert first 4 pages to PNG using pdftoppm (available on Netlify)
+      execSync(`pdftoppm -png -r 150 -l 4 "${pdfPath}" "${imgPrefix}"`,
+        { timeout: 30000 });
+
+      const openai = getOpenAI();
+      let allText = '';
+
+      const files = fs.readdirSync(tmpDir)
+        .filter(f => f.endsWith('.png'))
+        .sort();
+
+      for (const file of files) {
+        const imgBuffer = fs.readFileSync(path.join(tmpDir, file));
+        const base64 = imgBuffer.toString('base64');
+        const pageNum = file.replace(/[^0-9]/g, '');
+
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          max_tokens: 2000,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'image_url',
+                image_url: { url: `data:image/png;base64,${base64}` }
+              },
+              {
+                type: 'text',
+                text: 'This is page ' + pageNum + ' of an insurance policy declarations document. Extract ALL text exactly as written — every coverage name, every dollar amount, every limit. Return only the raw extracted text, nothing else.'
+              }
+            ]
+          }]
+        });
+
+        const pageText = response.choices[0]?.message?.content?.trim();
+        if (pageText) {
+          allText += '\n\n--- PAGE ' + pageNum + ' ---\n' + pageText;
+        }
+      }
+
+      // Cleanup
+      try { fs.rmSync(tmpDir, { recursive: true }); } catch (e) {}
+
+      if (allText.length >= 200) {
+        console.log('Vision page extraction succeeded:', allText.length, 'chars');
+        return allText.slice(0, MAX_POLICY_TEXT_CHARS);
+      }
+    } catch (e) {
+      console.warn('Vision page extraction failed:', e.message);
+    }
+
     return null;
   } catch (err) {
     console.warn('extractTextFromStorage error:', err.message);
