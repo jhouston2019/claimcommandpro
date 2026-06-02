@@ -15,6 +15,12 @@ const MAX_TOKENS = 4096;
 /** Large base64 payloads (Goodson-type PDFs) — skip pdf-parse, upload to OpenAI once. */
 const LARGE_BASE64_CHARS = 1_000_000;
 
+const LARGE_PDF_SYSTEM_PROMPT =
+  'Return valid JSON: { policy_type, carrier, settlement_type, deductible, dwelling_coverage, contents_coverage, ale_coverage, coverages[], endorsements[], exclusions[], coverage_gaps[], summary_for_user, confidence }';
+
+const LARGE_PDF_USER_PROMPT =
+  'Extract all insurance policy coverages, limits, deductibles, endorsements, and exclusions. Return only the JSON schema provided in the system prompt. Focus on: dwelling limit, personal property limit, loss of use limit, deductible, settlement type, endorsements.';
+
 const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extract every coverage, limit, endorsement, exclusion, and gap from the policy. Return only valid JSON matching this schema exactly:
 {
   "success": true,
@@ -414,7 +420,8 @@ async function tryLargePdfFastPath(openai, body, ctx) {
   if (buffer.length === 0 || buffer.length > MAX_FILE_BYTES) return null;
   if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
 
-  console.log('[ai-policy-review] large PDF fast path, file bytes:', buffer.length);
+  const truncatedBuffer = buffer.slice(0, 400000);
+  console.log('[ai-policy-review] truncated PDF to', truncatedBuffer.length, 'bytes for file API');
 
   const { toFile } = require('openai');
   let lastParsed = null;
@@ -423,21 +430,17 @@ async function tryLargePdfFastPath(openai, body, ctx) {
     let uploadedId = null;
     try {
       const uploaded = await openai.files.create({
-        file: await toFile(buffer, 'policy.pdf', { type: 'application/pdf' }),
+        file: await toFile(truncatedBuffer, 'policy.pdf', { type: 'application/pdf' }),
         purpose: 'user_data'
       });
       uploadedId = uploaded.id;
 
-      const userContent = buildUserPrompt(
-        '[Full policy PDF attached. Read every page — declarations, coverages, limits, endorsements, exclusions.]',
-        ctx,
-        { retry, degraded: true }
-      );
+      const userContent = retry ? LARGE_PDF_USER_PROMPT + RETRY_SUFFIX : LARGE_PDF_USER_PROMPT;
 
       const response = await openai.responses.create({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         input: [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: LARGE_PDF_SYSTEM_PROMPT },
           {
             role: 'user',
             content: [
