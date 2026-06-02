@@ -54,7 +54,9 @@ async function runOpenAI(systemPrompt, userPrompt, options = {}) {
               { type: 'input_file', file_id: file.id }
             ]
           }
-        ]
+        ],
+        text: response_format ? { format: { type: 'json_object' } } : undefined,
+        max_output_tokens: max_tokens
       });
 
       return response.output_text;

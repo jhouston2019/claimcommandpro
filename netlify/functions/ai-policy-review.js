@@ -148,16 +148,24 @@ function contextStub(ctx) {
   );
 }
 
-function textLooksUsable(text) {
+/** True when text likely contains real policy language (not pdf-parse font garbage). */
+function textHasPolicySignals(text) {
   if (!text || typeof text !== 'string') return false;
   const t = text.trim();
   if (t.length < MIN_TEXT || t.startsWith(STUB_PREFIX)) return false;
-  const hasMoney = /\$\s?\d[\d,]*(\.\d{2})?/.test(t) || /\b\d{1,3}(?:,\d{3})*\.\d{2}\b/.test(t);
-  const hasKw = /\b(coverage|dwelling|deductible|endorsement|exclusion|declarations|policy|limit|RCV|ACV|HO-?3|HO-?5|personal\s+property|loss\s+of\s+use)\b/i.test(t);
-  if (t.length >= 500 && (hasKw || hasMoney)) return true;
-  if (t.length >= 200 && hasKw && hasMoney) return true;
-  if (hasKw || hasMoney) return t.length >= 120;
-  return t.length >= 400;
+  const hasMoney =
+    /\$\s?\d[\d,]*(\.\d{2})?/.test(t) ||
+    /\b\d{1,3}(?:,\d{3})*\.\d{2}\b/.test(t) ||
+    /\blimit[:\s]+\$?\d/i.test(t);
+  const hasKw =
+    /\b(coverage|dwelling|deductible|endorsement|exclusion|declarations|policyholder|insured|liability|limit|RCV|ACV|HO-?3|HO-?5|personal\s+property|loss\s+of\s+use|replacement\s+cost)\b/i.test(
+      t
+    );
+  return hasKw || hasMoney;
+}
+
+function textLooksUsable(text) {
+  return textHasPolicySignals(text);
 }
 
 async function visionExtract(openai, base64, mime) {
@@ -219,7 +227,8 @@ async function extractPolicyText(openai, buffer, mime, base64, ctx) {
     }
   }
 
-  return text.length > 0 ? text : fallback();
+  if (textHasPolicySignals(text)) return text;
+  return fallback();
 }
 
 async function resolvePolicyText(supabase, body, ctx) {
@@ -317,6 +326,7 @@ async function analyzeWithPdf(pdfDataUrl, ctx, retry) {
     model: 'gpt-4o',
     temperature: 0.2,
     max_tokens: MAX_TOKENS,
+    response_format: { type: 'json_object' },
     pdfFileDataUrl: pdfDataUrl
   });
 }
@@ -452,35 +462,25 @@ async function tryAnalyze(mode, extracted, ctx, retry) {
 }
 
 async function runAnalysis(extracted, ctx) {
-  const { pdfDataUrl, degraded } = extracted;
+  const { pdfDataUrl, degraded, text } = extracted;
   let bestPartial = null;
 
-  // Text + vision extraction first (Medical Bill golden path — reliable on Netlify).
-  for (const retry of [false, true]) {
-    try {
-      const attempt = await tryAnalyze('text', extracted, ctx, retry);
-      if (attempt && !attempt.partial) {
-        console.log('[ai-policy-review] analysis mode: text', retry ? '(retry)' : '');
-        return normalize(attempt.parsed, ctx, degraded);
-      }
-      if (attempt?.partial) bestPartial = attempt;
-    } catch (e) {
-      console.warn('[ai-policy-review] text analyze failed:', e.message);
-    }
-  }
+  // Scanned / custom-font PDFs (e.g. Goodson) — pdf-parse yields garbage; read the file directly first.
+  const modes =
+    pdfDataUrl && (degraded || !textHasPolicySignals(text)) ? ['pdf', 'text'] : ['text', 'pdf'];
 
-  // Optional: OpenAI file upload for stubborn scanned PDFs.
-  if (pdfDataUrl) {
+  for (const mode of modes) {
+    if (mode === 'pdf' && !pdfDataUrl) continue;
     for (const retry of [false, true]) {
       try {
-        const attempt = await tryAnalyze('pdf', extracted, ctx, retry);
+        const attempt = await tryAnalyze(mode, extracted, ctx, retry);
         if (attempt && !attempt.partial) {
-          console.log('[ai-policy-review] analysis mode: pdf', retry ? '(retry)' : '');
-          return normalize(attempt.parsed, ctx, false);
+          console.log('[ai-policy-review] analysis mode:', mode, retry ? '(retry)' : '');
+          return normalize(attempt.parsed, ctx, mode !== 'pdf' && degraded);
         }
         if (attempt?.partial) bestPartial = attempt;
       } catch (e) {
-        console.warn('[ai-policy-review] pdf analyze failed:', e.message);
+        console.warn(`[ai-policy-review] ${mode} analyze failed:`, e.message);
       }
     }
   }

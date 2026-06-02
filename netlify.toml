@@ -31,6 +31,9 @@ package = "@netlify/plugin-functions-install-core"
 [functions."email-automation"]
   schedule = "0 * * * *"  # Run every hour at minute 0
 
+[functions."ai-policy-review"]
+  timeout = 60
+
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
