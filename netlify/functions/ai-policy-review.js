@@ -12,6 +12,8 @@ const MAX_TEXT = 48000;
 const MIN_POLICY_TEXT = 50;
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
 const MAX_TOKENS = 4096;
+/** Large base64 payloads (Goodson-type PDFs) — skip pdf-parse, upload to OpenAI once. */
+const LARGE_BASE64_CHARS = 1_000_000;
 
 const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extract every coverage, limit, endorsement, exclusion, and gap from the policy. Return only valid JSON matching this schema exactly:
 {
@@ -392,6 +394,134 @@ async function analyzePolicy(openai, { policyText, usePdfDirect, pdfDataUrl, ctx
   return completion.choices?.[0]?.message?.content || '';
 }
 
+/**
+ * Fast path: large file_base64 → upload PDF to OpenAI Files API → responses (no raw pdf-parse pass).
+ * Returns { result, lastParsed } or null to fall through to standard pipeline.
+ */
+async function tryLargePdfFastPath(openai, body, ctx) {
+  const raw = body.file_base64;
+  if (!raw || String(raw).length <= LARGE_BASE64_CHARS) return null;
+
+  const clean = String(raw).replace(/^data:.+;base64,/, '');
+  let buffer;
+  try {
+    buffer = Buffer.from(clean, 'base64');
+  } catch (e) {
+    console.warn('[ai-policy-review] large path: invalid base64', e.message);
+    return null;
+  }
+
+  if (buffer.length === 0 || buffer.length > MAX_FILE_BYTES) return null;
+  if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
+
+  console.log('[ai-policy-review] large PDF fast path, file bytes:', buffer.length);
+
+  const { toFile } = require('openai');
+  let lastParsed = null;
+
+  for (const retry of [false, true]) {
+    let uploadedId = null;
+    try {
+      const uploaded = await openai.files.create({
+        file: await toFile(buffer, 'policy.pdf', { type: 'application/pdf' }),
+        purpose: 'user_data'
+      });
+      uploadedId = uploaded.id;
+
+      const userContent = buildUserPrompt(
+        '[Full policy PDF attached. Read every page — declarations, coverages, limits, endorsements, exclusions.]',
+        ctx,
+        { retry, degraded: true }
+      );
+
+      const response = await openai.responses.create({
+        model: 'gpt-4o',
+        input: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          {
+            role: 'user',
+            content: [
+              { type: 'input_text', text: userContent },
+              { type: 'input_file', file_id: uploaded.id }
+            ]
+          }
+        ],
+        text: { format: { type: 'json_object' } },
+        max_output_tokens: MAX_TOKENS
+      });
+
+      const rawText = response.output_text;
+      if (!rawText) throw new Error('Empty response from large PDF analysis');
+
+      const parsed = parseJsonFromLlm(rawText);
+      lastParsed = parsed;
+      if (validateCanonical(parsed) && hasSubstance(parsed)) {
+        console.log('[ai-policy-review] large PDF fast path OK', retry ? '(retry)' : '');
+        return {
+          result: normalizeCanonical(parsed, ctx, false),
+          lastParsed: parsed
+        };
+      }
+    } catch (e) {
+      console.warn('[ai-policy-review] large PDF fast path failed:', e.message, retry ? '(retry)' : '');
+    } finally {
+      if (uploadedId) {
+        try {
+          await openai.files.del(uploadedId);
+        } catch (e) {
+          console.warn('[ai-policy-review] large path file delete:', e.message);
+        }
+      }
+    }
+  }
+
+  if (lastParsed && validateCanonical(lastParsed)) {
+    return {
+      result: bestEffortFromParsed(lastParsed, ctx, true, 'large PDF partial'),
+      lastParsed
+    };
+  }
+
+  return null;
+}
+
+async function finalizePolicyResult(result, body, supabase, ctx, lastParsed) {
+  let out = result;
+  if (!out || isEmptyShell(out)) {
+    out = bestEffortFromParsed(
+      lastParsed || {},
+      ctx,
+      true,
+      'analysis could not produce complete coverage data'
+    );
+    if (isEmptyShell(out)) {
+      out = emptyShellResponse(
+        ctx,
+        'Policy analysis could not be completed from the document provided. Please re-upload your full policy PDF and try again.'
+      );
+    }
+  }
+
+  if (body.claim_id && supabase) {
+    try {
+      await supabase.from('claim_outputs').insert({
+        claim_id: body.claim_id,
+        output_type: 'policy_analysis',
+        content: out,
+        created_at: new Date().toISOString()
+      });
+    } catch (e) {
+      console.warn('[ai-policy-review] claim_outputs insert:', e.message);
+    }
+  }
+
+  return {
+    statusCode: 200,
+    headers: corsHeaders(),
+    body: JSON.stringify(out)
+  };
+}
+
 async function runPolicyAnalysis(openai, extraction, ctx) {
   const { policyText, extractionDegraded, usePdfDirect, pdfDataUrl } = extraction;
   let lastParsed = null;
@@ -506,42 +636,15 @@ exports.handler = async (event) => {
       timeout: 110000,
       maxRetries: 1
     });
+
+    // Large base64 (e.g. Goodson 60-page PDF): upload once, analyze via file_id — skip pdf-parse.
+    const fastPath = await tryLargePdfFastPath(openai, body, ctx);
+    if (fastPath?.result) {
+      return finalizePolicyResult(fastPath.result, body, supabase, ctx, fastPath.lastParsed);
+    }
+
     const { result: analyzed, lastParsed } = await runPolicyAnalysis(openai, extraction, ctx);
-    let result = analyzed;
-
-    if (!result || isEmptyShell(result)) {
-      result = bestEffortFromParsed(
-        lastParsed || {},
-        ctx,
-        true,
-        'analysis could not produce complete coverage data'
-      );
-      if (isEmptyShell(result)) {
-        result = emptyShellResponse(
-          ctx,
-          'Policy analysis could not be completed from the document provided. Please re-upload your full policy PDF and try again.'
-        );
-      }
-    }
-
-    if (body.claim_id && supabase) {
-      try {
-        await supabase.from('claim_outputs').insert({
-          claim_id: body.claim_id,
-          output_type: 'policy_analysis',
-          content: result,
-          created_at: new Date().toISOString()
-        });
-      } catch (e) {
-        console.warn('[ai-policy-review] claim_outputs insert:', e.message);
-      }
-    }
-
-    return {
-      statusCode: 200,
-      headers: corsHeaders(),
-      body: JSON.stringify(result)
-    };
+    return finalizePolicyResult(analyzed, body, supabase, ctx, lastParsed);
   } catch (err) {
     console.error('[ai-policy-review] error:', err);
     const msg = err.message?.includes('too large')
