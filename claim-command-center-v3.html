@@ -1286,6 +1286,9 @@ async function uploadClaimFile(file, docType) {
   try {
     // If no claim_id, store in localStorage only
     if (!window.CCC_CLAIM_ID) {
+      if (docType === 'policy') {
+        claimData.documents = claimData.documents.filter(d => d.type !== 'policy');
+      }
       claimData.documents.push({
         id: 'doc-' + Date.now(),
         name: file.name,
@@ -1375,7 +1378,9 @@ async function uploadClaimFile(file, docType) {
       } catch (e) { console.warn('Text extraction error:', e); }
     }
 
-    // Update local claimData
+    if (docType === 'policy') {
+      claimData.documents = claimData.documents.filter(d => d.type !== 'policy');
+    }
     claimData.documents.push({
       id: docRecord?.id || 'doc-' + Date.now(),
       name: file.name,
@@ -1591,9 +1596,14 @@ function renderP02S0(){
   setTimeout(() => {
     const policyDoc = claimData.documents.find(d => d.type === 'policy');
     const zone = document.getElementById('policy-upload-zone');
-    if (policyDoc && zone) {
+    const hasBytes = !!(claimData.policy?.fileBase64?.length) || !!(policyDoc?.path?.length);
+    if (policyDoc && zone && hasBytes) {
       const label = policyDoc.stored === 'local' ? 'attached' : 'ready';
       setUploadZoneStatus(zone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + policyDoc.name + ' ' + label + '</div>');
+    } else if (policyDoc && zone && !hasBytes) {
+      setUploadZoneStatus(zone, '<div style="padding:16px;background:#fef3c7;border-radius:8px;color:#92400e;text-align:center"><strong>Re-upload required</strong><br><small>Page was refreshed — select your policy PDF again before Analyze.</small></div>');
+      claimData.documents = claimData.documents.filter(d => d.type !== 'policy');
+      claimData.policy.uploaded = false;
     }
     policyUnlockAnalyzeBtn();
   }, 0);
@@ -1656,7 +1666,7 @@ async function analyzePolicyDoc(){
   let fileBase64   = claimData.policy?.fileBase64 || '';
   let fileMimeType = claimData.policy?.fileMimeType || 'application/pdf';
 
-  if (!fileBase64 && policyDoc?.stored === 'local' && !storagePath) {
+  if (!fileBase64 && !storagePath) {
     const fileInput = document.getElementById('fi-policy-upload');
     const file = fileInput?.files?.[0];
     if (file) {
@@ -1675,9 +1685,14 @@ async function analyzePolicyDoc(){
     return;
   }
 
-  const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
-  if (adminPreview && !storagePath && !fileBase64) {
-    console.warn('Admin preview: no PDF bytes in request — re-upload the file before Analyze');
+  if (!storagePath && !fileBase64 && policyDoc && policyText.length < 50) {
+    const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
+    const msg = adminPreview
+      ? 'Admin preview needs the PDF in this browser session. Choose the file again, then click Analyze (or use Load Sample Policy).'
+      : 'Choose your policy PDF again, then click Analyze.';
+    res.innerHTML = `<div class="warn-amber"><strong>⚠️ PDF not loaded</strong><div class="warn-amber-text">${msg}</div></div>`;
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
+    return;
   }
 
   console.log('analyzePolicyDoc payload:', {
