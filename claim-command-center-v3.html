@@ -731,6 +731,79 @@ function readFileAsBase64(file){
   });
 }
 
+function isAdminPreview(){
+  return sessionStorage.getItem('adminAuthenticated') === 'true';
+}
+
+/** Supabase storage/DB uploads need a signed-in user JWT — not admin preview. */
+async function canUseSupabaseStorage(){
+  if (!window.CCC_CLAIM_ID) return false;
+  if (isAdminPreview()) return false;
+  const token = await window.CNAuth.getToken();
+  const user = await window.CNAuth.currentUser();
+  return !!(token && user && user.id);
+}
+
+const POLICY_SESSION_MAX_BYTES = 3 * 1024 * 1024;
+
+function persistPolicyFileToSession(file, base64, mime){
+  if (!base64 || file.size > POLICY_SESSION_MAX_BYTES) return;
+  try {
+    sessionStorage.setItem('ccc_policy_file_b64', base64);
+    sessionStorage.setItem('ccc_policy_file_mime', mime || 'application/pdf');
+    sessionStorage.setItem('ccc_policy_file_name', file.name || 'policy.pdf');
+  } catch (e) {
+    console.warn('Policy session cache skipped (storage full):', e);
+  }
+}
+
+function restorePolicyFileFromSession(){
+  try {
+    const b64 = sessionStorage.getItem('ccc_policy_file_b64');
+    if (!b64 || b64.length < 100) return false;
+    claimData.policy.fileBase64 = b64;
+    claimData.policy.fileMimeType = sessionStorage.getItem('ccc_policy_file_mime') || 'application/pdf';
+    claimData.policy.fileName = sessionStorage.getItem('ccc_policy_file_name') || 'policy.pdf';
+    claimData.policy.uploaded = true;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function attachClaimFileLocally(file, docType, uploadZone){
+  if (docType === 'policy') {
+    claimData.documents = claimData.documents.filter(d => d.type !== 'policy');
+  }
+  claimData.documents.push({
+    id: 'doc-' + Date.now(),
+    name: file.name,
+    type: docType,
+    size: file.size,
+    uploadedAt: new Date().toISOString(),
+    stored: 'local'
+  });
+  if (docType === 'policy') {
+    claimData.policy.uploaded = true;
+    claimData.policy.fileName = file.name;
+    try {
+      const b64 = await readFileAsBase64(file);
+      claimData.policy.fileBase64 = b64;
+      claimData.policy.fileMimeType = file.type || 'application/pdf';
+      persistPolicyFileToSession(file, b64, claimData.policy.fileMimeType);
+      console.log('Policy file ready for analyze (base64 bytes):', b64.length);
+    } catch (e) {
+      console.warn('Could not read policy file as base64:', e);
+    }
+  }
+  logActivity('📎', file.name + ' attached (' + docType + ')');
+  saveState();
+  if (docType === 'policy') policyUnlockAnalyzeBtn();
+  if (uploadZone) {
+    setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' attached<br><small style="color:var(--slate)">Ready to analyze</small></div>');
+  }
+}
+
 function setUploadZoneStatus(uploadZone, html){
   if (!uploadZone) return;
   let status = uploadZone.querySelector('.upload-zone-status');
@@ -812,13 +885,10 @@ async function saveState(){
 
 async function callNetlify(functionName, body) {
   const token = await window.CNAuth.getToken();
-  const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
-  console.log(
-    'callNetlify token:',
-    token ? 'present (' + token.substring(0, 20) + '...)' : adminPreview ? 'admin preview (no user JWT)' : 'NULL - sign in at /auth/login.html'
-  );
+  console.log('callNetlify:', functionName, token ? 'auth: user JWT' : isAdminPreview() ? 'auth: admin (functions work without JWT)' : 'auth: guest');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
+  if (isAdminPreview()) headers['X-Admin-Preview'] = 'true';
   const res = await fetch('/.netlify/functions/' + functionName, {
     method: 'POST',
     headers: headers,
@@ -1284,37 +1354,13 @@ async function uploadClaimFile(file, docType) {
   }
 
   try {
-    // If no claim_id, store in localStorage only
-    if (!window.CCC_CLAIM_ID) {
-      if (docType === 'policy') {
-        claimData.documents = claimData.documents.filter(d => d.type !== 'policy');
-      }
-      claimData.documents.push({
-        id: 'doc-' + Date.now(),
-        name: file.name,
-        type: docType,
-        size: file.size,
-        uploadedAt: new Date().toISOString(),
-        stored: 'local'
-      });
-      if (docType === 'policy') {
-        claimData.policy.uploaded = true;
-        try {
-          claimData.policy.fileBase64 = await readFileAsBase64(file);
-          claimData.policy.fileMimeType = file.type || 'application/pdf';
-          claimData.policy.fileName = file.name;
-        } catch (e) {
-          console.warn('Could not read policy file as base64:', e);
-        }
-      }
-      logActivity('📎', file.name + ' attached (' + docType + ')');
-      saveState();
-      if (docType === 'policy') policyUnlockAnalyzeBtn();
-      setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' attached<br><small style="color:var(--slate)">Ready to analyze</small></div>');
+    // Local attach: no claim, admin preview, or guest — same path as Medical Bill (file in analyze POST).
+    if (!(await canUseSupabaseStorage())) {
+      await attachClaimFileLocally(file, docType, uploadZone);
       return;
     }
 
-    // Upload to Supabase Storage
+    // Upload to Supabase Storage (signed-in user with claim_id)
     const supabase = await window.getSupabaseClient();
     const token = await window.CNAuth.getToken();
     const user = await window.CNAuth.currentUser();
@@ -1396,9 +1442,11 @@ async function uploadClaimFile(file, docType) {
       claimData.policy.uploaded = true;
       claimData.policy.fileName = file.name;
       try {
-        claimData.policy.fileBase64 = await readFileAsBase64(file);
+        const b64 = await readFileAsBase64(file);
+        claimData.policy.fileBase64 = b64;
         claimData.policy.fileMimeType = file.type || 'application/pdf';
-        console.log('Policy file ready for analyze (base64 bytes):', claimData.policy.fileBase64.length);
+        persistPolicyFileToSession(file, b64, claimData.policy.fileMimeType);
+        console.log('Policy file ready for analyze (base64 bytes):', b64.length);
       } catch (e) {
         console.warn('Could not read policy file as base64 after storage upload:', e);
         claimData.policy.fileBase64 = undefined;
@@ -1594,6 +1642,7 @@ function renderP02S0(){
       <div id="policy-result"></div>
     </div>`;
   setTimeout(() => {
+    if (!claimData.policy?.fileBase64?.length) restorePolicyFileFromSession();
     const policyDoc = claimData.documents.find(d => d.type === 'policy');
     const zone = document.getElementById('policy-upload-zone');
     const hasBytes = !!(claimData.policy?.fileBase64?.length) || !!(policyDoc?.path?.length);
@@ -1660,21 +1709,29 @@ async function analyzePolicyDoc(){
   }
 
   const policyDoc  = claimData.documents.find(d => d.type === 'policy');
-  const storagePath = policyDoc?.path || '';
+  let storagePath = policyDoc?.path || '';
   const policyText  = claimData.policy.rawText || '';
 
   let fileBase64   = claimData.policy?.fileBase64 || '';
   let fileMimeType = claimData.policy?.fileMimeType || 'application/pdf';
 
-  if (!fileBase64 && !storagePath) {
-    const fileInput = document.getElementById('fi-policy-upload');
-    const file = fileInput?.files?.[0];
-    if (file) {
-      fileBase64 = await readFileAsBase64(file);
-      fileMimeType = file.type || 'application/pdf';
-      claimData.policy.fileBase64 = fileBase64;
-      claimData.policy.fileMimeType = fileMimeType;
-    }
+  const fileInput = document.getElementById('fi-policy-upload');
+  const pickedFile = fileInput?.files?.[0];
+  if (pickedFile) {
+    fileBase64 = await readFileAsBase64(pickedFile);
+    fileMimeType = pickedFile.type || 'application/pdf';
+    claimData.policy.fileBase64 = fileBase64;
+    claimData.policy.fileMimeType = fileMimeType;
+    persistPolicyFileToSession(pickedFile, fileBase64, fileMimeType);
+  } else if (!fileBase64) {
+    restorePolicyFileFromSession();
+    fileBase64 = claimData.policy?.fileBase64 || '';
+    fileMimeType = claimData.policy?.fileMimeType || fileMimeType;
+  }
+
+  // Without a user JWT, storage download on the server will fail — send PDF bytes only.
+  if (!(await window.CNAuth.getToken())) {
+    storagePath = '';
   }
 
   if (!storagePath && !fileBase64 && policyText.length < 50) {
@@ -1686,11 +1743,13 @@ async function analyzePolicyDoc(){
   }
 
   if (!storagePath && !fileBase64 && policyDoc && policyText.length < 50) {
-    const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
-    const msg = adminPreview
-      ? 'Admin preview needs the PDF in this browser session. Choose the file again, then click Analyze (or use Load Sample Policy).'
-      : 'Choose your policy PDF again, then click Analyze.';
-    res.innerHTML = `<div class="warn-amber"><strong>⚠️ PDF not loaded</strong><div class="warn-amber-text">${msg}</div></div>`;
+    res.innerHTML = `<div class="warn-amber"><strong>⚠️ PDF not loaded</strong><div class="warn-amber-text">Choose your policy PDF again, then click Analyze My Policy.</div></div>`;
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
+    return;
+  }
+
+  if (fileBase64 && fileBase64.length > 14 * 1024 * 1024) {
+    res.innerHTML = `<div class="warn-amber"><strong>⚠️ File too large</strong><div class="warn-amber-text">This PDF is too large to analyze in one request (max ~10MB). Try a smaller export or the declarations pages only.</div></div>`;
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
     return;
   }
@@ -1740,7 +1799,7 @@ async function analyzePolicyDoc(){
     const confidenceHtml = showPartialWarning
       ? `<div class="warn-amber" style="margin-bottom:12px">
            <strong>⚠️ Partial Analysis</strong>
-           <div class="warn-amber-text">The policy PDF could not be fully read. Re-upload your complete policy PDF (or sign in and upload to cloud storage). Admin preview without a file payload cannot analyze scanned documents.</div>
+           <div class="warn-amber-text">The policy PDF could not be fully read. Re-upload your complete policy PDF or try a text-based export. Scanned policies may need a clearer scan or the declarations pages only.</div>
          </div>`
       : '';
 

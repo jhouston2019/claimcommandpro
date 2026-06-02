@@ -35,7 +35,7 @@ package = "@netlify/plugin-functions-install-core"
   for = "/.netlify/functions/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Admin-Email, x-admin-email"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Admin-Email, x-admin-email, X-Admin-Preview"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Allow-Credentials = "true"
 

@@ -105,6 +105,22 @@ function resolveMime(buf, declared) {
 async function loadPolicyFile(supabase, body) {
   const { storage_path, file_base64, file_mime_type } = body;
 
+  // Prefer inline base64 when provided (admin preview / guest — same as Medical Bill wizard).
+  if (file_base64 && String(file_base64).length > 0) {
+    const clean = String(file_base64).replace(/^data:.+;base64,/, '');
+    const buffer = Buffer.from(clean, 'base64');
+    if (buffer.length > 15 * 1024 * 1024) {
+      throw new Error('File too large (max 15MB)');
+    }
+    if (buffer.length > 0) {
+      return {
+        buffer,
+        mime: resolveMime(buffer, file_mime_type || 'application/pdf'),
+        base64: clean
+      };
+    }
+  }
+
   if (storage_path) {
     const { data, error } = await supabase.storage.from('claim-documents').download(storage_path);
     if (error || !data) {
@@ -116,19 +132,6 @@ async function loadPolicyFile(supabase, body) {
       buffer,
       mime: resolveMime(buffer, 'application/pdf'),
       base64: buffer.toString('base64')
-    };
-  }
-
-  if (file_base64 && String(file_base64).length > 0) {
-    const clean = String(file_base64).replace(/^data:.+;base64,/, '');
-    const buffer = Buffer.from(clean, 'base64');
-    if (buffer.length > 15 * 1024 * 1024) {
-      throw new Error('File too large (max 15MB)');
-    }
-    return {
-      buffer,
-      mime: resolveMime(buffer, file_mime_type || 'application/pdf'),
-      base64: clean
     };
   }
 
@@ -341,12 +344,13 @@ function validateParsed(p) {
 
 function parsedHasSubstance(p) {
   if ((p.coverages || []).length > 0) return true;
-  if (typeof p.deductible === 'number') return true;
+  if ((p.endorsements || []).length > 0) return true;
+  if (typeof p.deductible === 'number' && p.deductible > 0) return true;
   const sum = (p.summary_for_user || '').toLowerCase();
-  if (/incomplete|could not extract|does not contain|further information is needed|no specific details/.test(sum)) {
+  if (/could not be completed|could not extract|no specific details|document provided\. please re-upload/.test(sum)) {
     return false;
   }
-  return sum.length > 80;
+  return sum.length > 60;
 }
 
 function normalize(parsed, ctx, extractionDegraded) {
@@ -442,41 +446,51 @@ async function tryAnalyze(mode, extracted, ctx, retry) {
       ? await analyzeWithPdf(pdfDataUrl, ctx, retry)
       : await analyzeWithText(text, ctx, degraded, retry);
   const parsed = parseJsonFromLlm(raw);
-  if (!validateParsed(parsed) || !parsedHasSubstance(parsed)) return null;
-  return normalize(parsed, ctx, mode !== 'pdf' && degraded);
+  if (!validateParsed(parsed)) return null;
+  if (!parsedHasSubstance(parsed)) return { partial: true, parsed };
+  return { partial: false, parsed };
 }
 
 async function runAnalysis(extracted, ctx) {
-  const { pdfDataUrl } = extracted;
+  const { pdfDataUrl, degraded } = extracted;
+  let bestPartial = null;
 
-  // Policies are often scanned PDFs — read the file first when we have bytes (not only after text fails).
+  // Text + vision extraction first (Medical Bill golden path — reliable on Netlify).
+  for (const retry of [false, true]) {
+    try {
+      const attempt = await tryAnalyze('text', extracted, ctx, retry);
+      if (attempt && !attempt.partial) {
+        console.log('[ai-policy-review] analysis mode: text', retry ? '(retry)' : '');
+        return normalize(attempt.parsed, ctx, degraded);
+      }
+      if (attempt?.partial) bestPartial = attempt;
+    } catch (e) {
+      console.warn('[ai-policy-review] text analyze failed:', e.message);
+    }
+  }
+
+  // Optional: OpenAI file upload for stubborn scanned PDFs.
   if (pdfDataUrl) {
     for (const retry of [false, true]) {
       try {
-        const out = await tryAnalyze('pdf', extracted, ctx, retry);
-        if (out) {
+        const attempt = await tryAnalyze('pdf', extracted, ctx, retry);
+        if (attempt && !attempt.partial) {
           console.log('[ai-policy-review] analysis mode: pdf', retry ? '(retry)' : '');
-          return out;
+          return normalize(attempt.parsed, ctx, false);
         }
+        if (attempt?.partial) bestPartial = attempt;
       } catch (e) {
         console.warn('[ai-policy-review] pdf analyze failed:', e.message);
       }
     }
   }
 
-  for (const retry of [false, true]) {
-    try {
-      const out = await tryAnalyze('text', extracted, ctx, retry);
-      if (out) {
-        console.log('[ai-policy-review] analysis mode: text', retry ? '(retry)' : '');
-        return out;
-      }
-    } catch (e) {
-      console.warn('[ai-policy-review] text analyze failed:', e.message);
-    }
+  if (bestPartial?.parsed) {
+    console.warn('[ai-policy-review] using best-effort partial analysis');
+    return normalize(bestPartial.parsed, ctx, true);
   }
 
-  return safeFallback(ctx, 'invalid or empty analysis after pdf and text attempts');
+  return safeFallback(ctx, 'invalid or empty analysis after text and pdf attempts');
 }
 
 // ─── Handler ───────────────────────────────────────────────────────────────
