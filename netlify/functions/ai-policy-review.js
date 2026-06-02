@@ -7,7 +7,14 @@ const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
 const { runOpenAI } = require('./lib/ai-utils');
-const { deleteOpenAIFile, uploadPdfToOpenAI, decodeBase64Payload, preparePdfBuffer } = require('./lib/policy-pdf-utils');
+const {
+  deleteOpenAIFile,
+  uploadPdfToOpenAI,
+  decodeBase64Payload,
+  extractFirstPages
+} = require('./lib/policy-pdf-utils');
+
+const LARGE_PDF_DECLARATION_PAGES = 4;
 
 const MAX_TEXT = 48000;
 const MIN_POLICY_TEXT = 50;
@@ -483,12 +490,24 @@ async function tryLargePdfFastPath(openai, body, ctx) {
 
   if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
 
-  const { uploadBuffer, pagesUsed } = await preparePdfBuffer(buffer, true);
-  console.log('[ai-policy-review] declarations PDF for file API:', uploadBuffer.length, 'bytes, pages:', pagesUsed);
+  let decPagesBuffer;
+  try {
+    const { buffer: subset, pagesUsed } = await extractFirstPages(buffer, LARGE_PDF_DECLARATION_PAGES);
+    decPagesBuffer = subset;
+    console.log(
+      '[ai-policy-review] extracted',
+      pagesUsed,
+      'declaration pages, bytes:',
+      decPagesBuffer.length
+    );
+  } catch (e) {
+    console.warn('[ai-policy-review] pdf-lib page extract failed:', e.message);
+    return null;
+  }
 
   let uploadedId = null;
   try {
-    uploadedId = await uploadPdfToOpenAI(openai, uploadBuffer);
+    uploadedId = await uploadPdfToOpenAI(openai, decPagesBuffer);
     return await analyzeFromOpenAiFileId(openai, uploadedId, ctx, 'large base64');
   } catch (e) {
     console.warn('[ai-policy-review] large PDF fast path:', e.message);

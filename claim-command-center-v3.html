@@ -1680,7 +1680,7 @@ function renderP02S0(){
       <label style="display:flex;align-items:flex-start;gap:8px;margin-top:12px;font-size:13px;color:var(--gray-600);cursor:pointer">
         <input type="checkbox" id="policy-declarations-only" checked style="margin-top:3px"
           onchange="claimData.policy.openaiFileId=undefined;claimData.policy.fileBase64=undefined">
-        <span><strong>Declarations &amp; coverage pages only</strong> (recommended) — sends the first 12 pages as a valid PDF (where limits and deductibles usually appear). Uncheck to stage the full file (slower).</span>
+        <span><strong>Declarations &amp; coverage pages only</strong> (recommended) — sends the first 4 pages as a valid PDF (where limits and deductibles usually appear). Uncheck to stage the full file (slower).</span>
       </label>
       <div>
         <div class="paste-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=(this.nextElementSibling.classList.contains('open')?'▴ Hide':'▾ Or paste a specific policy clause or exclusion text')">▾ Or paste a specific policy clause or exclusion text</div>

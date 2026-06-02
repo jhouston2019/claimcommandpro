@@ -4,7 +4,7 @@
 
 const { PDFDocument } = require('pdf-lib');
 
-const DECLARATIONS_MAX_PAGES = 12;
+const DECLARATIONS_MAX_PAGES = 4;
 const MAX_FILE_BYTES = 15 * 1024 * 1024;
 
 function detectMime(buf) {
