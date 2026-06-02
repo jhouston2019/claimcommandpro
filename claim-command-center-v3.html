@@ -1352,8 +1352,8 @@ async function uploadClaimFile(file, docType) {
 
     if (dbError) console.warn('DB insert failed but file uploaded:', dbError);
 
-    // Store raw text for AI analysis if PDF (via text-extract function)
-    if (file.type === 'application/pdf' && (docType === 'policy' || docType === 'contractor_estimate' || docType === 'carrier_estimate')) {
+    // Policy: do NOT use text-extract sidecar (Med Bill / ERP send the file in one analyze POST).
+    if (file.type === 'application/pdf' && (docType === 'contractor_estimate' || docType === 'carrier_estimate')) {
       try {
         const textRes = await fetch('/.netlify/functions/text-extract', {
           method: 'POST',
@@ -1368,17 +1368,11 @@ async function uploadClaimFile(file, docType) {
         });
         if (textRes.ok) {
           const { text } = await textRes.json();
-          // Skip garbled/huge extraction — ai-policy-review reads PDF from storage
           const usable = text && text.length >= 100 && text.length <= 50000;
-          if (docType === 'policy' && usable) claimData.policy.rawText = text;
           if (docType === 'contractor_estimate' && usable) claimData.structure.contractorEstimateText = text;
           if (docType === 'carrier_estimate' && usable) claimData.structure.carrierEstimateText = text;
-          console.log('Text extracted successfully:', usable ? text.substring(0, 100) : '(skipped — unusable length)');
-        } else {
-          const errBody = await textRes.text();
-          console.warn('Text extraction failed:', textRes.status, errBody);
         }
-      } catch(e) { console.warn('Text extraction error:', e); }
+      } catch (e) { console.warn('Text extraction error:', e); }
     }
 
     // Update local claimData
@@ -1395,9 +1389,16 @@ async function uploadClaimFile(file, docType) {
 
     if (docType === 'policy') {
       claimData.policy.uploaded = true;
-      claimData.policy.fileBase64 = undefined;
-      claimData.policy.fileMimeType = undefined;
       claimData.policy.fileName = file.name;
+      try {
+        claimData.policy.fileBase64 = await readFileAsBase64(file);
+        claimData.policy.fileMimeType = file.type || 'application/pdf';
+        console.log('Policy file ready for analyze (base64 bytes):', claimData.policy.fileBase64.length);
+      } catch (e) {
+        console.warn('Could not read policy file as base64 after storage upload:', e);
+        claimData.policy.fileBase64 = undefined;
+        claimData.policy.fileMimeType = file.type || 'application/pdf';
+      }
     }
     if (docType === 'policy') policyUnlockAnalyzeBtn();
 
@@ -1678,6 +1679,12 @@ async function analyzePolicyDoc(){
   if (adminPreview && !storagePath && !fileBase64) {
     console.warn('Admin preview: no PDF bytes in request — re-upload the file before Analyze');
   }
+
+  console.log('analyzePolicyDoc payload:', {
+    storage_path: storagePath || null,
+    file_base64_chars: fileBase64 ? fileBase64.length : 0,
+    policy_text_chars: policyText.length
+  });
 
   try {
     const result = await callNetlify('ai-policy-review', {
