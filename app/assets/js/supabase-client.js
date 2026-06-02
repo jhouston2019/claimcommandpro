@@ -9,24 +9,37 @@
 const SUPABASE_URL = window.SUPABASE_URL || 'https://your-project.supabase.co';
 const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'your-anon-key';
 
-// Dynamic import for Supabase
+// Single client instance (parallel getSupabaseClient() calls must not create duplicate GoTrueClients)
 let supabaseClient = null;
+let supabaseClientPromise = null;
 
 async function getSupabaseClient() {
   if (supabaseClient) {
     return supabaseClient;
   }
 
-  try {
-    // jsdelivr ESM (esm.sh often blocked or ERR_CONNECTION_CLOSED on some networks)
-    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm');
+  if (!supabaseClientPromise) {
+    supabaseClientPromise = (async () => {
+      try {
+        // jsdelivr ESM (esm.sh often blocked or ERR_CONNECTION_CLOSED on some networks)
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm');
 
-    supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return supabaseClient;
-  } catch (error) {
-    console.error('CNError (Supabase Init):', error);
-    // Fallback: return a mock client for development
-    return {
+        supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.supabase = supabaseClient;
+        return supabaseClient;
+      } catch (error) {
+        console.error('CNError (Supabase Init):', error);
+        supabaseClientPromise = null;
+        return createMockSupabaseClient();
+      }
+    })();
+  }
+
+  return supabaseClientPromise;
+}
+
+function createMockSupabaseClient() {
+  return {
       auth: {
         getSession: () => Promise.resolve({ data: { session: null }, error: null }),
         signInWithPassword: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
@@ -42,13 +55,10 @@ async function getSupabaseClient() {
         update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) })
       })
     };
-  }
 }
 
 // Export for use in other modules
 window.getSupabaseClient = getSupabaseClient;
 
-// Initialize on load
-getSupabaseClient().then(client => {
-  window.supabase = client;
-});
+// Warm singleton on load (auth-session also calls getSupabaseClient — must share one instance)
+getSupabaseClient();

@@ -100,9 +100,16 @@
   }
 
   async function getToken() {
+    if (sessionStorage.getItem('adminAuthenticated') === 'true') {
+      return null;
+    }
     try {
       const supabase = await window.getSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.warn('CNError (getToken session):', error.message);
+        return null;
+      }
       return session?.access_token ?? null;
     } catch (err) {
       console.error('CNError (getToken):', err);

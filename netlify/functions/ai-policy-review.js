@@ -281,15 +281,15 @@ async function resolvePolicyTextForAnalysis(supabase, body, claimContext) {
   });
 
   if (!file && !policyText) {
-    return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true };
+    return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true, pdfDataUrl: null };
   }
 
   if (!file) {
     if (!policyTextLooksUsable(policyText) && policyText.length > 0) extractionDegraded = true;
     if (!policyText) {
-      return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true };
+      return { policyText: policyMetadataFallbackText(claimContext), extractionDegraded: true, pdfDataUrl: null };
     }
-    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded };
+    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded, pdfDataUrl: null };
   }
 
   if (!process.env.OPENAI_API_KEY) {
@@ -298,7 +298,11 @@ async function resolvePolicyTextForAnalysis(supabase, body, claimContext) {
       extractionDegraded = true;
       if (!policyText) policyText = policyMetadataFallbackText(claimContext);
     }
-    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded };
+    const pdfDataUrlNoKey =
+      file.mime === 'application/pdf' && file.fileBase64
+        ? `data:application/pdf;base64,${file.fileBase64}`
+        : null;
+    return { policyText: policyText.slice(0, MAX_POLICY_TEXT_CHARS), extractionDegraded, pdfDataUrl: pdfDataUrlNoKey };
   }
 
   const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -336,7 +340,12 @@ async function resolvePolicyTextForAnalysis(supabase, body, claimContext) {
     policyText = policyText.slice(0, MAX_POLICY_TEXT_CHARS) + '\n[TRUNCATED]';
   }
 
-  return { policyText, extractionDegraded };
+  const pdfDataUrl =
+    file && file.mime === 'application/pdf' && file.fileBase64
+      ? `data:application/pdf;base64,${file.fileBase64}`
+      : null;
+
+  return { policyText, extractionDegraded, pdfDataUrl };
 }
 
 // ─── GPT-4o analysis (text → runOpenAI JSON mode) ───────────────────────────
@@ -367,6 +376,22 @@ async function runPolicyAnalysis(policyText, claimContext, extractionDegraded, i
     temperature: 0.2,
     max_tokens: MAX_TOKENS,
     response_format: { type: 'json_object' }
+  });
+}
+
+/** When text extraction fails on a PDF, read the document directly (OpenAI Files API). */
+async function runPolicyAnalysisFromPdf(pdfDataUrl, claimContext, isRetry = false) {
+  const userMessage = buildAnalysisUserPrompt(
+    'The full insurance policy is attached as a PDF. Read the document directly and extract all coverages, limits, and endorsements.',
+    claimContext,
+    false,
+    isRetry
+  );
+  return runOpenAI(SYSTEM_PROMPT, userMessage, {
+    model: 'gpt-4o',
+    temperature: 0.2,
+    max_tokens: MAX_TOKENS,
+    pdfFileDataUrl: pdfDataUrl
   });
 }
 
@@ -526,30 +551,42 @@ exports.handler = async (event) => {
     };
   }
 
-  const { policyText: policyTextForAnalysis, extractionDegraded } = await resolvePolicyTextForAnalysis(
+  const { policyText: policyTextForAnalysis, extractionDegraded, pdfDataUrl } = await resolvePolicyTextForAnalysis(
     supabase,
     body,
     claimContext
   );
 
-  if (extractionDegraded) {
+  const usePdfDirect = extractionDegraded && pdfDataUrl;
+  if (extractionDegraded && !usePdfDirect) {
     console.warn('[ai-policy-review] extraction degraded — continuing with partial text or claim-context fallback');
+  }
+  if (usePdfDirect) {
+    console.log('[ai-policy-review] text extraction weak — analyzing PDF via OpenAI Files API');
+  }
+
+  async function runAnalysisAttempt(isRetry) {
+    if (usePdfDirect) {
+      return runPolicyAnalysisFromPdf(pdfDataUrl, claimContext, isRetry);
+    }
+    return runPolicyAnalysis(policyTextForAnalysis, claimContext, extractionDegraded, isRetry);
   }
 
   // GPT-4o analysis with retry (never hard-stop on weak extraction)
   let analysisResult = null;
   let rawResponse    = null;
+  const resultDegraded = usePdfDirect ? false : extractionDegraded;
   try {
-    rawResponse = await runPolicyAnalysis(policyTextForAnalysis, claimContext, extractionDegraded, false);
+    rawResponse = await runAnalysisAttempt(false);
     const parsed = JSON.parse(rawResponse);
     if (validateAnalysis(parsed)) {
-      analysisResult = normalizeOutput(parsed, claimContext, extractionDegraded);
+      analysisResult = normalizeOutput(parsed, claimContext, resultDegraded);
     } else {
       console.warn('First attempt failed validation. Retrying...');
-      rawResponse = await runPolicyAnalysis(policyTextForAnalysis, claimContext, extractionDegraded, true);
+      rawResponse = await runAnalysisAttempt(true);
       const parsed2 = JSON.parse(rawResponse);
       analysisResult = validateAnalysis(parsed2)
-        ? normalizeOutput(parsed2, claimContext, extractionDegraded)
+        ? normalizeOutput(parsed2, claimContext, resultDegraded)
         : fallbackOutput(claimContext, 'Both AI attempts returned invalid schema');
     }
   } catch (parseError) {

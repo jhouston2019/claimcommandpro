@@ -812,7 +812,11 @@ async function saveState(){
 
 async function callNetlify(functionName, body) {
   const token = await window.CNAuth.getToken();
-  console.log('callNetlify token:', token ? 'present (' + token.substring(0,20) + '...)' : 'NULL - no token retrieved');
+  const adminPreview = sessionStorage.getItem('adminAuthenticated') === 'true';
+  console.log(
+    'callNetlify token:',
+    token ? 'present (' + token.substring(0, 20) + '...)' : adminPreview ? 'admin preview (no user JWT)' : 'NULL - sign in at /auth/login.html'
+  );
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers['Authorization'] = 'Bearer ' + token;
   const res = await fetch('/.netlify/functions/' + functionName, {
