@@ -18,9 +18,9 @@ async function getSupabaseClient() {
   }
 
   try {
-    // Use CDN import for browser compatibility
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-    
+    // jsdelivr ESM (esm.sh often blocked or ERR_CONNECTION_CLOSED on some networks)
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/+esm');
+
     supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     return supabaseClient;
   } catch (error) {
