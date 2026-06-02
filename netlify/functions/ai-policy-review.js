@@ -1,12 +1,6 @@
 /**
- * ai-policy-review.js — Policy analysis for Claim Command Center (Phase 02)
- *
- * Golden path (matches Medical Bill Dispute analyze-medical-bill.js):
- *   POST → load file (storage_path | file_base64) or policy_text
- *   → extractPolicyText (pdf-parse ×2 → vision → context stub; never 422)
- *   → if PDF text weak: analyze via OpenAI Files API on same PDF
- *   → else: GPT-4o JSON on extracted text
- *   → validate, normalize, persist claim_outputs, return canonical JSON
+ * ai-policy-review.js — Property policy analysis (Claim Command Center Phase 02)
+ * Modeled on analyze-medical-bill.js: file in → structured JSON out, guest-safe, no payment gate.
  */
 
 const OpenAI = require('openai');
@@ -14,78 +8,57 @@ const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
 const { runOpenAI } = require('./lib/ai-utils');
 
-const MAX_TEXT = 20000;
+const MAX_TEXT = 48000;
+const MIN_POLICY_TEXT = 50;
+const MAX_FILE_BYTES = 15 * 1024 * 1024;
 const MAX_TOKENS = 4096;
-const MIN_TEXT = 50;
-const STUB_PREFIX = '[Policy text could not be extracted';
 
-const VISION_PROMPT =
-  'Extract all text from this insurance policy document (declarations, coverages, limits, endorsements, exclusions). ' +
-  'Return only raw text, preserving line breaks. Include coverage names, dollar amounts, deductibles, and policy numbers.';
-
-const SYSTEM_PROMPT = `You are an expert property insurance policy analyst (HO-3, HO-5, DP-3, commercial property). Extract coverages, limits, endorsements, exclusions, and coverage gaps relevant to the active claim.
-
-Return ONLY valid JSON matching this schema. No markdown. No code fences.
-
+const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extract every coverage, limit, endorsement, exclusion, and gap from the policy. Return only valid JSON matching this schema exactly:
 {
-  "policy_type": "HO-3 | HO-5 | DP-3 | Commercial | Unknown",
+  "success": true,
+  "confidence": "high|medium|low",
+  "policy_type": "string",
   "carrier": "string",
-  "policy_number": "string or null",
-  "effective_date": "string or null",
-  "expiration_date": "string or null",
-  "settlement_type": "RCV or ACV",
-  "deductible": number,
-  "coverages": [{"label": "string", "limit": number, "applied_by_carrier": "yes|no|partial|unknown", "description": "string"}],
-  "endorsements": [{"name": "string", "limit": number or null, "applies_to_claim": boolean, "description": "string"}],
-  "exclusions": [{"name": "string", "description": "string", "affects_claim": boolean}],
-  "coverage_gaps": [{"coverage": "string", "reason_not_applied": "string", "potential_value": number or null, "action_required": "string"}],
+  "policy_number": "string|null",
+  "settlement_type": "RCV|ACV",
+  "deductible": "number|null",
+  "dwelling_coverage": "number|null",
+  "contents_coverage": "number|null",
+  "ale_coverage": "number|null",
+  "coverages": [{"label": "string", "limit": "number|null", "applied_by_carrier": "yes|no|partial|unknown", "description": "string"}],
+  "endorsements": [{"name": "string", "limit": "number|null", "applies_to_claim": "boolean", "description": "string"}],
+  "exclusions": [{"name": "string", "description": "string", "affects_claim": "boolean"}],
+  "coverage_gaps": [{"coverage": "string", "reason_not_applied": "string", "potential_value": "number|null", "action_required": "string"}],
+  "gaps_found": "number",
   "recommended_actions": ["string"],
-  "summary_for_user": "string",
-  "confidence": "high | medium | low"
+  "summary_for_user": "string"
 }
 
 Rules:
-- Never fabricate limits; use null if not in the document.
-- coverage_gaps: coverages in the policy not applied by the carrier on this claim.
-- applied_by_carrier reflects carrier behavior on the claim, not policy allowance.
-- Incomplete text → confidence low/medium and say so in summary_for_user.`;
+- Never fabricate dollar limits; use null if not stated in the document.
+- gaps_found must equal coverage_gaps.length.
+- applied_by_carrier reflects carrier behavior on the active claim when claim context is provided.
+- If the document is incomplete, set confidence to low or medium and say so in summary_for_user.`;
 
-// ─── CORS / Supabase ─────────────────────────────────────────────────────────
+const RETRY_SUFFIX =
+  '\n\nIMPORTANT: Return ONLY a raw JSON object matching the schema. No markdown. No code fences. Populate coverages from the document.';
 
-const cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
-
-function getSupabase() {
-  return createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-}
-
-function jsonResponse(statusCode, body, extraHeaders = {}) {
+function corsHeaders(extra = {}) {
   return {
-    statusCode,
-    headers: { ...cors, 'Content-Type': 'application/json', ...extraHeaders },
-    body: JSON.stringify(body)
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Preview',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    ...extra
   };
 }
 
-// ─── Auth (optional JWT — missing token = preview, no hard fail) ───────────
-
-async function verifyAccess(event, supabase) {
-  const raw = event.headers?.authorization || event.headers?.Authorization || '';
-  const token = raw.replace(/^Bearer\s+/i, '').trim();
-  if (!token) return { preview: true };
-  try {
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-    if (error || !user) return { preview: true };
-    return { preview: false, userId: user.id };
-  } catch {
-    return { preview: true };
-  }
+function getSupabaseAdmin() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
-
-// ─── File load (storage or base64) ───────────────────────────────────────────
 
 function detectMime(buf) {
   if (!buf || buf.length < 4) return 'application/octet-stream';
@@ -102,236 +75,124 @@ function resolveMime(buf, declared) {
   return d;
 }
 
-async function loadPolicyFile(supabase, body) {
-  const { storage_path, file_base64, file_mime_type } = body;
+/** $ + coverage keywords + min 500 chars (filters custom-font pdf-parse garbage). */
+function textHasPolicySignals(text) {
+  if (!text || typeof text !== 'string') return false;
+  const t = text.trim();
+  if (t.length < 500) return false;
+  const hasDollar = /\$/.test(t);
+  const hasKw = /\b(dwelling|liability|deductible|coverage)\b/i.test(t);
+  return hasDollar && hasKw;
+}
 
-  // Prefer inline base64 when provided (admin preview / guest — same as Medical Bill wizard).
-  if (file_base64 && String(file_base64).length > 0) {
-    const clean = String(file_base64).replace(/^data:.+;base64,/, '');
+function claimContext(body) {
+  return {
+    insurer: body.insurer || 'Unknown',
+    property_type: body.property_type || 'Unknown',
+    date_of_loss: body.date_of_loss || 'Unknown',
+    claim_type: body.claim_type || body.claimType || 'Unknown',
+    jurisdiction: body.jurisdiction || body.state || 'Unknown'
+  };
+}
+
+function buildUserPrompt(policyText, ctx, { retry, degraded } = {}) {
+  const note = degraded
+    ? '\nNOTE: Text extraction was partial. Use the attached policy or text carefully; do not invent limits.'
+    : '';
+  const retryNote = retry ? RETRY_SUFFIX : '';
+  return `POLICY TEXT:
+${policyText || '[Policy document attached as PDF]'}
+
+CLAIM CONTEXT:
+- Insurer: ${ctx.insurer}
+- Property: ${ctx.property_type}
+- Date of loss: ${ctx.date_of_loss}
+- Cause / claim type: ${ctx.claim_type}
+- Jurisdiction: ${ctx.jurisdiction}${note}${retryNote}
+
+Analyze this policy for the claim above and return the JSON object.`;
+}
+
+async function loadFileFromBody(supabase, body) {
+  const mimeDeclared = body.file_mime_type || body.fileType || 'application/pdf';
+
+  if (body.file_base64 && String(body.file_base64).length > 0) {
+    const clean = String(body.file_base64).replace(/^data:.+;base64,/, '');
     const buffer = Buffer.from(clean, 'base64');
-    if (buffer.length > 15 * 1024 * 1024) {
-      throw new Error('File too large (max 15MB)');
-    }
-    if (buffer.length > 0) {
-      return {
-        buffer,
-        mime: resolveMime(buffer, file_mime_type || 'application/pdf'),
-        base64: clean
-      };
-    }
+    if (buffer.length > MAX_FILE_BYTES) throw new Error('File too large (max 15MB)');
+    if (buffer.length === 0) return null;
+    return {
+      buffer,
+      base64: clean,
+      mime: resolveMime(buffer, mimeDeclared)
+    };
   }
 
-  if (storage_path) {
-    const { data, error } = await supabase.storage.from('claim-documents').download(storage_path);
+  if (body.storage_path && supabase) {
+    const { data, error } = await supabase.storage.from('claim-documents').download(body.storage_path);
     if (error || !data) {
       console.warn('[ai-policy-review] storage download failed:', error?.message);
       return null;
     }
     const buffer = Buffer.from(await data.arrayBuffer());
+    if (buffer.length > MAX_FILE_BYTES) throw new Error('File too large (max 15MB)');
     return {
       buffer,
-      mime: resolveMime(buffer, 'application/pdf'),
-      base64: buffer.toString('base64')
+      base64: buffer.toString('base64'),
+      mime: resolveMime(buffer, mimeDeclared)
     };
   }
 
   return null;
 }
 
-// ─── Text extraction (Medical Bill extractBillText → extractPolicyText) ─────
-
-function contextStub(ctx) {
-  return (
-    `${STUB_PREFIX}. Analyze using claim context only: Insurer=${ctx.insurer || 'Unknown'}, ` +
-    `Property=${ctx.property_type || 'Unknown'}, DOL=${ctx.date_of_loss || 'Unknown'}, ` +
-    `Cause=${ctx.claim_type || 'Unknown'}, State=${ctx.jurisdiction || 'Unknown'}]`
-  );
-}
-
-/** True when text likely contains real policy language (not pdf-parse font garbage). */
-function textHasPolicySignals(text) {
-  if (!text || typeof text !== 'string') return false;
-  const t = text.trim();
-  if (t.length < MIN_TEXT || t.startsWith(STUB_PREFIX)) return false;
-  const hasMoney =
-    /\$\s?\d[\d,]*(\.\d{2})?/.test(t) ||
-    /\b\d{1,3}(?:,\d{3})*\.\d{2}\b/.test(t) ||
-    /\blimit[:\s]+\$?\d/i.test(t);
-  const hasKw =
-    /\b(coverage|dwelling|deductible|endorsement|exclusion|declarations|policyholder|insured|liability|limit|RCV|ACV|HO-?3|HO-?5|personal\s+property|loss\s+of\s+use|replacement\s+cost)\b/i.test(
-      t
-    );
-  return hasKw || hasMoney;
-}
-
-function textLooksUsable(text) {
-  return textHasPolicySignals(text);
-}
-
-async function visionExtract(openai, base64, mime) {
-  const res = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    max_tokens: 8000,
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'image_url', image_url: { url: `data:${mime};base64,${base64}`, detail: 'high' } },
-        { type: 'text', text: VISION_PROMPT }
-      ]
-    }]
-  });
-  return (res.choices?.[0]?.message?.content || '').trim();
-}
-
-async function extractPolicyText(openai, buffer, mime, base64, ctx) {
-  const b64 = base64 || buffer.toString('base64');
-  const fallback = () => contextStub(ctx);
-
-  const parsePdf = async (label, opts) => {
-    try {
-      const data = opts ? await pdfParse(buffer, opts) : await pdfParse(buffer);
-      return String(data?.text || '').trim();
-    } catch (e) {
-      console.warn(`[ai-policy-review] pdf-parse ${label}:`, e.message);
-      return '';
-    }
-  };
-
-  if (mime === 'image/jpeg' || mime === 'image/png') {
-    for (const m of [mime, 'image/jpeg']) {
-      try {
-        const t = await visionExtract(openai, b64, m);
-        if (textLooksUsable(t)) return t;
-      } catch (e) {
-        console.warn('[ai-policy-review] vision image:', e.message);
-      }
-    }
-    return fallback();
+async function tryPdfParse(buffer) {
+  try {
+    const data = await pdfParse(buffer);
+    return String(data?.text || '').trim();
+  } catch (e) {
+    console.warn('[ai-policy-review] pdf-parse failed:', e.message);
+    return '';
   }
-
-  if (mime !== 'application/pdf') return fallback();
-
-  let text = await parsePdf('1');
-  if (textLooksUsable(text)) return text;
-
-  const text2 = await parsePdf('2', { max: 0 });
-  if (textLooksUsable(text2)) return text2;
-  if (text2.length > text.length) text = text2;
-
-  for (const m of ['application/pdf', 'image/jpeg']) {
-    try {
-      const t = await visionExtract(openai, b64, m);
-      if (textLooksUsable(t)) return t;
-    } catch (e) {
-      console.warn(`[ai-policy-review] vision ${m}:`, e.message);
-    }
-  }
-
-  if (textHasPolicySignals(text)) return text;
-  return fallback();
 }
 
-async function resolvePolicyText(supabase, body, ctx) {
-  let text = String(body.policy_text || '').trim();
-  let degraded = false;
-
-  const file = await loadPolicyFile(supabase, body);
-  if (!file && !text) {
-    return { text: contextStub(ctx), degraded: true, pdfDataUrl: null };
-  }
+/**
+ * Resolve text for GPT and whether to use OpenAI file API on the PDF.
+ */
+async function resolveExtraction(file, policyTextInput) {
+  let policyText = String(policyTextInput || '').trim();
+  let extractionDegraded = false;
+  let usePdfDirect = false;
+  let pdfDataUrl = null;
 
   if (!file) {
-    degraded = !textLooksUsable(text);
-    return { text: text.slice(0, MAX_TEXT) || contextStub(ctx), degraded, pdfDataUrl: null };
+    extractionDegraded = policyText.length > 0 && !textHasPolicySignals(policyText);
+    return { policyText, extractionDegraded, usePdfDirect: false, pdfDataUrl: null };
   }
-
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY not configured');
-  }
-
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   if (file.mime === 'application/pdf') {
-    try {
-      const quick = String((await pdfParse(file.buffer))?.text || '').trim();
-      if (textLooksUsable(quick) && (!textLooksUsable(text) || quick.length > text.length)) {
-        text = quick;
-      }
-    } catch (e) {
-      console.warn('[ai-policy-review] quick pdf-parse:', e.message);
+    const parsed = await tryPdfParse(file.buffer);
+    if (textHasPolicySignals(parsed)) {
+      policyText = parsed;
+    } else if (textHasPolicySignals(policyText)) {
+      extractionDegraded = false;
+    } else {
+      usePdfDirect = true;
+      extractionDegraded = true;
+      pdfDataUrl = `data:application/pdf;base64,${file.base64}`;
+      if (!policyText) policyText = parsed.slice(0, 2000);
     }
+  } else {
+    extractionDegraded = true;
+    policyText = policyText || '[Image policy document — analyze from file]';
   }
 
-  if (!textLooksUsable(text)) {
-    const extracted = await extractPolicyText(openai, file.buffer, file.mime, file.base64, ctx);
-    if (extracted.length > text.length || !textLooksUsable(text)) text = extracted;
+  if (policyText.length > MAX_TEXT) {
+    policyText = policyText.slice(0, MAX_TEXT) + '\n[TRUNCATED]';
   }
 
-  degraded = !textLooksUsable(text) || text.startsWith(STUB_PREFIX);
-  if (!text) text = contextStub(ctx);
-  if (text.length > MAX_TEXT) text = text.slice(0, MAX_TEXT) + '\n[TRUNCATED]';
-
-  const pdfDataUrl =
-    file.mime === 'application/pdf' && file.base64
-      ? `data:application/pdf;base64,${file.base64}`
-      : null;
-
-  return { text, degraded, pdfDataUrl };
+  return { policyText, extractionDegraded, usePdfDirect, pdfDataUrl };
 }
-
-// ─── Analysis ──────────────────────────────────────────────────────────────
-
-function claimContext(body) {
-  return {
-    insurer: body.insurer,
-    property_type: body.property_type,
-    date_of_loss: body.date_of_loss,
-    claim_type: body.claim_type,
-    jurisdiction: body.jurisdiction
-  };
-}
-
-function userPrompt(policyText, ctx, { degraded, retry }) {
-  const note = degraded
-    ? '\nNOTE: Extraction was partial. Use available text and context; set confidence low; do not invent limits.'
-    : '';
-  const retryNote = retry
-    ? '\nIMPORTANT: Return ONLY a raw JSON object. No markdown.'
-    : '';
-  return `POLICY TEXT:
-${policyText}
-
-CLAIM CONTEXT:
-- Insurer: ${ctx.insurer || 'Unknown'}
-- Property: ${ctx.property_type || 'Unknown'}
-- Date of loss: ${ctx.date_of_loss || 'Unknown'}
-- Cause: ${ctx.claim_type || 'Unknown'}
-- Jurisdiction: ${ctx.jurisdiction || 'Unknown'}${note}${retryNote}`;
-}
-
-async function analyzeWithText(policyText, ctx, degraded, retry) {
-  return runOpenAI(SYSTEM_PROMPT, userPrompt(policyText, ctx, { degraded, retry }), {
-    model: 'gpt-4o',
-    temperature: 0.2,
-    max_tokens: MAX_TOKENS,
-    response_format: { type: 'json_object' }
-  });
-}
-
-async function analyzeWithPdf(pdfDataUrl, ctx, retry) {
-  const msg =
-    'The insurance policy PDF is attached. Read it and extract all coverages, limits, endorsements, and exclusions.' +
-    (retry ? ' Return ONLY raw JSON.' : '');
-  return runOpenAI(SYSTEM_PROMPT, userPrompt(msg, ctx, { degraded: false, retry }), {
-    model: 'gpt-4o',
-    temperature: 0.2,
-    max_tokens: MAX_TOKENS,
-    response_format: { type: 'json_object' },
-    pdfFileDataUrl: pdfDataUrl
-  });
-}
-
-// ─── Output shape (CCC contract) ───────────────────────────────────────────
 
 function parseJsonFromLlm(raw) {
   if (!raw || typeof raw !== 'string') throw new Error('empty AI response');
@@ -344,26 +205,28 @@ function parseJsonFromLlm(raw) {
   return JSON.parse(s);
 }
 
-function validateParsed(p) {
+function validateCanonical(p) {
   if (!p || typeof p !== 'object') return false;
-  const s = JSON.stringify(p);
-  if (s.includes('"string —') || s.includes('"number —')) return false;
   if (!Array.isArray(p.coverages)) return false;
-  return typeof p.summary_for_user === 'string' && p.summary_for_user.length > 0;
+  if (typeof p.summary_for_user !== 'string' || p.summary_for_user.length < 10) return false;
+  const blob = JSON.stringify(p);
+  if (blob.includes('"string —') || blob.includes('"number —')) return false;
+  return true;
 }
 
-function parsedHasSubstance(p) {
+function hasSubstance(p) {
   if ((p.coverages || []).length > 0) return true;
   if ((p.endorsements || []).length > 0) return true;
   if (typeof p.deductible === 'number' && p.deductible > 0) return true;
+  if (typeof p.dwelling_coverage === 'number') return true;
   const sum = (p.summary_for_user || '').toLowerCase();
-  if (/could not be completed|could not extract|no specific details|document provided\. please re-upload/.test(sum)) {
+  if (/could not be completed|please re-upload|no specific details|document provided\. please/.test(sum)) {
     return false;
   }
-  return sum.length > 60;
+  return sum.length > 80;
 }
 
-function normalize(parsed, ctx, extractionDegraded) {
+function normalizeCanonical(parsed, ctx, extractionDegraded) {
   const coverages = (parsed.coverages || []).map((c) => ({
     label: String(c.label || 'Coverage'),
     limit: typeof c.limit === 'number' ? c.limit : null,
@@ -376,9 +239,6 @@ function normalize(parsed, ctx, extractionDegraded) {
   const findLimit = (keys) =>
     coverages.find((c) => keys.some((k) => c.label.toLowerCase().includes(k)))?.limit ?? null;
 
-  let confidence = ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium';
-  if (extractionDegraded) confidence = confidence === 'high' ? 'medium' : 'low';
-
   const coverage_gaps = (parsed.coverage_gaps || []).map((g) => ({
     coverage: String(g.coverage || ''),
     reason_not_applied: String(g.reason_not_applied || ''),
@@ -386,20 +246,34 @@ function normalize(parsed, ctx, extractionDegraded) {
     action_required: String(g.action_required || '')
   }));
 
+  let confidence = ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium';
+  if (extractionDegraded) confidence = confidence === 'high' ? 'medium' : 'low';
+
+  const dwelling =
+    typeof parsed.dwelling_coverage === 'number'
+      ? parsed.dwelling_coverage
+      : findLimit(['dwelling', 'coverage a']);
+  const contents =
+    typeof parsed.contents_coverage === 'number'
+      ? parsed.contents_coverage
+      : findLimit(['contents', 'coverage c', 'personal property']);
+  const ale =
+    typeof parsed.ale_coverage === 'number'
+      ? parsed.ale_coverage
+      : findLimit(['ale', 'loss of use', 'coverage d', 'additional living']);
+
   return {
     success: true,
     confidence,
-    extraction_degraded: extractionDegraded,
+    extraction_degraded: extractionDegraded === true,
     policy_type: String(parsed.policy_type || 'Unknown'),
     carrier: String(parsed.carrier || ctx.insurer || ''),
-    policy_number: parsed.policy_number ?? null,
-    effective_date: parsed.effective_date ?? null,
-    expiration_date: parsed.expiration_date ?? null,
+    policy_number: parsed.policy_number != null ? String(parsed.policy_number) : null,
     settlement_type: ['RCV', 'ACV'].includes(parsed.settlement_type) ? parsed.settlement_type : 'RCV',
     deductible: typeof parsed.deductible === 'number' ? parsed.deductible : null,
-    dwelling_coverage: findLimit(['dwelling', 'coverage a']),
-    contents_coverage: findLimit(['contents', 'coverage c', 'personal property']),
-    ale_coverage: findLimit(['ale', 'loss of use', 'coverage d', 'additional living']),
+    dwelling_coverage: dwelling,
+    contents_coverage: contents,
+    ale_coverage: ale,
     coverages,
     endorsements: (parsed.endorsements || []).map((e) => ({
       name: String(e.name || ''),
@@ -419,17 +293,46 @@ function normalize(parsed, ctx, extractionDegraded) {
   };
 }
 
-function safeFallback(ctx, reason) {
-  console.error('[ai-policy-review] fallback:', reason);
+function bestEffortFromParsed(parsed, ctx, extractionDegraded, reason) {
+  const base = normalizeCanonical(
+    {
+      success: true,
+      confidence: 'low',
+      policy_type: parsed?.policy_type || 'Unknown',
+      carrier: parsed?.carrier || ctx.insurer,
+      policy_number: parsed?.policy_number ?? null,
+      settlement_type: parsed?.settlement_type || 'RCV',
+      deductible: parsed?.deductible ?? null,
+      dwelling_coverage: parsed?.dwelling_coverage ?? null,
+      contents_coverage: parsed?.contents_coverage ?? null,
+      ale_coverage: parsed?.ale_coverage ?? null,
+      coverages: parsed?.coverages || [],
+      endorsements: parsed?.endorsements || [],
+      exclusions: parsed?.exclusions || [],
+      coverage_gaps: parsed?.coverage_gaps || [],
+      recommended_actions: parsed?.recommended_actions || [
+        'Re-upload a complete policy PDF including the declarations page.'
+      ],
+      summary_for_user:
+        parsed?.summary_for_user ||
+        `Policy analysis was partial (${reason}). Re-upload your full policy PDF for a complete review.`
+    },
+    ctx,
+    true
+  );
+  base.extraction_degraded = true;
+  base.confidence = 'low';
+  return base;
+}
+
+function emptyShellResponse(ctx, reason) {
   return {
-    success: true,
+    success: false,
     confidence: 'low',
     extraction_degraded: true,
     policy_type: 'Unknown',
     carrier: ctx.insurer || '',
     policy_number: null,
-    effective_date: null,
-    expiration_date: null,
     settlement_type: 'RCV',
     deductible: null,
     dwelling_coverage: null,
@@ -441,88 +344,140 @@ function safeFallback(ctx, reason) {
     coverage_gaps: [],
     gaps_found: 0,
     recommended_actions: [
-      'Re-upload your complete policy PDF including the declarations page.',
-      'Use a text-based PDF or a clear scan if possible.'
+      'Upload your complete policy PDF (declarations and endorsements).',
+      'Or paste key policy sections into the text area.'
     ],
-    summary_for_user:
-      'Policy analysis could not be completed from the document provided. Please re-upload your full policy PDF and try again.'
+    summary_for_user: reason
   };
 }
 
-async function tryAnalyze(mode, extracted, ctx, retry) {
-  const { text, degraded, pdfDataUrl } = extracted;
-  const raw =
-    mode === 'pdf'
-      ? await analyzeWithPdf(pdfDataUrl, ctx, retry)
-      : await analyzeWithText(text, ctx, degraded, retry);
-  const parsed = parseJsonFromLlm(raw);
-  if (!validateParsed(parsed)) return null;
-  if (!parsedHasSubstance(parsed)) return { partial: true, parsed };
-  return { partial: false, parsed };
+function isEmptyShell(out) {
+  return (
+    !out.coverages?.length &&
+    !out.endorsements?.length &&
+    out.deductible == null &&
+    out.dwelling_coverage == null &&
+    out.contents_coverage == null
+  );
 }
 
-async function runAnalysis(extracted, ctx) {
-  const { pdfDataUrl, degraded, text } = extracted;
-  let bestPartial = null;
+async function analyzePolicy(openai, { policyText, usePdfDirect, pdfDataUrl, ctx, extractionDegraded, retry }) {
+  const userContent = buildUserPrompt(policyText, ctx, { retry, degraded: extractionDegraded });
 
-  // Scanned / custom-font PDFs (e.g. Goodson) — pdf-parse yields garbage; read the file directly first.
-  const modes =
-    pdfDataUrl && (degraded || !textHasPolicySignals(text)) ? ['pdf', 'text'] : ['text', 'pdf'];
+  if (usePdfDirect && pdfDataUrl) {
+    return runOpenAI(SYSTEM_PROMPT, userContent, {
+      model: 'gpt-4o',
+      temperature: 0.2,
+      max_tokens: MAX_TOKENS,
+      response_format: { type: 'json_object' },
+      pdfFileDataUrl: pdfDataUrl
+    });
+  }
 
-  for (const mode of modes) {
-    if (mode === 'pdf' && !pdfDataUrl) continue;
-    for (const retry of [false, true]) {
-      try {
-        const attempt = await tryAnalyze(mode, extracted, ctx, retry);
-        if (attempt && !attempt.partial) {
-          console.log('[ai-policy-review] analysis mode:', mode, retry ? '(retry)' : '');
-          return normalize(attempt.parsed, ctx, mode !== 'pdf' && degraded);
-        }
-        if (attempt?.partial) bestPartial = attempt;
-      } catch (e) {
-        console.warn(`[ai-policy-review] ${mode} analyze failed:`, e.message);
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4o',
+    response_format: { type: 'json_object' },
+    temperature: 0.2,
+    max_tokens: MAX_TOKENS,
+    messages: [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: userContent }
+    ]
+  });
+
+  return completion.choices?.[0]?.message?.content || '';
+}
+
+async function runPolicyAnalysis(openai, extraction, ctx) {
+  const { policyText, extractionDegraded, usePdfDirect, pdfDataUrl } = extraction;
+  let lastParsed = null;
+
+  for (const retry of [false, true]) {
+    try {
+      const raw = await analyzePolicy(openai, {
+        policyText,
+        usePdfDirect,
+        pdfDataUrl,
+        ctx,
+        extractionDegraded,
+        retry
+      });
+      const parsed = parseJsonFromLlm(raw);
+      lastParsed = parsed;
+      if (validateCanonical(parsed) && hasSubstance(parsed)) {
+        console.log('[ai-policy-review] OK', retry ? '(retry)' : '', usePdfDirect ? 'pdf-file' : 'text');
+        const out = normalizeCanonical(parsed, ctx, usePdfDirect ? false : extractionDegraded);
+        return { result: out, lastParsed: parsed };
       }
+    } catch (e) {
+      console.warn('[ai-policy-review] analyze attempt failed:', e.message);
     }
   }
 
-  if (bestPartial?.parsed) {
-    console.warn('[ai-policy-review] using best-effort partial analysis');
-    return normalize(bestPartial.parsed, ctx, true);
+  if (lastParsed && validateCanonical(lastParsed)) {
+    return { result: bestEffortFromParsed(lastParsed, ctx, extractionDegraded, 'incomplete model output'), lastParsed };
   }
 
-  return safeFallback(ctx, 'invalid or empty analysis after text and pdf attempts');
+  return { result: null, lastParsed };
 }
-
-// ─── Handler ───────────────────────────────────────────────────────────────
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: cors, body: '' };
+    return { statusCode: 200, headers: corsHeaders(), body: '' };
   }
+
   if (event.httpMethod !== 'POST') {
-    return jsonResponse(405, { error: 'Method not allowed' });
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify({ success: false, error: 'Method not allowed' })
+    };
   }
 
   let body;
   try {
     body = JSON.parse(event.body || '{}');
   } catch {
-    return jsonResponse(400, { error: 'Invalid JSON body' });
-  }
-
-  const supabase = getSupabase();
-  await verifyAccess(event, supabase);
-
-  const hasFile = !!(body.storage_path || body.file_base64);
-  const hasText = (body.policy_text || '').trim().length >= MIN_TEXT;
-  if (!hasFile && !hasText) {
-    return jsonResponse(400, {
-      error: 'Upload a policy PDF, provide file_base64, or paste policy text.',
-      code: 'NO_CONTENT'
-    });
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify({
+        success: false,
+        error: 'Invalid JSON body',
+        confidence: 'low',
+        extraction_degraded: true
+      })
+    };
   }
 
   const ctx = claimContext(body);
+  const supabase = getSupabaseAdmin();
+
+  const hasFile = !!(body.file_base64 || body.storage_path);
+  const hasText = (body.policy_text || '').trim().length >= MIN_POLICY_TEXT;
+
+  if (!hasFile && !hasText) {
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify(
+        emptyShellResponse(
+          ctx,
+          'Upload a policy PDF, provide file_base64, or paste at least 50 characters of policy text.'
+        )
+      )
+    };
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify(
+        emptyShellResponse(ctx, 'Policy analysis is temporarily unavailable (API not configured).')
+      )
+    };
+  }
 
   try {
     console.log('[ai-policy-review] input:', {
@@ -531,16 +486,37 @@ exports.handler = async (event) => {
       policy_text_chars: (body.policy_text || '').length
     });
 
-    const extracted = await resolvePolicyText(supabase, body, ctx);
-    if (extracted.pdfDataUrl) {
-      console.log('[ai-policy-review] PDF available for direct read');
-    } else if (extracted.degraded) {
-      console.warn('[ai-policy-review] no PDF bytes — text-only path');
+    const file = await loadFileFromBody(supabase, body);
+    const extraction = await resolveExtraction(file, body.policy_text);
+
+    if (!file && !extraction.policyText) {
+      return {
+        statusCode: 200,
+        headers: corsHeaders(),
+        body: JSON.stringify(emptyShellResponse(ctx, 'No policy content could be loaded.'))
+      };
     }
 
-    const result = await runAnalysis(extracted, ctx);
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const { result: analyzed, lastParsed } = await runPolicyAnalysis(openai, extraction, ctx);
+    let result = analyzed;
 
-    if (body.claim_id) {
+    if (!result || isEmptyShell(result)) {
+      result = bestEffortFromParsed(
+        lastParsed || {},
+        ctx,
+        true,
+        'analysis could not produce complete coverage data'
+      );
+      if (isEmptyShell(result)) {
+        result = emptyShellResponse(
+          ctx,
+          'Policy analysis could not be completed from the document provided. Please re-upload your full policy PDF and try again.'
+        );
+      }
+    }
+
+    if (body.claim_id && supabase) {
       try {
         await supabase.from('claim_outputs').insert({
           claim_id: body.claim_id,
@@ -553,15 +529,20 @@ exports.handler = async (event) => {
       }
     }
 
-    return jsonResponse(200, result);
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify(result)
+    };
   } catch (err) {
-    console.error('[ai-policy-review]', err);
-    if (err.message === 'OPENAI_API_KEY not configured') {
-      return jsonResponse(500, { error: err.message });
-    }
-    if (err.message?.includes('too large')) {
-      return jsonResponse(400, { error: err.message });
-    }
-    return jsonResponse(200, safeFallback(ctx, err.message));
+    console.error('[ai-policy-review] error:', err);
+    const msg = err.message?.includes('too large')
+      ? err.message
+      : 'Policy analysis failed. Please try again with a smaller PDF or paste key sections.';
+    return {
+      statusCode: 200,
+      headers: corsHeaders(),
+      body: JSON.stringify(emptyShellResponse(ctx, msg))
+    };
   }
 };
