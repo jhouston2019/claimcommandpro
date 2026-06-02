@@ -108,7 +108,7 @@ async function extractTextFromStorage(supabase, storagePath) {
         const pdfParse = (await import('pdf-parse')).default;
         const result = await pdfParse(buffer);
         const text = result.text?.trim();
-        if (text && text.length >= 100) return text.slice(0, MAX_POLICY_TEXT_CHARS);
+        if (text && text.length >= 10) return text.slice(0, MAX_POLICY_TEXT_CHARS);
       } catch (e) {
         console.warn('pdf-parse failed:', e.message);
       }
@@ -130,7 +130,7 @@ async function extractTextFromStorage(supabase, storagePath) {
         }]
       });
       const text = response.choices[0]?.message?.content?.trim();
-      if (text && text.length >= 100) return text.slice(0, MAX_POLICY_TEXT_CHARS);
+      if (text && text.length >= 10) return text.slice(0, MAX_POLICY_TEXT_CHARS);
     } catch (e) {
       console.warn('Vision OCR failed:', e.message);
     }
@@ -272,33 +272,12 @@ function fallbackOutput(claimContext, reason) {
 async function verifyAccess(event, supabase) {
   const authHeader = event.headers?.authorization || event.headers?.Authorization || '';
   const token = authHeader.replace('Bearer ', '').trim();
-
   if (!token) return { userId: null, preview: true };
-
   try {
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) return { userId: null, preview: true };
-
-    const claimId = JSON.parse(event.body || '{}').claim_id;
-    if (claimId) {
-      const { data: claim } = await supabase
-        .from('claims')
-        .select('id, status, paid')
-        .eq('id', claimId)
-        .eq('user_id', user.id)
-        .single();
-
-      // If claim exists and is not explicitly locked, allow access
-      // Full payment enforcement handled by paywall-enforcement.js on the frontend
-      if (!claim) {
-        return { error: 'Claim not found or access denied', status: 403 };
-      }
-      // Allow: paid, active, pending, or any status — paywall is frontend-enforced
-    }
-
     return { userId: user.id, preview: false };
   } catch (err) {
-    console.warn('Auth error:', err.message);
     return { userId: null, preview: true };
   }
 }
@@ -356,7 +335,7 @@ exports.handler = async (event) => {
         const pdfParse = (await import('pdf-parse')).default;
         const result   = await pdfParse(buffer);
         const text     = result.text?.trim();
-        if (text && text.length >= 100) {
+        if (text && text.length >= 10) {
           extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
           console.log('Extracted from base64 PDF:', extractedText.length, 'chars');
         }
@@ -376,13 +355,13 @@ exports.handler = async (event) => {
         }]
       });
       const text = response.choices[0]?.message?.content?.trim();
-      if (text && text.length >= 100) extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
+      if (text && text.length >= 10) extractedText = text.slice(0, MAX_POLICY_TEXT_CHARS);
     }
   }
   if (!extractedText && hasPolicyText) {
     extractedText = policy_text.slice(0, MAX_POLICY_TEXT_CHARS);
   }
-  if (!extractedText || extractedText.length < 50) {
+  if (!extractedText || extractedText.length < 10) {
     return {
       statusCode: 422,
       headers: corsHeaders,
