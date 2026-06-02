@@ -719,7 +719,40 @@ function claimDataForLocalStorage(){
   if (copy.policy?.fileBase64) {
     copy.policy = { ...copy.policy, fileBase64: undefined, fileMimeType: undefined };
   }
+  if (copy.policy?.openaiFileId) {
+    copy.policy = { ...copy.policy, openaiFileId: undefined };
+  }
   return copy;
+}
+
+/** Upload PDF once to OpenAI Files (+ optional Supabase). Analyze sends only openai_file_id. */
+async function stagePolicyPdfFile(file) {
+  const zone = document.getElementById('policy-upload-zone');
+  if (zone) {
+    setUploadZoneStatus(zone, '<div style="padding:16px;text-align:center;color:var(--slate)">⏳ Preparing policy for AI (upload once)...</div>');
+  }
+  const declarationsOnly = document.getElementById('policy-declarations-only')?.checked !== false;
+  const b64 = await readFileAsBase64(file);
+  const stage = await callNetlify('policy-file-stage', {
+    file_base64: b64,
+    file_mime_type: file.type || 'application/pdf',
+    declarations_only: declarationsOnly,
+    claim_id: window.CCC_CLAIM_ID || undefined
+  });
+  if (!stage?.success || !stage.openai_file_id) {
+    throw new Error(stage?.error || 'Could not prepare policy file for analysis');
+  }
+  claimData.policy.openaiFileId = stage.openai_file_id;
+  claimData.policy.fileBase64 = undefined;
+  claimData.policy.fileMimeType = file.type || 'application/pdf';
+  claimData.policy.fileName = file.name;
+  claimData.policy.declarationsOnly = stage.declarations_only;
+  if (stage.storage_path) {
+    const doc = claimData.documents.find(d => d.type === 'policy');
+    if (doc) doc.path = stage.storage_path;
+  }
+  console.log('Policy staged for analyze:', stage.openai_file_id, 'bytes:', stage.bytes_staged);
+  return stage;
 }
 
 function readFileAsBase64(file){
@@ -786,20 +819,38 @@ async function attachClaimFileLocally(file, docType, uploadZone){
   if (docType === 'policy') {
     claimData.policy.uploaded = true;
     claimData.policy.fileName = file.name;
-    try {
-      const b64 = await readFileAsBase64(file);
-      claimData.policy.fileBase64 = b64;
-      claimData.policy.fileMimeType = file.type || 'application/pdf';
-      persistPolicyFileToSession(file, b64, claimData.policy.fileMimeType);
-      console.log('Policy file ready for analyze (base64 bytes):', b64.length);
-    } catch (e) {
-      console.warn('Could not read policy file as base64:', e);
+    claimData.policy.openaiFileId = undefined;
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if (isPdf) {
+      try {
+        const stage = await stagePolicyPdfFile(file);
+        if (uploadZone) {
+          setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' ready<br><small style="color:var(--slate)">' + (stage.declarations_only ? 'Declarations & coverage pages' : 'Full PDF') + ' · staged for AI</small></div>');
+        }
+      } catch (e) {
+        console.warn('Policy stage failed, using base64 fallback:', e);
+        const b64 = await readFileAsBase64(file);
+        claimData.policy.fileBase64 = b64;
+        claimData.policy.fileMimeType = file.type || 'application/pdf';
+        persistPolicyFileToSession(file, b64, claimData.policy.fileMimeType);
+        if (uploadZone) {
+          setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' attached<br><small style="color:var(--slate)">Ready to analyze</small></div>');
+        }
+      }
+    } else {
+      try {
+        const b64 = await readFileAsBase64(file);
+        claimData.policy.fileBase64 = b64;
+        claimData.policy.fileMimeType = file.type || 'application/pdf';
+      } catch (err) {
+        console.warn('Could not read policy file as base64:', err);
+      }
     }
   }
   logActivity('📎', file.name + ' attached (' + docType + ')');
   saveState();
   if (docType === 'policy') policyUnlockAnalyzeBtn();
-  if (uploadZone) {
+  if (uploadZone && !(docType === 'policy' && claimData.policy?.openaiFileId)) {
     setUploadZoneStatus(uploadZone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + file.name + ' attached<br><small style="color:var(--slate)">Ready to analyze</small></div>');
   }
 }
@@ -1441,16 +1492,18 @@ async function uploadClaimFile(file, docType) {
     if (docType === 'policy') {
       claimData.policy.uploaded = true;
       claimData.policy.fileName = file.name;
-      try {
-        const b64 = await readFileAsBase64(file);
-        claimData.policy.fileBase64 = b64;
-        claimData.policy.fileMimeType = file.type || 'application/pdf';
-        persistPolicyFileToSession(file, b64, claimData.policy.fileMimeType);
-        console.log('Policy file ready for analyze (base64 bytes):', b64.length);
-      } catch (e) {
-        console.warn('Could not read policy file as base64 after storage upload:', e);
-        claimData.policy.fileBase64 = undefined;
-        claimData.policy.fileMimeType = file.type || 'application/pdf';
+      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      if (isPdf) {
+        try {
+          const stage = await stagePolicyPdfFile(file);
+          setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} ready<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${stage.declarations_only ? 'Declarations staged' : 'Full PDF staged'}</small></div>`);
+        } catch (e) {
+          console.warn('Policy stage after storage failed:', e);
+          const b64 = await readFileAsBase64(file);
+          claimData.policy.fileBase64 = b64;
+          claimData.policy.fileMimeType = file.type || 'application/pdf';
+          setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · policy</small></div>`);
+        }
       }
     }
     if (docType === 'policy') policyUnlockAnalyzeBtn();
@@ -1458,7 +1511,9 @@ async function uploadClaimFile(file, docType) {
     logActivity('📎', file.name + ' uploaded (' + docType + ')');
     saveState();
 
-    setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`);
+    if (docType !== 'policy' || !claimData.policy?.openaiFileId) {
+      setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`);
+    }
 
   } catch(err) {
     console.error('File upload failed:', err);
@@ -1622,6 +1677,11 @@ function renderP02S0(){
         <input type="file" id="fi-policy-upload" style="display:none" accept=".pdf,.jpg,.jpeg,.png"
           onchange="handleFileInput(event,'policy')">
       </div>
+      <label style="display:flex;align-items:flex-start;gap:8px;margin-top:12px;font-size:13px;color:var(--gray-600);cursor:pointer">
+        <input type="checkbox" id="policy-declarations-only" checked style="margin-top:3px"
+          onchange="claimData.policy.openaiFileId=undefined;claimData.policy.fileBase64=undefined">
+        <span><strong>Declarations &amp; coverage pages only</strong> (recommended) — uses the first ~400KB of your PDF where limits and deductibles usually appear. Uncheck to stage the full file (slower).</span>
+      </label>
       <div>
         <div class="paste-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=(this.nextElementSibling.classList.contains('open')?'▴ Hide':'▾ Or paste a specific policy clause or exclusion text')">▾ Or paste a specific policy clause or exclusion text</div>
         <div class="paste-content">
@@ -1645,7 +1705,7 @@ function renderP02S0(){
     if (!claimData.policy?.fileBase64?.length) restorePolicyFileFromSession();
     const policyDoc = claimData.documents.find(d => d.type === 'policy');
     const zone = document.getElementById('policy-upload-zone');
-    const hasBytes = !!(claimData.policy?.fileBase64?.length) || !!(policyDoc?.path?.length);
+    const hasBytes = !!(claimData.policy?.openaiFileId) || !!(claimData.policy?.fileBase64?.length) || !!(policyDoc?.path?.length);
     if (policyDoc && zone && hasBytes) {
       const label = policyDoc.stored === 'local' ? 'attached' : 'ready';
       setUploadZoneStatus(zone, '<div style="padding:16px;color:#059669;text-align:center">✅ ' + policyDoc.name + ' ' + label + '</div>');
@@ -1661,6 +1721,8 @@ function renderP02S0(){
 function loadSamplePolicy(){
   const zone = document.getElementById('policy-upload-zone');
   setUploadZoneStatus(zone, '<div style="padding:16px;color:#059669;text-align:center">✅ Sample policy loaded: HO3_StateFarm_Sample.pdf<br><small style="color:var(--gray-400)">847 KB · Ready to analyze</small></div>');
+  claimData.policy.openaiFileId = undefined;
+  claimData.policy.fileBase64 = undefined;
   claimData.policy.rawText = 'HO-3 Standard Homeowners Policy. Insurer: State Farm. Named Insured: Policyholder. Dwelling Coverage A: $350,000. Personal Property Coverage C: $262,500. Loss of Use Coverage D: $70,000. Deductible: $2,500 per occurrence. Settlement type: Replacement Cost Value (RCV). Endorsements: Ordinance or Law $35,000, Water Backup and Sump Discharge $25,000, Equipment Breakdown $50,000. Exclusions: Flood, Earthquake, Intentional loss.';
   claimData.documents.push({ id: 'doc-sample-policy', name: 'HO3_StateFarm_Sample.pdf', type: 'policy', path: '', size: 867320, uploadedAt: new Date().toISOString(), stored: 'sample' });
   saveState();
@@ -1669,11 +1731,12 @@ function loadSamplePolicy(){
 
 function policyHasAnalyzableContent(){
   const policyDoc = claimData.documents.find(d => d.type === 'policy');
+  const hasStaged  = !!(claimData.policy?.openaiFileId?.length);
   const hasStorage = !!(policyDoc?.path?.length);
   const hasBase64  = !!(claimData.policy?.fileBase64?.length);
   const hasPaste   = (document.getElementById('policy-paste-text')?.value?.trim().length || 0) > 50;
   const hasRawText = (claimData.policy?.rawText?.length || 0) > 50;
-  return hasStorage || hasBase64 || hasPaste || hasRawText;
+  return hasStaged || hasStorage || hasBase64 || hasPaste || hasRawText;
 }
 
 function policyUnlockAnalyzeBtn(){
@@ -1699,7 +1762,7 @@ async function analyzePolicyDoc(){
 
   res.innerHTML = `<div style="padding:24px;text-align:center;color:var(--gray-500)">
     <div class="spinner" style="margin:0 auto 12px"></div>
-    Analyzing your policy with AI — this takes 15–30 seconds...
+    Analyzing your policy with AI — large policies may take up to 60 seconds...
   </div>`;
 
   // Read paste text if provided
@@ -1712,29 +1775,48 @@ async function analyzePolicyDoc(){
   let storagePath = policyDoc?.path || '';
   const policyText  = claimData.policy.rawText || '';
 
+  let openaiFileId = claimData.policy?.openaiFileId || '';
   let fileBase64   = claimData.policy?.fileBase64 || '';
   let fileMimeType = claimData.policy?.fileMimeType || 'application/pdf';
 
   const fileInput = document.getElementById('fi-policy-upload');
   const pickedFile = fileInput?.files?.[0];
-  if (pickedFile) {
-    fileBase64 = await readFileAsBase64(pickedFile);
-    fileMimeType = pickedFile.type || 'application/pdf';
-    claimData.policy.fileBase64 = fileBase64;
-    claimData.policy.fileMimeType = fileMimeType;
-    persistPolicyFileToSession(pickedFile, fileBase64, fileMimeType);
-  } else if (!fileBase64) {
-    restorePolicyFileFromSession();
-    fileBase64 = claimData.policy?.fileBase64 || '';
-    fileMimeType = claimData.policy?.fileMimeType || fileMimeType;
+
+  if (!openaiFileId && (pickedFile || fileBase64) && policyText.length < 50) {
+    try {
+      if (pickedFile && (pickedFile.type === 'application/pdf' || /\.pdf$/i.test(pickedFile.name))) {
+        await stagePolicyPdfFile(pickedFile);
+      } else if (fileBase64) {
+        const declarationsOnly = document.getElementById('policy-declarations-only')?.checked !== false;
+        const stage = await callNetlify('policy-file-stage', {
+          file_base64: fileBase64,
+          file_mime_type: fileMimeType,
+          declarations_only: declarationsOnly,
+          claim_id: window.CCC_CLAIM_ID || undefined
+        });
+        if (stage?.success && stage.openai_file_id) {
+          claimData.policy.openaiFileId = stage.openai_file_id;
+          claimData.policy.fileBase64 = undefined;
+          openaiFileId = stage.openai_file_id;
+        }
+      }
+    } catch (e) {
+      console.warn('Policy stage before analyze failed:', e);
+      if (pickedFile && !fileBase64) {
+        fileBase64 = await readFileAsBase64(pickedFile);
+        claimData.policy.fileBase64 = fileBase64;
+      }
+    }
   }
 
-  // Without a user JWT, storage download on the server will fail — send PDF bytes only.
-  if (!(await window.CNAuth.getToken())) {
+  openaiFileId = claimData.policy?.openaiFileId || openaiFileId;
+  fileBase64 = claimData.policy?.fileBase64 || fileBase64;
+
+  if (!(await window.CNAuth.getToken()) && !openaiFileId) {
     storagePath = '';
   }
 
-  if (!storagePath && !fileBase64 && policyText.length < 50) {
+  if (!openaiFileId && !storagePath && !fileBase64 && policyText.length < 50) {
     res.innerHTML = `<div class="warn-amber"><strong>⚠️ Nothing to Analyze</strong>
       <div class="warn-amber-text">Upload your insurance policy PDF, paste a policy clause, 
       or click "Load Sample Policy" to test.</div></div>`;
@@ -1742,7 +1824,7 @@ async function analyzePolicyDoc(){
     return;
   }
 
-  if (!storagePath && !fileBase64 && policyDoc && policyText.length < 50) {
+  if (!openaiFileId && !storagePath && !fileBase64 && policyDoc && policyText.length < 50) {
     res.innerHTML = `<div class="warn-amber"><strong>⚠️ PDF not loaded</strong><div class="warn-amber-text">Choose your policy PDF again, then click Analyze My Policy.</div></div>`;
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Analyze My Policy →'; }
     return;
@@ -1755,16 +1837,18 @@ async function analyzePolicyDoc(){
   }
 
   console.log('analyzePolicyDoc payload:', {
+    openai_file_id: openaiFileId || null,
     storage_path: storagePath || null,
-    file_base64_chars: fileBase64 ? fileBase64.length : 0,
+    file_base64_chars: openaiFileId ? 0 : (fileBase64 ? fileBase64.length : 0),
     policy_text_chars: policyText.length
   });
 
   try {
     const result = await callNetlify('ai-policy-review', {
-      storage_path:  storagePath,
+      openai_file_id: openaiFileId || undefined,
+      storage_path:  openaiFileId ? '' : storagePath,
       policy_text:   policyText,
-      file_base64:   fileBase64,
+      file_base64:   openaiFileId ? '' : fileBase64,
       file_mime_type: fileMimeType,
       insurer:       claimData.initial.insurer,
       property_type: claimData.initial.propertyType,

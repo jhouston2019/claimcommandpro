@@ -7,6 +7,7 @@ const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
 const { runOpenAI } = require('./lib/ai-utils');
+const { deleteOpenAIFile, uploadPdfToOpenAI, decodeBase64Payload, preparePdfBuffer } = require('./lib/policy-pdf-utils');
 
 const MAX_TEXT = 48000;
 const MIN_POLICY_TEXT = 50;
@@ -401,42 +402,14 @@ async function analyzePolicy(openai, { policyText, usePdfDirect, pdfDataUrl, ctx
 }
 
 /**
- * Fast path: large file_base64 → upload PDF to OpenAI Files API → responses (no raw pdf-parse pass).
- * Returns { result, lastParsed } or null to fall through to standard pipeline.
+ * Analyze using a pre-staged OpenAI file_id (from policy-file-stage — no base64 on this request).
  */
-async function tryLargePdfFastPath(openai, body, ctx) {
-  const raw = body.file_base64;
-  if (!raw || String(raw).length <= LARGE_BASE64_CHARS) return null;
-
-  const clean = String(raw).replace(/^data:.+;base64,/, '');
-  let buffer;
-  try {
-    buffer = Buffer.from(clean, 'base64');
-  } catch (e) {
-    console.warn('[ai-policy-review] large path: invalid base64', e.message);
-    return null;
-  }
-
-  if (buffer.length === 0 || buffer.length > MAX_FILE_BYTES) return null;
-  if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
-
-  const truncatedBuffer = buffer.slice(0, 400000);
-  console.log('[ai-policy-review] truncated PDF to', truncatedBuffer.length, 'bytes for file API');
-
-  const { toFile } = require('openai');
+async function analyzeFromOpenAiFileId(openai, fileId, ctx, label) {
   let lastParsed = null;
 
   for (const retry of [false, true]) {
-    let uploadedId = null;
     try {
-      const uploaded = await openai.files.create({
-        file: await toFile(truncatedBuffer, 'policy.pdf', { type: 'application/pdf' }),
-        purpose: 'user_data'
-      });
-      uploadedId = uploaded.id;
-
       const userContent = retry ? LARGE_PDF_USER_PROMPT + RETRY_SUFFIX : LARGE_PDF_USER_PROMPT;
-
       const response = await openai.responses.create({
         model: 'gpt-4o-mini',
         input: [
@@ -445,7 +418,7 @@ async function tryLargePdfFastPath(openai, body, ctx) {
             role: 'user',
             content: [
               { type: 'input_text', text: userContent },
-              { type: 'input_file', file_id: uploaded.id }
+              { type: 'input_file', file_id: fileId }
             ]
           }
         ],
@@ -454,38 +427,75 @@ async function tryLargePdfFastPath(openai, body, ctx) {
       });
 
       const rawText = response.output_text;
-      if (!rawText) throw new Error('Empty response from large PDF analysis');
+      if (!rawText) throw new Error('Empty response from PDF file analysis');
 
       const parsed = parseJsonFromLlm(rawText);
       lastParsed = parsed;
       if (validateCanonical(parsed) && hasSubstance(parsed)) {
-        console.log('[ai-policy-review] large PDF fast path OK', retry ? '(retry)' : '');
+        console.log('[ai-policy-review]', label, 'OK', retry ? '(retry)' : '');
         return {
           result: normalizeCanonical(parsed, ctx, false),
           lastParsed: parsed
         };
       }
     } catch (e) {
-      console.warn('[ai-policy-review] large PDF fast path failed:', e.message, retry ? '(retry)' : '');
-    } finally {
-      if (uploadedId) {
-        try {
-          await openai.files.del(uploadedId);
-        } catch (e) {
-          console.warn('[ai-policy-review] large path file delete:', e.message);
-        }
-      }
+      console.warn('[ai-policy-review]', label, 'failed:', e.message, retry ? '(retry)' : '');
     }
   }
 
   if (lastParsed && validateCanonical(lastParsed)) {
     return {
-      result: bestEffortFromParsed(lastParsed, ctx, true, 'large PDF partial'),
+      result: bestEffortFromParsed(lastParsed, ctx, true, 'partial PDF analysis'),
       lastParsed
     };
   }
 
   return null;
+}
+
+async function tryStagedFileIdPath(openai, body, ctx) {
+  const fileId = body.openai_file_id;
+  if (!fileId || typeof fileId !== 'string') return null;
+
+  console.log('[ai-policy-review] staged file_id path:', fileId);
+  try {
+    const out = await analyzeFromOpenAiFileId(openai, fileId, ctx, 'staged file_id');
+    return out;
+  } finally {
+    await deleteOpenAIFile(openai, fileId);
+  }
+}
+
+/**
+ * Fallback: large file_base64 on analyze POST — upload + analyze (prefer policy-file-stage from client).
+ */
+async function tryLargePdfFastPath(openai, body, ctx) {
+  const raw = body.file_base64;
+  if (!raw || String(raw).length <= LARGE_BASE64_CHARS) return null;
+
+  let buffer;
+  try {
+    ({ buffer } = decodeBase64Payload(raw));
+  } catch (e) {
+    console.warn('[ai-policy-review] large path:', e.message);
+    return null;
+  }
+
+  if (resolveMime(buffer, body.file_mime_type || 'application/pdf') !== 'application/pdf') return null;
+
+  const { uploadBuffer } = preparePdfBuffer(buffer, true);
+  console.log('[ai-policy-review] truncated PDF to', uploadBuffer.length, 'bytes for file API');
+
+  let uploadedId = null;
+  try {
+    uploadedId = await uploadPdfToOpenAI(openai, uploadBuffer);
+    return await analyzeFromOpenAiFileId(openai, uploadedId, ctx, 'large base64');
+  } catch (e) {
+    console.warn('[ai-policy-review] large PDF fast path:', e.message);
+    return null;
+  } finally {
+    await deleteOpenAIFile(openai, uploadedId);
+  }
 }
 
 async function finalizePolicyResult(result, body, supabase, ctx, lastParsed) {
@@ -590,7 +600,7 @@ exports.handler = async (event) => {
   const ctx = claimContext(body);
   const supabase = getSupabaseAdmin();
 
-  const hasFile = !!(body.file_base64 || body.storage_path);
+  const hasFile = !!(body.openai_file_id || body.file_base64 || body.storage_path);
   const hasText = (body.policy_text || '').trim().length >= MIN_POLICY_TEXT;
 
   if (!hasFile && !hasText) {
@@ -618,21 +628,11 @@ exports.handler = async (event) => {
 
   try {
     console.log('[ai-policy-review] input:', {
+      openai_file_id: body.openai_file_id || null,
       storage_path: body.storage_path || null,
       file_base64_chars: body.file_base64 ? String(body.file_base64).length : 0,
       policy_text_chars: (body.policy_text || '').length
     });
-
-    const file = await loadFileFromBody(supabase, body);
-    const extraction = await resolveExtraction(file, body.policy_text);
-
-    if (!file && !extraction.policyText) {
-      return {
-        statusCode: 200,
-        headers: corsHeaders(),
-        body: JSON.stringify(emptyShellResponse(ctx, 'No policy content could be loaded.'))
-      };
-    }
 
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -640,7 +640,25 @@ exports.handler = async (event) => {
       maxRetries: 1
     });
 
-    // Large base64 (e.g. Goodson 60-page PDF): upload once, analyze via file_id — skip pdf-parse.
+    // ChatGPT-style path: file already on OpenAI — analyze with file_id only (small JSON body).
+    if (body.openai_file_id) {
+      const staged = await tryStagedFileIdPath(openai, body, ctx);
+      if (staged?.result) {
+        return finalizePolicyResult(staged.result, body, supabase, ctx, staged.lastParsed);
+      }
+    }
+
+    const file = await loadFileFromBody(supabase, body);
+    const extraction = await resolveExtraction(file, body.policy_text);
+
+    if (!file && !extraction.policyText && !body.openai_file_id) {
+      return {
+        statusCode: 200,
+        headers: corsHeaders(),
+        body: JSON.stringify(emptyShellResponse(ctx, 'No policy content could be loaded.'))
+      };
+    }
+
     const fastPath = await tryLargePdfFastPath(openai, body, ctx);
     if (fastPath?.result) {
       return finalizePolicyResult(fastPath.result, body, supabase, ctx, fastPath.lastParsed);

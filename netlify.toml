@@ -34,6 +34,9 @@ package = "@netlify/plugin-functions-install-core"
 [functions."ai-policy-review"]
   timeout = 120
 
+[functions."policy-file-stage"]
+  timeout = 90
+
 [[headers]]
   for = "/.netlify/functions/*"
   [headers.values]
