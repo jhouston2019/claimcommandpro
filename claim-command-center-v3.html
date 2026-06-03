@@ -567,7 +567,7 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
       </div>
     </div>
     <div class="drop-panel" id="dp-missing">
-      <div class="drop-inner">
+      <div class="drop-inner" id="dp-missing-list">
         <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">Carrier estimate not uploaded</span><button class="fix-btn" onclick="closeAllDrops();setPhase(5);showView('fullplan')">Fix →</button></div>
         <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">Contents inventory incomplete</span><button class="fix-btn" onclick="closeAllDrops();setPhase(6);showView('fullplan')">Fix →</button></div>
         <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">ALE daily log not started</span><button class="fix-btn" onclick="closeAllDrops();setPhase(6);setSubstep(1);showView('fullplan')">Fix →</button></div>
@@ -610,10 +610,10 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
       <div class="ob-title">Let's set up your claim</div>
       <div class="ob-sub">Enter your claim details to get started. You can update these anytime.</div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="ob-name" value="James Davidson"></div>
-        <div class="form-group"><label class="form-label">Insurance Company</label><input class="form-input" id="ob-insurer" value="State Farm"></div>
-        <div class="form-group"><label class="form-label">Claim Number</label><input class="form-input" id="ob-claim-num" value="CLM-2024-089456"></div>
-        <div class="form-group"><label class="form-label">Date of Loss</label><input class="form-input" id="ob-dol" type="date" value="2024-11-15"></div>
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="ob-name" placeholder="Your full name"></div>
+        <div class="form-group"><label class="form-label">Insurance Company</label><input class="form-input" id="ob-insurer" placeholder="e.g. State Farm, Allstate"></div>
+        <div class="form-group"><label class="form-label">Claim Number</label><input class="form-input" id="ob-claim-num" placeholder="Your claim number"></div>
+        <div class="form-group"><label class="form-label">Date of Loss</label><input class="form-input" id="ob-dol" type="date"></div>
         <div class="form-group"><label class="form-label">Property Type</label>
           <select class="form-select" id="ob-prop-type">
             <option value="Single Family Home" selected>Single Family Home</option>
@@ -632,7 +632,7 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
           </select>
         </div>
         <div class="form-group full"><label class="form-label">Brief Description</label>
-          <textarea class="form-textarea" id="ob-desc" placeholder="Describe what happened...">Burst pipe in second floor bathroom caused significant water damage to floors, walls, and ceiling below. Damage extends to living room and kitchen area.</textarea>
+          <textarea class="form-textarea" id="ob-desc" placeholder="Describe what happened..." placeholder="Describe what happened — cause, affected areas, extent of damage..."></textarea>
         </div>
         <div class="form-group"><label class="form-label">Have you received a carrier estimate?</label>
           <select class="form-select" id="ob-has-estimate" onchange="document.getElementById('ob-est-row').style.display=this.value==='yes'?'block':'none'">
@@ -660,17 +660,14 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
 // STATE
 // ============================
 let claimData = {
-  initial:{insuredName:'James Davidson',claimNumber:'CLM-2024-089456',insurer:'State Farm',adjusterName:'Mike Johnson',dateOfLoss:'November 15, 2024',propertyType:'Single Family Home',claimType:'property-claim',description:'Burst pipe caused water damage.',daysSinceLoss:85},
-  policy:{uploaded:false,dwellingCoverage:350000,deductible:2500,settlementType:'RCV',contentsCoverage:262500,aleCoverage:70000,endorsements:['Ordinance & Law','Water Backup','Equipment Breakdown']},
+  initial:{insuredName:'',claimNumber:'',insurer:'',adjusterName:'',dateOfLoss:'',propertyType:'Single Family Home',claimType:'property-claim',description:'',daysSinceLoss:0,claimStatus:'Active — Under Review'},
+  policy:{uploaded:false,dwellingCoverage:0,deductible:0,settlementType:'RCV',contentsCoverage:0,aleCoverage:0,endorsements:[]},
   structure:{insurerEstimate:0,userEstimate:0,gap:0},
   contents:{items:[],totalValue:0,recovered:0},
-  ALE:{entries:[],total:0,dailyRate:132,baseline:75},
-  documents:[],messages:[
-    {id:'m1',from:'Mike Johnson — State Farm',subject:'Acknowledgment of Claim CLM-2024-089456',preview:'We have received your claim and assigned adjuster Mike Johnson. An inspection is scheduled...',date:'Dec 2, 2024',read:true},
-    {id:'m2',from:'State Farm Claims Department',subject:'Inspection Scheduled — November 28, 2024',preview:'Your inspection has been scheduled for November 28, 2024 between 10am–12pm. Please ensure all areas...',date:'Nov 22, 2024',read:true},
-  ],
+  ALE:{entries:[],total:0,dailyRate:0,baseline:0},
+  documents:[],messages:[],
   deadlines:[],
-  meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null}
+  meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null,carrierPayments:0,aleReceived:0,contentsReceived:0,offerLog:[],inspectionLog:null}
 };
 let activePhase = 0;
 let activeSubstep = 0;
@@ -878,6 +875,8 @@ async function saveState(){
     localStorage.setItem('ccc_activity_log',JSON.stringify(activityLog));
     localStorage.setItem('ccc_onboarded','true');
   }catch(e){}
+  updateDocumentsPanel();
+  updateMissingPanel();
 
   // Write to Supabase if claim_id is available
   if (!window.CCC_CLAIM_ID) return;
@@ -1016,14 +1015,13 @@ async function loadState(){
         .order('created_at', { ascending: false });
 
       if (letters && letters.length > 0) {
-        correspondenceJournal = letters.map(l => ({
-          id: l.id,
-          type: l.letter_type,
-          phase: l.phase_number,
-          date: l.created_at,
-          content: l.content,
-          status: 'sent'
+        const supabaseEntries = letters.map(l => ({
+          id: l.id, type: l.letter_type, phase: l.phase_number,
+          date: l.created_at, content: l.content, status: 'sent'
         }));
+        const supabaseIds = new Set(supabaseEntries.map(e => e.id));
+        const localOnlyEntries = correspondenceJournal.filter(e => !supabaseIds.has(e.id));
+        correspondenceJournal = [...supabaseEntries, ...localOnlyEntries];
       }
 
       // Load financial summary
@@ -1074,13 +1072,27 @@ function logCorrespondence(type, content){
 }
 
 function renderJournalTab(){
-  const el = document.getElementById('correspondence-journal-list');
+  const el = document.getElementById('journal-list');
   if (!el) return;
   if (!correspondenceJournal || correspondenceJournal.length === 0) {
-    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--slate)">No letters generated yet. Complete a correspondence substep (✉) to generate your first letter.</div>';
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--gray-500)">No letters generated yet.</div>';
     return;
   }
-  el.innerHTML = correspondenceJournal.map(entry => `
+  const dirFilter  = (document.getElementById('journal-direction-filter')||{}).value||'all';
+  const phaseFilter= (document.getElementById('journal-phase-filter')||{}).value||'';
+  let filtered = correspondenceJournal.filter(entry => {
+    if(dirFilter==='sent'     && entry.status==='received') return false;
+    if(dirFilter==='received' && entry.status!=='received') return false;
+    if(phaseFilter){
+      const ep=String(entry.phaseNum||(entry.phase!=null?entry.phase+1:'')).padStart(2,'0');
+      if(ep!==phaseFilter)return false;
+    }
+    return true;
+  });
+  const countEl=document.getElementById('journal-count');
+  if(countEl) countEl.textContent=filtered.length+' of '+correspondenceJournal.length+' letters';
+  if(filtered.length===0){el.innerHTML='<div style="padding:24px;text-align:center;color:var(--gray-500)">No letters match filter.</div>';return;}
+  el.innerHTML = filtered.map(entry => `
     <div class="journal-entry" style="background:white;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
         <div>
@@ -1116,6 +1128,24 @@ function copyLetterToClipboard(entryId) {
   });
 }
 
+function copyToClipboard(encodedText) {
+  try {
+    const text = decodeURIComponent(encodedText);
+    navigator.clipboard.writeText(text).then(() => {
+      if (window.CNToast) window.CNToast.success('Letter copied to clipboard');
+      else alert('Letter copied to clipboard');
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('Letter copied to clipboard');
+    });
+  } catch(e) { alert('Could not copy: ' + e.message); }
+}
+
 function downloadLetterPDF(entryId) {
   const entry = correspondenceJournal.find(e => e.id === entryId);
   if (!entry || !entry.content) return;
@@ -1144,9 +1174,15 @@ function updateNavMetrics(){
   document.getElementById('metricGap').textContent=fmt(Math.max(0,gap));
   document.getElementById('sv-recovery').textContent='Collected: '+fmt(claimData.structure.insurerEstimate);
   document.getElementById('sv-findings').textContent='Gaps: '+fmt(Math.max(0,gap));
-  document.getElementById('dp-carrier-pay').textContent=fmt(claimData.structure.insurerEstimate);
-  document.getElementById('dp-ale-recv').textContent=fmt(claimData.ALE.total);
-  document.getElementById('dp-total-collected').textContent=fmt(claimData.structure.insurerEstimate+claimData.ALE.total);
+  const cpay=claimData.meta.carrierPayments||0;
+  const arecv=claimData.meta.aleReceived||0;
+  const crecv=claimData.meta.contentsReceived||0;
+  const tcoll=cpay+arecv+crecv;
+  document.getElementById('dp-carrier-pay').textContent=fmt(cpay);
+  document.getElementById('dp-ale-recv').textContent=fmt(arecv);
+  const dce=document.getElementById('dp-cont-recv');if(dce)dce.textContent=fmt(crecv);
+  document.getElementById('dp-total-collected').textContent=fmt(tcoll);
+  document.getElementById('sv-recovery').textContent='Collected: '+fmt(tcoll);
   document.getElementById('dp-est-def').textContent=fmt(Math.max(0,gap));
 }
 
@@ -1170,15 +1206,36 @@ function renderActivityStrip(){
     </div>`).join('');
 }
 
+// Map each milestone label to the completedSubsteps key that signals it's done
+const MILESTONE_KEYS = [
+  '0-1',  // Claim reported to insurer          → Phase 01 substep 1 (Report the Loss)
+  '1-0',  // Policy uploaded and analyzed        → Phase 02 substep 0 (Upload Policy)
+  '1-1',  // Coverage gaps identified             → Phase 02 substep 1 (Coverage Analysis)
+  '2-0',  // Damage fully documented             → Phase 03 substep 0 (Photo Documentation)
+  '3-1',  // Adjuster inspection completed       → Phase 04 substep 1 (Inspection Log)
+  '4-0',  // Independent contractor estimate     → Phase 05 substep 0 (Upload Estimate)
+  '5-0',  // Carrier estimate received           → Phase 06 substep 0 (Upload Carrier Estimate)
+  '5-1',  // Line-item comparison completed      → Phase 06 substep 1 (Line-Item Comparison)
+  '5-2',  // Gap analysis completed              → Phase 06 substep 2 (Gap Analysis)
+  '2-3',  // Proof of Loss filed                 → Phase 03 substep 3 (Proof of Loss Letter ✉)
+  '7-2',  // Demand letter sent                  → Phase 08 substep 2 (Formal Demand Letter ✉)
+  '6-0',  // Contents inventory completed        → Phase 07 substep 0 (Contents Inventory)
+  '6-1',  // ALE expenses documented             → Phase 07 substep 1 (ALE Daily Log)
+  '8-0',  // Settlement negotiated               → Phase 09 substep 0 (Negotiation Strategy)
+];
+
 function renderProgressMilestones(){
   const done=Object.keys(completedSubsteps).length;
   const total=phases.reduce((s,p)=>s+p.substeps.length,0);
   document.getElementById('sv-progress').textContent=`${done} of ${total} complete`;
   const el=document.getElementById('progress-milestones');
   if(!el)return;
+  // Find the first incomplete milestone to mark as active
+  let firstIncomplete=-1;
   el.innerHTML=milestones.map((m,i)=>{
-    const isDone=i<done*2;
-    const isActive=i===done*2;
+    const isDone=!!completedSubsteps[MILESTONE_KEYS[i]];
+    if(!isDone&&firstIncomplete===-1)firstIncomplete=i;
+    const isActive=(!isDone&&firstIncomplete===i);
     return `<div class="milestone">
       <div class="milestone-dot ${isDone?'ms-done':isActive?'ms-active':'ms-pending'}">${isDone?'✓':''}</div>
       <span class="milestone-text ${isDone?'done':isActive?'active':''}">${m}</span>
@@ -1333,7 +1390,36 @@ function thinRow(label,chips){
   return `<div class="thin-row"><span class="thin-row-label">${label}</span>${chips}</div>`;
 }
 function taskChip(text,id){return `<div class="task-chip" id="tc-${id}" onclick="toggleTaskChip(this)"><div class="task-chip-cb"></div>${text}</div>`;}
-function toolChip(name,cls){const b=cls==='required'?'badge-req':cls==='recommended'?'badge-rec':'badge-sit';const bt=cls.toUpperCase();return `<div class="tool-chip"><span class="font-bold">${name}</span><span class="${b}">${bt}</span><span>›</span></div>`;}
+function toolChip(name,cls){
+  const b=cls==='required'?'badge-req':cls==='recommended'?'badge-rec':'badge-sit';
+  const bt=cls.toUpperCase();
+  return `<div class="tool-chip" onclick="toolChipAction('${name.replace(/'/g,"\\'")}')"><span class="font-bold">${name}</span><span class="${b}">${bt}</span><span>›</span></div>`;
+}
+const TOOL_ROUTES={
+  'AI Policy Analyzer':{phase:1,sub:0},'Coverage Matcher':{phase:1,sub:0},'Coverage Gap Analyzer':{phase:1,sub:1},
+  'Endorsement Checker':{phase:1,sub:1},'Coverage Map Visualizer':{phase:1,sub:2},'Endorsement Applicability Guide':{phase:1,sub:2},
+  'State Rights & Deadlines':{view:'deadlines'},'Deadline Calculator':{view:'deadlines'},'Claim Process Guide':{phase:0,sub:0},
+  'AI Notice Generator':{phase:0,sub:1},'Claim Diary':{view:'activity'},'AI Damage Documentation System':{phase:2,sub:0},
+  'Photo Guide':{phase:2,sub:0},'Damage Inventory Builder':{phase:2,sub:1},'Contents Inventory':{phase:6,sub:0},
+  'Evidence Organizer':{phase:2,sub:2},'Document Tagger':{phase:2,sub:2},'Adjuster Meeting Prep':{phase:3,sub:0},
+  'What to Say Guide':{phase:3,sub:0},'Tactic Counter Guide':{phase:3,sub:0},'Inspection Log':{phase:3,sub:1},
+  'Communication Logger':{view:'activity'},'Contractor Estimate Analyzer':{phase:4,sub:0},'Scope Verification Checklist':{phase:4,sub:1},
+  'Labor Rate Validator':{phase:4,sub:1},'Carrier Estimate Analyzer':{phase:5,sub:0},'Line-Item Comparison Tool':{phase:5,sub:1},
+  'Depreciation Calculator':{phase:5,sub:1},'Gap Analysis Calculator':{phase:5,sub:2},'Supplement Request Builder':{phase:5,sub:3},
+  'Contents Inventory Builder':{phase:6,sub:0},'Replacement Cost Calculator':{phase:6,sub:0},'ALE Tracker':{phase:6,sub:1},
+  'ALE Calculator':{phase:6,sub:1},'Demand Package Builder':{phase:7,sub:0},'Settlement Calculator':{phase:7,sub:0},
+  'Dispute Letter Generator':{phase:7,sub:1},'Policy Citation Tool':{phase:7,sub:1},'Bad Faith Tracker':{phase:7,sub:1},
+  'Negotiation Strategy Generator':{phase:8,sub:0},'Offer Tracker':{phase:8,sub:0},'Leverage Builder':{phase:8,sub:0},
+  'Escalation Evaluator':{phase:8,sub:1},'DOI Complaint Builder':{phase:8,sub:1},'Settlement Analyzer':{phase:9,sub:0},
+  'Release Reviewer':{phase:9,sub:0},'Net Recovery Calculator':{phase:9,sub:0},'RCV Recovery Submitter':{phase:9,sub:1},
+  'Repair Tracker':{phase:9,sub:1},'Claim Archive System':{phase:9,sub:2},'Settlement Record':{phase:9,sub:2}
+};
+function toolChipAction(name){
+  const r=TOOL_ROUTES[name];
+  if(!r)return;
+  if(r.view)showView(r.view);
+  else{setPhase(r.phase);setSubstep(r.sub);showView('fullplan');}
+}
 
 function toggleTaskChip(el){el.classList.toggle('done');const cb=el.querySelector('.task-chip-cb');cb.textContent=el.classList.contains('done')?'✓':'';}
 
@@ -1508,8 +1594,28 @@ async function uploadClaimFile(file, docType) {
     }
     if (docType === 'policy') policyUnlockAnalyzeBtn();
 
+    // Apply selected category for evidence uploads
+    if (docType === 'evidence') {
+      const cat = getCategoryForUpload(docType);
+      if (cat) {
+        const lastDoc = claimData.documents[claimData.documents.length - 1];
+        if (lastDoc && lastDoc.type === 'evidence') lastDoc.category = cat;
+      }
+    }
     logActivity('📎', file.name + ' uploaded (' + docType + ')');
     saveState();
+    // Refresh evidence grid if visible
+    const evGrid = document.getElementById('evidence-doc-grid');
+    if (evGrid) evGrid.innerHTML = renderEvidenceGrid();
+    // Keep photo count display in sync
+    if (docType === 'photo') {
+      const photoCountEl = document.getElementById('photo-count');
+      if (photoCountEl) {
+        const n = (claimData.documents || []).filter(d => d.type === 'photo').length;
+        photoCountEl.textContent = n + ' photo' + (n !== 1 ? 's' : '') + ' uploaded';
+        photoCountEl.style.color = n > 0 ? 'var(--emerald)' : 'var(--gray-500)';
+      }
+    }
 
     if (docType !== 'policy' || !claimData.policy?.openaiFileId) {
       setUploadZoneStatus(uploadZone, `<div style="padding:16px;color:#059669;text-align:center">✅ ${file.name} uploaded successfully<br><small style="color:var(--slate)">${(file.size/1024).toFixed(0)} KB · ${docType}</small></div>`);
@@ -1535,8 +1641,98 @@ function pasteAccordion(){
   </div>`;
 }
 
-function loadSample(){alert('Sample data loaded! In production, this would pre-populate with realistic test data.');}
-function editClaimInfo(){alert('Claim info editor opens here. Fields are saved to your claim profile.');}
+function loadSample(){
+  claimData.initial.insuredName = claimData.initial.insuredName || 'Sample User';
+  claimData.initial.insurer = claimData.initial.insurer || 'State Farm';
+  claimData.initial.claimNumber = claimData.initial.claimNumber || 'CLM-SAMPLE-001';
+  claimData.initial.dateOfLoss = claimData.initial.dateOfLoss || 'January 10, 2025';
+  claimData.initial.propertyType = claimData.initial.propertyType || 'Single Family Home';
+  claimData.initial.description = claimData.initial.description || 'Water damage from burst pipe.';
+  if (!claimData.structure.userEstimate) { claimData.structure.insurerEstimate=28400; claimData.structure.userEstimate=47250; claimData.structure.gap=18850; }
+  if (!claimData.contents.items.length) { claimData.contents.items=[{name:'Living Room Flooring',room:'Living Room',val:8400,condition:'destroyed'},{name:'Drywall — Kitchen Ceiling',room:'Kitchen',val:3200,condition:'destroyed'}]; claimData.contents.totalValue=11600; }
+  if (!claimData.ALE.entries.length) { claimData.ALE.entries=[{date:'2025-01-12',category:'Hotel',amount:189,description:'Extended Stay night 1'},{date:'2025-01-13',category:'Meals',amount:67,description:'Family meals'}]; claimData.ALE.total=256; }
+  updateNavMetrics(); saveState(); renderContent();
+  if(window.CNToast) CNToast.success('Sample data loaded'); else alert('Sample claim data loaded.');
+}
+function editClaimInfo(){
+  const existing=document.getElementById('edit-claim-modal');
+  if(existing){existing.remove();return;}
+  const modal=document.createElement('div');
+  modal.id='edit-claim-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`<div style="background:#fff;border-radius:14px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:700;color:#0f172a">Edit Claim Information</div>
+      <button onclick="document.getElementById('edit-claim-modal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8">×</button>
+    </div>
+    <div style="display:grid;gap:12px">
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Insured Name</label><input id="eci-name" class="form-input" value="${claimData.initial.insuredName}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Insurance Company</label><input id="eci-insurer" class="form-input" value="${claimData.initial.insurer}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Claim Number</label><input id="eci-claimnum" class="form-input" value="${claimData.initial.claimNumber}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Adjuster Name</label><input id="eci-adjuster" class="form-input" value="${claimData.initial.adjusterName}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Date of Loss</label><input id="eci-dol" class="form-input" value="${claimData.initial.dateOfLoss}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Property Type</label><input id="eci-proptype" class="form-input" value="${claimData.initial.propertyType}"></div>
+      <div><label style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px">Loss Description</label><textarea id="eci-desc" class="form-input" rows="3" style="resize:vertical">${claimData.initial.description}</textarea></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:20px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveClaimInfoEdit()">Save Changes</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('edit-claim-modal').remove()">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+}
+
+function saveClaimInfoEdit(){
+  claimData.initial.insuredName  = document.getElementById('eci-name').value.trim()||claimData.initial.insuredName;
+  claimData.initial.insurer      = document.getElementById('eci-insurer').value.trim()||claimData.initial.insurer;
+  claimData.initial.claimNumber  = document.getElementById('eci-claimnum').value.trim()||claimData.initial.claimNumber;
+  claimData.initial.adjusterName = document.getElementById('eci-adjuster').value.trim();
+  claimData.initial.dateOfLoss   = document.getElementById('eci-dol').value.trim()||claimData.initial.dateOfLoss;
+  claimData.initial.propertyType = document.getElementById('eci-proptype').value.trim()||claimData.initial.propertyType;
+  claimData.initial.description  = document.getElementById('eci-desc').value.trim();
+  document.getElementById('edit-claim-modal').remove();
+  updateNavMetrics(); saveState(); renderContent();
+  if(window.CNToast) CNToast.success('Claim information updated');
+}
+
+function updateDocumentsPanel() {
+  const el = document.getElementById('dp-doc-list');
+  if (!el) return;
+  const docs = claimData.documents || [];
+  const hasType = (type) => docs.some(d => d.type === type);
+  const hasContents = (claimData.contents && claimData.contents.items && claimData.contents.items.length > 0);
+  const rows = [
+    { icon:'📋', label:'Insurance Policy',     ok:hasType('policy') },
+    { icon:'📸', label:'Damage Photos',         ok:hasType('photo') },
+    { icon:'📊', label:'Carrier Estimate',      ok:hasType('carrier_estimate') },
+    { icon:'🏠', label:'Contractor Estimate',   ok:hasType('contractor_estimate') },
+    { icon:'📦', label:'Contents Inventory',    ok:hasContents }
+  ];
+  el.innerHTML = rows.map(function(r){
+    return '<div class="doc-item"><span class="doc-icon">'+r.icon+'</span><span class="doc-name">'+r.label+'</span><span class="doc-status '+(r.ok?'ok':'missing')+'">'+(r.ok?'✔ Uploaded':'✖ Missing')+'</span></div>';
+  }).join('');
+}
+
+function updateMissingPanel() {
+  const el = document.getElementById('dp-missing-list');
+  if (!el) return;
+  const docs = claimData.documents || [];
+  const hasType = (type) => docs.some(d => d.type === type);
+  const checks = [
+    { ok:hasType('policy'),                               text:'Insurance policy not uploaded',      fix:"closeAllDrops();setPhase(1);showView('fullplan')" },
+    { ok:hasType('contractor_estimate'),                  text:'Contractor estimate not uploaded',   fix:"closeAllDrops();setPhase(4);showView('fullplan')" },
+    { ok:hasType('carrier_estimate'),                     text:'Carrier estimate not uploaded',      fix:"closeAllDrops();setPhase(5);showView('fullplan')" },
+    { ok:(claimData.contents.items||[]).length > 0,       text:'Contents inventory incomplete',      fix:"closeAllDrops();setPhase(6);showView('fullplan')" },
+    { ok:(claimData.ALE.entries||[]).length > 0,          text:'ALE daily log not started',          fix:"closeAllDrops();setPhase(6);setSubstep(1);showView('fullplan')" },
+  ];
+  const missing = checks.filter(x => !x.ok);
+  el.innerHTML = missing.length === 0
+    ? '<div style="padding:12px;text-align:center;color:rgba(255,255,255,.5);font-size:12px">✓ No missing items</div>'
+    : missing.map(m=>'<div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">'+m.text+'</span><button class="fix-btn" onclick="'+m.fix+'">Fix →</button></div>').join('');
+  const sv = document.getElementById('sv-missing');
+  if(sv) sv.textContent = missing.length > 0 ? missing.length+' missing' : 'All complete';
+}
 
 // ============================
 // PHASE 01
@@ -2081,6 +2277,12 @@ function renderP03S0(){
       <div class="warn-amber"><strong>📸 Documentation Tips</strong><div class="warn-amber-text">Take wide shots, medium shots, and close-ups of every damage area · Photograph from multiple angles · Include a ruler or common object for scale · Capture room overview before individual items · Document pre-existing conditions separately to avoid confusion</div></div>
       ${actionRow("setPhase(1)","Organize Documentation →","markComplete()",'true')}
     </div>`;
+  // Update photo count from real document list
+  (function(){
+    const n=(claimData.documents||[]).filter(d=>d.type==='photo').length;
+    const el=document.getElementById('photo-count');
+    if(el){el.textContent=n+' photo'+(n!==1?'s':'')+' uploaded';el.style.color=n>0?'var(--emerald)':'var(--gray-500)';}
+  })();
 }
 
 function renderP03S1(){
@@ -2171,15 +2373,56 @@ function renderP03S2(){
       <div class="panel-header"><div class="panel-title">Evidence Organizer</div><div class="panel-subtitle">All uploaded files organized by category. Tag and organize your evidence package.</div></div>
       <div class="form-grid">
         <div class="form-group"><label class="form-label">Upload Additional File</label>${uploadZone('evidence-upload','Upload evidence file','evidence')}</div>
-        <div class="form-group"><label class="form-label">Category</label>
-          <select class="form-select"><option>Structural Damage</option><option>Contents</option><option>Pre-Loss Condition</option><option>Receipts</option><option>Correspondence</option><option>Other</option></select>
+        <div class="form-group"><label class="form-label">Default Category for Next Upload</label>
+          <select class="form-select" id="evidence-cat-select">
+            <option value="Structural Damage">Structural Damage</option>
+            <option value="Contents">Contents</option>
+            <option value="Pre-Loss Condition">Pre-Loss Condition</option>
+            <option value="Receipts">Receipts</option>
+            <option value="Correspondence">Correspondence</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
       </div>
-      <div class="doc-grid" style="margin-top:12px">
-        ${claimData.documents.length===0?'<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">No files uploaded yet</div><div class="empty-sub">Upload your first evidence file above</div></div>':''}
+      <div id="evidence-doc-grid" class="doc-grid" style="margin-top:12px">
+        ${renderEvidenceGrid()}
       </div>
       ${actionRow("setSubstep(1)","Mark Complete & Continue →","markComplete()")}
     </div>`;
+}
+
+function renderEvidenceGrid(){
+  const docs=claimData.documents||[];
+  if(!docs.length) return '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">No files uploaded yet</div><div class="empty-sub">Upload your first evidence file above</div></div>';
+  const cats=['Structural Damage','Contents','Pre-Loss Condition','Receipts','Correspondence','Other'];
+  return docs.map((doc,i)=>`
+    <div class="doc-item-page" style="flex-wrap:wrap;gap:8px">
+      <div class="doc-icon">📄</div>
+      <div class="doc-name" style="flex:1;min-width:120px">${doc.name}</div>
+      <select class="form-select" style="max-width:160px;font-size:11px;padding:3px 6px" onchange="tagEvidenceDoc('${doc.id}',this.value)">
+        <option value="">— Tag category —</option>
+        ${cats.map(cat=>`<option value="${cat}"${doc.category===cat?' selected':''}>${cat}</option>`).join('')}
+      </select>
+      ${doc.category?`<span style="font-size:10px;font-weight:600;background:#dbeafe;color:#1e40af;padding:2px 7px;border-radius:4px">${doc.category}</span>`:''}
+    </div>`).join('');
+}
+
+function tagEvidenceDoc(docId, category){
+  const doc=claimData.documents.find(d=>d.id===docId);
+  if(!doc)return;
+  doc.category=category;
+  saveState();
+  const grid=document.getElementById('evidence-doc-grid');
+  if(grid)grid.innerHTML=renderEvidenceGrid();
+}
+
+// Hook: apply selected category when evidence file is uploaded
+const _origUploadClaimFile = uploadClaimFile;
+// Category is read in uploadClaimFile post-upload via getCategoryForUpload()
+function getCategoryForUpload(docType){
+  if(docType!=='evidence')return null;
+  const sel=document.getElementById('evidence-cat-select');
+  return sel?sel.value:null;
 }
 
 // ============================
@@ -2229,13 +2472,13 @@ function renderP04S1(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Inspection Log</div><div class="panel-subtitle">Complete this immediately after the adjuster leaves while details are fresh.</div></div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Inspection Date</label><input class="form-input" id="insp-date" type="date" value="2024-11-28"></div>
+        <div class="form-group"><label class="form-label">Inspection Date</label><input class="form-input" id="insp-date" type="date" value="${claimData.meta.inspectionLog?claimData.meta.inspectionLog.date:''}"></div>
         <div class="form-group"><label class="form-label">Start / End Time</label><input class="form-input" id="insp-time" placeholder="e.g. 10:15am – 11:45am"></div>
         <div class="form-group"><label class="form-label">Adjuster Name</label><input class="form-input" id="insp-adj" value="${claimData.initial.adjusterName}"></div>
         <div class="form-group"><label class="form-label">Adjuster's Company / Firm</label><input class="form-input" id="insp-co" value="${claimData.initial.insurer} — Internal Adjuster"></div>
-        <div class="form-group full"><label class="form-label">Areas Inspected</label><textarea class="form-textarea" id="insp-areas" placeholder="List each room/area that was inspected...">Living room, kitchen, master bathroom, hallway, second floor bathroom (origin), ceiling below bathroom</textarea></div>
-        <div class="form-group full"><label class="form-label">Key Statements Made by Adjuster</label><textarea class="form-textarea" id="insp-statements" placeholder="Document specific statements, comments, or assessments...">Acknowledged burst pipe as covered cause. Noted flooring damage in living room and kitchen. Did not inspect inside walls for moisture. Stated 'we'll send estimate within 10 days'.</textarea></div>
-        <div class="form-group full"><label class="form-label">Areas/Items Skipped or Disputed</label><textarea class="form-textarea" id="insp-skipped" placeholder="Note any areas the adjuster did not inspect or disputed...">Did not perform moisture readings inside walls. Did not inspect HVAC ductwork. Did not assess ceiling integrity below second bathroom.</textarea></div>
+        <div class="form-group full"><label class="form-label">Areas Inspected</label><textarea class="form-textarea" id="insp-areas" placeholder="List each room/area that was inspected...">${claimData.meta.inspectionLog?claimData.meta.inspectionLog.areas:''}</textarea></div>
+        <div class="form-group full"><label class="form-label">Key Statements Made by Adjuster</label><textarea class="form-textarea" id="insp-statements" placeholder="Document specific statements, comments, or assessments...">${claimData.meta.inspectionLog?claimData.meta.inspectionLog.statements:''}</textarea></div>
+        <div class="form-group full"><label class="form-label">Areas/Items Skipped or Disputed</label><textarea class="form-textarea" id="insp-skipped" placeholder="Note any areas the adjuster did not inspect or disputed...">${claimData.meta.inspectionLog?claimData.meta.inspectionLog.skipped:''}</textarea></div>
       </div>
       <button class="btn btn-primary" onclick="saveInspectionLog()">💾 Save Inspection Log</button>
       <div id="insp-saved" style="display:none;margin-top:12px" class="warn-teal"><div class="warn-teal-text">✅ Inspection log saved. This will be referenced in your Post-Inspection Follow-Up Letter.</div></div>
@@ -2244,8 +2487,22 @@ function renderP04S1(){
 }
 
 function saveInspectionLog(){
-  document.getElementById('insp-saved').style.display='block';
-  logActivity('📋','Inspection log saved');
+  const date       = (document.getElementById('insp-date')||{}).value||'';
+  const time       = (document.getElementById('insp-time')||{}).value||'';
+  const adjuster   = (document.getElementById('insp-adj')||{}).value||'';
+  const company    = (document.getElementById('insp-co')||{}).value||'';
+  const areas      = (document.getElementById('insp-areas')||{}).value||'';
+  const statements = (document.getElementById('insp-statements')||{}).value||'';
+  const skipped    = (document.getElementById('insp-skipped')||{}).value||'';
+  claimData.meta.inspectionLog = {
+    date, time, adjuster, company, areas, statements, skipped,
+    savedAt: new Date().toISOString()
+  };
+  // Also keep adjuster name in sync with claimData.initial
+  if (adjuster) claimData.initial.adjusterName = adjuster;
+  const el = document.getElementById('insp-saved');
+  if (el) el.style.display = 'block';
+  logActivity('📋', 'Inspection log saved — adjuster: ' + (adjuster||'unknown') + ' · date: ' + (date||'unknown'));
   saveState();
 }
 
@@ -2316,42 +2573,37 @@ async function analyzeContractorEst(){
     res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Contractor Estimate Analyzed — Total: ${fmt(result.total_estimate || 0)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p></div></div>`;
   } catch(err) {
     console.error('Contractor estimate analysis failed:', err);
-    showNetlifyError('contractor-result', err.message);
+    showNetlifyError('ce-result', err.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '📋 Analyze Estimate'; }
   }
 }
 
 function renderP05S1(){
+  const analysis=claimData.structure.contractorAnalysis;
+  const lineItems=analysis&&Array.isArray(analysis.line_items)?analysis.line_items:[];
+  const total=claimData.structure.userEstimate||0;
+  const contractor=analysis&&analysis.contractor_name?analysis.contractor_name:null;
+  let tableBody;
+  if(lineItems.length>0){
+    tableBody=lineItems.map(item=>{
+      const status=item.status||'Complete';
+      const pill=status.toLowerCase().includes('question')?'sp-amber':status.toLowerCase().includes('miss')?'sp-red':'sp-green';
+      return `<tr><td>${item.description||item.name||item.line||'—'}</td><td>${item.quantity!=null?item.quantity:'—'}</td><td>${item.unit||'—'}</td><td>${item.unit_price!=null?'$'+Number(item.unit_price).toLocaleString():'—'}</td><td>${item.total!=null?'$'+Number(item.total).toLocaleString():'—'}</td><td><span class="status-pill ${pill}">${status}</span></td></tr>`;
+    }).join('')+`<tr><td><strong>TOTAL</strong></td><td></td><td></td><td></td><td><strong>${fmt(total)}</strong></td><td></td></tr>`;
+  }else{
+    tableBody=`<tr><td colspan="6" style="text-align:center;color:var(--gray-400);padding:20px">${total>0?'Estimate analyzed — total: '+fmt(total)+'. Detailed line items not returned. Review your estimate PDF directly.':'Upload and analyze your contractor estimate in Step 1 to populate line items.'}</td></tr>`;
+  }
+  const subtitle=contractor?'Contractor: '+contractor+' · Total: '+fmt(total)+(lineItems.length?' · '+lineItems.length+' items':''):total>0?'Total: '+fmt(total):'Upload contractor estimate in Step 1';
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(4,'Scope Review','Line-by-line review of your contractor estimate with completeness analysis.')}
-    ${thinRow('TASKS',[
-      taskChip('Review every line item in the estimate','p05s1t1'),
-      taskChip('Flag questionable or missing scope items','p05s1t2'),
-      taskChip('Verify labor rates against local market','p05s1t3'),
-      taskChip('Confirm all damaged areas are included','p05s1t4'),
-    ].join(''))}
-    ${thinRow('TOOLS',[
-      toolChip('Scope Verification Checklist','required'),
-      toolChip('Labor Rate Validator','recommended'),
-    ].join(''))}
+    ${thinRow('TASKS',[taskChip('Review every line item in the estimate','p05s1t1'),taskChip('Flag questionable or missing scope items','p05s1t2'),taskChip('Verify labor rates against local market','p05s1t3'),taskChip('Confirm all damaged areas are included','p05s1t4')].join(''))}
+    ${thinRow('TOOLS',[toolChip('Scope Verification Checklist','required'),toolChip('Labor Rate Validator','recommended')].join(''))}
     <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">Estimate Scope Review — ABC Restoration</div><div class="panel-subtitle">Total: $68,450 · 47 Line Items</div></div>
-      <table class="data-table">
-        <thead><tr><th>Line Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>Drywall removal and replacement — Living Room</td><td>480</td><td>SF</td><td>$4.25</td><td>$2,040</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Engineered hardwood flooring — LR & Kitchen</td><td>420</td><td>SF</td><td>$12.50</td><td>$5,250</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Ceiling texture and paint — Living Room</td><td>280</td><td>SF</td><td>$3.75</td><td>$1,050</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Plumbing repair — 2nd floor bathroom</td><td>1</td><td>LS</td><td>$3,800</td><td>$3,800</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Moisture remediation / drying</td><td>5</td><td>Days</td><td>$1,200</td><td>$6,000</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Subfloor replacement — Kitchen</td><td>180</td><td>SF</td><td>$6.50</td><td>$1,170</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>Interior paint — affected rooms</td><td>1,200</td><td>SF</td><td>$2.80</td><td>$3,360</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td>HVAC duct cleaning and inspection</td><td>1</td><td>LS</td><td>$1,200</td><td>$1,200</td><td><span class="status-pill sp-amber">Questionable</span></td></tr>
-          <tr><td>General contractor overhead & profit</td><td>1</td><td>LS</td><td>$8,100</td><td>$8,100</td><td><span class="status-pill sp-green">Complete</span></td></tr>
-          <tr><td><strong>TOTAL</strong></td><td></td><td></td><td></td><td><strong>$68,450</strong></td><td></td></tr>
-        </tbody>
-      </table>
+      <div class="panel-header"><div class="panel-title">Estimate Scope Review</div><div class="panel-subtitle">${subtitle}</div></div>
+      ${!analysis?'<div class="warn-amber"><strong>⚠️ No estimate analyzed yet</strong><div class="warn-amber-text">Go back to Step 1 and upload + analyze your contractor estimate.</div></div>':''}
+      ${analysis&&analysis.notes?'<div class="warn-teal" style="margin-bottom:12px"><div class="warn-teal-text">💡 '+analysis.notes+'</div></div>':''}
+      <table class="data-table"><thead><tr><th>Line Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total</th><th>Status</th></tr></thead><tbody>${tableBody}</tbody></table>
       ${actionRow("setSubstep(0)","Mark Complete & Continue →","markComplete()")}
     </div>`;
 }
@@ -2423,15 +2675,15 @@ async function analyzeCarrierEst(){
     res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Carrier Estimate Analyzed — Gap: ${fmt(claimData.structure.gap)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p></div></div>`;
   } catch(err) {
     console.error('Carrier estimate analysis failed:', err);
-    showNetlifyError('carrier-result', err.message);
+    showNetlifyError('ce2-result', err.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '📊 Analyze Carrier Estimate'; }
   }
 }
 
 function renderP06S1(){
-  const carrier=claimData.structure.insurerEstimate||38200;
-  const user=claimData.structure.userEstimate||68450;
+  const carrier=claimData.structure.insurerEstimate||0;
+  const user=claimData.structure.userEstimate||0;
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(5,'Line-Item Comparison','Side-by-side comparison of carrier vs. contractor estimates with variance analysis.')}
     ${thinRow('TASKS',[
@@ -2446,22 +2698,19 @@ function renderP06S1(){
     ].join(''))}
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Line-Item Comparison</div><div class="panel-subtitle">Carrier: ${fmt(carrier)} vs. Contractor: ${fmt(user)}</div></div>
-      <table class="data-table">
-        <thead><tr><th>Line Item</th><th>Carrier Amount</th><th>Contractor Amount</th><th>Variance</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>Drywall removal & replacement</td><td>$1,440</td><td>$2,040</td><td>-$600</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>Engineered hardwood flooring</td><td>$3,200</td><td>$5,250</td><td>-$2,050</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>Ceiling texture and paint</td><td>$840</td><td>$1,050</td><td>-$210</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>Plumbing repair</td><td>$3,800</td><td>$3,800</td><td>$0</td><td><span class="status-pill sp-gray">Match</span></td></tr>
-          <tr><td>Moisture remediation</td><td>$4,200</td><td>$6,000</td><td>-$1,800</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>Subfloor replacement</td><td>$900</td><td>$1,170</td><td>-$270</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>Interior paint</td><td>$2,520</td><td>$3,360</td><td>-$840</td><td><span class="status-pill sp-amber">Undervalued</span></td></tr>
-          <tr><td>HVAC duct cleaning</td><td>$0</td><td>$1,200</td><td>-$1,200</td><td><span class="status-pill sp-red">Missing from Carrier</span></td></tr>
-          <tr><td>General contractor O&P</td><td>$0</td><td>$8,100</td><td>-$8,100</td><td><span class="status-pill sp-red">Missing from Carrier</span></td></tr>
-          <tr><td>Ordinance & Law upgrades</td><td>$0</td><td>$4,500</td><td>-$4,500</td><td><span class="status-pill sp-red">Missing from Carrier</span></td></tr>
-          <tr><td>Depreciation withheld (ACV)</td><td>-$6,500</td><td>$0 (RCV basis)</td><td>+$6,500</td><td><span class="status-pill sp-blue">Disputed</span></td></tr>
-        </tbody>
-      </table>
+      ${(function(){
+        const cA=claimData.structure.carrierAnalysis;
+        const items=cA&&Array.isArray(cA.line_items)?cA.line_items:[];
+        if(!items.length) return (carrier>0?'<div class="warn-amber"><strong>Carrier estimate analyzed — total: '+fmt(carrier)+'.</strong><div class="warn-amber-text">Detailed line items not returned. Review both estimate PDFs directly.</div></div>':'<div class="warn-amber"><strong>⚠️ No carrier estimate analyzed</strong><div class="warn-amber-text">Upload and analyze the carrier estimate in Step 1.</div></div>');
+        return '<table class="data-table"><thead><tr><th>Line Item</th><th>Carrier</th><th>Contractor</th><th>Variance</th><th>Status</th></tr></thead><tbody>'+items.map(item=>{
+          const ca=item.carrier_amount!=null?item.carrier_amount:(item.carrier||0);
+          const co=item.contractor_amount!=null?item.contractor_amount:(item.contractor||0);
+          const v=co-ca;
+          const sc=ca===0&&co>0?'sp-red':v>100?'sp-amber':Math.abs(v)<=100?'sp-gray':'sp-green';
+          const sl=ca===0&&co>0?'Missing from Carrier':v>100?'Undervalued':Math.abs(v)<=100?'Match':'Reviewed';
+          return `<tr><td>${item.description||item.name||'—'}</td><td>${ca>0?'$'+Number(ca).toLocaleString():'$0'}</td><td>${co>0?'$'+Number(co).toLocaleString():'—'}</td><td style="color:${v<0?'var(--red)':v>0?'var(--emerald)':'inherit'}">${v!==0?(v>0?'+':'')+'$'+Math.abs(v).toLocaleString():'$0'}</td><td><span class="status-pill ${sc}">${sl}</span></td></tr>`;
+        }).join('')+'</tbody></table>';
+      })()}
       <div class="money-moment" style="margin-top:16px">
         <div class="money-label">Total Identified Gap</div>
         <div class="money-amount">${fmt(user-carrier)}</div>
@@ -2472,6 +2721,20 @@ function renderP06S1(){
       </div>
       ${actionRow("setSubstep(0)","Run Gap Analysis →","setSubstep(2)")}
     </div>`;
+}
+
+function buildGapCategoryTable(totalGap){
+  const g=Math.max(0,totalGap);
+  const cA=claimData.structure.carrierAnalysis;
+  const cats=cA&&Array.isArray(cA.gap_categories)?cA.gap_categories:null;
+  if(cats&&cats.length>0){
+    return '<table class="compare-table"><thead><tr><th>Category</th><th>Amount</th><th>% of Gap</th></tr></thead><tbody>'+cats.map(cat=>{
+      const pct=g>0?Math.round((cat.amount/g)*100):0;
+      return `<tr><td>${cat.category}</td><td style="color:var(--red)">${fmt(cat.amount)}</td><td>${pct}%</td></tr>`;
+    }).join()+`<tr><td><strong>Total Gap</strong></td><td style="color:var(--emerald)"><strong>${fmt(g)}</strong></td><td><strong>100%</strong></td></tr></tbody></table>`;
+  }
+  if(cA&&cA.gap_summary) return '<div class="warn-teal"><div class="warn-teal-text">💡 '+cA.gap_summary+'</div></div>';
+  return g>0?`<div class="warn-teal"><div class="warn-teal-text">Total identified gap: <strong>${fmt(g)}</strong>. Detailed category breakdown will appear once carrier estimate is analyzed.</div></div>`:'<div class="warn-amber"><strong>⚠️ No gap data</strong><div class="warn-amber-text">Analyze carrier estimate in Phase 06 Step 1.</div></div>';
 }
 
 function renderP06S2(){
@@ -2495,17 +2758,7 @@ function renderP06S2(){
         <div class="money-amount">${fmt(Math.max(0,gap)||30250)}</div>
         <div class="money-sub">Based on line-item comparison of carrier estimate vs. independent contractor pricing</div>
       </div>
-      <table class="compare-table">
-        <thead><tr><th>Category</th><th>Amount</th><th>% of Gap</th></tr></thead>
-        <tbody>
-          <tr><td>Missing scope items</td><td style="color:var(--red)">$13,800</td><td>46%</td></tr>
-          <tr><td>Underpriced labor rates</td><td style="color:var(--red)">$4,270</td><td>14%</td></tr>
-          <tr><td>Underpriced materials</td><td style="color:var(--red)">$3,180</td><td>10%</td></tr>
-          <tr><td>Unapplied coverages (O&L, Water Backup)</td><td style="color:var(--red)">$8,500</td><td>28%</td></tr>
-          <tr><td>Improper depreciation (ACV instead of RCV)</td><td style="color:var(--red)">$500</td><td>2%</td></tr>
-          <tr><td><strong>Total Gap</strong></td><td style="color:var(--emerald)"><strong>${fmt(Math.max(0,gap)||30250)}</strong></td><td><strong>100%</strong></td></tr>
-        </tbody>
-      </table>
+      ${buildGapCategoryTable(gap)}
       <div class="warn-teal"><div class="warn-teal-text">💡 A Supplement Request Letter citing these specific line items and amounts is your strongest next action. Include your contractor's line items and the supporting documentation for each gap category.</div></div>
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-primary" onclick="downloadGapAnalysis()">⬇️ Download Gap Analysis PDF</button>
@@ -2625,54 +2878,6 @@ function renderP07S1(){
   renderALELog();
 }
 
-function renderP07S2(){
-  document.getElementById('content-view').innerHTML=`
-    ${stepHeader(6,'ALE Daily Log','Log every additional living expense daily. Every unlogged day is money you cannot claim.')}
-    ${thinRow('TASKS',[
-      taskChip('Log all hotel or housing costs','p07s2t1'),
-      taskChip('Log all meal cost overages','p07s2t2'),
-      taskChip('Log transportation costs','p07s2t3'),
-      taskChip('Log storage unit costs','p07s2t4'),
-      taskChip('Keep all receipts','p07s2t5'),
-    ].join(''))}
-    ${thinRow('TOOLS',[
-      toolChip('ALE Tracker','required'),
-      toolChip('ALE Calculator','recommended'),
-    ].join(''))}
-    <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">ALE Daily Expense Log</div><div class="panel-subtitle">Your policy covers the difference between your normal living costs and your current displacement costs.</div></div>
-      <div class="warn-amber"><strong>⚠️ Log Every Day — Even Small Amounts</strong><div class="warn-amber-text">Every unlogged day is money you cannot claim. Hotel, meals above your baseline ($75/day), laundry, transportation, storage — all of it counts.</div></div>
-      <div class="ale-stats">
-        <div class="ale-stat"><div class="ale-stat-label">Total Logged</div><div class="ale-stat-value" id="ale-total-disp">${fmt(claimData.ALE.total)}</div></div>
-        <div class="ale-stat"><div class="ale-stat-label">Days Tracked</div><div class="ale-stat-value" id="ale-days-disp">${claimData.ALE.entries.length}</div></div>
-        <div class="ale-stat"><div class="ale-stat-label">Daily Average</div><div class="ale-stat-value" id="ale-avg-disp">${claimData.ALE.entries.length>0?fmt(Math.round(claimData.ALE.total/claimData.ALE.entries.length)):'-'}</div></div>
-        <div class="ale-stat"><div class="ale-stat-label">ALE Coverage</div><div class="ale-stat-value">$70,000</div></div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Date</label><input class="form-input" id="ale-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
-        <div class="form-group"><label class="form-label">Category</label>
-          <select class="form-select" id="ale-cat">
-            <option value="Housing">Housing / Hotel</option>
-            <option value="Meals">Meals (above $75/day baseline)</option>
-            <option value="Transportation">Transportation</option>
-            <option value="Storage">Storage Unit</option>
-            <option value="Laundry">Laundry</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="form-group"><label class="form-label">Amount</label><input class="form-input" id="ale-amount" type="number" placeholder="$0.00"></div>
-        <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="ale-desc" placeholder="e.g. Hampton Inn — 1 night"></div>
-      </div>
-      <button class="btn btn-primary" onclick="addALEEntry()">+ Log Expense</button>
-      <div id="ale-log" style="margin-top:16px"></div>
-      <div class="inventory-total" style="margin-top:8px">
-        <span class="inv-total-label">Total ALE Logged</span>
-        <span class="inv-total-value" id="ale-grand-total">${fmt(claimData.ALE.total)}</span>
-      </div>
-      ${actionRow("setSubstep(0)","Mark Complete & Continue →","markComplete()")}
-    </div>`;
-  renderALELog();
-}
 
 function addALEEntry(){
   const date=document.getElementById('ale-date').value;
@@ -2786,48 +2991,35 @@ function renderP08S1(){
     </div>`;
 }
 
-function generateDisputeLetter(){
-  const res=document.getElementById('disp-result');
-  if(!res)return;
-  showSpinner('disp-result',2000,function(el){
-    el.innerHTML=`
-      <hr class="divider">
-      <div class="letter-display">
-${fmtDate()}
-
-${claimData.initial.insurer} Insurance Company
-Claims Department
-Claim No.: ${claimData.initial.claimNumber}
-
-RE: FORMAL DISPUTE — LINE-ITEM UNDERPAYMENT / SCOPE DISPUTE
-
-Dear Claims Manager:
-
-I am writing to formally dispute the estimate provided by State Farm for the above-referenced claim. After obtaining an independent estimate from a licensed, insured contractor, I have documented significant discrepancies that require your immediate review and correction.
-
-DISPUTE SUMMARY:
-• Carrier Estimate Total: ${fmt(claimData.structure.insurerEstimate||38200)}
-• Independent Contractor Estimate: ${fmt(claimData.structure.userEstimate||68450)}  
-• Total Identified Gap: ${fmt(Math.max(0,(claimData.structure.userEstimate||68450)-(claimData.structure.insurerEstimate||38200)))}
-
-SPECIFIC DISPUTED ITEMS:
-1. Flooring — Carrier priced at $3,200 vs. market rate of $5,250 (Delta: -$2,050)
-2. Contractor O&P — Not included in carrier estimate ($8,100)
-3. HVAC cleaning — Not included in carrier estimate ($1,200)
-4. Ordinance & Law coverage — Not applied ($4,500 per endorsement)
-
-Under my policy (page [X]), I am entitled to Replacement Cost Value based on actual repair costs in my market area. The carrier's use of pricing tools that do not reflect local market rates is inconsistent with my policy's RCV provision.
-
-I request written response within 15 days confirming how each disputed line item will be addressed, or written explanation of any denial with specific policy citations.
-
-Respectfully,
-${claimData.initial.insuredName}
-Claim No.: ${claimData.initial.claimNumber}</div>
-      <div class="flex gap-8">
-        <button class="btn btn-primary" onclick="logCorrespondence('Dispute Letter','Phase 08');alert('Logged to Correspondence Journal')">📋 Log to Journal</button>
-        <button class="btn btn-secondary" onclick="alert('PDF downloaded')">⬇️ Download PDF</button>
+async function generateDisputeLetter(){
+  const res=document.getElementById('disp-result');if(!res)return;
+  const btn=event&&event.target?event.target:null;
+  if(btn){btn.disabled=true;btn.textContent='⏳ Generating...';}
+  const dispType=(document.getElementById('disp-type')||{}).value||'Dispute';
+  const dispItem=(document.getElementById('disp-item')||{}).value||'';
+  const dispReason=(document.getElementById('disp-reason')||{}).value||'';
+  const dispCounter=(document.getElementById('disp-counter')||{}).value||'';
+  res.innerHTML='<div class="processing"><div class="spinner"></div><div class="processing-text">Generating dispute letter with AI — 15–30 seconds...</div></div>';
+  try{
+    const d=claimData.initial;
+    const result=await callNetlify('generate-letter',{
+      letter_type:'Dispute Letter — '+dispType,insured_name:d.insuredName,claim_number:d.claimNumber,
+      insurer:d.insurer,adjuster_name:d.adjusterName,date_of_loss:d.dateOfLoss,description:d.description,
+      property_type:d.propertyType,carrier_estimate:claimData.structure.insurerEstimate||0,
+      user_estimate:claimData.structure.userEstimate||0,gap:claimData.structure.gap||0,
+      endorsements:claimData.policy.endorsements||[],phase_number:'08',
+      dispute_type:dispType,disputed_item:dispItem,carrier_reason:dispReason,counter_argument:dispCounter
+    });
+    const letter=result.letter||result.content||result.text||'[Generation failed — try again]';
+    logCorrespondence('Dispute Letter',letter);saveState();
+    res.innerHTML=`<hr class="divider"><div class="letter-display">${letter}</div>
+      <div class="flex gap-8" style="margin-top:12px">
+        <button class="btn btn-primary" onclick="if(window.CNToast)CNToast.success('Logged');else alert('Logged ✓')">📋 Logged to Journal</button>
+        <button class="btn btn-secondary" onclick="downloadComposeLetterPDF('Dispute Letter')">⬇️ Download PDF</button>
       </div>`;
-  });
+  }catch(err){
+    res.innerHTML='<div style="background:#fee2e2;border-left:4px solid var(--red);padding:16px;border-radius:6px;color:#991b1b"><strong>Error:</strong> '+err.message+'</div>';
+  }finally{if(btn){btn.disabled=false;btn.textContent='Generate Dispute Letter →';}}
 }
 
 function renderP08S2(){
@@ -2862,14 +3054,45 @@ function renderP09S0(){
       </div>
       <button class="btn btn-primary" onclick="calcNegotiation()">Calculate Strategy →</button>
       <div id="neg-result" style="margin-top:12px"></div>
-      <div style="margin-top:16px"><div style="font-size:13px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Offer Tracking Log</div>
-        <div class="offer-row"><span class="offer-date">Dec 5, 2024</span><span>Carrier offer:</span><span class="offer-carrier">${fmt(carrier)}</span><span>Your counter:</span><span class="offer-counter">—</span><span class="offer-status-chip">Pending Response</span></div>
-        <div id="offer-log"></div>
+      <div style="margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Offer Tracking Log</div>
+        <div class="form-grid" style="margin-bottom:10px">
+          <div class="form-group"><label class="form-label">Carrier Offer</label><input class="form-input" id="offer-carrier-amt" type="number" placeholder="Offer amount"></div>
+          <div class="form-group"><label class="form-label">Your Counter</label><input class="form-input" id="offer-counter-amt" type="number" placeholder="Counter (optional)"></div>
+          <div class="form-group"><label class="form-label">Notes</label><input class="form-input" id="offer-notes" placeholder="e.g. Phone call with adjuster"></div>
+          <div class="form-group" style="display:flex;align-items:flex-end"><button class="btn btn-secondary" style="width:100%" onclick="logOffer()">+ Log Offer</button></div>
+        </div>
+        <div id="offer-log">${renderOfferLog()}</div>
       </div>
       ${actionRow("setPhase(7)","Generate Counter-Offer →","markComplete()")}
     </div>`;
 }
 
+function renderOfferLog(){
+  const log=(claimData.meta&&claimData.meta.offerLog)?claimData.meta.offerLog:[];
+  if(!log.length)return '<div style="color:var(--gray-400);font-size:12px;text-align:center;padding:12px">No offers logged yet.</div>';
+  return log.slice().reverse().map(e=>
+    '<div class="offer-row">'+
+    '<span class="offer-date">'+e.date+'</span>'+
+    '<span>Carrier:</span><span class="offer-carrier">'+fmt(e.carrierOffer)+'</span>'+
+    (e.yourCounter>0?'<span>Counter:</span><span class="offer-counter">'+fmt(e.yourCounter)+'</span>':'<span class="offer-counter">—</span>')+
+    (e.notes?'<span style="font-size:11px;color:var(--gray-500)">'+e.notes+'</span>':'')+
+    '<span class="offer-status-chip">Logged</span></div>'
+  ).join('');
+}
+function logOffer(){
+  const ca=parseFloat((document.getElementById('offer-carrier-amt')||{}).value||0);
+  if(!ca){alert('Enter the carrier offer amount.');return;}
+  const co=parseFloat((document.getElementById('offer-counter-amt')||{}).value||0);
+  const notes=(document.getElementById('offer-notes')||{}).value||'';
+  if(!claimData.meta.offerLog)claimData.meta.offerLog=[];
+  claimData.meta.offerLog.push({date:fmtDate(),carrierOffer:ca,yourCounter:co,notes:notes});
+  if(ca>0){claimData.structure.insurerEstimate=ca;claimData.structure.gap=Math.max(0,(claimData.structure.userEstimate||0)-ca);updateNavMetrics();}
+  saveState();
+  const logEl=document.getElementById('offer-log');if(logEl)logEl.innerHTML=renderOfferLog();
+  ['offer-carrier-amt','offer-counter-amt','offer-notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  logActivity('💬','Offer logged: carrier '+fmt(ca)+(co>0?' · counter '+fmt(co):''));
+}
 function calcNegotiation(){
   const carrier=parseInt(document.getElementById('neg-carrier').value)||0;
   const user=parseInt(document.getElementById('neg-user').value)||0;
@@ -2900,9 +3123,9 @@ function renderP09S1(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Escalation Paths</div><div class="panel-subtitle">If carrier continues to underpay, you have three primary escalation options. Choose based on your situation.</div></div>
       <div class="esc-grid">
-        <div class="esc-card"><div class="esc-title">⚖️ Appraisal</div><span class="risk-badge risk-med">MODERATE RISK</span><div class="esc-desc">Invoke the appraisal clause in your policy. Both parties hire independent appraisers, who select a neutral umpire. The umpire's decision is binding on the amount of loss.</div><div class="esc-when">Best when: Amount in dispute > $10,000 and you have strong documentation.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="alert('Appraisal demand letter generated')">Start Process →</button></div></div>
-        <div class="esc-card"><div class="esc-title">🤝 Mediation</div><span class="risk-badge risk-low">LOW RISK</span><div class="esc-desc">Non-binding mediation with a neutral third party. Less formal than appraisal. Many states offer free insurance mediation programs for residential claims.</div><div class="esc-when">Best when: Relationship with adjuster has broken down but amounts are negotiable.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="alert('State mediation request generated')">Learn More →</button></div></div>
-        <div class="esc-card"><div class="esc-title">📋 DOI Complaint</div><span class="risk-badge risk-low">LOW RISK</span><div class="esc-desc">File a formal complaint with your state Department of Insurance. Carriers take DOI complaints seriously — they trigger mandatory response timelines and regulatory scrutiny.</div><div class="esc-when">Best when: Carrier is violating state regulations, unreasonably delaying, or acting in bad faith.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="alert('DOI complaint generated')">Build Complaint →</button></div></div>
+        <div class="esc-card"><div class="esc-title">⚖️ Appraisal</div><span class="risk-badge risk-med">MODERATE RISK</span><div class="esc-desc">Invoke the appraisal clause in your policy. Both parties hire independent appraisers, who select a neutral umpire. The umpire's decision is binding on the amount of loss.</div><div class="esc-when">Best when: Amount in dispute > $10,000 and you have strong documentation.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="setPhase(8);setSubstep(2);showView('fullplan')">Start Process →</button></div></div>
+        <div class="esc-card"><div class="esc-title">🤝 Mediation</div><span class="risk-badge risk-low">LOW RISK</span><div class="esc-desc">Non-binding mediation with a neutral third party. Less formal than appraisal. Many states offer free insurance mediation programs for residential claims.</div><div class="esc-when">Best when: Relationship with adjuster has broken down but amounts are negotiable.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="showView('deadlines')">Learn More →</button></div></div>
+        <div class="esc-card"><div class="esc-title">📋 DOI Complaint</div><span class="risk-badge risk-low">LOW RISK</span><div class="esc-desc">File a formal complaint with your state Department of Insurance. Carriers take DOI complaints seriously — they trigger mandatory response timelines and regulatory scrutiny.</div><div class="esc-when">Best when: Carrier is violating state regulations, unreasonably delaying, or acting in bad faith.</div><div class="esc-actions"><button class="btn btn-secondary" style="font-size:11px" onclick="setPhase(8);setSubstep(2);showView('fullplan')">Build Complaint →</button></div></div>
       </div>
       ${actionRow("setSubstep(0)","Mark Complete & Continue →","markComplete()")}
     </div>`;
@@ -2987,8 +3210,21 @@ function renderP10S1(){
 }
 
 function submitRCV(){
-  logActivity('💰','RCV recovery request submitted');
-  document.getElementById('rcv-result').innerHTML=`<div class="warn-teal"><div class="warn-teal-text">✅ RCV request logged. In production, this submits to your carrier portal and generates the RCV Claim Submission Letter. Track response within 30 days.</div></div>`;
+  const repairDate=(document.getElementById('rcv-date')||{}).value||'';
+  const repairCost=(document.getElementById('rcv-cost')||{}).value||'';
+  const contractor=(document.getElementById('rcv-contractor')||{}).value||'';
+  const invoice=(document.getElementById('rcv-invoice')||{}).value||'';
+  if(!repairDate||!repairCost||!contractor){
+    document.getElementById('rcv-result').innerHTML='<div style="background:#fee2e2;border-left:4px solid #dc2626;padding:12px 16px;border-radius:6px;color:#991b1b;margin-top:8px"><strong>Required:</strong> Enter repair date, total cost, and contractor name.</div>';
+    return;
+  }
+  claimData.meta.rcvRepairDate=repairDate;
+  claimData.meta.rcvRepairCost=parseFloat(repairCost)||0;
+  claimData.meta.rcvContractor=contractor;
+  claimData.meta.rcvInvoice=invoice;
+  logActivity('💰','RCV recovery submitted — $'+parseFloat(repairCost).toLocaleString()+' repairs by '+contractor);
+  saveState();
+  document.getElementById('rcv-result').innerHTML=`<div class="warn-teal"><div class="warn-teal-text">✅ Recorded. <strong>Date:</strong> ${repairDate} · <strong>Cost:</strong> $${parseFloat(repairCost).toLocaleString()} · <strong>Contractor:</strong> ${contractor}<br><br>Next: <button class="btn btn-primary" style="font-size:12px;margin-top:6px" onclick="setSubstep(3);renderContent()">Generate RCV Submission Letter →</button></div></div>`;
 }
 
 function renderP10S2(){
@@ -3106,26 +3342,41 @@ async function renderWizardStep(step, letterType){
   }
 
   else if(step===2){
-    wc.innerHTML=stepsHtml+`
-      <div class="action-panel">
-        <div id="wz-analysis-spinner"></div>
+    wc.innerHTML=stepsHtml+`<div class="action-panel"><div id="wz-analysis-spinner"></div></div>`;
+    // Build real context immediately from actual claim data — no fake spinner needed
+    const d=claimData.initial;
+    const hasPolicyA=!!claimData.policy.analysis;
+    const hasCEst=claimData.structure.userEstimate>0;
+    const hasCarrierEst=claimData.structure.insurerEstimate>0;
+    const gap2=claimData.structure.gap||0;
+    const endr=(claimData.policy.endorsements||[]).join(', ')||'none identified';
+    const aleT=claimData.ALE.total||0;
+    const contT=claimData.contents.totalValue||0;
+    const photos=(claimData.documents||[]).filter(x=>x.type==='photo').length;
+    const letC=correspondenceJournal.length;
+    const kp=[];
+    if(hasCEst)kp.push({i:'💰',t:'Your Documented Total',s:'Contractor: '+fmt(claimData.structure.userEstimate)+(hasCarrierEst?' · Carrier: '+fmt(claimData.structure.insurerEstimate)+' · Gap: '+fmt(Math.max(0,gap2)):'')});
+    if(hasPolicyA)kp.push({i:'📋',t:'Policy Analysis Available',s:'Your policy has been analyzed. Reference specific coverage sections, limits, and identified gaps.'});
+    else kp.push({i:'📋',t:'Policy Basis',s:'Reference your specific coverage sections and endorsements: '+endr+'.'});
+    if(aleT>0)kp.push({i:'🏠',t:'ALE Documented',s:'Additional living expenses logged: '+fmt(aleT)+'. Include in applicable letters.'});
+    if(contT>0)kp.push({i:'📦',t:'Contents Documented',s:'Personal property loss documented: '+fmt(contT)+'.'});
+    kp.push({i:'⏱️',t:'Response Timeline',s:"Demand written response within 15 business days per your state's claim handling regulations."});
+    kp.push({i:'⚖️',t:'Rights Preservation',s:'Include language preserving all rights including appraisal and legal remedies.'});
+    if(photos>0)kp.push({i:'📸',t:'Documentation',s:photos+' photos · '+letC+' prior letters. Reference attachments explicitly.'});
+    document.getElementById('wz-analysis-spinner').innerHTML=`
+      <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">What this ${letterType} needs to accomplish based on your actual claim data.</div></div>
+      <div class="warn-teal"><strong>Claim Context</strong><div class="warn-teal-text">
+        <strong>Insured:</strong> ${d.insuredName||'[Not set]'} · <strong>Carrier:</strong> ${d.insurer||'[Not set]'} · <strong>Claim #:</strong> ${d.claimNumber||'[Not set]'}<br>
+        <strong>Loss Date:</strong> ${d.dateOfLoss||'[Not set]'} · <strong>Phase:</strong> ${phases[activePhase]?.num||''} — ${phases[activePhase]?.title||''}
+      </div></div>
+      <div style="margin-bottom:16px">
+        <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Key Points to Address</div>
+        ${kp.map(p=>`<div class="log-entry"><div class="log-entry-icon">${p.i}</div><div class="log-entry-content"><div class="log-entry-title">${p.t}</div><div class="log-entry-sub">${p.s}</div></div></div>`).join('')}
+      </div>
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="renderWizardStep(1,'${letterType}')">← Back</button>
+        <button class="btn btn-primary" onclick="renderWizardStep(3,'${letterType}')">Choose Strategy →</button>
       </div>`;
-    showSpinner('wz-analysis-spinner',1800,function(el){
-      el.innerHTML=`
-        <div class="panel-header"><div class="panel-title">Step 2 — Analysis</div><div class="panel-subtitle">AI analysis of your situation and what this letter needs to accomplish.</div></div>
-        <div class="warn-teal"><strong>What This Situation Requires</strong><div class="warn-teal-text">Based on your claim status, the carrier's position, and your documentation, this letter needs to formally assert your rights, reference specific policy provisions, and demand a written response within a defined timeline.</div></div>
-        <div style="margin-bottom:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Key Points to Address</div>
-          <div class="log-entry"><div class="log-entry-icon">📌</div><div class="log-entry-content"><div class="log-entry-title">Policy Basis</div><div class="log-entry-sub">Reference your specific coverage sections and endorsements by page number and provision title.</div></div></div>
-          <div class="log-entry"><div class="log-entry-icon">💰</div><div class="log-entry-content"><div class="log-entry-title">Dollar Amounts</div><div class="log-entry-sub">Cite your documented totals: Contractor estimate ${fmt(claimData.structure.userEstimate||68450)} vs. carrier estimate ${fmt(claimData.structure.insurerEstimate||38200)}.</div></div></div>
-          <div class="log-entry"><div class="log-entry-icon">⏱️</div><div class="log-entry-content"><div class="log-entry-title">Response Timeline</div><div class="log-entry-sub">Demand written response within 15 business days per your state's claim handling regulations.</div></div></div>
-          <div class="log-entry"><div class="log-entry-icon">⚖️</div><div class="log-entry-content"><div class="log-entry-title">Rights Preservation</div><div class="log-entry-sub">Include language preserving all rights, including appraisal, to prevent any waiver.</div></div></div>
-        </div>
-        <div class="action-row">
-          <button class="btn btn-secondary" onclick="renderWizardStep(1,'${letterType}')">← Back</button>
-          <button class="btn btn-primary" onclick="renderWizardStep(3,'${letterType}')">Choose Strategy →</button>
-        </div>`;
-    });
   }
 
   else if(step===3){
@@ -3267,26 +3518,75 @@ async function generateLetterContent(letterType){
 // ============================
 function renderClaimSummary(){
   const cv=document.getElementById('content-view');
+  const st=claimData.structure;
+  const pol=claimData.policy;
+  const done=Object.keys(completedSubsteps).length;
+  const total=phases.reduce((s,p)=>s+p.substeps.length,0);
+  const pct=total>0?Math.round((done/total)*100):0;
+  const gap=Math.max(0,(st.userEstimate||0)+(claimData.contents.totalValue||0)+(claimData.ALE.total||0)-(st.insurerEstimate||0));
+  const statusVal=claimData.initial.claimStatus||'Active — Under Review';
+  const statusColor=statusVal.toLowerCase().includes('denied')?'var(--red)':statusVal.toLowerCase().includes('closed')||statusVal.toLowerCase().includes('settled')?'var(--emerald)':'var(--teal)';
   cv.innerHTML=`
-    <div class="view-header"><div class="view-title">Claim Summary</div><div class="view-sub">Overview of your claim ${claimData.initial.claimNumber}</div></div>
+    <div class="view-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div><div class="view-title">Claim Summary</div><div class="view-sub">Overview of your claim ${claimData.initial.claimNumber||'—'}</div></div>
+      <button class="btn btn-secondary" style="font-size:12px" onclick="editClaimInfo()">✏️ Edit Info</button>
+    </div>
     <div class="action-panel">
       <div class="coverage-grid">
-        <div class="cov-card"><div class="cov-type">Insured</div><div class="cov-amount" style="font-size:16px">${claimData.initial.insuredName}</div></div>
-        <div class="cov-card"><div class="cov-type">Claim Number</div><div class="cov-amount" style="font-size:16px">${claimData.initial.claimNumber}</div></div>
-        <div class="cov-card"><div class="cov-type">Insurance Company</div><div class="cov-amount" style="font-size:16px">${claimData.initial.insurer}</div></div>
-        <div class="cov-card"><div class="cov-type">Date of Loss</div><div class="cov-amount" style="font-size:16px">${claimData.initial.dateOfLoss}</div></div>
-        <div class="cov-card"><div class="cov-type">Property Type</div><div class="cov-amount" style="font-size:16px">${claimData.initial.propertyType}</div></div>
-        <div class="cov-card"><div class="cov-type">Days Since Loss</div><div class="cov-amount" style="font-size:16px;color:var(--amber)">${claimData.initial.daysSinceLoss}</div></div>
+        <div class="cov-card"><div class="cov-type">Insured</div><div class="cov-amount" style="font-size:15px">${claimData.initial.insuredName||'—'}</div></div>
+        <div class="cov-card"><div class="cov-type">Claim Number</div><div class="cov-amount" style="font-size:15px">${claimData.initial.claimNumber||'—'}</div></div>
+        <div class="cov-card"><div class="cov-type">Insurance Company</div><div class="cov-amount" style="font-size:15px">${claimData.initial.insurer||'—'}</div></div>
+        <div class="cov-card"><div class="cov-type">Date of Loss</div><div class="cov-amount" style="font-size:15px">${claimData.initial.dateOfLoss||'—'}</div></div>
+        <div class="cov-card"><div class="cov-type">Property Type</div><div class="cov-amount" style="font-size:15px">${claimData.initial.propertyType||'—'}</div></div>
+        <div class="cov-card"><div class="cov-type">Days Since Loss</div><div class="cov-amount" style="font-size:15px;color:var(--amber)">${claimData.initial.daysSinceLoss||0}</div></div>
       </div>
-      <div class="warn-teal"><div class="warn-teal-text"><strong>Loss Description:</strong> ${claimData.initial.description}</div></div>
+      ${claimData.initial.description?`<div class="warn-teal"><div class="warn-teal-text"><strong>Loss Description:</strong> ${claimData.initial.description}</div></div>`:''}
+      <hr class="divider">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px">
+        <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Your Documented Value</div>
+          <div style="font-size:20px;font-weight:700;color:var(--emerald)">${fmt((st.userEstimate||0)+(claimData.contents.totalValue||0)+(claimData.ALE.total||0))}</div>
+        </div>
+        <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Carrier Offer</div>
+          <div style="font-size:20px;font-weight:700;color:var(--gray-700)">${fmt(st.insurerEstimate||0)}</div>
+        </div>
+        <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Recoverable Gap</div>
+          <div style="font-size:20px;font-weight:700;color:var(--red)">${fmt(gap)}</div>
+        </div>
+        <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Claim Progress</div>
+          <div style="font-size:20px;font-weight:700;color:var(--navy)">${pct}%</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${done} of ${total} substeps</div>
+        </div>
+      </div>
+      ${(pol.dwellingCoverage||pol.analysis)?`
+      <hr class="divider">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">Policy Coverage Limits</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px">
+        <div class="cov-card"><div class="cov-type">Dwelling (A)</div><div class="cov-amount">${fmt(pol.analysis?.dwelling_coverage||pol.dwellingCoverage||0)}</div></div>
+        <div class="cov-card"><div class="cov-type">Contents (C)</div><div class="cov-amount">${fmt(pol.analysis?.contents_coverage||pol.contentsCoverage||0)}</div></div>
+        <div class="cov-card"><div class="cov-type">ALE (D)</div><div class="cov-amount">${fmt(pol.analysis?.ale_coverage||pol.aleCoverage||0)}</div></div>
+        <div class="cov-card"><div class="cov-type">Deductible</div><div class="cov-amount">${fmt(pol.analysis?.deductible||pol.deductible||0)}</div></div>
+        <div class="cov-card"><div class="cov-type">Settlement</div><div class="cov-amount" style="font-size:14px">${pol.analysis?.settlement_type||pol.settlementType||'—'}</div></div>
+      </div>`:''}
       <hr class="divider">
       <div style="font-size:13px;font-weight:700;margin-bottom:8px">Assigned Adjuster</div>
       <div class="claim-info-strip">
-        <div class="cis-item"><div class="cis-label">Adjuster</div><div class="cis-value">${claimData.initial.adjusterName}</div></div>
-        <div class="cis-item"><div class="cis-label">Company</div><div class="cis-value">${claimData.initial.insurer}</div></div>
-        <div class="cis-item"><div class="cis-label">Status</div><div class="cis-value" style="color:var(--teal)">Active — Under Review</div></div>
+        <div class="cis-item"><div class="cis-label">Adjuster</div><div class="cis-value">${claimData.initial.adjusterName||'—'}</div></div>
+        <div class="cis-item"><div class="cis-label">Company</div><div class="cis-value">${claimData.initial.insurer||'—'}</div></div>
+        <div class="cis-item">
+          <div class="cis-label">Status</div>
+          <div class="cis-value" style="color:${statusColor}">${statusVal}</div>
+        </div>
       </div>
-      <button class="btn btn-primary" onclick="showView('fullplan')">Continue Working on Claim →</button>
+      <div style="margin-top:4px">
+        <select class="form-select" style="max-width:220px;font-size:12px" onchange="claimData.initial.claimStatus=this.value;saveState()">
+          ${['Active — Under Review','Active — Inspection Scheduled','Active — Estimate Pending','Active — In Negotiation','Partially Paid — Supplement Pending','Denied — Under Appeal','Closed — Settled','Closed — Withdrawn'].map(s=>`<option${s===statusVal?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="showView('fullplan')">Continue Working on Claim →</button>
     </div>`;
 }
 
@@ -3427,54 +3727,37 @@ function renderWizardStepCompose(step,lt){
     </div>`;
   } else if(step===4){
     el.innerHTML=`<div class="wizard-steps">${stepsHtml}</div>
-    <div class="action-panel"><div id="comp-letter"><div class="processing"><div class="spinner"></div><div class="processing-text">Generating ${lt}...</div></div></div></div>`;
-    setTimeout(()=>{
+    <div class="action-panel"><div id="comp-letter"><div class="processing"><div class="spinner"></div><div class="processing-text">Generating ${lt} with AI — 15–30 seconds...</div></div></div></div>`;
+    generateLetterContent(lt).then(letter=>{
       const el3=document.getElementById('comp-letter');if(!el3)return;
       el3.innerHTML=`<div class="panel-header"><div class="panel-title">Step 4 — Your ${lt}</div></div>
-        <div class="letter-display">
-${fmtDate()}
-
-${claimData.initial.insurer}
-Claim No.: ${claimData.initial.claimNumber}
-Re: ${lt}
-
-Dear Claims Department:
-
-This letter is submitted on behalf of ${claimData.initial.insuredName} regarding the above-referenced claim for property damage occurring on ${claimData.initial.dateOfLoss}.
-
-[Letter body generated based on your claim data and selected strategy. In production, this generates a complete, customized letter referencing your specific policy terms, documented evidence, and applicable state insurance regulations.]
-
-Total documented claim value: ${fmt((claimData.structure.userEstimate||0)+(claimData.contents.totalValue||0)+(claimData.ALE.total||0))}
-Carrier offer to date: ${fmt(claimData.structure.insurerEstimate||0)}
-Identified gap: ${fmt(Math.max(0,(claimData.structure.userEstimate||0)+(claimData.contents.totalValue||0)+(claimData.ALE.total||0)-(claimData.structure.insurerEstimate||0)))}
-
-I request written response within 15 business days.
-
-Respectfully,
-${claimData.initial.insuredName}</div>
-        <div class="flex gap-8" style="flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="logCorrespondence('${lt}','Correspondence Center');alert('Logged to Journal ✓')">📋 Log to Journal</button>
-          <button class="btn btn-secondary" onclick="alert('PDF downloading...')">⬇️ Download PDF</button>
-          <button class="btn btn-secondary" onclick="alert('Word downloading...')">📄 Download Word</button>
+        <div class="letter-display">${letter}</div>
+        <div class="flex gap-8" style="flex-wrap:wrap;margin-top:12px">
+          <button class="btn btn-primary" onclick="(function(){if(window.CNToast)CNToast.success('Logged');else alert('✅ Logged to Journal');})()">📋 Logged to Journal</button>
+          <button class="btn btn-ghost" onclick="downloadComposeLetterPDF('${lt}')">⬇️ Download PDF</button>
         </div>
         <div class="action-row"><button class="btn btn-secondary" onclick="renderWizardStepCompose(3,'${lt}')">← Back</button></div>
         <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>`;
-    },2000);
+    }).catch(err=>{
+      const el3=document.getElementById('comp-letter');if(!el3)return;
+      el3.innerHTML='<div style="background:#fee2e2;border-left:4px solid var(--red);padding:16px;border-radius:6px;color:#991b1b"><strong>Error:</strong> '+err.message+'</div>';
+    });
   }
 }
 
 function renderJournal(el){
   el.innerHTML=`
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <select class="form-select" id="journal-filter" style="max-width:120px;font-size:12px" onchange="renderJournalTab()">
-        <option value="all">All</option>
-        <option value="sent">Sent</option>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+      <select class="form-select" id="journal-direction-filter" style="max-width:130px;font-size:12px" onchange="renderJournalTab()">
+        <option value="all">All Letters</option>
+        <option value="sent">Sent / Drafted</option>
         <option value="received">Received</option>
       </select>
-      <select class="form-select" style="max-width:160px;font-size:12px">
-        <option>All Phases</option>
-        ${phases.map(p=>`<option>Phase ${p.num}</option>`).join('')}
+      <select class="form-select" id="journal-phase-filter" style="max-width:160px;font-size:12px" onchange="renderJournalTab()">
+        <option value="">All Phases</option>
+        ${phases.map(p=>`<option value="${p.num}">Phase ${p.num}</option>`).join('')}
       </select>
+      <span id="journal-count" style="font-size:12px;color:var(--gray-500);margin-left:4px"></span>
     </div>
     <div id="journal-list"></div>`;
   renderJournalTab();
@@ -3507,12 +3790,51 @@ function renderMessagesView(){
           <div class="msg-subject">${m.subject}</div>
           <div class="msg-preview">${m.preview}</div>
           <div style="margin-top:8px;display:flex;gap:6px">
-            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="alert('Opening message...')">Read →</button>
+            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="readMessage('${m.id}')">Read →</button>
             <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showView('correspondence');correspondenceTab='compose'">Respond →</button>
           </div>
         </div>
         <div class="msg-date">${m.date}</div>
       </div>`).join('')}`;
+}
+
+function readMessage(msgId){
+  const m=claimData.messages.find(x=>x.id===msgId);
+  if(!m)return;
+  const existing=document.getElementById('msg-modal-'+msgId);
+  if(existing){existing.remove();return;}
+  const modal=document.createElement('div');
+  modal.id='msg-modal-'+msgId;
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`<div style="background:#fff;border-radius:14px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div><div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px">${m.subject}</div>
+      <div style="font-size:12px;color:#64748b">From: ${m.from} · ${m.date}</div></div>
+      <button onclick="document.getElementById('msg-modal-${m.id}').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;flex-shrink:0;margin-left:16px">×</button>
+    </div>
+    <div style="background:#f8fafc;border-radius:8px;padding:16px;font-size:13px;color:#334155;line-height:1.7;white-space:pre-wrap">${m.body||m.preview}</div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button class="btn btn-primary" onclick="document.getElementById('msg-modal-${m.id}').remove();showView('correspondence');correspondenceTab='compose'">Reply →</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('msg-modal-${m.id}').remove()">Close</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  m.read=true;
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+}
+
+function downloadComposeLetterPDF(letterType){
+  try{
+    const el=document.querySelector('.letter-display');
+    if(!el){alert('No letter content found.');return;}
+    const text=el.textContent;
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'in',format:'letter'});
+    doc.setFont('helvetica','normal');doc.setFontSize(11);
+    const lines=doc.splitTextToSize(text,6.5);
+    doc.text(lines,1,1.25);
+    doc.save((letterType||'letter').replace(/\s+/g,'-').toLowerCase()+'-'+new Date().toISOString().slice(0,10)+'.pdf');
+  }catch(e){alert('PDF failed: '+e.message);}
 }
 
 function renderDocumentsView(){
@@ -3527,7 +3849,7 @@ function renderDocumentsView(){
   cv.innerHTML=`
     <div class="view-header" style="display:flex;align-items:center;justify-content:space-between">
       <div><div class="view-title">Documents</div><div class="view-sub">All uploaded and generated claim documents</div></div>
-      <button class="btn btn-primary" onclick="alert('Upload dialog')">+ Upload</button>
+      <button class="btn btn-primary" onclick="setPhase(2);setSubstep(2);showView('fullplan')">+ Upload</button>
     </div>
     ${docCats.map(dc=>`
       <div style="margin-bottom:20px">
@@ -3546,25 +3868,28 @@ function renderDocumentsView(){
 
 function renderDeadlinesView(){
   const cv=document.getElementById('content-view');
-  const dol=new Date('2024-11-15');
+  const dolRaw=claimData.initial.dateOfLoss;
+  const dol=dolRaw?new Date(dolRaw):null;
+  const dolValid=dol&&!isNaN(dol.getTime());
+  const rcvAnchor=claimData.meta&&claimData.meta.rcvRepairDate?new Date(claimData.meta.rcvRepairDate):null;
   const today=new Date();
   const deadlines=[
-    {name:'Proof of Loss',date:new Date(dol.getTime()+60*24*3600000),desc:'Submit sworn statement of loss with all supporting documentation.',phase:'Phase 03 — Document Damage'},
-    {name:'Lawsuit Filing Deadline',date:new Date(dol.getTime()+365*24*3600000),desc:'If claim is denied or settlement is inadequate, legal action must be filed before this date.',phase:'Phase 08-09 — Demand & Negotiate'},
-    {name:'ALE Reimbursement Request',date:new Date(dol.getTime()+30*24*3600000),desc:'Submit initial ALE reimbursement request with documented expenses.',phase:'Phase 07 — Contents & ALE'},
-    {name:'Appraisal Invocation',date:new Date(dol.getTime()+300*24*3600000),desc:'If amount in dispute, appraisal must be invoked before suit limitation expires.',phase:'Phase 09 — Negotiate & Escalate'},
-    {name:'RCV Recovery (after repairs)',date:new Date(today.getTime()+180*24*3600000),desc:'Submit repair receipts to recover withheld depreciation. Must be done within 180 days of repair completion.',phase:'Phase 10 — Close & Recover'},
+    {name:'Proof of Loss',date:dolValid?new Date(dol.getTime()+60*24*3600000):null,desc:'Submit sworn statement of loss with all supporting documentation.',phase:'Phase 03 — Document Damage'},
+    {name:'Lawsuit Filing Deadline',date:dolValid?new Date(dol.getTime()+365*24*3600000):null,desc:'If claim denied or settlement inadequate, legal action must be filed before this date.',phase:'Phase 08-09 — Demand & Negotiate'},
+    {name:'ALE Reimbursement Request',date:dolValid?new Date(dol.getTime()+30*24*3600000):null,desc:'Submit initial ALE reimbursement request with documented expenses.',phase:'Phase 07 — Contents & ALE'},
+    {name:'Appraisal Invocation',date:dolValid?new Date(dol.getTime()+300*24*3600000):null,desc:'If amount in dispute, appraisal must be invoked before suit limitation expires.',phase:'Phase 09 — Negotiate & Escalate'},
+    {name:'RCV Recovery (180 days from repair completion)',date:rcvAnchor?new Date(rcvAnchor.getTime()+180*24*3600000):null,desc:'Submit repair receipts to recover withheld depreciation.'+(rcvAnchor?'':' Log repair completion date in Phase 10 to activate.'),phase:'Phase 10 — Close & Recover'},
   ];
   cv.innerHTML=`
     <div class="view-header"><div class="view-title">Deadlines</div><div class="view-sub">Critical claim deadlines. Missing these can delay or reduce your payment.</div></div>
     ${deadlines.map(d=>{
+      if(!d.date) return `<div class="deadline-item"><div class="days-badge" style="background:#475569;color:#fff"><div class="days-num">—</div><div class="days-unit">pending</div></div><div><div class="dl-title">${d.name}</div><div class="dl-desc">${d.desc}</div><div class="dl-phase">${d.phase}</div></div></div>`;
       const days=Math.round((d.date-today)/(24*3600000));
       const cls=days<0?'red':days<30?'amber':'green';
-      return `<div class="deadline-item">
-        <div class="days-badge ${cls}"><div class="days-num">${Math.abs(days)}</div><div class="days-unit">${days<0?'overdue':'days'}</div></div>
-        <div><div class="dl-title">${d.name}</div><div class="dl-desc">${d.desc}</div><div class="dl-phase">${d.phase}</div></div>
-      </div>`;
-    }).join('')}`;
+      return `<div class="deadline-item"><div class="days-badge ${cls}"><div class="days-num">${Math.abs(days)}</div><div class="days-unit">${days<0?'overdue':'days'}</div></div><div><div class="dl-title">${d.name}</div><div class="dl-desc">${d.desc}</div><div class="dl-phase">${d.phase}</div></div></div>`;
+    }).join('')}
+    ${!dolValid?'<div class="warn-amber" style="margin-top:16px"><strong>⚠️ Enter your Date of Loss</strong><div class="warn-amber-text">Click "Edit Claim Info" to set your date of loss and activate your personalized deadlines.</div></div>':''}
+    `;
 }
 
 // ============================
@@ -3582,7 +3907,9 @@ function obNext(){
   if(!name||!insurer||!claimNum){alert('Please fill in your name, insurance company, and claim number.');return;}
   claimData.initial.insuredName=name;claimData.initial.insurer=insurer;claimData.initial.claimNumber=claimNum;
   claimData.initial.propertyType=propType;claimData.initial.description=desc;
-  if(dol){const d=new Date(dol);claimData.initial.dateOfLoss=d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});const days=Math.round((new Date()-d)/(24*3600000));claimData.initial.daysSinceLoss=days;document.getElementById('dayCount').textContent=days;}
+  if(dol){const d=new Date(dol);claimData.initial.dateOfLoss=d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});const days=Math.round((new Date()-d)/(24*3600000));claimData.initial.daysSinceLoss=days;const dc=document.getElementById('dayCount');if(dc)dc.textContent=days;}
+  const estAmt=parseFloat((document.getElementById('ob-est-amt')||{}).value||0);
+  if(estAmt>0){claimData.structure.insurerEstimate=estAmt;claimData.structure.gap=Math.max(0,claimData.structure.userEstimate-estAmt);}
   document.getElementById('ob-summary').innerHTML=`
     <div class="coverage-grid">
       <div class="cov-card"><div class="cov-type">Insured</div><div class="cov-amount" style="font-size:16px">${name}</div></div>
@@ -3600,6 +3927,8 @@ function obSkip(){
   overlay.style.display = 'none';
   overlay.style.visibility = 'hidden';
   localStorage.setItem('ccc_onboarded','true');
+  const estAmt=parseFloat((document.getElementById('ob-est-amt')||{}).value||0);
+  if(estAmt>0){claimData.structure.insurerEstimate=estAmt;claimData.structure.gap=Math.max(0,claimData.structure.userEstimate-estAmt);}
   activePhase=0;activeSubstep=0;
   updateNavMetrics();
   buildPhaseRow();
@@ -3610,18 +3939,28 @@ function obSkip(){
   saveState();
 }
 
-function obStart(){
+async function obStart(){
   const overlay = document.getElementById('onboarding-overlay');
   overlay.style.display = 'none';
   overlay.style.visibility = 'hidden';
   localStorage.setItem('ccc_onboarded','true');
   activePhase=0;activeSubstep=0;
-  updateNavMetrics();
-  buildPhaseRow();
-  buildSubstepBar();
-  renderProgressMilestones();
-  renderActivityStrip();
-  renderContent();
+  updateNavMetrics();buildPhaseRow();buildSubstepBar();renderProgressMilestones();renderActivityStrip();renderContent();
+  if(!window.CCC_CLAIM_ID){
+    try{
+      const user=await window.CNAuth.currentUser();
+      if(user){
+        const supabase=await window.getSupabaseClient();
+        const{data:newClaim,error}=await supabase.from('claims').insert({
+          user_id:user.id,insured_name:claimData.initial.insuredName,claim_number:claimData.initial.claimNumber,
+          insurer:claimData.initial.insurer,adjuster_name:claimData.initial.adjusterName||'',
+          date_of_loss:claimData.initial.dateOfLoss,property_type:claimData.initial.propertyType,
+          type_of_loss:claimData.initial.description,status:'active',created_at:new Date().toISOString()
+        }).select('id').single();
+        if(!error&&newClaim)window.CCC_CLAIM_ID=newClaim.id;
+      }
+    }catch(e){console.warn('Supabase claim creation failed:',e);}
+  }
   saveState();
 }
 
@@ -3716,6 +4055,8 @@ async function init(){
   buildSubstepBar();
   renderProgressMilestones();
   renderActivityStrip();
+  updateDocumentsPanel();
+  updateMissingPanel();
   if(onboarded){
     document.getElementById('onboarding-overlay').style.display='none';
     showView('fullplan');
@@ -3838,73 +4179,46 @@ function downloadCoverageAnalysis(){
   const pageW=doc.internal.pageSize.getWidth();
   pdfFooter(doc);
   let y=pdfHeader(doc,'Coverage Analysis','Policy coverage breakdown and carrier application status');
-
+  const analysis=claimData.policy.analysis;
+  const coverages=analysis&&Array.isArray(analysis.coverages)?analysis.coverages:[];
+  const gaps=analysis&&Array.isArray(analysis.coverage_gaps)?analysis.coverage_gaps:[];
+  const p=claimData.policy;
   y=pdfSectionTitle(doc,'Policy Coverage Summary',y);
-
-  // Highlight boxes — key numbers
   const boxW=(pageW-28-6)/3;
-  pdfHighlightBox(doc,'Dwelling Coverage','$350,000',14,y,boxW,[15,23,42]);
-  pdfHighlightBox(doc,'Deductible','$2,500',14+boxW+3,y,boxW,[20,184,166]);
-  pdfHighlightBox(doc,'Settlement Type','RCV',14+boxW*2+6,y,boxW,[16,185,129]);
+  pdfHighlightBox(doc,'Dwelling Coverage',fmt(analysis&&analysis.dwelling_coverage?analysis.dwelling_coverage:p.dwellingCoverage||0),14,y,boxW,[15,23,42]);
+  pdfHighlightBox(doc,'Deductible',fmt(analysis&&analysis.deductible?analysis.deductible:p.deductible||0),14+boxW+3,y,boxW,[20,184,166]);
+  pdfHighlightBox(doc,'Settlement Type',(analysis&&analysis.settlement_type?analysis.settlement_type:p.settlementType||'RCV'),14+boxW*2+6,y,boxW,[16,185,129]);
   y+=24;
-
-  pdfHighlightBox(doc,'Contents Coverage','$262,500',14,y,boxW,[15,23,42]);
-  pdfHighlightBox(doc,'ALE / Loss of Use','$70,000',14+boxW+3,y,boxW,[20,184,166]);
-  pdfHighlightBox(doc,'Total Max Coverage','$742,500',14+boxW*2+6,y,boxW,[16,185,129]);
+  const cc=analysis&&analysis.contents_coverage?analysis.contents_coverage:p.contentsCoverage||0;
+  const ac=analysis&&analysis.ale_coverage?analysis.ale_coverage:p.aleCoverage||0;
+  const tc=(analysis&&analysis.dwelling_coverage?analysis.dwelling_coverage:p.dwellingCoverage||0)+cc+ac;
+  pdfHighlightBox(doc,'Contents Coverage',fmt(cc),14,y,boxW,[15,23,42]);
+  pdfHighlightBox(doc,'ALE / Loss of Use',fmt(ac),14+boxW+3,y,boxW,[20,184,166]);
+  pdfHighlightBox(doc,'Total Max Coverage',fmt(tc),14+boxW*2+6,y,boxW,[16,185,129]);
   y+=28;
-
   y=pdfSectionTitle(doc,'Coverage Detail Table',y);
-
-  doc.autoTable({
-    startY:y,
-    margin:{left:14,right:14},
-    head:[['Coverage Type','Policy Limit','Applied by Carrier','Status']],
-    body:[
-      ['Dwelling (Coverage A)','$350,000','Partial','⚠ Partial'],
-      ['Contents (Coverage C)','$262,500','Not yet','✗ Not Applied'],
-      ['ALE / Loss of Use (D)','$70,000','Not yet','✗ Not Applied'],
-      ['Ordinance & Law','$35,000','No','✗ Not Applied'],
-      ['Water Backup Endorsement','$25,000','No','✗ Not Applied'],
-      ['Equipment Breakdown','$50,000','No','✗ Not Applied'],
-      ['Deductible','$2,500','Applied','✓ Applied'],
-      ['Settlement Type','RCV','Acknowledged','✓ Applied'],
-    ],
-    headStyles:{fillColor:[15,23,42],textColor:255,fontStyle:'bold',fontSize:9},
-    bodyStyles:{fontSize:9,textColor:[51,65,85]},
-    alternateRowStyles:{fillColor:[248,250,252]},
-    columnStyles:{
-      2:{halign:'center'},
-      3:{halign:'center',fontStyle:'bold'}
-    },
-    didDrawCell:(data)=>{
-      if(data.column.index===3&&data.section==='body'){
-        const v=data.cell.text[0];
-        if(v.startsWith('✓'))data.cell.styles.textColor=[16,185,129];
-        else if(v.startsWith('✗'))data.cell.styles.textColor=[239,68,68];
-        else data.cell.styles.textColor=[245,158,11];
-      }
-    }
+  const tableBody=coverages.length>0?coverages.map(cv=>{
+    const ap=cv.applied_by_carrier;
+    return [cv.label,cv.limit!=null?fmt(cv.limit):'—',ap==='yes'?'Yes':ap==='partial'?'Partial':'Not yet',ap==='yes'?'✓ Applied':ap==='partial'?'⚠ Partial':'✗ Not Applied'];
+  }):[['Policy not yet analyzed','—','—','Upload policy in Phase 02']];
+  doc.autoTable({startY:y,margin:{left:14,right:14},head:[['Coverage Type','Policy Limit','Applied by Carrier','Status']],body:tableBody,
+    headStyles:{fillColor:[15,23,42],textColor:255,fontStyle:'bold',fontSize:9},bodyStyles:{fontSize:9,textColor:[51,65,85]},
+    alternateRowStyles:{fillColor:[248,250,252]},columnStyles:{2:{halign:'center'},3:{halign:'center',fontStyle:'bold'}},
+    didDrawCell:(data)=>{if(data.column.index===3&&data.section==='body'){const v=data.cell.text[0];if(v.startsWith('✓'))data.cell.styles.textColor=[16,185,129];else if(v.startsWith('✗'))data.cell.styles.textColor=[239,68,68];else data.cell.styles.textColor=[245,158,11];}}
   });
-
   y=doc.lastAutoTable.finalY+10;
-  y=pdfSectionTitle(doc,'Action Required',y);
-
-  doc.setFillColor(255,251,235);
-  doc.setDrawColor(245,158,11);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(14,y,pageW-28,22,2,2,'FD');
-  doc.setFillColor(245,158,11);
-  doc.rect(14,y,3,22,'F');
-  doc.setTextColor(146,64,14);
-  doc.setFontSize(9);
-  doc.setFont('helvetica','bold');
-  doc.text('5 Coverages Not Yet Applied by Carrier',20,y+7);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(8);
-  doc.text('Total potential unapplied coverage: up to $382,500. A Coverage Clarification Request letter should be sent to',20,y+13);
-  doc.text('the carrier requesting written explanation of why these coverages have not been applied to this claim.',20,y+18);
-
-  doc.save(`Coverage_Analysis_${claimData.initial.claimNumber}.pdf`);
+  if(gaps.length>0){
+    y=pdfSectionTitle(doc,'Action Required',y);
+    const uv=gaps.reduce((s,g)=>s+(g.potential_value||0),0);
+    doc.setFillColor(255,251,235);doc.setDrawColor(245,158,11);doc.setLineWidth(0.3);
+    doc.roundedRect(14,y,pageW-28,22,2,2,'FD');doc.setFillColor(245,158,11);doc.rect(14,y,3,22,'F');
+    doc.setTextColor(146,64,14);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text(gaps.length+' Coverage'+(gaps.length!==1?'s':'')+' Not Yet Applied by Carrier',20,y+7);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);
+    const gt=uv>0?'Total potential unapplied: up to '+fmt(uv)+'.':'Coverage gaps identified.';
+    doc.text(gt+' Send a Coverage Clarification Request.',20,y+13);
+  }
+  doc.save('Coverage_Analysis_'+claimData.initial.claimNumber+'.pdf');
   logActivity('⬇️','Downloaded Coverage Analysis PDF');
 }
 
@@ -3918,15 +4232,23 @@ function downloadCoverageMap(){
   pdfFooter(doc);
   let y=pdfHeader(doc,'Coverage Map','How your policy coverages apply to this specific loss');
 
-  y=pdfSectionTitle(doc,'Coverage Applicability — Burst Pipe Water Damage',y);
-
+  const pA=claimData.policy.analysis;
+  const mapCoverages=pA&&Array.isArray(pA.coverages)?pA.coverages:[];
+  const sectionTitle='Coverage Applicability'+(pA?' — '+(pA.carrier||claimData.initial.insurer||'Your Carrier'):' (Policy Not Yet Analyzed)');
+  y=pdfSectionTitle(doc,sectionTitle,y);
+  if(mapCoverages.length===0){
+    doc.setTextColor(100,116,139);doc.setFontSize(10);
+    doc.text('Upload and analyze your policy in Phase 02 to generate a personalized coverage map.',14,y+10,{maxWidth:pageW-28});
+    doc.save('Coverage_Map_'+claimData.initial.claimNumber+'.pdf');
+    logActivity('⬇️','Downloaded Coverage Map PDF');
+    return;
+  }
   const coverages=[
-    {type:'Structural Damage',coverage:'Coverage A — Dwelling',limit:'$350,000',applies:true,desc:'Floors, walls, ceilings, subfloor, drywall, paint — all structural repair costs covered under Coverage A.'},
-    {type:'Code Upgrades',coverage:'Ordinance & Law Endorsement',limit:'$35,000',applies:true,desc:'Covers costs to bring repairs up to current building code. Often $5,000–$25,000 in added value.'},
-    {type:'Pipe Damage',coverage:'Water Backup Endorsement',limit:'$25,000',applies:true,desc:'Covers resultant damage from burst/failed plumbing systems within the dwelling walls.'},
-    {type:'Living Expenses',coverage:'Coverage D — ALE',limit:'$70,000',applies:null,desc:'Additional living expenses if you had to temporarily relocate. Document all costs above normal baseline.'},
-    {type:'Personal Property',coverage:'Coverage C — Contents',limit:'$262,500',applies:true,desc:'Furniture, electronics, clothing, personal property damaged by water. Full RCV basis.'},
-    {type:'Equipment',coverage:'Equipment Breakdown',limit:'$50,000',applies:null,desc:'HVAC, appliances, and mechanical systems damaged as a result of the water loss.'},
+    ...mapCoverages.map(cov=>({
+      type:cov.label,coverage:cov.label,limit:cov.limit!=null?fmt(cov.limit):'—',
+      applies:cov.applied_by_carrier==='yes'?true:cov.applied_by_carrier==='no'?false:null,
+      desc:cov.description||''
+    }))
   ];
 
   coverages.forEach((cov,i)=>{
@@ -4249,14 +4571,16 @@ function downloadDemandPackage(){
   y=doc.lastAutoTable.finalY+10;
   y=pdfSectionTitle(doc,'Documentation Checklist',y);
 
+  const docList=claimData.documents||[];
+  const hd=(type)=>docList.some(d=>d.type===type);
   const checklist=[
-    ['✓','Independent contractor estimate ($68,450)','Complete'],
-    ['✓','Line-item comparison with gap analysis','Complete'],
-    ['✓','Policy coverage analysis','Complete'],
-    ['○','Proof of Loss with sworn inventory','Pending'],
-    ['○','ALE receipts and expense log',ale.entries.length>0?'In Progress':'Pending'],
-    ['○','Photo documentation package','Pending'],
-    ['○','Correspondence log','Pending'],
+    [hd('contractor_estimate')?'✓':'○','Independent contractor estimate'+(structure.userEstimate>0?' ('+fmt(structure.userEstimate)+')':''),hd('contractor_estimate')?'Complete':'Pending'],
+    [hd('carrier_estimate')?'✓':'○','Carrier estimate uploaded',hd('carrier_estimate')?'Complete':'Pending'],
+    [claimData.policy.analysis?'✓':'○','Policy coverage analysis',claimData.policy.analysis?'Complete':'Pending'],
+    [hd('photo')?'✓':'○','Photo documentation package',hd('photo')?'Complete':'Pending'],
+    [ale.entries.length>0?'✓':'○','ALE receipts and expense log',ale.entries.length>0?'In Progress':'Pending'],
+    [(claimData.contents.items||[]).length>0?'✓':'○','Contents inventory',( claimData.contents.items||[]).length>0?'In Progress':'Pending'],
+    [correspondenceJournal.length>0?'✓':'○','Correspondence log ('+correspondenceJournal.length+' letters)',correspondenceJournal.length>0?'Complete':'Pending'],
   ];
 
   doc.autoTable({
