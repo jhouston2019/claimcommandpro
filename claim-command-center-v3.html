@@ -632,7 +632,7 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
           </select>
         </div>
         <div class="form-group full"><label class="form-label">Brief Description</label>
-          <textarea class="form-textarea" id="ob-desc" placeholder="Describe what happened..." placeholder="Describe what happened — cause, affected areas, extent of damage..."></textarea>
+          <textarea class="form-textarea" id="ob-desc" placeholder="Describe what happened — cause, affected areas, extent of damage..."></textarea>
         </div>
         <div class="form-group"><label class="form-label">Have you received a carrier estimate?</label>
           <select class="form-select" id="ob-has-estimate" onchange="document.getElementById('ob-est-row').style.display=this.value==='yes'?'block':'none'">
@@ -643,7 +643,7 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
         <div class="form-group" id="ob-est-row" style="display:none"><label class="form-label">Carrier Estimate Amount</label><input class="form-input" id="ob-est-amt" placeholder="$0" type="number"></div>
       </div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="obNext()">Review Claim Summary →</button>
-      <button onclick="obSkip()" style="width:100%;margin-top:10px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;padding:10px;font-size:13px;color:#64748b;cursor:pointer;font-family:var(--font)">Skip → Enter with pre-filled data</button>
+      <button onclick="obSkip()" style="width:100%;margin-top:10px;background:transparent;border:1px solid #e2e8f0;border-radius:6px;padding:10px;font-size:13px;color:#64748b;cursor:pointer;font-family:var(--font)">Skip for now →</button>
     </div>
     <div id="ob-step2" style="display:none">
       <div class="ob-title">Your claim at a glance</div>
@@ -1039,6 +1039,28 @@ async function loadState(){
         claimData.ALE.total = financial.ale_total || 0;
       }
 
+      const { data: claimDocs } = await supabase
+        .from('claim_documents')
+        .select('id, document_type, file_name, storage_path, file_size, uploaded_at')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .order('uploaded_at', { ascending: false });
+
+      if (claimDocs && claimDocs.length > 0) {
+        const fromDb = claimDocs.map(d => ({
+          id: d.id,
+          name: d.file_name || 'Document',
+          type: d.document_type || 'evidence',
+          path: d.storage_path || '',
+          size: d.file_size || 0,
+          uploadedAt: d.uploaded_at || new Date().toISOString(),
+          stored: 'supabase'
+        }));
+        const localOnly = (claimData.documents || []).filter(ld =>
+          !fromDb.some(fd => fd.id === ld.id || (fd.path && ld.path && fd.path === ld.path))
+        );
+        claimData.documents = [...fromDb, ...localOnly];
+      }
+
     } catch(e) {
       console.warn('Supabase loadState failed, using localStorage cache:', e);
     }
@@ -1184,6 +1206,13 @@ function updateNavMetrics(){
   document.getElementById('dp-total-collected').textContent=fmt(tcoll);
   document.getElementById('sv-recovery').textContent='Collected: '+fmt(tcoll);
   document.getElementById('dp-est-def').textContent=fmt(Math.max(0,gap));
+  const dc=document.getElementById('dayCount');
+  if(dc)dc.textContent=String(claimData.initial.daysSinceLoss||0);
+  const av=document.querySelector('.nav1-avatar');
+  if(av){
+    const n=(claimData.initial.insuredName||'').trim();
+    av.textContent=n?n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase():'—';
+  }
 }
 
 function renderActivityStrip(){
@@ -1691,6 +1720,10 @@ function saveClaimInfoEdit(){
   claimData.initial.dateOfLoss   = document.getElementById('eci-dol').value.trim()||claimData.initial.dateOfLoss;
   claimData.initial.propertyType = document.getElementById('eci-proptype').value.trim()||claimData.initial.propertyType;
   claimData.initial.description  = document.getElementById('eci-desc').value.trim();
+  if(claimData.initial.dateOfLoss){
+    const d=new Date(claimData.initial.dateOfLoss);
+    if(!isNaN(d.getTime()))claimData.initial.daysSinceLoss=Math.max(0,Math.round((new Date()-d)/(24*3600000)));
+  }
   document.getElementById('edit-claim-modal').remove();
   updateNavMetrics(); saveState(); renderContent();
   if(window.CNToast) CNToast.success('Claim information updated');
@@ -1712,6 +1745,9 @@ function updateDocumentsPanel() {
   el.innerHTML = rows.map(function(r){
     return '<div class="doc-item"><span class="doc-icon">'+r.icon+'</span><span class="doc-name">'+r.label+'</span><span class="doc-status '+(r.ok?'ok':'missing')+'">'+(r.ok?'✔ Uploaded':'✖ Missing')+'</span></div>';
   }).join('');
+  const uploaded=rows.filter(r=>r.ok).length;
+  const sv=document.getElementById('sv-docs');
+  if(sv)sv.textContent=uploaded+' of '+rows.length+' uploaded';
 }
 
 function updateMissingPanel() {
@@ -1783,7 +1819,7 @@ function renderP01S1(){
       <div class="panel-header"><div class="panel-title">Report Loss Details</div><div class="panel-subtitle">Fill out the details below to generate your Written Notice of Loss.</div></div>
       <div class="warn-red"><strong>⛔ Do Not Provide Damage Estimates on the Initial Call</strong><div class="warn-red-text">Only report that a loss occurred and when. Do not describe damage amounts or provide cost estimates — you likely don't know the full extent yet.</div></div>
       <div class="form-grid">
-        <div class="form-group"><label class="form-label">Date of Loss</label><input class="form-input" id="dol-input" value="November 15, 2024"></div>
+        <div class="form-group"><label class="form-label">Date of Loss</label><input class="form-input" id="dol-input" value="${claimData.initial.dateOfLoss||''}" placeholder="Date of loss"></div>
         <div class="form-group"><label class="form-label">Cause of Loss</label>
           <select class="form-select" id="col-select">
             <option value="water" selected>Water / Plumbing (Burst Pipe)</option>
@@ -1814,6 +1850,12 @@ async function generateNotice(){
   if (!res) return;
   const btn = event?.target;
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating...'; }
+  const dolIn=(document.getElementById('dol-input')||{}).value;
+  const descIn=(document.getElementById('desc-input')||{}).value;
+  const claimNumIn=(document.getElementById('claimnum-input')||{}).value;
+  if(dolIn)claimData.initial.dateOfLoss=dolIn;
+  if(descIn)claimData.initial.description=descIn;
+  if(claimNumIn)claimData.initial.claimNumber=claimNumIn;
   res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">✉️ Generating your written notice — this takes 10–20 seconds...</div>';
 
   try {
@@ -2623,7 +2665,7 @@ function renderP06S0(){
       toolChip('Carrier Estimate Analyzer','required'),
     ].join(''))}
     <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">Upload Carrier Estimate</div><div class="panel-subtitle">Upload the estimate provided by State Farm. This will be compared line-by-line to your contractor's estimate.</div></div>
+      <div class="panel-header"><div class="panel-title">Upload Carrier Estimate</div><div class="panel-subtitle">Upload the estimate provided by ${claimData.initial.insurer||'your carrier'}. This will be compared line-by-line to your contractor's estimate.</div></div>
       ${claimInfoStrip()}
       ${uploadZone('carrier-est-upload','Drag & drop the carrier estimate PDF here','carrier_estimate')}
       <div class="form-grid" style="margin-top:12px">
@@ -2714,7 +2756,7 @@ function renderP06S1(){
       <div class="money-moment" style="margin-top:16px">
         <div class="money-label">Total Identified Gap</div>
         <div class="money-amount">${fmt(user-carrier)}</div>
-        <div class="money-sub">This is the documented difference between what you are owed and what State Farm has offered</div>
+        <div class="money-sub">This is the documented difference between what you are owed and what ${claimData.initial.insurer||'the carrier'} has offered</div>
       </div>
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-secondary" onclick="downloadGapAnalysis()">⬇️ Download Comparison PDF</button>
@@ -2755,7 +2797,7 @@ function renderP06S2(){
       <div class="panel-header"><div class="panel-title">Underpayment Analysis</div></div>
       <div class="money-moment">
         <div class="money-label">You Are Currently Underpaid By</div>
-        <div class="money-amount">${fmt(Math.max(0,gap)||30250)}</div>
+        <div class="money-amount">${fmt(Math.max(0,gap))}</div>
         <div class="money-sub">Based on line-item comparison of carrier estimate vs. independent contractor pricing</div>
       </div>
       ${buildGapCategoryTable(gap)}
@@ -3442,8 +3484,7 @@ async function renderWizardStep(step, letterType){
           <button class="btn btn-secondary" onclick="renderWizardStep(3,'${letterType}')">← Back</button>
           <div class="flex gap-8" style="flex-wrap:wrap">
             <button class="btn btn-ghost" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.querySelector('.letter-display').textContent).then(()=>alert('Copied to clipboard'))">📋 Copy</button>
-            <button class="btn btn-secondary" onclick="alert('PDF download triggered')">⬇️ Download PDF</button>
-            <button class="btn btn-secondary" onclick="alert('Word download triggered')">⬇️ Download Word</button>
+            <button class="btn btn-secondary" onclick="downloadComposeLetterPDF('${letterType.replace(/'/g,"\\'")}')">⬇️ Download PDF</button>
             <button class="btn btn-primary" onclick="logCorrespondence('${letterType}','Phase '+phases[activePhase].num+' — '+phases[activePhase].title);alert('✅ Logged to Correspondence Journal')">📋 Log to Journal</button>
           </div>
         </div>
@@ -3780,9 +3821,11 @@ function renderActivityView(){
 
 function renderMessagesView(){
   const cv=document.getElementById('content-view');
-  cv.innerHTML=`
-    <div class="view-header"><div class="view-title">Messages</div><div class="view-sub">Claim correspondence and incoming communications from ${claimData.initial.insurer}</div></div>
-    ${claimData.messages.map(m=>`
+  const msgs=claimData.messages||[];
+  const listHtml=msgs.length===0
+    ? `<div class="action-panel"><div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-sub">Log adjuster emails here, or use Correspondence to draft outbound letters.</div></div>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="showView('correspondence');setCorrespondenceTab('compose')">Compose a Letter →</button></div>`
+    : msgs.map(m=>`
       <div class="message-item">
         <div class="msg-icon">✉️</div>
         <div class="msg-content">
@@ -3791,11 +3834,14 @@ function renderMessagesView(){
           <div class="msg-preview">${m.preview}</div>
           <div style="margin-top:8px;display:flex;gap:6px">
             <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="readMessage('${m.id}')">Read →</button>
-            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showView('correspondence');correspondenceTab='compose'">Respond →</button>
+            <button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="showView('correspondence');setCorrespondenceTab('compose')">Respond →</button>
           </div>
         </div>
         <div class="msg-date">${m.date}</div>
-      </div>`).join('')}`;
+      </div>`).join('');
+  cv.innerHTML=`
+    <div class="view-header"><div class="view-title">Messages</div><div class="view-sub">Claim correspondence and incoming communications from ${claimData.initial.insurer||'your carrier'}</div></div>
+    ${listHtml}`;
 }
 
 function readMessage(msgId){
@@ -3839,12 +3885,24 @@ function downloadComposeLetterPDF(letterType){
 
 function renderDocumentsView(){
   const cv=document.getElementById('content-view');
+  const docs=claimData.documents||[];
+  const byType=(t)=>docs.filter(d=>d.type===t);
+  const policyRows=byType('policy').map(d=>({name:d.name,ok:true}));
+  if(!policyRows.length)policyRows.push({name:'Insurance Policy',ok:false});
+  const photoRows=byType('photo').map(d=>({name:d.name,ok:true}));
+  if(!photoRows.length)photoRows.push({name:'Damage photos',ok:false});
+  const estRows=[...byType('contractor_estimate'),...byType('carrier_estimate')].map(d=>({name:d.name+' ('+d.type.replace('_',' ')+')',ok:true}));
+  if(!byType('contractor_estimate').length)estRows.unshift({name:'Contractor estimate',ok:false});
+  if(!byType('carrier_estimate').length)estRows.push({name:'Carrier estimate',ok:false});
+  const evidenceRows=byType('evidence').map(d=>({name:d.name+(d.category?' · '+d.category:''),ok:true}));
+  const otherRows=docs.filter(d=>!['policy','photo','contractor_estimate','carrier_estimate','evidence'].includes(d.type)).map(d=>({name:d.name,ok:true}));
+  const letterRows=correspondenceJournal.map(j=>({name:j.type,ok:true}));
   const docCats=[
-    {cat:'Policy Documents',icon:'📋',items:['Insurance Policy (Declarations + Full Contract)','Policy Endorsements & Riders','Premium Payment Records'],status:['missing','missing','missing']},
-    {cat:'Damage Evidence',icon:'📸',items:['Damage Photos Package','Video Walkthrough','Pre-Loss Condition Photos'],status:['missing','missing','missing']},
-    {cat:'Estimates',icon:'📊',items:['Independent Contractor Estimate','Carrier Estimate','Scope Comparison'],status:['missing','missing','missing']},
-    {cat:'Correspondence',icon:'✉️',items:correspondenceJournal.map(j=>j.type),status:correspondenceJournal.map(()=>'ok')},
-    {cat:'Receipts & Invoices',icon:'🧾',items:['Emergency Mitigation Receipts','ALE Expense Receipts'],status:['missing','missing']},
+    {cat:'Policy',icon:'📋',items:policyRows},
+    {cat:'Damage evidence',icon:'📸',items:photoRows},
+    {cat:'Estimates',icon:'📊',items:estRows},
+    {cat:'Evidence & other uploads',icon:'📁',items:[...evidenceRows,...otherRows]},
+    {cat:'Correspondence',icon:'✉️',items:letterRows},
   ];
   cv.innerHTML=`
     <div class="view-header" style="display:flex;align-items:center;justify-content:space-between">
@@ -3855,12 +3913,11 @@ function renderDocumentsView(){
       <div style="margin-bottom:20px">
         <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.3px;margin-bottom:8px">${dc.icon} ${dc.cat}</div>
         <div class="doc-grid">
-          ${dc.items.length===0?'<div class="empty-state" style="padding:16px"><div class="empty-sub">No documents yet</div></div>':dc.items.map((item,i)=>`
+          ${dc.items.length===0?'<div class="empty-state" style="padding:16px"><div class="empty-sub">No documents yet</div></div>':dc.items.map((item)=>`
             <div class="doc-item-page">
-              <div class="doc-icon">${dc.status[i]==='ok'?'✅':'📄'}</div>
-              <div class="doc-name">${item}</div>
-              <div class="doc-status ${dc.status[i]==='ok'?'ok':'missing'}">${dc.status[i]==='ok'?'✓ Available':'✖ Missing'}</div>
-              ${dc.status[i]==='ok'?`<button class="btn btn-ghost" style="font-size:11px;padding:3px 8px" onclick="alert('Downloading...')">⬇️</button>`:''}
+              <div class="doc-icon">${item.ok?'✅':'📄'}</div>
+              <div class="doc-name">${item.name}</div>
+              <div class="doc-status ${item.ok?'ok':'missing'}">${item.ok?'✓ Available':'✖ Missing'}</div>
             </div>`).join('')}
         </div>
       </div>`).join('')}`;
