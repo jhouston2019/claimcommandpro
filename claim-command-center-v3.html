@@ -663,6 +663,7 @@ let claimData = {
   initial:{insuredName:'',claimNumber:'',insurer:'',adjusterName:'',dateOfLoss:'',propertyType:'Single Family Home',claimType:'property-claim',description:'',daysSinceLoss:0,claimStatus:'Active — Under Review'},
   policy:{uploaded:false,dwellingCoverage:0,deductible:0,settlementType:'RCV',contentsCoverage:0,aleCoverage:0,endorsements:[]},
   structure:{insurerEstimate:0,userEstimate:0,gap:0},
+  structureItems:[],
   contents:{items:[],totalValue:0,recovered:0},
   ALE:{entries:[],total:0,dailyRate:0,baseline:0},
   documents:[],messages:[],
@@ -873,6 +874,7 @@ async function saveState(){
     localStorage.setItem('ccc_current_substep',activeSubstep);
     localStorage.setItem('ccc_correspondence_journal',JSON.stringify(correspondenceJournal));
     localStorage.setItem('ccc_activity_log',JSON.stringify(activityLog));
+    localStorage.setItem('ccc_structure_items',JSON.stringify(claimData.structureItems||[]));
     localStorage.setItem('ccc_onboarded','true');
   }catch(e){}
   updateDocumentsPanel();
@@ -928,6 +930,23 @@ async function saveState(){
           .insert(financialData);
       }
     }
+
+    const user = await window.CNAuth.currentUser();
+    const userId = user?.id || null;
+    const activityRows = activityLog.slice(0, 50).map(a => ({
+      claim_id: window.CCC_CLAIM_ID,
+      user_id: userId,
+      icon: a.icon || null,
+      text: a.text || '',
+      amount: a.amount != null ? a.amount : null,
+      date: a.date || null,
+      time: a.time || null
+    }));
+    if (activityRows.length > 0) {
+      await supabase
+        .from('claim_activity_log')
+        .upsert(activityRows, { onConflict: 'claim_id,date,time,text' });
+    }
   } catch(e) {
     console.warn('Supabase saveState failed, localStorage preserved:', e);
   }
@@ -981,6 +1000,18 @@ async function loadState(){
     if(cj)correspondenceJournal=JSON.parse(cj);
     const al=localStorage.getItem('ccc_activity_log');
     if(al)activityLog=JSON.parse(al);
+    const si=localStorage.getItem('ccc_structure_items');
+    if(si){
+      try{claimData.structureItems=JSON.parse(si);}catch(e){claimData.structureItems=[];}
+    }
+    if(!claimData.structureItems)claimData.structureItems=[];
+    if(!claimData.structureItems.length&&claimData.contents&&claimData.contents.items){
+      const legacy=claimData.contents.items.filter(i=>i.room&&i.type&&!i.name);
+      if(legacy.length){
+        claimData.structureItems=legacy;
+        claimData.contents.items=claimData.contents.items.filter(i=>!(i.room&&i.type&&!i.name));
+      }
+    }
     onboarded = localStorage.getItem('ccc_onboarded')==='true';
   }catch(e){
     console.warn('loadState localStorage error:', e);
@@ -1037,6 +1068,46 @@ async function loadState(){
         claimData.structure.gap = financial.gap_amount || 0;
         claimData.contents.totalValue = financial.contents_total || 0;
         claimData.ALE.total = financial.ale_total || 0;
+      }
+
+      const activityKey = a => (a.date || '') + '|' + (a.time || '') + '|' + (a.text || '');
+      const { data: remoteActivity } = await supabase
+        .from('claim_activity_log')
+        .select('icon,text,amount,date,time')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (remoteActivity && remoteActivity.length > 0) {
+        const remoteKeys = new Set(remoteActivity.map(activityKey));
+        const remoteEntries = remoteActivity.map(a => ({
+          icon: a.icon || '📋',
+          text: a.text || '',
+          amount: a.amount,
+          date: a.date || '',
+          time: a.time || ''
+        }));
+        const localOnly = activityLog.filter(a => !remoteKeys.has(activityKey(a)));
+        activityLog = [...remoteEntries, ...localOnly].slice(0, 50);
+      }
+
+      if (!claimData.policy?.analysis) {
+        const { data: policyRow } = await supabase
+          .from('claim_policy_analysis')
+          .select('analysis, analyzed_at, policy_file_name')
+          .eq('claim_id', window.CCC_CLAIM_ID)
+          .maybeSingle();
+
+        if (policyRow?.analysis) {
+          claimData.policy.analysis = policyRow.analysis;
+          claimData.policy.uploaded = true;
+          if (policyRow.policy_file_name) claimData.policy.fileName = policyRow.policy_file_name;
+          if (policyRow.analysis.dwelling_coverage != null) claimData.policy.dwellingCoverage = policyRow.analysis.dwelling_coverage;
+          if (policyRow.analysis.contents_coverage != null) claimData.policy.contentsCoverage = policyRow.analysis.contents_coverage;
+          if (policyRow.analysis.ale_coverage != null) claimData.policy.aleCoverage = policyRow.analysis.ale_coverage;
+          if (policyRow.analysis.deductible != null) claimData.policy.deductible = policyRow.analysis.deductible;
+          if (policyRow.analysis.settlement_type) claimData.policy.settlementType = policyRow.analysis.settlement_type;
+        }
       }
 
       const { data: claimDocs } = await supabase
@@ -1678,7 +1749,7 @@ function loadSample(){
   claimData.initial.propertyType = claimData.initial.propertyType || 'Single Family Home';
   claimData.initial.description = claimData.initial.description || 'Water damage from burst pipe.';
   if (!claimData.structure.userEstimate) { claimData.structure.insurerEstimate=28400; claimData.structure.userEstimate=47250; claimData.structure.gap=18850; }
-  if (!claimData.contents.items.length) { claimData.contents.items=[{name:'Living Room Flooring',room:'Living Room',val:8400,condition:'destroyed'},{name:'Drywall — Kitchen Ceiling',room:'Kitchen',val:3200,condition:'destroyed'}]; claimData.contents.totalValue=11600; }
+  if (!(claimData.structureItems||[]).length) { claimData.structureItems=[{room:'Living Room',type:'Flooring',desc:'Engineered hardwood, water damage',val:8400,cond:'destroyed',date:fmtDate()},{room:'Kitchen',type:'Structural / Drywall',desc:'Drywall ceiling water damage',val:3200,cond:'destroyed',date:fmtDate()}]; }
   if (!claimData.ALE.entries.length) { claimData.ALE.entries=[{date:'2025-01-12',category:'Hotel',amount:189,description:'Extended Stay night 1'},{date:'2025-01-13',category:'Meals',amount:67,description:'Family meals'}]; claimData.ALE.total=256; }
   updateNavMetrics(); saveState(); renderContent();
   if(window.CNToast) CNToast.success('Sample data loaded'); else alert('Sample claim data loaded.');
@@ -2122,6 +2193,21 @@ async function analyzePolicyDoc(){
     logActivity('🔍', 'Policy analyzed — ' + result.gaps_found + ' coverage gap' + (result.gaps_found !== 1 ? 's' : '') + ' identified');
     saveState();
 
+    if (window.CCC_CLAIM_ID) {
+      try {
+        const supabase = await window.getSupabaseClient();
+        await supabase.from('claim_policy_analysis').upsert({
+          claim_id: window.CCC_CLAIM_ID,
+          analysis: result,
+          analyzed_at: new Date().toISOString(),
+          policy_file_name: claimData.policy.fileName || null,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'claim_id' });
+      } catch (e) {
+        console.warn('Policy analysis Supabase persist failed:', e);
+      }
+    }
+
     // Low confidence warning
     const showPartialWarning = result.extraction_degraded === true ||
       (result.confidence === 'low' && (!result.coverages || result.coverages.length === 0));
@@ -2299,6 +2385,9 @@ function renderP02S2(){
 // PHASE 03
 // ============================
 function renderP03S0(){
+  const photoCount=(claimData.documents||[]).filter(d=>d.type==='photo').length;
+  const pa=claimData.meta&&claimData.meta.photoAnalysis;
+  const analysisHtml=pa?`<div class="analysis-result" id="photo-analysis-result"><div class="ar-header"><div class="ar-header-text">✅ AI Photo Analysis — ${pa.severity||'assessed'}</div></div><div class="ar-body"><p>${pa.summary||''}</p>${(pa.damage_types&&pa.damage_types.length)?'<p style="margin-top:8px"><strong>Damage types:</strong> '+pa.damage_types.join(', ')+'</p>':''}${pa.notes?'<p style="margin-top:8px;font-size:12px;color:var(--slate)">'+pa.notes+'</p>':''}</div></div>`:'<div id="photo-analysis-result"></div>';
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(2,'Photo Documentation','Capture comprehensive photographic evidence of all damage to support your claim.')}
     ${thinRow('TASKS',[
@@ -2315,16 +2404,50 @@ function renderP03S0(){
       <div class="panel-header"><div class="panel-title">Upload Damage Photos & Video</div><div class="panel-subtitle">Upload all photos and video of damage. The more documentation you have, the stronger your claim.</div></div>
       <div class="warn-red"><strong>⛔ Do Not Throw Away Damaged Items or Begin Repairs</strong><div class="warn-red-text">Do not discard any damaged materials, make repairs, or allow anyone to remove evidence until you have thoroughly photographed everything and the adjuster has completed their inspection.</div></div>
       ${uploadZone('photo-upload','Drag & drop photos or video files here (multi-file supported)','photo')}
-      <div id="photo-count" style="font-size:12px;color:var(--gray-500);text-align:center;margin-top:8px">0 photos uploaded</div>
+      <div id="photo-count" style="font-size:12px;color:var(--gray-500);text-align:center;margin-top:8px">${photoCount} photo${photoCount!==1?'s':''} uploaded</div>
+      <div style="text-align:center;margin-top:12px">
+        <button id="photo-analyze-btn" class="btn btn-primary" onclick="analyzePhotosWithAI()" ${photoCount===0?'disabled':''}>${photoCount===0?'Upload photos first':'Analyze Photos with AI →'}</button>
+      </div>
+      ${analysisHtml}
       <div class="warn-amber"><strong>📸 Documentation Tips</strong><div class="warn-amber-text">Take wide shots, medium shots, and close-ups of every damage area · Photograph from multiple angles · Include a ruler or common object for scale · Capture room overview before individual items · Document pre-existing conditions separately to avoid confusion</div></div>
       ${actionRow("setPhase(1)","Organize Documentation →","markComplete()",'true')}
     </div>`;
-  // Update photo count from real document list
   (function(){
     const n=(claimData.documents||[]).filter(d=>d.type==='photo').length;
     const el=document.getElementById('photo-count');
     if(el){el.textContent=n+' photo'+(n!==1?'s':'')+' uploaded';el.style.color=n>0?'var(--emerald)':'var(--gray-500)';}
   })();
+}
+
+async function analyzePhotosWithAI(){
+  const photos=(claimData.documents||[]).filter(d=>d.type==='photo');
+  if(photos.length===0){if(window.CNToast)CNToast.warn('Upload photos first');return;}
+  const btn=document.getElementById('photo-analyze-btn');
+  const res=document.getElementById('photo-analysis-result');
+  if(btn){btn.disabled=true;btn.textContent='Analyzing photos…';}
+  if(res)res.innerHTML='<div class="warn-teal" style="margin-top:12px"><strong>⏳ Analyzing damage photos…</strong></div>';
+  try{
+    const payload=photos.map(d=>({
+      storage_path:d.path||d.storage_path||'',
+      file_name:d.name||d.file_name||'photo',
+      url:d.url||''
+    }));
+    const result=await callNetlify('analyze-photos',{
+      photos:payload,
+      claim_type:claimData.initial.claimType,
+      description:claimData.initial.description
+    });
+    if(!claimData.meta)claimData.meta={};
+    claimData.meta.photoAnalysis=result;
+    const types=(result.damage_types||[]).join(', ')||'general damage';
+    logActivity('📸','AI photo analysis complete — '+types);
+    saveState();
+    renderP03S0();
+  }catch(e){
+    console.warn('analyzePhotosWithAI failed:',e);
+    if(res)res.innerHTML='<div class="warn-amber" style="margin-top:12px"><strong>Analysis failed</strong><div class="warn-amber-text">'+e.message+'</div></div>';
+    if(btn){btn.disabled=false;btn.textContent='Analyze Photos with AI →';}
+  }
 }
 
 function renderP03S1(){
@@ -2373,8 +2496,8 @@ function addInventoryItem(){
   const val=parseInt(document.getElementById('inv-val').value)||0;
   const cond=document.getElementById('inv-cond').value;
   const item={room,type,desc,val,cond,date:fmtDate()};
-  claimData.contents.items.push(item);
-  claimData.contents.totalValue+=val;
+  if(!claimData.structureItems)claimData.structureItems=[];
+  claimData.structureItems.push(item);
   document.getElementById('inv-desc').value='';
   document.getElementById('inv-val').value='';
   saveState();logActivity('📋','Added inventory item: '+desc.slice(0,40),val);
@@ -2383,8 +2506,9 @@ function addInventoryItem(){
 
 function renderInventoryList(){
   const el=document.getElementById('inv-list');if(!el)return;
-  if(claimData.contents.items.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No items added yet</div><div class="empty-sub">Add your first damaged item above</div></div>';return;}
-  el.innerHTML=claimData.contents.items.map((item,i)=>`
+  const items=claimData.structureItems||[];
+  if(items.length===0){el.innerHTML='<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No items added yet</div><div class="empty-sub">Add your first damaged item above</div></div>';return;}
+  el.innerHTML=items.map((item,i)=>`
     <div class="log-entry">
       <div class="log-entry-icon">📦</div>
       <div class="log-entry-content">
@@ -2394,7 +2518,7 @@ function renderInventoryList(){
       </div>
       <div class="log-entry-amount">${fmt(item.val)}</div>
     </div>`).join('');
-  const total=claimData.contents.items.reduce((s,i)=>s+i.val,0);
+  const total=(claimData.structureItems||[]).reduce((s,i)=>s+(i.val||0),0);
   const el2=document.getElementById('inv-total');if(el2)el2.textContent=fmt(total);
 }
 
@@ -3819,13 +3943,61 @@ function renderActivityView(){
     <div class="action-panel">${html}</div>`;
 }
 
+function openLogIncomingMessage(){
+  const existing=document.getElementById('log-incoming-msg-modal');
+  if(existing){existing.remove();return;}
+  const today=new Date().toISOString().slice(0,10);
+  const modal=document.createElement('div');
+  modal.id='log-incoming-msg-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`<div style="background:#fff;border-radius:14px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:700;color:#0f172a">Log Incoming Message</div>
+      <button type="button" onclick="document.getElementById('log-incoming-msg-modal').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8">×</button>
+    </div>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">From</label><input class="form-input" id="log-msg-from" placeholder="Adjuster name or email"></div>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Subject</label><input class="form-input" id="log-msg-subject" placeholder="Message subject"></div>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Date</label><input class="form-input" id="log-msg-date" type="date" value="${today}"></div>
+    <div class="form-group" style="margin-bottom:16px"><label class="form-label">Body</label><textarea class="form-input" id="log-msg-body" rows="6" placeholder="Paste or type message content..." style="resize:vertical"></textarea></div>
+    <div class="flex gap-8">
+      <button class="btn btn-primary" onclick="saveIncomingMessage()">Save Message</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('log-incoming-msg-modal').remove()">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+}
+
+function saveIncomingMessage(){
+  const from=(document.getElementById('log-msg-from')||{}).value||'Unknown';
+  const subject=(document.getElementById('log-msg-subject')||{}).value||'(No subject)';
+  const dateRaw=(document.getElementById('log-msg-date')||{}).value;
+  const body=(document.getElementById('log-msg-body')||{}).value||'';
+  const date=dateRaw?new Date(dateRaw+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):fmtDate();
+  if(!claimData.messages)claimData.messages=[];
+  claimData.messages.unshift({
+    id:'msg-'+Date.now(),
+    from:from,
+    subject:subject,
+    date:date,
+    preview:body.substring(0,120),
+    body:body,
+    read:false
+  });
+  const modal=document.getElementById('log-incoming-msg-modal');
+  if(modal)modal.remove();
+  saveState();
+  renderMessagesView();
+  if(window.CNToast)CNToast.success('Message logged');
+}
+
 function renderMessagesView(){
   const cv=document.getElementById('content-view');
   const msgs=claimData.messages||[];
   const listHtml=msgs.length===0
-    ? `<div class="action-panel"><div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-sub">Log adjuster emails here, or use Correspondence to draft outbound letters.</div></div>
+    ? `<div class="action-panel"><div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">No messages yet</div><div class="empty-sub">Log adjuster emails, calls, and letters here, or use Correspondence to draft outbound letters.</div></div>
       <button class="btn btn-primary" style="margin-top:12px" onclick="showView('correspondence');setCorrespondenceTab('compose')">Compose a Letter →</button></div>`
-    : msgs.map(m=>`
+    : `<div class="action-panel">${msgs.map(m=>`
       <div class="message-item">
         <div class="msg-icon">✉️</div>
         <div class="msg-content">
@@ -3838,9 +4010,12 @@ function renderMessagesView(){
           </div>
         </div>
         <div class="msg-date">${m.date}</div>
-      </div>`).join('');
+      </div>`).join('')}</div>`;
   cv.innerHTML=`
-    <div class="view-header"><div class="view-title">Messages</div><div class="view-sub">Claim correspondence and incoming communications from ${claimData.initial.insurer||'your carrier'}</div></div>
+    <div class="view-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+      <div><div class="view-title">Messages</div><div class="view-sub">Claim correspondence and incoming communications from ${claimData.initial.insurer||'your carrier'}</div></div>
+      <button class="btn btn-secondary" onclick="openLogIncomingMessage()">Log Incoming Message</button>
+    </div>
     ${listHtml}`;
 }
 
@@ -4075,12 +4250,14 @@ async function init(){
       initial:{insuredName:'',claimNumber:'',insurer:'',adjusterName:'',dateOfLoss:'',propertyType:'Single Family Home',claimType:'property-claim',description:'',daysSinceLoss:0},
       policy:{uploaded:false,dwellingCoverage:0,deductible:0,settlementType:'RCV',contentsCoverage:0,aleCoverage:0,endorsements:[]},
       structure:{insurerEstimate:0,userEstimate:0,gap:0},
+      structureItems:[],
       contents:{items:[],totalValue:0,recovered:0},
       ALE:{entries:[],total:0,dailyRate:0,baseline:0},
       documents:[],messages:[],deadlines:[],
       meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null}
     };
   }
+  if(!claimData.structureItems)claimData.structureItems=[];
 
   // Step 6: Hydrate claimData from Supabase claims row
   if (window.CCC_CLAIM_ID) {
@@ -4444,7 +4621,7 @@ function downloadDamageInventory(){
   pdfFooter(doc);
   let y=pdfHeader(doc,'Damage Inventory','Room-by-room inventory of all documented damage');
 
-  const items=claimData.contents.items.filter(i=>i.val||i.room);
+  const items=(claimData.structureItems||[]).filter(i=>i.val||i.room);
   const total=items.reduce((s,i)=>s+(i.val||0),0);
 
   if(items.length===0){
