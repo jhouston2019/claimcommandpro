@@ -2337,11 +2337,22 @@ async function analyzePolicyDoc(){
   }
 }
 
+function openCoverageLetterWizard(){
+  setPhase(1);
+  setSubstep(3);
+  saveState();
+  buildPhaseRow();
+  buildSubstepBar();
+  renderCorrespondenceWizard('✉ Coverage Clarification Request');
+}
+
 function renderP02S1(){
   const analysis  = claimData.policy.analysis;
   const coverages = analysis?.coverages || [];
   const gaps      = analysis?.coverage_gaps || [];
+  const endorsements = analysis?.endorsements || [];
   const carrier   = analysis?.carrier || claimData.initial.insurer || 'Your Carrier';
+  const settlement = analysis?.settlement_type || claimData.policy.settlementType || 'RCV';
 
   const statusPill = (applied) => {
     if (applied === 'yes')     return '<span class="status-pill sp-green">Applied</span>';
@@ -2349,26 +2360,65 @@ function renderP02S1(){
     return '<span class="status-pill sp-red">Not Applied</span>';
   };
 
-  const rows = coverages.length > 0
+  const appliedToClaim = (c) => {
+    const ap = c.applied_by_carrier;
+    if (ap === 'yes') return c.limit != null ? fmt(c.limit) : 'Full amount';
+    if (ap === 'partial') return '⚠️ Partial';
+    return '$0 — Not Applied';
+  };
+
+  const gapCell = (c) => {
+    const ap = c.applied_by_carrier;
+    if (ap === 'yes') return '—';
+    if (ap === 'partial') return 'Review needed';
+    if (c.limit != null) return `<span style="color:var(--red);font-weight:600">${fmt(c.limit)}</span>`;
+    return '—';
+  };
+
+  const policySummaryGrid = coverages.length > 0
+    ? `<div class="coverage-grid">${coverages.map(c => `
+        <div class="cov-card">
+          <div class="cov-type">${c.label}</div>
+          <div class="cov-amount">${c.limit != null ? fmt(c.limit) : '—'}</div>
+          <div class="cov-desc">Settlement: ${settlement}${c.description ? ' · ' + c.description : ''}</div>
+        </div>`).join('')}</div>`
+    : `<div style="text-align:center;color:var(--gray-400);padding:20px">Run policy analysis in Step 1 to see your policy coverage limits.</div>`;
+
+  const carrierRows = coverages.length > 0
     ? coverages.map(c => `
         <tr>
           <td><strong>${c.label}</strong></td>
           <td>${c.limit != null ? fmt(c.limit) : '—'}</td>
-          <td>${c.applied_by_carrier === 'yes' ? 'Yes' : c.applied_by_carrier === 'partial' ? 'Partial' : 'Not yet'}</td>
+          <td>${appliedToClaim(c)}</td>
+          <td>${gapCell(c)}</td>
           <td>${statusPill(c.applied_by_carrier)}</td>
         </tr>`).join('')
-    : `<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:20px">
+    : `<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:20px">
          Run policy analysis in Step 1 to populate this table with your actual coverage data.
        </td></tr>`;
 
   const gapAlert = gaps.length > 0
-    ? `<div class="warn-amber">
+    ? `<div class="warn-amber" style="margin-top:16px">
          <strong>⚠️ Action Required: ${gaps.length} Coverage${gaps.length !== 1 ? 's' : ''} Not Applied</strong>
          <div class="warn-amber-text">
-           ${gaps.map(g => `• <strong>${g.coverage}</strong> — ${g.action_required}${g.potential_value ? ' (up to ' + fmt(g.potential_value) + ')' : ''}`).join('<br>')}
+           ${gaps.map(g => `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-top:10px;flex-wrap:wrap">
+             <span>• <strong>${g.coverage}</strong> — ${g.action_required}${g.potential_value ? ' (up to ' + fmt(g.potential_value) + ')' : ''}</span>
+             <button type="button" class="btn btn-secondary" style="font-size:11px;padding:4px 10px;flex-shrink:0" onclick="openCoverageLetterWizard()">Generate Letter →</button>
+           </div>`).join('')}
          </div>
        </div>`
-    : (analysis ? '' : `<div class="warn-amber"><strong>⚠️ Policy Not Yet Analyzed</strong><div class="warn-amber-text">Complete Step 1 to see coverage gaps specific to your policy and claim.</div></div>`);
+    : (analysis ? '' : `<div class="warn-amber" style="margin-top:16px"><strong>⚠️ Policy Not Yet Analyzed</strong><div class="warn-amber-text">Complete Step 1 to see coverage gaps specific to your policy and claim.</div></div>`);
+
+  const endorseSection = (analysis && endorsements.length > 0)
+    ? `<div style="margin-top:16px">
+         <div class="paste-toggle" onclick="var b=this.nextElementSibling;b.classList.toggle('open');this.textContent=(b.classList.contains('open')?'▼':'▶')+' Endorsements & Riders on This Policy'">▶ Endorsements & Riders on This Policy</div>
+         <div class="paste-content">
+           <ul style="margin:12px 0 0;padding-left:20px;font-size:13px;color:var(--gray-700);line-height:1.7">
+             ${endorsements.map(e => `<li style="margin-bottom:8px"><strong>${e.name || 'Endorsement'}</strong>${e.limit != null ? ' — ' + fmt(e.limit) : ''}${e.description ? ': ' + e.description : ''}</li>`).join('')}
+           </ul>
+         </div>
+       </div>`
+    : '';
 
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(1,'Coverage Analysis','Detailed breakdown of all policy coverages, limits, and carrier application status.')}
@@ -2383,12 +2433,22 @@ function renderP02S1(){
     ].join(''))}
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Coverage Analysis — ${carrier}</div></div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px">Policy Coverage Summary</div>
+      <div class="panel-subtitle" style="margin-top:-6px;margin-bottom:12px">What your policy provides — limits from your declarations</div>
+      ${policySummaryGrid}
+
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);text-transform:uppercase;letter-spacing:.3px;margin:20px 0 8px">Carrier Application Status</div>
+      <div class="warn-teal" style="margin-bottom:12px"><div class="warn-teal-text" style="font-size:12px"><strong>Policy Limit</strong> = what your policy covers. <strong>Applied to Claim</strong> = what the carrier has credited toward your loss. <strong>Gaps</strong> require action.</div></div>
       <table class="data-table">
-        <thead><tr><th>Coverage Type</th><th>Limit</th><th>Applied by Carrier</th><th>Status</th></tr></thead>
-        <tbody>${rows}</tbody>
+        <thead><tr><th>Coverage</th><th>Policy Limit</th><th>Applied to Claim</th><th>Gap</th><th>Status</th></tr></thead>
+        <tbody>${carrierRows}</tbody>
       </table>
+
       ${gapAlert}
-      <div class="flex gap-8">
+      ${endorseSection}
+
+      <div class="flex gap-8" style="margin-top:16px">
         <button class="btn btn-primary" onclick="downloadCoverageAnalysis()">⬇️ Download Coverage Analysis PDF</button>
       </div>
       ${actionRow("setSubstep(0)","View Coverage Map →","setSubstep(2)")}
@@ -2413,9 +2473,15 @@ function renderP02S2(){
         const border    = applied === 'yes' ? 'var(--emerald)' : applied === 'partial' ? 'var(--amber)' : isGap ? 'var(--red)' : 'var(--gray-300)';
         const icon      = applied === 'yes' ? '✓' : applied === 'partial' ? '⚠️' : '✗';
         const iconColor = applied === 'yes' ? 'var(--emerald)' : applied === 'partial' ? 'var(--amber)' : 'var(--red)';
+        const appliedSub = applied === 'yes'
+          ? '<div style="font-size:11px;color:var(--emerald);margin-top:6px;font-weight:600">Applied to claim</div>'
+          : applied === 'partial'
+          ? '<div style="font-size:11px;color:var(--amber);margin-top:6px;font-weight:600">Partially applied</div>'
+          : '<div style="font-size:11px;color:var(--red);margin-top:6px;font-weight:600">Not applied — action needed</div>';
         return `<div class="cov-card" style="border-color:${border};border-width:2px">
           <div class="cov-type" style="color:${iconColor}">${icon} ${c.label}</div>
           <div class="cov-amount">${c.limit != null ? fmt(c.limit) : '—'}</div>
+          ${appliedSub}
           <div class="cov-desc">${c.description}</div>
         </div>`;
       }).join('')
