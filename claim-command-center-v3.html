@@ -528,7 +528,10 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
     </button>
     <button class="drop-trigger" id="dt-progress" onclick="toggleDrop('progress',this)">
       <span class="drop-label">Progress ▼</span>
-      <span class="drop-value" id="sv-progress">0 of 14 complete</span>
+      <span style="display:flex;flex-direction:column;align-items:flex-start;min-width:0">
+        <span class="drop-value" id="sv-progress">0 of 14 complete</span>
+        <span class="drop-value" id="sv-progress-sub" style="font-size:10px;opacity:.65;margin-top:2px"></span>
+      </span>
     </button>
     <button class="drop-trigger" id="dt-findings" onclick="toggleDrop('findings',this)">
       <span class="drop-label">Findings ▼</span>
@@ -896,7 +899,8 @@ async function saveState(){
           completedPhases: completedPhases,
           activePhase: activePhase,
           activeSubstep: activeSubstep,
-          onboarded: true
+          onboarded: true,
+          photoAnalysis: claimData.meta?.photoAnalysis || null
         }
       })
       .eq('id', window.CCC_CLAIM_ID);
@@ -946,6 +950,42 @@ async function saveState(){
       await supabase
         .from('claim_activity_log')
         .upsert(activityRows, { onConflict: 'claim_id,date,time,text' });
+    }
+
+    if (claimData.messages && claimData.messages.length > 0) {
+      try {
+        const { data: existing } = await supabase
+          .from('claim_messages')
+          .select('id')
+          .eq('claim_id', window.CCC_CLAIM_ID);
+        const existingIds = new Set((existing || []).map(r => r.id));
+        const newMessages = claimData.messages.filter(m => !existingIds.has(m.id));
+        if (newMessages.length > 0) {
+          const msgUser = await window.CNAuth.currentUser();
+          const uuidRe=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+          const rows=newMessages.map(m=>{
+            const row={
+              claim_id:window.CCC_CLAIM_ID,
+              user_id:msgUser?.id,
+              from_name:m.from,
+              subject:m.subject,
+              date:m.date,
+              preview:m.preview,
+              body:m.body||m.preview,
+              read:m.read||false,
+              created_at:new Date().toISOString()
+            };
+            if(uuidRe.test(String(m.id)))row.id=m.id;
+            return row;
+          });
+          const {data:inserted}=await supabase.from('claim_messages').insert(rows).select('id');
+          if(inserted&&inserted.length===newMessages.length){
+            newMessages.forEach((m,i)=>{m.id=inserted[i].id;});
+          }
+        }
+      } catch (e) {
+        console.warn('Could not persist messages to Supabase:', e);
+      }
     }
   } catch(e) {
     console.warn('Supabase saveState failed, localStorage preserved:', e);
@@ -1036,6 +1076,10 @@ async function loadState(){
         if (cf.activePhase !== undefined) activePhase = cf.activePhase;
         if (cf.activeSubstep !== undefined) activeSubstep = cf.activeSubstep;
         if (cf.onboarded) onboarded = true;
+        if (cf.photoAnalysis) {
+          if (!claimData.meta) claimData.meta = {};
+          claimData.meta.photoAnalysis = cf.photoAnalysis;
+        }
       }
 
       // Load correspondence journal from generated_letters
@@ -1053,6 +1097,27 @@ async function loadState(){
         const supabaseIds = new Set(supabaseEntries.map(e => e.id));
         const localOnlyEntries = correspondenceJournal.filter(e => !supabaseIds.has(e.id));
         correspondenceJournal = [...supabaseEntries, ...localOnlyEntries];
+      }
+
+      try {
+        if (!claimData.messages) claimData.messages = [];
+        const { data: dbMessages } = await supabase
+          .from('claim_messages')
+          .select('*')
+          .eq('claim_id', window.CCC_CLAIM_ID)
+          .order('created_at', { ascending: false });
+        if (dbMessages && dbMessages.length > 0) {
+          const localIds = new Set(claimData.messages.map(m => m.id));
+          const remoteOnly = dbMessages
+            .filter(r => !localIds.has(r.id))
+            .map(r => ({
+              id: r.id, from: r.from_name, subject: r.subject,
+              date: r.date, preview: r.preview, body: r.body, read: r.read
+            }));
+          claimData.messages = [...claimData.messages, ...remoteOnly];
+        }
+      } catch (e) {
+        console.warn('Could not load messages from Supabase:', e);
       }
 
       // Load financial summary
@@ -1328,6 +1393,9 @@ function renderProgressMilestones(){
   const done=Object.keys(completedSubsteps).length;
   const total=phases.reduce((s,p)=>s+p.substeps.length,0);
   document.getElementById('sv-progress').textContent=`${done} of ${total} complete`;
+  const milestoneDone=MILESTONE_KEYS.filter(k=>!!completedSubsteps[k]).length;
+  const subEl=document.getElementById('sv-progress-sub');
+  if(subEl)subEl.textContent=milestoneDone+' of '+milestones.length+' milestones';
   const el=document.getElementById('progress-milestones');
   if(!el)return;
   // Find the first incomplete milestone to mark as active
@@ -1516,7 +1584,10 @@ const TOOL_ROUTES={
 };
 function toolChipAction(name){
   const r=TOOL_ROUTES[name];
-  if(!r)return;
+  if(!r){
+    console.warn('No route for tool chip:', name);
+    return;
+  }
   if(r.view)showView(r.view);
   else{setPhase(r.phase);setSubstep(r.sub);showView('fullplan');}
 }
@@ -3086,6 +3157,21 @@ function renderALELog(){
 function renderP08S0(){
   const structure=claimData.structure;const contents=claimData.contents;const ale=claimData.ALE;
   const total=(structure.userEstimate||68450)+(contents.totalValue||0)+(ale.total||0);
+  const docList=claimData.documents||[];
+  const hd=(type)=>docList.some(d=>d.type===type);
+  const uiChecklist=[
+    {done:hd('contractor_estimate'),label:'Independent contractor estimate'+(claimData.structure.userEstimate>0?' ('+fmt(claimData.structure.userEstimate)+')':'')},
+    {done:hd('carrier_estimate'),label:'Carrier estimate uploaded'},
+    {done:!!claimData.policy.analysis,label:'Policy coverage analysis'},
+    {done:hd('photo'),label:'Photo documentation package'},
+    {done:(claimData.ALE.entries||[]).length>0,label:'ALE receipts and expense log'},
+    {done:(claimData.contents.items||[]).length>0,label:'Contents inventory'},
+    {done:correspondenceJournal.length>0,label:'Correspondence log ('+correspondenceJournal.length+' letters)'},
+  ];
+  const checklistHtml=uiChecklist.map(item=>`<label class="cb-label" style="margin-bottom:6px">
+    <input type="checkbox" ${item.done?'checked':''}>
+    <span style="${item.done?'color:var(--emerald)':''}">${item.label}</span>
+  </label>`).join('');
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(7,'Build Demand Package','Compile all evidence and calculate your total claim demand.')}
     ${thinRow('TASKS',[
@@ -3115,7 +3201,7 @@ function renderP08S0(){
         </tbody>
       </table>
       <div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Demand Package Checklist</div>
-        ${['Independent contractor estimate ($68,450)','Line-item comparison with gap analysis','Policy coverage analysis','Proof of Loss with sworn inventory','ALE receipts and expense log','Correspondence log (all communications)','Photo documentation package'].map(item=>`<label class="cb-label" style="margin-bottom:6px"><input type="checkbox"><span>${item}</span></label>`).join('')}
+        ${checklistHtml}
       </div>
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-secondary" onclick="downloadDemandPackage()">⬇️ Download Demand Package PDF</button>
@@ -3607,8 +3693,8 @@ async function renderWizardStep(step, letterType){
         <div class="action-row">
           <button class="btn btn-secondary" onclick="renderWizardStep(3,'${letterType}')">← Back</button>
           <div class="flex gap-8" style="flex-wrap:wrap">
-            <button class="btn btn-ghost" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.querySelector('.letter-display').textContent).then(()=>alert('Copied to clipboard'))">📋 Copy</button>
-            <button class="btn btn-secondary" onclick="downloadComposeLetterPDF('${letterType.replace(/'/g,"\\'")}')">⬇️ Download PDF</button>
+            <button class="btn btn-ghost" onclick="navigator.clipboard&&navigator.clipboard.writeText(document.querySelector('.letter-display').textContent).then(()=>{if(window.CNToast)CNToast.success('Copied');else alert('Copied')})">📋 Copy</button>
+            <button class="btn btn-secondary" onclick="downloadWizardLetterPDF('${letterType.replace(/'/g,"\\'")}')">⬇️ Download PDF</button>
             <button class="btn btn-primary" onclick="logCorrespondence('${letterType}','Phase '+phases[activePhase].num+' — '+phases[activePhase].title);alert('✅ Logged to Correspondence Journal')">📋 Log to Journal</button>
           </div>
         </div>
@@ -3975,8 +4061,9 @@ function saveIncomingMessage(){
   const body=(document.getElementById('log-msg-body')||{}).value||'';
   const date=dateRaw?new Date(dateRaw+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):fmtDate();
   if(!claimData.messages)claimData.messages=[];
+  const msgId=(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():('msg-'+Date.now());
   claimData.messages.unshift({
-    id:'msg-'+Date.now(),
+    id:msgId,
     from:from,
     subject:subject,
     date:date,
@@ -4049,6 +4136,28 @@ function downloadComposeLetterPDF(letterType){
     const el=document.querySelector('.letter-display');
     if(!el){alert('No letter content found.');return;}
     const text=el.textContent;
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'in',format:'letter'});
+    doc.setFont('helvetica','normal');doc.setFontSize(11);
+    const lines=doc.splitTextToSize(text,6.5);
+    doc.text(lines,1,1.25);
+    doc.save((letterType||'letter').replace(/\s+/g,'-').toLowerCase()+'-'+new Date().toISOString().slice(0,10)+'.pdf');
+  }catch(e){alert('PDF failed: '+e.message);}
+}
+
+function downloadWizardLetterPDF(letterType){
+  try{
+    const el=document.querySelector('.letter-display');
+    if(!el){alert('No letter content found.');return;}
+    let text=el.textContent||'';
+    const addr=(document.getElementById('ph-address')||{}).value;
+    const phone=(document.getElementById('ph-phone')||{}).value;
+    const email=(document.getElementById('ph-email')||{}).value;
+    const carrierAddr=(document.getElementById('ph-carrier-addr')||{}).value;
+    if(addr)text=text.split('[Property Address]').join(addr);
+    if(phone)text=text.split('[Phone Number]').join(phone);
+    if(email)text=text.split('[Email Address]').join(email);
+    if(carrierAddr)text=text.split('[Carrier Mailing Address]').join(carrierAddr);
     const{jsPDF}=window.jspdf;
     const doc=new jsPDF({unit:'in',format:'letter'});
     doc.setFont('helvetica','normal');doc.setFontSize(11);

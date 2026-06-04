@@ -1,9 +1,30 @@
 # Claim Command Center v3 — Full Functional Audit
 
-**Scope:** `claim-command-center-v3.html` only (~4,361 lines, self-contained SPA).  
-**Out of scope:** `claim-command-center.html`, `/app/tools/*`, `next-app/src/lib/claimSteps.ts`.  
+**Scope:** `claim-command-center-v3.html` only (~4,620 lines of application logic in a ~4,920-line file, self-contained SPA).  
+**Out of scope:** `claim-command-center.html` (redirect stub), `/app/tools/*`, `next-app/src/lib/claimSteps.ts`.  
 **Method:** Full source review of HTML/CSS/inline JS; no live browser QA; Netlify functions audited only at call sites.  
-**Audit date:** June 2026  
+**Initial audit:** June 2026  
+**Last updated:** June 2026 — after commits `ba64817c` (UX/data sync) and `56da569a` (infrastructure fixes)
+
+### Revision summary
+
+| Area | Prior audit | After updates |
+|------|-------------|---------------|
+| Activity log | localStorage only | **LIVE** sync ↔ `claim_activity_log` (requires migration) |
+| Policy analysis | memory + localStorage | **LIVE** upsert/load ↔ `claim_policy_analysis` |
+| Photo damage AI | not built | **LIVE** `analyze-photos` + Phase 03 UI |
+| Messages | 2 demo seeds | **LIVE** manual inbox log (`claimData.messages`) |
+| Damage vs contents inventory | shared `contents.items` | **LIVE** split: `structureItems` vs `contents.items` |
+| Journal tab | BROKEN ID mismatch | **LIVE** `#journal-list` + filters |
+| Documents / Missing panels | static | **LIVE** `updateDocumentsPanel` / `updateMissingPanel` |
+| Deadlines | hardcoded Nov 2024 | **LIVE** from `initial.dateOfLoss` |
+| Documents view | demo checklist | **LIVE** from `claimData.documents` + journal |
+| `claim_documents` on init | not loaded | **LIVE** merged in `loadState()` |
+| Onboarding | demo pre-fill | empty defaults; `obStart` creates claim |
+| Dispute letter | mock spinner | **LIVE** `generate-letter` |
+| Coverage PDFs | hardcoded | **LIVE** from `policy.analysis` when analyzed |
+
+**Deploy prerequisite:** Run `supabase/migrations/20260603_ccc_activity_policy_tables.sql` in production for activity/policy tables.
 
 ---
 
@@ -11,10 +32,10 @@
 
 | Dimension | Assessment |
 |-----------|------------|
-| **Architecture** | Single-file app: 10 phases × 33 substeps, 8 top-level views, local state + optional Supabase |
-| **Strongest** | Policy AI (`ai-policy-review`), letter generation (`generate-letter`), estimate interpreters, financial rollup, PDF exports (jsPDF), auth/paywall gates |
-| **Weakest** | Messages (demo), Documents view (disconnected from uploads), Deadlines (hardcoded DOL), Correspondence Journal UI bug, many tables/PDFs use static sample data |
-| **Production readiness** | Usable for guided workflow + AI policy/letters when Netlify + Supabase are configured; not sign-off ready without QA and bug fixes below |
+| **Architecture** | Single-file app: 10 phases × 33 substeps, 8 top-level views, localStorage cache + Supabase when `CCC_CLAIM_ID` + JWT |
+| **Strongest** | Policy AI (`ai-policy-review` + DB persist), letters (`generate-letter`), estimates, photo vision (`analyze-photos`), financial rollup, dynamic documents/deadlines, PDF exports |
+| **Weakest** | Compose-tab wizard still template-only (step 4); line-item/gap tables still static; tool chips non-functional; messages not email-synced (manual log only) |
+| **Production readiness** | Suitable for guided claims with configured Netlify + Supabase after migration + QA on checklist §13; remaining gaps are P1 polish, not blockers for core workflow |
 
 ### Status legend
 
@@ -75,10 +96,10 @@
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Step 1 form | **UI** | Pre-filled demo: James Davidson / State Farm / CLM-2024-089456 |
-| Carrier estimate on signup | **STUB** | `#ob-est-amt` never read in `obNext` / `obSkip` |
+| Step 1 form | **UI** | Empty defaults (no demo pre-fill) |
+| Carrier estimate on signup | **LIVE** | `#ob-est-amt` applied in `obNext` / `obSkip` to `structure.insurerEstimate` |
 | Step 2 summary | **UI** | `obNext()` builds summary cards |
-| Skip / Start | **UI** | Sets `ccc_onboarded`, does not create Supabase claim |
+| Skip / Start | **LIVE** | `obSkip` local only; `obStart` inserts `claims` row + sets `CCC_CLAIM_ID` |
 | Persist onboarding fields | **UI** | Updates `claimData.initial` + `saveState()` |
 
 ### 3.4 Global UX patterns
@@ -88,8 +109,8 @@
 | **Task chips** | **UI** | Toggle done visually; not required to advance |
 | **Tool chips** | **STUB** | No `onclick`; hover only — labels only |
 | **Mark Complete** | **LIVE** | `completedSubsteps[phase-substep]`; auto-advance substep/phase |
-| **Load Sample** | **STUB** | Generic alert |
-| **Edit claim info** | **STUB** | Alert only |
+| **Load Sample** | **LIVE** | Populates claim + structure sample inventory |
+| **Edit claim info** | **LIVE** | Modal `editClaimInfo()` |
 | **hardReset** | **LIVE** | `localStorage.clear()` + reload (if invoked) |
 
 ---
@@ -101,9 +122,9 @@
 | **Recovery** | Collected total | `insurerEstimate + ALE.total` as proxy | **Partial** — not actual payments |
 | **Progress** | `N of 33 complete` | `Object.keys(completedSubsteps).length` vs sum of all substeps | **LIVE** count; milestone list uses separate 14-item `milestones` array with `done*2` heuristic | **Partial** |
 | **Findings** | Gap $ | `structure.gap` | **LIVE** |
-| **Missing** | 4 fixed items + Fix → | Static HTML; not derived from `claimData.documents` | **DEMO** |
-| **Documents** | 5 types Missing | Static HTML in `#dp-doc-list`; not updated on upload | **BROKEN** vs uploads |
-| **Activity** | Last 8 log lines | `activityLog` | **LIVE** |
+| **Missing** | Dynamic checklist + Fix → | `updateMissingPanel()` — policy, estimates, contents, ALE | **LIVE** |
+| **Documents** | Upload counts | `updateDocumentsPanel()` from `claimData.documents` + contents | **LIVE** |
+| **Activity** | Last 8 log lines | `activityLog` (+ Supabase when migrated) | **LIVE** |
 
 ---
 
@@ -141,8 +162,8 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Tab | Status | Notes |
 |-----|--------|-------|
 | **Compose New Letter** | **Partial** | 4-step wizard; step 4 uses **2s timeout + static template** — does **not** call `generate-letter` |
-| **Journal** | **BROKEN** | `renderJournal()` creates `#journal-list`; `renderJournalTab()` writes to `#correspondence-journal-list` — **ID mismatch** → empty journal |
-| Journal filters | **STUB** | Sent/Received/Phase selects; filter logic not implemented |
+| **Journal** | **LIVE** | `renderJournalTab()` targets `#journal-list`; direction + phase filters applied |
+| Journal filters | **LIVE** | Sent/Received/Phase filters on `correspondenceJournal` |
 | Copy / PDF per entry | **LIVE** | `copyLetterToClipboard`, `downloadLetterPDF` (if journal rendered) |
 
 **In-flow ✉ wizards (Full Plan):** Step 4 calls `generateLetterContent` → **LIVE** `generate-letter` + `logCorrespondence` + optional `generated_letters` insert.
@@ -154,7 +175,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Full chronological list | **LIVE** |
 | Max 50 entries | **LIVE** |
 | Amount column when provided | **LIVE** |
-| Supabase persistence | **Not implemented** — localStorage only |
+| Supabase persistence | **LIVE** — last 50 entries upserted to `claim_activity_log` on `saveState`; merged on `loadState` |
 | Status strip preview | **LIVE** |
 
 **Auto-logged events include:** step completion, uploads, policy analyze, estimates, letters, ALE, inspection save, PDF downloads.
@@ -163,30 +184,31 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 
 | Feature | Status |
 |---------|--------|
-| Message list | **DEMO** — 2 seeded objects in `claimData.messages` |
-| Read | **STUB** — `alert('Opening message...')` |
+| Message list | **LIVE** — `claimData.messages[]`; empty state when none |
+| Log Incoming Message | **LIVE** — modal (`openLogIncomingMessage` / `saveIncomingMessage`); persists via `saveState` |
+| Read | **LIVE** — modal with full body; marks `read: true` |
 | Respond | **UI** — navigates to Correspondence compose |
-| Inbound sync | **Not built** |
+| Email/IMAP sync | **Not built** — manual log only (by design) |
 
 ### 5.7 Documents
 
 | Feature | Status |
 |---------|--------|
-| Category checklist | **DEMO** — static missing/ok; correspondence from `correspondenceJournal.length` |
-| + Upload button | **STUB** — alert only |
-| Real uploads | **LIVE** in `claimData.documents` via step uploads + `claim_documents` DB when authed — **not reflected** in this view |
+| Category checklist | **LIVE** — Policy, photos, estimates, evidence, correspondence from `claimData.documents` + journal |
+| + Upload button | **LIVE** — routes to Phase 03 Evidence Organizer |
+| Supabase rows | **LIVE** — `claim_documents` merged on `loadState()`; uploads insert on auth path |
 
 ### 5.8 Deadlines
 
 | Deadline | Calculation | Status |
 |----------|-------------|--------|
-| Proof of Loss (+60d) | `new Date('2024-11-15')` hardcoded | **DEMO** |
-| Lawsuit (+365d) | Same anchor | **DEMO** |
-| ALE request (+30d) | Same anchor | **DEMO** |
-| Appraisal (+300d) | Same anchor | **DEMO** |
-| RCV (+180d from today) | Relative to today, not repair date | **Partial** |
+| Proof of Loss (+60d) | DOL + 60 days | **LIVE** when DOL set |
+| Lawsuit (+365d) | DOL + 365 days | **LIVE** |
+| ALE request (+30d) | DOL + 30 days | **LIVE** |
+| Appraisal (+300d) | DOL + 300 days | **LIVE** |
+| RCV (+180d) | `meta.rcvRepairDate` + 180d, else pending | **Partial** — needs repair date logged |
 
-**Not used:** `claimData.initial.dateOfLoss` from user onboarding.
+**Empty DOL:** shows placeholder rows + amber callout to use Edit Claim Info.
 
 ---
 
@@ -230,7 +252,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Form fields (DOL, cause, claim #, description) | **UI** |
 | Warning: no estimates on initial call | **UI** |
 | Generate Written Notice | **LIVE** → `generate-written-notice` |
-| Copy letter button | **BROKEN** — calls `copyToClipboard()` **not defined** in v3 |
+| Copy letter button | **LIVE** — `copyToClipboard()` defined |
 | Log to correspondence + activity | **LIVE** |
 
 #### 01.2 ✉ Written Notice of Loss
@@ -254,7 +276,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Load Sample Policy | **UI** — sets `rawText` + sample doc metadata |
 | Analyze My Policy | **LIVE** → `policy-file-stage` + `ai-policy-review` |
 | Results UI | **LIVE** — coverages, gaps, `claimData.policy.analysis` |
-| Persist analysis to dedicated DB tables | **Not in v3** — in-memory + localStorage only |
+| Persist analysis to Supabase | **LIVE** — `claim_policy_analysis` upsert on analyze; load on `loadState` if local empty |
 
 #### 02.1 Coverage Analysis
 
@@ -262,14 +284,14 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 |------------|--------|
 | Table from `policy.analysis.coverages` | **LIVE** after analyze |
 | Empty state before analyze | **UI** |
-| Download Coverage Analysis PDF | **DEMO** — **hardcoded** $350k/$262k table, not analysis JSON |
+| Download Coverage Analysis PDF | **LIVE** — from `policy.analysis` coverages/gaps; empty state if not analyzed |
 
 #### 02.2 Coverage Map
 
 | Capability | Status |
 |------------|--------|
 | Cards from analysis | **LIVE** after analyze |
-| Download Coverage Map PDF | **DEMO** — static burst-pipe scenario content |
+| Download Coverage Map PDF | **LIVE** — from `policy.analysis.coverages`; prompt to analyze if empty |
 
 #### 02.3 ✉ Coverage Clarification Request
 
@@ -285,17 +307,19 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 
 | Capability | Status |
 |------------|--------|
-| Multi upload `photo` | **LIVE** upload; photo count UI not wired to list length |
+| Multi upload `photo` | **LIVE** — count + color from `documents` filter `type==='photo'` |
+| Analyze Photos with AI | **LIVE** → `analyze-photos` (up to 5 images); result in `meta.photoAnalysis` |
 | Documentation tips | **UI** |
-| AI damage analysis | **Not built** |
 
 #### 03.1 Damage Inventory
 
 | Capability | Status |
 |------------|--------|
-| Add items → `claimData.contents.items` | **UI** — **shared array with Phase 07 contents** |
+| Add items → `claimData.structureItems` | **LIVE** — separate from Phase 07 contents |
 | Running total, list UI | **LIVE** |
-| Download Damage Inventory PDF | **LIVE** — filters items with `val`/`room` |
+| localStorage key | `ccc_structure_items` |
+| Download Damage Inventory PDF | **LIVE** — reads `structureItems` |
+| Legacy migration | **LIVE** — old damage rows in `contents.items` (room/type, no `name`) moved on load |
 
 #### 03.2 Evidence Organizer
 
@@ -344,7 +368,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Upload `contractor_estimate` | **LIVE** + optional `text-extract` |
 | Analyze | **LIVE** → `contractor-estimate-interpreter`; sets `userEstimate` |
 | `claim_outputs` insert | **LIVE** when `CCC_CLAIM_ID` |
-| Error container id | **BUG** — errors target `contractor-result` but container is `ce-result` |
+| Error container id | **LIVE** — `showNetlifyError('ce-result', …)` |
 
 #### 05.1 Scope Review
 
@@ -369,7 +393,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | Upload `carrier_estimate` | **LIVE** |
 | Manual carrier total input | **UI** — not wired to analyze unless in PDF text |
 | Analyze | **LIVE** → `analyze-estimates-v2`; sets `insurerEstimate`, `gap` |
-| Error container id | **BUG** — errors target `carrier-result` but container is `ce2-result` |
+| Error container id | **LIVE** — `showNetlifyError('ce2-result', …)` |
 
 #### 06.1 Line-Item Comparison
 
@@ -401,7 +425,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 
 | Capability | Status |
 |------------|--------|
-| Add items (name, cat, RCV, etc.) | **LIVE** — same `contents.items` array as damage inventory |
+| Add items (name, cat, RCV, etc.) | **LIVE** — `contents.items` only (personal property schema) |
 | PDF export | **LIVE** — filters `i.name` |
 
 #### 07.1 ALE Daily Log
@@ -435,8 +459,8 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 
 | Capability | Status |
 |------------|--------|
-| Form + Generate | **DEMO** — 2s spinner, static letter template |
-| Log to journal button | **LIVE** `logCorrespondence` with static text |
+| Form + Generate | **LIVE** → `generate-letter` with dispute fields |
+| Log to journal | **LIVE** — `logCorrespondence` on success + PDF download |
 
 #### 08.2 ✉ Formal Demand Letter
 
@@ -528,6 +552,7 @@ Shows phase row + substep bar + `renderContent()`. See §6.
 | `analyze-estimates-v2` | Phase 06.0 | `carrier_estimate_text`, contractor total | **LIVE** |
 | `generate-letter` | ✉ wizard step 4, `generateLetterContent` | letter_type, financials, endorsements, phase | **LIVE** |
 | `text-extract` | After Supabase upload of estimate PDFs | `storage_path`, `claim_id` | **LIVE** |
+| `analyze-photos` | Phase 03.0 Analyze Photos | `photos[]`, `claim_type`, `description`, `claim_id` | **LIVE** |
 
 All calls: `POST /.netlify/functions/{name}`, optional `Authorization`, `X-Admin-Preview`, body includes `claim_id`.
 
@@ -542,12 +567,14 @@ All calls: `POST /.netlify/functions/{name}`, optional `Authorization`, `X-Admin
 | Branch | Fields | Persisted |
 |--------|--------|-----------|
 | `initial` | insuredName, claimNumber, insurer, adjuster, DOL, propertyType, claimType, description, daysSinceLoss | localStorage + partial Supabase `claims` row on init |
-| `policy` | uploaded, limits, deductible, RCV, endorsements, analysis, openaiFileId, fileBase64 | localStorage; analysis **not** in dedicated policy tables from v3 |
+| `policy` | uploaded, limits, analysis, openaiFileId, fileBase64 | localStorage + `claim_policy_analysis` JSONB |
 | `structure` | insurerEstimate, userEstimate, gap, texts, analyses | localStorage + `claim_financial_summary` |
-| `contents` | items[], totalValue — **mixed shape** for damage vs contents | localStorage + financial `contents_total` |
+| `structureItems` | room, type, desc, val, cond — damage inventory | localStorage `ccc_structure_items` |
+| `contents` | items[] (name, rcv, qty…) — personal property only | localStorage + financial `contents_total` |
+| `meta` | photoAnalysis, inspectionLog, offerLog, … | localStorage (in `claimData`) |
 | `ALE` | entries[], total, baseline | localStorage + financial `ale_total` |
 | `documents` | upload metadata array | localStorage; DB on Supabase upload |
-| `messages` | demo array only | Seeded; reset on corrupt init |
+| `messages` | id, from, subject, date, preview, body, read | localStorage via `ccc_claim_data`; manual log only |
 | `meta` | valueIdentified, documentsGenerated | localStorage |
 
 ### 9.2 localStorage keys
@@ -560,6 +587,7 @@ All calls: `POST /.netlify/functions/{name}`, optional `Authorization`, `X-Admin
 | `ccc_current_phase` / `ccc_current_substep` | Navigation |
 | `ccc_correspondence_journal` | Letter entries |
 | `ccc_activity_log` | Activity array |
+| `ccc_structure_items` | Damage inventory (`structureItems`) |
 | `ccc_onboarded` | `"true"` |
 | `ccc_policy_file_*` | sessionStorage policy cache |
 
@@ -570,9 +598,11 @@ All calls: `POST /.netlify/functions/{name}`, optional `Authorization`, `X-Admin
 | `claims` | Row + `custom_fields` progress | `custom_fields` on saveState |
 | `claim_financial_summary` | On loadState | Upsert on saveState |
 | `generated_letters` | Hydrates journal on load | Insert on letter gen |
-| `claim_documents` | **Not loaded into UI on init** | Insert on upload |
+| `claim_activity_log` | Last 50 merged on load | Upsert last 50 on saveState |
+| `claim_policy_analysis` | If local analysis empty | Upsert on policy analyze |
+| `claim_documents` | Merged into `claimData.documents` on load | Insert on upload |
 | `claim_outputs` | No | Insert after estimate analyses |
-| Storage `claim-documents` | Public URL | Upload |
+| Storage `claim-documents` | Public URL + analyze-photos download | Upload |
 
 ---
 
@@ -580,10 +610,10 @@ All calls: `POST /.netlify/functions/{name}`, optional `Authorization`, `X-Admin
 
 | Function | Data source | Status |
 |----------|-------------|--------|
-| `downloadCoverageAnalysis` | Hardcoded State Farm sample | **DEMO** |
-| `downloadCoverageMap` | Hardcoded burst-pipe narrative | **DEMO** |
+| `downloadCoverageAnalysis` | `policy.analysis` coverages/gaps | **LIVE** |
+| `downloadCoverageMap` | `policy.analysis.coverages` | **LIVE** |
 | `downloadGapAnalysis` | Live totals + static line/category tables | **Mixed** |
-| `downloadDamageInventory` | Live inventory items (`val`/`room`) | **LIVE** |
+| `downloadDamageInventory` | `structureItems` | **LIVE** |
 | `downloadContentsInventory` | Live contents items (`name`) | **LIVE** |
 | `downloadALELog` | Live ALE entries | **LIVE** |
 | `downloadDemandPackage` | Live totals + static checklist | **Mixed** |
@@ -612,66 +642,99 @@ Shared: `pdfHeader`, `pdfFooter`, branded layout, disclaimer footer.
 
 ## 12. Defects & technical debt (prioritized)
 
-### P0 — Broken user-visible
+### Resolved (June 2026)
+
+| ID | Issue | Resolution |
+|----|-------|------------|
+| B1 | Journal tab empty (ID mismatch) | `renderJournalTab` → `#journal-list` |
+| B2 | `copyToClipboard` undefined | Function added |
+| B3 | Estimate error container IDs | `ce-result` / `ce2-result` |
+| M1 | Messages demo-only | Manual log + read modal |
+| M2 | Documents view disconnected | `renderDocumentsView` + `claim_documents` load |
+| M3 | Deadlines hardcoded | DOL-based `renderDeadlinesView` |
+| M4 | Static Missing/Documents panels | `updateMissingPanel` / `updateDocumentsPanel` |
+| M7 | Coverage PDFs hardcoded | Uses `policy.analysis` |
+| M8 | Dispute letter mock | `generateDisputeLetter` → `generate-letter` |
+| M9 | Onboarding estimate ignored | `ob-est-amt` in `obNext`/`obSkip` |
+| D1 | Shared damage/contents array | `structureItems` + `ccc_structure_items` |
+| D5 | Demo onboarding pre-fill | Cleared defaults |
+| — | Activity log browser-only | `claim_activity_log` sync |
+| — | Policy analysis browser-only | `claim_policy_analysis` sync |
+| — | No photo AI | `analyze-photos` function + UI |
+
+### P0 — Still broken / blocking QA
 
 | ID | Issue |
 |----|-------|
-| B1 | Correspondence **Journal** tab: `#journal-list` vs `#correspondence-journal-list` |
-| B2 | `copyToClipboard()` called after written notice — **function undefined** in v3 |
-| B3 | `showNetlifyError('contractor-result'/'carrier-result')` — wrong element IDs (`ce-result`, `ce2-result`) |
+| — | *(none identified in source after June fixes)* |
 
 ### P1 — Misleading / demo in production path
 
 | ID | Issue |
 |----|-------|
-| M1 | Messages view entirely demo |
-| M2 | Documents view not synced with `claimData.documents` / `claim_documents` |
-| M3 | Deadlines ignore user DOL |
-| M4 | Status strip Missing/Documents panels static |
-| M5 | Compose tab letter step 4 does not call AI |
+| M5 | Compose tab letter step 4 does not call AI (in-flow ✉ wizards do) |
 | M6 | Line-item comparison, gap categories, scope review — static tables |
-| M7 | Coverage PDFs ignore `policy.analysis` |
-| M8 | Dispute letter generator — mock only |
-| M9 | Onboarding `ob-est-amt` never applied to `insurerEstimate` |
+| M10 | Messages not synced to Supabase (localStorage via `claimData` only) |
+| M11 | Activity/policy tables require migration before Supabase sync works |
 
 ### P2 — Design / maintainability
 
 | ID | Issue |
 |----|-------|
-| D1 | `claimData.contents.items` shared for damage inventory + contents (different schemas) |
-| D2 | `renderP07S2` dead code |
+| D2 | `renderP07S2` dead code (unwired duplicate ALE UI) |
 | D3 | Progress milestones (14) vs substeps (33) inconsistent |
-| D4 | Tool chips non-functional |
-| D5 | Default demo claim pre-fill |
-| D6 | `generated_letters` reload overwrites local journal without merge |
+| D4 | Tool chips non-functional (labels only) |
+| D6 | `generated_letters` reload may need journal merge QA across devices |
 | D7 | Wizard PDF/Word download buttons often alert-only |
-| D8 | Inspection log fields not persisted structurally |
+| D8 | Inspection log fields not persisted structurally (banner only) |
+| D9 | `meta.photoAnalysis` not persisted to Supabase (localStorage only) |
 
 ---
 
 ## 13. QA checklist (recommended before release)
 
+- [ ] Apply migration `20260603_ccc_activity_policy_tables.sql` on target Supabase project
 - [ ] Auth redirect + paywall with/without `claim_id`
-- [ ] Onboarding → Full Plan; refresh preserves progress
-- [ ] Policy upload + analyze (PDF, paste, sample)
-- [ ] Each ✉ substep generates letter and appears in journal **after B1 fix**
-- [ ] Written notice copy button **after B2 fix**
-- [ ] Contractor + carrier analyze error display **after B3 fix**
-- [ ] Supabase upload + reload claim in new session
+- [ ] Onboarding (`obStart`) creates claim; refresh preserves progress
+- [ ] Policy upload + analyze; reload in new browser — analysis restores from `claim_policy_analysis`
+- [ ] Activity log survives localStorage clear when claim_id set (Supabase merge)
+- [ ] Photo upload + **Analyze Photos with AI** (≥1 image)
+- [ ] Damage inventory (Phase 03) does not appear in Contents inventory (Phase 07)
+- [ ] Log Incoming Message → appears in Messages view after refresh
+- [ ] Each ✉ substep generates letter and appears in journal with filters
+- [ ] Written notice copy button
+- [ ] Contractor + carrier analyze error display in-panel
+- [ ] Supabase upload + `claim_documents` visible in Documents view
+- [ ] Deadlines update when DOL edited
 - [ ] Financial Summary matches nav metrics after estimates
-- [ ] All 8 PDF downloads open correctly
+- [ ] Coverage Analysis + Coverage Map PDFs after policy analyze
+- [ ] Dispute letter generates via AI
 - [ ] Mobile tab bar navigation
-- [ ] Admin preview mode Netlify calls
-- [ ] Compose tab vs in-flow wizard parity **after M5 fix**
+- [ ] Admin preview mode Netlify calls (storage still disabled)
+- [ ] Compose tab vs in-flow wizard parity (M5 — known gap)
 
 ---
 
 ## 14. Function index (inline script)
 
-~90 functions including: `init`, `loadState`, `saveState`, `callNetlify`, `uploadClaimFile`, `analyzePolicyDoc`, `generateNotice`, `generateLetterContent`, `renderWizardStep`, all `renderP**`, all `render*View`, all `download*`, `logActivity`, `logCorrespondence`, `markComplete`, `showView`, `buildPhaseRow`, `buildSubstepBar`, etc.
+~95 functions including: `init`, `loadState`, `saveState`, `callNetlify`, `uploadClaimFile`, `analyzePolicyDoc`, `analyzePhotosWithAI`, `generateNotice`, `generateDisputeLetter`, `generateLetterContent`, `openLogIncomingMessage`, `saveIncomingMessage`, `updateDocumentsPanel`, `updateMissingPanel`, `editClaimInfo`, `renderWizardStep`, all `renderP**`, all `render*View`, all `download*`, `logActivity`, `logCorrespondence`, `markComplete`, `showView`, `obStart`, `obSkip`, etc.
 
 **Entry point:** `window.addEventListener('load', init);`
 
 ---
 
-*End of v3-only audit.*
+## 15. Infrastructure implementation reference (`56da569a`)
+
+| Issue | Tables / functions | Client hooks |
+|-------|-------------------|--------------|
+| Activity log sync | `claim_activity_log` | `saveState` upsert; `loadState` merge |
+| Policy analysis persist | `claim_policy_analysis` | `analyzePolicyDoc` upsert; `loadState` restore |
+| Photo AI | `analyze-photos.js` | `renderP03S0`, `analyzePhotosWithAI`, `meta.photoAnalysis` |
+| Manual messages | — (local `messages[]`) | `openLogIncomingMessage`, `saveIncomingMessage` |
+| Structure inventory | `ccc_structure_items` | `structureItems`, Phase 03 only |
+
+**Git:** `main` @ `56da569a` (June 2026)
+
+---
+
+*End of v3-only audit (updated post-infrastructure fixes).*
