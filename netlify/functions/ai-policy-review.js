@@ -23,11 +23,33 @@ const MAX_TOKENS = 4096;
 /** Large base64 payloads (Goodson-type PDFs) — skip pdf-parse, upload to OpenAI once. */
 const LARGE_BASE64_CHARS = 1_000_000;
 
-const LARGE_PDF_SYSTEM_PROMPT =
-  'Return valid JSON: { policy_type, carrier, settlement_type, deductible, dwelling_coverage, contents_coverage, ale_coverage, coverages[], endorsements[], exclusions[], coverage_gaps[], summary_for_user, confidence }';
+const COVERAGE_EXTRACTION_RULES = `
+COVERAGES ARRAY (mandatory — one row per coverage line, never merge):
+"coverages": [
+  {
+    "label": "REQUIRED — the exact coverage name from the policy, e.g. 'Coverage A — Dwelling', 'Coverage B — Other Structures', 'Coverage C — Personal Property', 'Coverage D — Loss of Use / ALE', 'Personal Liability', 'Medical Payments', or the endorsement name. Do NOT use generic labels like 'Coverage'. Extract the actual name.",
+    "limit": "number or null",
+    "applied_by_carrier": "yes|no|partial|unknown",
+    "description": "one sentence describing what this coverage covers"
+  }
+]
 
-const LARGE_PDF_USER_PROMPT =
-  'Extract all insurance policy coverages, limits, deductibles, endorsements, and exclusions. Return only the JSON schema provided in the system prompt. Focus on: dwelling limit, personal property limit, loss of use limit, deductible, settlement type, endorsements.';
+Coverage extraction rules (mandatory):
+1. Extract EVERY coverage line from Section I and Section II of the declarations page(s).
+2. Include Additional Coverages listed (Ordinance/Law, Water Backup, Sewer Backup, etc.) as separate rows or in endorsements with named limits.
+3. Extract Loss of Use / Coverage D / ALE as its own row with the exact label from the policy (e.g. "Coverage D — Loss of Use").
+4. Extract Other Structures / Coverage B as its own row.
+5. Add the policy deductible as a separate coverages row with label "Deductible" and the dollar amount as limit (not negative).
+6. Never merge multiple coverages into one row. Never use the generic label "Coverage" alone.
+
+Top-level limits (must match declarations — also set from coverages when present):
+- dwelling_coverage: limit for Dwelling / Coverage A
+- contents_coverage: limit for Personal Property / Coverage C
+- ale_coverage: limit for Loss of Use / Coverage D / ALE
+- deductible: policy deductible amount
+- settlement_type: "RCV" or "ACV" (e.g. Replacement Cost)
+
+Endorsements: extract every endorsement from declarations (e.g. Ordinance/Law, Back-Up of Sewer or Drain, Jewelry, Cyber/ID, Fungus/Mold) with name, limit, and description.`;
 
 const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extract every coverage, limit, endorsement, exclusion, and gap from the policy. Return only valid JSON matching this schema exactly:
 {
@@ -41,7 +63,14 @@ const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extr
   "dwelling_coverage": "number|null",
   "contents_coverage": "number|null",
   "ale_coverage": "number|null",
-  "coverages": [{"label": "string", "limit": "number|null", "applied_by_carrier": "yes|no|partial|unknown", "description": "string"}],
+  "coverages": [
+    {
+      "label": "REQUIRED — exact coverage name from policy (e.g. Coverage A — Dwelling, Coverage B — Other Structures, Coverage C — Personal Property, Coverage D — Loss of Use / ALE, Personal Liability, Medical Payments, Deductible). Never use generic label Coverage alone.",
+      "limit": "number|null",
+      "applied_by_carrier": "yes|no|partial|unknown",
+      "description": "one sentence describing what this coverage covers"
+    }
+  ],
   "endorsements": [{"name": "string", "limit": "number|null", "applies_to_claim": "boolean", "description": "string"}],
   "exclusions": [{"name": "string", "description": "string", "affects_claim": "boolean"}],
   "coverage_gaps": [{"coverage": "string", "reason_not_applied": "string", "potential_value": "number|null", "action_required": "string"}],
@@ -49,6 +78,7 @@ const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extr
   "recommended_actions": ["string"],
   "summary_for_user": "string"
 }
+${COVERAGE_EXTRACTION_RULES}
 
 Rules:
 - Never fabricate dollar limits; use null if not stated in the document.
@@ -56,8 +86,13 @@ Rules:
 - applied_by_carrier reflects carrier behavior on the active claim when claim context is provided.
 - If the document is incomplete, set confidence to low or medium and say so in summary_for_user.`;
 
+const LARGE_PDF_SYSTEM_PROMPT = SYSTEM_PROMPT;
+
+const LARGE_PDF_USER_PROMPT =
+  'Analyze the attached declarations pages. Extract ALL Section I and Section II coverages as separate named rows (Coverage A/B/C/D, Liability, Medical Payments, Deductible). Include Loss of Use and Other Structures. List all endorsements and additional coverages from the declarations. Return only the JSON schema from the system prompt.';
+
 const RETRY_SUFFIX =
-  '\n\nIMPORTANT: Return ONLY a raw JSON object matching the schema. No markdown. No code fences. Populate coverages from the document.';
+  '\n\nIMPORTANT: Return ONLY a raw JSON object matching the schema. No markdown. No code fences. Every coverage must have a specific label (e.g. Coverage A — Dwelling), never the generic word Coverage alone. Include Coverage D / Loss of Use and Coverage B / Other Structures as separate rows.';
 
 function corsHeaders(extra = {}) {
   return {
@@ -245,9 +280,19 @@ function hasSubstance(p) {
   return sum.length > 80;
 }
 
+function normalizeCoverageLabel(c) {
+  let label = String(c.label || '').trim();
+  if (!label || /^coverage$/i.test(label)) {
+    const desc = String(c.description || '').trim();
+    if (desc.length > 3 && desc.length < 140) label = desc;
+    else label = 'Unnamed Coverage';
+  }
+  return label;
+}
+
 function normalizeCanonical(parsed, ctx, extractionDegraded) {
   const coverages = (parsed.coverages || []).map((c) => ({
-    label: String(c.label || 'Coverage'),
+    label: normalizeCoverageLabel(c),
     limit: typeof c.limit === 'number' ? c.limit : null,
     applied_by_carrier: ['yes', 'no', 'partial', 'unknown'].includes(c.applied_by_carrier)
       ? c.applied_by_carrier
@@ -257,6 +302,19 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
 
   const findLimit = (keys) =>
     coverages.find((c) => keys.some((k) => c.label.toLowerCase().includes(k)))?.limit ?? null;
+
+  const deductibleAmount =
+    typeof parsed.deductible === 'number'
+      ? parsed.deductible
+      : findLimit(['deductible']);
+  if (deductibleAmount != null && !coverages.some((c) => /deductible/i.test(c.label))) {
+    coverages.push({
+      label: 'Deductible',
+      limit: deductibleAmount,
+      applied_by_carrier: 'unknown',
+      description: 'Policy deductible'
+    });
+  }
 
   const coverage_gaps = (parsed.coverage_gaps || []).map((g) => ({
     coverage: String(g.coverage || ''),
@@ -269,17 +327,21 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
   if (extractionDegraded) confidence = confidence === 'high' ? 'medium' : 'low';
 
   const dwelling =
-    typeof parsed.dwelling_coverage === 'number'
-      ? parsed.dwelling_coverage
-      : findLimit(['dwelling', 'coverage a']);
+    findLimit(['dwelling', 'coverage a']) ??
+    (typeof parsed.dwelling_coverage === 'number' ? parsed.dwelling_coverage : null);
   const contents =
-    typeof parsed.contents_coverage === 'number'
-      ? parsed.contents_coverage
-      : findLimit(['contents', 'coverage c', 'personal property']);
+    findLimit(['personal property', 'coverage c', 'contents']) ??
+    (typeof parsed.contents_coverage === 'number' ? parsed.contents_coverage : null);
   const ale =
-    typeof parsed.ale_coverage === 'number'
-      ? parsed.ale_coverage
-      : findLimit(['ale', 'loss of use', 'coverage d', 'additional living']);
+    findLimit(['loss of use', 'coverage d', 'ale', 'additional living']) ??
+    (typeof parsed.ale_coverage === 'number' ? parsed.ale_coverage : null);
+
+  let settlementType = parsed.settlement_type;
+  if (typeof settlementType === 'string') {
+    const st = settlementType.toLowerCase();
+    if (st.includes('replacement') || st === 'rcv') settlementType = 'RCV';
+    else if (st.includes('actual cash') || st === 'acv') settlementType = 'ACV';
+  }
 
   return {
     success: true,
@@ -288,8 +350,8 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
     policy_type: String(parsed.policy_type || 'Unknown'),
     carrier: String(parsed.carrier || ctx.insurer || ''),
     policy_number: parsed.policy_number != null ? String(parsed.policy_number) : null,
-    settlement_type: ['RCV', 'ACV'].includes(parsed.settlement_type) ? parsed.settlement_type : 'RCV',
-    deductible: typeof parsed.deductible === 'number' ? parsed.deductible : null,
+    settlement_type: ['RCV', 'ACV'].includes(settlementType) ? settlementType : 'RCV',
+    deductible: deductibleAmount,
     dwelling_coverage: dwelling,
     contents_coverage: contents,
     ale_coverage: ale,
