@@ -100,32 +100,34 @@ async function parseLineItemsWithAI(extractedText, lossType, severity, areas) {
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const systemPrompt = `You are an expert at parsing contractor estimates. Extract all line items from the estimate text and return a structured JSON array.
+    const systemPrompt = `You are an expert at parsing contractor estimates. Extract every line item from the estimate text.
 
-For each line item, identify:
-- description: Clear description of the work/item
-- quantity: Numeric quantity (if present)
-- unit: Unit of measure (SF, LF, EA, etc.)
-- unitPrice: Price per unit (if present)
-- lineTotal: Total for this line item
-- category: Category (interior, exterior, roofing, plumbing, electrical, hvac, mitigation, other)
-
-Flag items that:
-- Have "possible_underpricing" if the unit price seems unusually low
-- Have "missing_quantity" if quantity is missing but should be present
-- Have "ambiguous_description" if the description is unclear
-
-Also identify:
-- totalAmount: Total estimate amount
-- Any missing scope items commonly needed for this loss type
-
-Return JSON in this format:
+Return ONLY valid JSON matching this exact structure:
 {
-  "lineItems": [...],
-  "totalAmount": 84250,
-  "missingScope": ["item 1", "item 2"],
-  "coverageCategory": "dwelling" or "contents" or "ale" or "mixed"
-}`;
+  "contractor_name": "string — name of contractor/company from estimate header",
+  "estimate_date": "string — date on the estimate if present",
+  "total": number,
+  "line_items": [
+    {
+      "description": "string — exact line item description",
+      "quantity": number or null,
+      "unit": "string or null — SF, LF, EA, LS, Days, etc.",
+      "unit_price": number or null,
+      "total": number,
+      "status": "Complete" | "Questionable" | "Missing from Carrier"
+    }
+  ],
+  "notes": "string — overall observations about the estimate scope",
+  "summary": "string — one paragraph summary for the user"
+}
+
+Rules:
+- Extract EVERY line item from the estimate — do not summarize or group them
+- If unit price cannot be determined, set to null but always set total
+- Mark status as "Questionable" if the line item seems underpriced or vague
+- Mark status as "Missing from Carrier" if you know this item is typically excluded from carrier estimates
+- contractor_name should be the company name from the letterhead or header
+- total must match the sum of all line_items[].total values (or the stated estimate total if present)`;
 
     const userPrompt = `Extract line items from this contractor estimate:
 
@@ -147,11 +149,34 @@ ${extractedText.substring(0, 8000)}`;
     });
 
     const content = response.choices[0].message.content;
-    return JSON.parse(content);
+    const parsed = JSON.parse(content);
+    parsed.line_items = Array.isArray(parsed.line_items) ? parsed.line_items : [];
+    parsed.total = Number(parsed.total) || parsed.line_items.reduce((s, i) => s + (Number(i.total) || 0), 0);
+    return parsed;
   } catch (error) {
     console.error('AI parsing error:', error);
     throw new Error('Failed to parse estimate with AI');
   }
+}
+
+function buildContractorResponse(parsedData) {
+  const lineItems = (parsedData.line_items || []).map((item) => ({
+    description: item.description || item.name || '—',
+    quantity: item.quantity != null ? item.quantity : null,
+    unit: item.unit || null,
+    unit_price: item.unit_price != null ? item.unit_price : (item.unitPrice != null ? item.unitPrice : null),
+    total: Number(item.total) || Number(item.lineTotal) || 0,
+    status: item.status || 'Complete'
+  }));
+  const total = Number(parsedData.total) || lineItems.reduce((s, i) => s + (i.total || 0), 0);
+  return {
+    contractor_name: parsedData.contractor_name || '',
+    estimate_date: parsedData.estimate_date || '',
+    total,
+    line_items: lineItems,
+    notes: parsedData.notes || '',
+    summary: parsedData.summary || `Contractor estimate analyzed — ${lineItems.length} line items, total ${total}.`
+  };
 }
 
 /**
@@ -323,68 +348,48 @@ exports.handler = async (event) => {
 
     // Parse request body
     const body = JSON.parse(event.body || '{}');
-    const { fileUrl, fileName, lossType, severity, areas, claimId } = body;
+    const {
+      fileUrl,
+      fileName,
+      estimate_text,
+      lossType,
+      severity,
+      areas,
+      claimId,
+      claim_type,
+      property_type
+    } = body;
 
-    if (!fileUrl) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'fileUrl is required' })
-      };
-    }
+    const resolvedLossType = lossType || claim_type || 'property-claim';
+    let extractedText = (estimate_text || '').trim();
 
-    // Download file
-    const fileBuffer = await downloadFile(fileUrl);
-    
-    // Extract text
-    let extractedText = '';
-    if (fileName.endsWith('.pdf')) {
-      extractedText = await extractTextFromPDF(fileBuffer);
-    } else if (fileName.match(/\.(png|jpg|jpeg)$/i)) {
-      extractedText = await extractTextFromImage(fileBuffer, fileName);
-    } else {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Unsupported file type. Please use PDF or image.' })
-      };
+    if (!extractedText && fileUrl) {
+      const fileBuffer = await downloadFile(fileUrl);
+      const name = fileName || 'estimate.pdf';
+      if (name.endsWith('.pdf')) {
+        extractedText = await extractTextFromPDF(fileBuffer);
+      } else if (name.match(/\.(png|jpg|jpeg)$/i)) {
+        extractedText = await extractTextFromImage(fileBuffer, name);
+      } else {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ error: 'Unsupported file type. Please use PDF or image.' })
+        };
+      }
     }
 
     if (!extractedText || extractedText.trim().length < 50) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Could not extract sufficient text from file. Please ensure the estimate is readable.' })
+        body: JSON.stringify({ error: 'Could not extract sufficient text. Upload a PDF or paste estimate text.' })
       };
     }
 
     // Parse line items with AI
-    const parsedData = await parseLineItemsWithAI(extractedText, lossType, severity, areas);
-
-    // Get ROM range
-    const romRange = await getROMRange(lossType, severity, areas);
-    const romComparison = compareToROMRange(parsedData.totalAmount || 0, romRange);
-
-    // Generate recommendations
-    const recommendations = await generateRecommendations(
-      { ...parsedData, romRange: romComparison },
-      lossType,
-      severity,
-      areas
-    );
-
-    // Build response
-    const response = {
-      summary: {
-        totalAmount: parsedData.totalAmount || 0,
-        lineItemCount: (parsedData.lineItems || []).length,
-        coverageCategory: parsedData.coverageCategory || 'mixed',
-        romRange: romComparison
-      },
-      lineItems: parsedData.lineItems || [],
-      missingScope: parsedData.missingScope || [],
-      recommendations: recommendations
-    };
+    const parsedData = await parseLineItemsWithAI(extractedText, resolvedLossType, severity, areas);
+    const response = buildContractorResponse(parsedData);
 
     // Store interpretation in database (optional)
     if (supabase && userId && claimId) {
@@ -392,19 +397,14 @@ exports.handler = async (event) => {
         await supabase.from('contractor_estimate_interpretations').insert({
           user_id: userId,
           claim_id: claimId,
-          estimate_total: response.summary.totalAmount,
-          rom_low: romComparison.low,
-          rom_high: romComparison.high,
-          rom_relation: romComparison.relation,
-          loss_type: lossType,
-          severity: severity,
+          estimate_total: response.total,
+          loss_type: resolvedLossType,
+          property_type: property_type || null,
           areas: areas || [],
-          line_items: response.lineItems,
-          missing_scope: response.missingScope,
-          recommendations: response.recommendations,
+          line_items: response.line_items,
+          recommendations: response.notes,
           created_at: new Date().toISOString()
         }).catch(() => {
-          // Table might not exist, that's okay
           console.warn('contractor_estimate_interpretations table not found, skipping database storage');
         });
       } catch (error) {

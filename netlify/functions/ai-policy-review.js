@@ -49,6 +49,15 @@ Top-level limits (must match declarations — also set from coverages when prese
 - deductible: policy deductible amount
 - settlement_type: "RCV" or "ACV" (e.g. Replacement Cost)
 
+For Coverage D, Loss of Use, or ALE (Additional Living Expenses):
+- Extract the dollar limit even if labeled as a percentage of Coverage A
+- If shown as a percentage (e.g. "30% of Coverage A"), calculate the dollar amount: percentage × dwelling_coverage
+- Always set both the coverages[] entry limit AND the top-level ale_coverage field to the same calculated dollar amount
+- Never return 0 or null for ale_coverage if any ALE/Loss of Use coverage exists
+
+Percentage limits (all coverages):
+- If a coverage shows a limit as a percentage of another coverage (e.g. Ordinance/Law 10% of Coverage A), calculate and return the dollar amount, not the percentage string
+
 Endorsements: extract every endorsement from declarations (e.g. Ordinance/Law, Back-Up of Sewer or Drain, Jewelry, Cyber/ID, Fungus/Mold) with name, limit, and description.`;
 
 const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extract every coverage, limit, endorsement, exclusion, and gap from the policy. Return only valid JSON matching this schema exactly:
@@ -326,15 +335,34 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
   let confidence = ['high', 'medium', 'low'].includes(parsed.confidence) ? parsed.confidence : 'medium';
   if (extractionDegraded) confidence = confidence === 'high' ? 'medium' : 'low';
 
-  const dwelling =
+  let dwelling =
     findLimit(['dwelling', 'coverage a']) ??
     (typeof parsed.dwelling_coverage === 'number' ? parsed.dwelling_coverage : null);
-  const contents =
+  let contents =
     findLimit(['personal property', 'coverage c', 'contents']) ??
     (typeof parsed.contents_coverage === 'number' ? parsed.contents_coverage : null);
-  const ale =
+  let ale =
     findLimit(['loss of use', 'coverage d', 'ale', 'additional living']) ??
     (typeof parsed.ale_coverage === 'number' ? parsed.ale_coverage : null);
+
+  if (!ale || ale === 0) {
+    const aleEntry = coverages.find((c) =>
+      /loss.of.use|ale|coverage.d|additional living/i.test(c.label)
+    );
+    if (aleEntry && aleEntry.limit > 0) ale = aleEntry.limit;
+  }
+  if (!dwelling || dwelling === 0) {
+    const dwellingEntry = coverages.find((c) =>
+      /dwelling|coverage.a/i.test(c.label)
+    );
+    if (dwellingEntry && dwellingEntry.limit > 0) dwelling = dwellingEntry.limit;
+  }
+  if (!contents || contents === 0) {
+    const contentsEntry = coverages.find((c) =>
+      /personal property|coverage.c|contents/i.test(c.label)
+    );
+    if (contentsEntry && contentsEntry.limit > 0) contents = contentsEntry.limit;
+  }
 
   let settlementType = parsed.settlement_type;
   if (typeof settlementType === 'string') {
