@@ -134,18 +134,26 @@ function validateHeaderTotal(lineItems, metadata) {
  * @returns {object|null} Parsed line item or null
  */
 function parseLineItem(line, lineNumber, section) {
+  // Summary depreciation lines (e.g. "Less Depreciation  1870.00")
+  if (isDepreciationSummaryLine(line)) {
+    const depLine = parseDepreciationSummaryLine(line, lineNumber, section);
+    if (depLine) return depLine;
+  }
+
   // Check if this is a total/subtotal line
   if (isTotalLine(line)) {
     return parseTotalLine(line, lineNumber, section);
   }
   
-  // Try multiple parsing strategies
-  const strategies = [
-    parseStandardFormat,      // "Description  10 SF  $5.00  $50.00"
-    parseXactimateFormat,     // "RCV  10.00 SF  $5.00  $50.00"
-    parseTabularFormat,       // "Description\t10\tSF\t$5.00\t$50.00"
-    parseCompactFormat        // "Description 10SF @$5.00 = $50.00"
-  ];
+  // RCV/ACV-prefixed lines must use Xactimate parser (standard parser would swallow the prefix as description)
+  const strategies = /^\s*(RCV|ACV)\b/i.test(line)
+    ? [parseXactimateFormat, parseStandardFormat, parseTabularFormat, parseCompactFormat]
+    : [
+        parseStandardFormat,
+        parseXactimateFormat,
+        parseTabularFormat,
+        parseCompactFormat
+      ];
   
   for (const strategy of strategies) {
     const result = strategy(line, lineNumber, section);
@@ -367,6 +375,44 @@ function parseCompactFormat(line, lineNumber, section) {
 }
 
 /**
+ * Detect summary depreciation lines (not line-item depreciation)
+ */
+function isDepreciationSummaryLine(line) {
+  const lower = line.toLowerCase();
+  return (lower.includes('depreciation') || lower.includes('depr')) &&
+    !lower.includes('recoverable');
+}
+
+/**
+ * Parse summary depreciation line into a marker item for allocation
+ */
+function parseDepreciationSummaryLine(line, lineNumber, section) {
+  const match = line.match(/(?:less\s+)?(?:depreciation|depr)[:\s]+\$?([\d,]+(?:\.\d{2})?)/i);
+  if (!match) return null;
+
+  const amount = parseFloat(match[1].replace(/,/g, ''));
+  return {
+    line_number: lineNumber,
+    section: section,
+    category: 'Depreciation',
+    description: line.trim(),
+    description_normalized: normalizeDescription(line),
+    quantity: null,
+    unit: null,
+    unit_price: null,
+    total: amount,
+    raw_line_text: line,
+    confidence_score: 1.00,
+    parsed_by: 'regex',
+    is_tax: false,
+    is_op: false,
+    is_subtotal: false,
+    is_total: false,
+    is_summary_depreciation: true
+  };
+}
+
+/**
  * Parse total/subtotal lines
  */
 function parseTotalLine(line, lineNumber, section) {
@@ -418,6 +464,11 @@ function isTotalLine(line) {
  * Detect section headers
  */
 function detectSection(line) {
+  // Lines with quantity/unit/price are line items, not section headers
+  if (/\d+(?:\.\d+)?\s+[A-Z]{1,4}\s+\$?[\d,]/.test(line)) {
+    return null;
+  }
+
   const sectionPatterns = [
     /^(roofing|roof)/i,
     /^(siding|exterior)/i,
@@ -446,24 +497,13 @@ function detectSection(line) {
  */
 function categorizeLineItem(description, unit) {
   const desc = description.toLowerCase();
-  
-  // Labor indicators
-  if (desc.includes('labor') || desc.includes('install') || unit === 'HR') {
+
+  // Labor indicators (unit HR or explicit labor wording)
+  if (unit === 'HR' || desc.includes('labor')) {
     return 'Labor';
   }
-  
-  // Material indicators
-  if (desc.includes('material') || desc.includes('supply') || 
-      ['EA', 'PC', 'LF', 'SF', 'SQ'].includes(unit)) {
-    return 'Materials';
-  }
-  
-  // Equipment indicators
-  if (desc.includes('equipment') || desc.includes('rental') || desc.includes('tool')) {
-    return 'Equipment';
-  }
-  
-  // Specific categories
+
+  // Trade-specific categories before generic material bucket
   if (desc.includes('roof') || desc.includes('shingle')) return 'Roofing';
   if (desc.includes('siding') || desc.includes('exterior')) return 'Siding';
   if (desc.includes('drywall') || desc.includes('paint')) return 'Interior';
@@ -472,7 +512,20 @@ function categorizeLineItem(description, unit) {
   if (desc.includes('floor') || desc.includes('carpet') || desc.includes('tile')) return 'Flooring';
   if (desc.includes('window') || desc.includes('door')) return 'Windows/Doors';
   if (desc.includes('demo') || desc.includes('tear') || desc.includes('remove')) return 'Demolition';
-  
+
+  // Equipment indicators
+  if (desc.includes('equipment') || desc.includes('rental') || desc.includes('tool')) {
+    return 'Equipment';
+  }
+
+  // Generic material indicators
+  if (desc.includes('material') || desc.includes('supply') ||
+      ['EA', 'PC', 'LF', 'SF', 'SQ'].includes(unit)) {
+    return 'Materials';
+  }
+
+  if (desc.includes('install')) return 'Labor';
+
   return 'Other';
 }
 
@@ -652,10 +705,11 @@ function allocateSummaryDepreciation(pairedItems, summaryDepreciation, metadata)
     
     // Only allocate to items without existing depreciation
     // Exclude: tax, O&P, totals, labor-only items
-    if (item.depreciation === 0 && 
-        !item.is_tax && 
-        !item.is_op && 
-        !item.is_total && 
+    if (item.depreciation === 0 &&
+        !item.is_tax &&
+        !item.is_op &&
+        !item.is_total &&
+        !item.is_subtotal &&
         !isLaborOnly) {
       totalRCV += item.rcv_total;
       itemsNeedingDepreciation.push(item);

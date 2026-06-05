@@ -1,3 +1,6 @@
+/claim-command-center.html    /claim-command-center-v3.html    301
+/app/claim-command-center.html    /claim-command-center-v3.html    301
+
 # Claim dashboard routing
 /app/claim/:claim_id    /app/claim.html?id=:claim_id    200
 

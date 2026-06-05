@@ -1,0 +1,19 @@
+State Farm Insurance
+Claim #CLM-2024-089456
+
+ROOFING
+Remove shingles  25 SQ  $3.00  $75.00
+Standard shingles  25 SQ  $75.00  $1,875.00
+Ice shield  8 LF  $4.00  $32.00
+
+SIDING
+Siding removal  200 SF  $1.50  $300.00
+Vinyl siding  200 SF  $5.00  $1,000.00
+
+INTERIOR
+Drywall  120 SF  $3.00  $360.00
+Paint  120 SF  $1.50  $180.00
+
+Subtotal: $3,822.00
+Tax: $305.76
+Total: $4,127.76

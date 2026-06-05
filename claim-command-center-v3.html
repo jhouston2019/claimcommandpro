@@ -718,6 +718,87 @@ function fmt(n){return '$'+(n||0).toLocaleString('en-US',{maximumFractionDigits:
 function fmtDate(){return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
 function fmtTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}
 
+function claimLifecycleStatus(displayStatus){
+  const s=(displayStatus||'').toLowerCase();
+  if(s.includes('closed')||s.includes('withdrawn')||s.includes('settled')||s.includes('denied'))return 'closed';
+  return 'active';
+}
+
+function letterClaimPayload(){
+  return {
+    initial: claimData.initial,
+    structure: claimData.structure,
+    policy: claimData.policy,
+    contents: claimData.contents,
+    ALE: claimData.ALE,
+    meta: claimData.meta
+  };
+}
+
+async function callLetterAI(letterType, extraContext){
+  const user=await window.CNAuth.currentUser();
+  const context=[extraContext||'',document.getElementById('wz-context')?.value||'',document.getElementById('compose-context')?.value||''].filter(Boolean).join('\n');
+  return callNetlify('letter',{
+    letterType: letterType,
+    claimData: letterClaimPayload(),
+    userId: user?.id||null,
+    context: context
+  });
+}
+
+async function callLetterAnalysisAI(letterType, extraContext){
+  const user=await window.CNAuth.currentUser();
+  const context=[extraContext||'',document.getElementById('compose-context')?.value||'',document.getElementById('wz-context')?.value||''].filter(Boolean).join('\n');
+  return callNetlify('letter',{
+    mode: 'analysis',
+    letterType: letterType,
+    claimData: letterClaimPayload(),
+    userId: user?.id||null,
+    context: context
+  });
+}
+
+function escapeHtml(text){
+  return String(text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildLetterSituationKeyPoints(){
+  const hasPolicyA=!!claimData.policy.analysis;
+  const hasCEst=claimData.structure.userEstimate>0;
+  const hasCarrierEst=claimData.structure.insurerEstimate>0;
+  const gap2=claimData.structure.gap||0;
+  const endr=(claimData.policy.endorsements||[]).join(', ')||'none identified';
+  const aleT=claimData.ALE.total||0;
+  const contT=claimData.contents.totalValue||0;
+  const photos=(claimData.documents||[]).filter(x=>x.type==='photo').length;
+  const letC=correspondenceJournal.length;
+  const kp=[];
+  if(hasCEst)kp.push({i:'💰',t:'Your Documented Total',s:'Contractor: '+fmt(claimData.structure.userEstimate)+(hasCarrierEst?' · Carrier: '+fmt(claimData.structure.insurerEstimate)+' · Gap: '+fmt(Math.max(0,gap2)):'')});
+  if(hasPolicyA)kp.push({i:'📋',t:'Policy Analysis Available',s:'Your policy has been analyzed. Reference specific coverage sections, limits, and identified gaps.'});
+  else kp.push({i:'📋',t:'Policy Basis',s:'Reference your specific coverage sections and endorsements: '+endr+'.'});
+  if(aleT>0)kp.push({i:'🏠',t:'ALE Documented',s:'Additional living expenses logged: '+fmt(aleT)+'. Include in applicable letters.'});
+  if(contT>0)kp.push({i:'📦',t:'Contents Documented',s:'Personal property loss documented: '+fmt(contT)+'.'});
+  kp.push({i:'⏱️',t:'Response Timeline',s:"Demand written response within 15 business days per your state's claim handling regulations."});
+  kp.push({i:'⚖️',t:'Rights Preservation',s:'Include language preserving all rights including appraisal and legal remedies.'});
+  if(photos>0)kp.push({i:'📸',t:'Documentation',s:photos+' photos · '+letC+' prior letters. Reference attachments explicitly.'});
+  return kp;
+}
+
+function buildLetterSituationFallbackHtml(letterType){
+  const d=claimData.initial;
+  const kp=buildLetterSituationKeyPoints();
+  return `
+    <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">What this ${escapeHtml(letterType)} needs to accomplish based on your claim data.</div></div>
+    <div class="warn-teal"><strong>Claim Context</strong><div class="warn-teal-text">
+      <strong>Insured:</strong> ${escapeHtml(d.insuredName||'[Not set]')} · <strong>Carrier:</strong> ${escapeHtml(d.insurer||'[Not set]')} · <strong>Claim #:</strong> ${escapeHtml(d.claimNumber||'[Not set]')}<br>
+      <strong>Loss Date:</strong> ${escapeHtml(d.dateOfLoss||'[Not set]')}
+    </div></div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Key Points to Address</div>
+      ${kp.map(p=>`<div class="log-entry"><div class="log-entry-icon">${p.i}</div><div class="log-entry-content"><div class="log-entry-title">${escapeHtml(p.t)}</div><div class="log-entry-sub">${escapeHtml(p.s)}</div></div></div>`).join('')}
+    </div>`;
+}
+
 function claimDataForLocalStorage(){
   const copy = JSON.parse(JSON.stringify(claimData));
   if (copy.policy?.fileBase64) {
@@ -921,7 +1002,7 @@ async function saveState(){
         date_of_loss: claimData.initial.dateOfLoss,
         property_type: claimData.initial.propertyType,
         type_of_loss: claimData.initial.description,
-        status: claimData.initial.claimStatus || 'active'
+        status: claimLifecycleStatus(claimData.initial.claimStatus)
       })
       .eq('id', window.CCC_CLAIM_ID);
 
@@ -2060,13 +2141,16 @@ async function generateNotice(){
   res.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate)">✉️ Generating your written notice — this takes 10–20 seconds...</div>';
 
   try {
+    const colSel=(document.getElementById('col-select')||{}).value||'water';
+    const lossTypeMap={water:'Water / Plumbing',fire:'Fire',wind:'Wind / Hail',theft:'Theft / Vandalism',other:'Other'};
     const result = await callNetlify('generate-written-notice', {
-      insured_name: claimData.initial.insuredName,
-      claim_number: claimData.initial.claimNumber,
-      insurer: claimData.initial.insurer,
-      date_of_loss: claimData.initial.dateOfLoss,
-      description: claimData.initial.description,
-      property_type: claimData.initial.propertyType
+      policyholder_name: claimData.initial.insuredName||'Policyholder',
+      property_address: '[Property Address]',
+      policy_number: claimData.initial.claimNumber||'[Policy Number]',
+      insurer_name: claimData.initial.insurer||'Insurance Company',
+      loss_date: claimData.initial.dateOfLoss||new Date().toLocaleDateString(),
+      loss_type: lossTypeMap[colSel]||colSel,
+      damage_description: claimData.initial.description||'Property damage from covered loss.'
     });
 
     const letterContent = result.letter || result.content || '';
@@ -3420,14 +3504,11 @@ async function generateDisputeLetter(){
   res.innerHTML='<div class="processing"><div class="spinner"></div><div class="processing-text">Generating dispute letter with AI — 15–30 seconds...</div></div>';
   try{
     const d=claimData.initial;
-    const result=await callNetlify('generate-letter',{
-      letter_type:'Dispute Letter — '+dispType,insured_name:d.insuredName,claim_number:d.claimNumber,
-      insurer:d.insurer,adjuster_name:d.adjusterName,date_of_loss:d.dateOfLoss,description:d.description,
-      property_type:d.propertyType,carrier_estimate:claimData.structure.insurerEstimate||0,
-      user_estimate:claimData.structure.userEstimate||0,gap:claimData.structure.gap||0,
-      endorsements:claimData.policy.endorsements||[],phase_number:'08',
-      dispute_type:dispType,disputed_item:dispItem,carrier_reason:dispReason,counter_argument:dispCounter
-    });
+    const result=await callLetterAI('Dispute Letter — '+dispType,
+      'Dispute type: '+dispType+'\nDisputed item: '+dispItem+'\nCarrier reason: '+dispReason+'\nCounter-argument: '+dispCounter+
+      '\nCarrier estimate: '+fmt(claimData.structure.insurerEstimate||0)+
+      '\nDocumented value: '+fmt(claimData.structure.userEstimate||0)+
+      '\nGap: '+fmt(claimData.structure.gap||0));
     const letter=result.letter||result.content||result.text||'[Generation failed — try again]';
     logCorrespondence('Dispute Letter',letter);saveState();
     res.innerHTML=`<hr class="divider"><div class="letter-display">${letter}</div>
@@ -3801,39 +3882,21 @@ async function renderWizardStep(step, letterType){
 
   else if(step===2){
     wc.innerHTML=stepsHtml+`<div class="action-panel"><div id="wz-analysis-spinner"></div></div>`;
-    // Build real context immediately from actual claim data — no fake spinner needed
     const d=claimData.initial;
-    const hasPolicyA=!!claimData.policy.analysis;
-    const hasCEst=claimData.structure.userEstimate>0;
-    const hasCarrierEst=claimData.structure.insurerEstimate>0;
-    const gap2=claimData.structure.gap||0;
-    const endr=(claimData.policy.endorsements||[]).join(', ')||'none identified';
-    const aleT=claimData.ALE.total||0;
-    const contT=claimData.contents.totalValue||0;
-    const photos=(claimData.documents||[]).filter(x=>x.type==='photo').length;
-    const letC=correspondenceJournal.length;
-    const kp=[];
-    if(hasCEst)kp.push({i:'💰',t:'Your Documented Total',s:'Contractor: '+fmt(claimData.structure.userEstimate)+(hasCarrierEst?' · Carrier: '+fmt(claimData.structure.insurerEstimate)+' · Gap: '+fmt(Math.max(0,gap2)):'')});
-    if(hasPolicyA)kp.push({i:'📋',t:'Policy Analysis Available',s:'Your policy has been analyzed. Reference specific coverage sections, limits, and identified gaps.'});
-    else kp.push({i:'📋',t:'Policy Basis',s:'Reference your specific coverage sections and endorsements: '+endr+'.'});
-    if(aleT>0)kp.push({i:'🏠',t:'ALE Documented',s:'Additional living expenses logged: '+fmt(aleT)+'. Include in applicable letters.'});
-    if(contT>0)kp.push({i:'📦',t:'Contents Documented',s:'Personal property loss documented: '+fmt(contT)+'.'});
-    kp.push({i:'⏱️',t:'Response Timeline',s:"Demand written response within 15 business days per your state's claim handling regulations."});
-    kp.push({i:'⚖️',t:'Rights Preservation',s:'Include language preserving all rights including appraisal and legal remedies.'});
-    if(photos>0)kp.push({i:'📸',t:'Documentation',s:photos+' photos · '+letC+' prior letters. Reference attachments explicitly.'});
+    const kp=buildLetterSituationKeyPoints();
     document.getElementById('wz-analysis-spinner').innerHTML=`
-      <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">What this ${letterType} needs to accomplish based on your actual claim data.</div></div>
+      <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">What this ${escapeHtml(letterType)} needs to accomplish based on your actual claim data.</div></div>
       <div class="warn-teal"><strong>Claim Context</strong><div class="warn-teal-text">
-        <strong>Insured:</strong> ${d.insuredName||'[Not set]'} · <strong>Carrier:</strong> ${d.insurer||'[Not set]'} · <strong>Claim #:</strong> ${d.claimNumber||'[Not set]'}<br>
-        <strong>Loss Date:</strong> ${d.dateOfLoss||'[Not set]'} · <strong>Phase:</strong> ${phases[activePhase]?.num||''} — ${phases[activePhase]?.title||''}
+        <strong>Insured:</strong> ${escapeHtml(d.insuredName||'[Not set]')} · <strong>Carrier:</strong> ${escapeHtml(d.insurer||'[Not set]')} · <strong>Claim #:</strong> ${escapeHtml(d.claimNumber||'[Not set]')}<br>
+        <strong>Loss Date:</strong> ${escapeHtml(d.dateOfLoss||'[Not set]')} · <strong>Phase:</strong> ${phases[activePhase]?.num||''} — ${phases[activePhase]?.title||''}
       </div></div>
       <div style="margin-bottom:16px">
         <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Key Points to Address</div>
-        ${kp.map(p=>`<div class="log-entry"><div class="log-entry-icon">${p.i}</div><div class="log-entry-content"><div class="log-entry-title">${p.t}</div><div class="log-entry-sub">${p.s}</div></div></div>`).join('')}
+        ${kp.map(p=>`<div class="log-entry"><div class="log-entry-icon">${p.i}</div><div class="log-entry-content"><div class="log-entry-title">${escapeHtml(p.t)}</div><div class="log-entry-sub">${escapeHtml(p.s)}</div></div></div>`).join('')}
       </div>
       <div class="action-row">
-        <button class="btn btn-secondary" onclick="renderWizardStep(1,'${letterType}')">← Back</button>
-        <button class="btn btn-primary" onclick="renderWizardStep(3,'${letterType}')">Choose Strategy →</button>
+        <button class="btn btn-secondary" onclick="renderWizardStep(1,'${letterType.replace(/'/g,"\\'")}')">← Back</button>
+        <button class="btn btn-primary" onclick="renderWizardStep(3,'${letterType.replace(/'/g,"\\'")}')">Choose Strategy →</button>
       </div>`;
   }
 
@@ -3951,23 +4014,7 @@ async function generateLetterContent(letterType){
   }
 
   try {
-    const d = claimData.initial;
-    const result = await callNetlify('generate-letter', {
-      letter_type: letterType,
-      insured_name: d.insuredName,
-      claim_number: d.claimNumber,
-      insurer: d.insurer,
-      adjuster_name: d.adjusterName,
-      date_of_loss: d.dateOfLoss,
-      description: d.description,
-      property_type: d.propertyType,
-      carrier_estimate: claimData.structure?.insurerEstimate || 0,
-      user_estimate: claimData.structure?.userEstimate || 0,
-      gap: claimData.structure?.gap || 0,
-      endorsements: claimData.policy?.endorsements || [],
-      phase_number: phases[activePhase]?.num || activePhase + 1
-    });
-
+    const result = await callLetterAI(letterType);
     const letterContent = result.letter || result.content || result.text || '';
 
     return letterContent;
@@ -4166,24 +4213,47 @@ function generateComposeAnalysis(){
   renderWizardStepCompose(2,lt);
 }
 
+function composeLetterTypeArg(lt){
+  return (lt||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+async function runComposeSituationAnalysis(lt){
+  const el2=document.getElementById('comp-ana');
+  if(!el2)return;
+  const ltArg=composeLetterTypeArg(lt);
+  try{
+    const result=await callLetterAnalysisAI(lt);
+    const analysis=result.analysis||result.letter||result.content||'';
+    el2.innerHTML=`
+      <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">AI analysis for your ${escapeHtml(lt)} based on live claim data.</div></div>
+      <pre style="white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.6;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:16px;margin-bottom:16px;max-height:360px;overflow-y:auto">${escapeHtml(analysis)}</pre>
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="renderComposeWizard()">← Back</button>
+        <button class="btn btn-primary" onclick="renderWizardStepCompose(3,'${ltArg}')">Choose Strategy →</button>
+      </div>`;
+  }catch(err){
+    console.error('Compose situation analysis failed:',err);
+    el2.innerHTML=buildLetterSituationFallbackHtml(lt)+`
+      <div style="background:#fef3c7;border-left:4px solid #f59e0b;padding:12px;border-radius:6px;color:#92400e;margin-bottom:16px;font-size:12px">
+        AI analysis unavailable (${escapeHtml(err.message||'error')}). Showing claim-data summary instead.
+      </div>
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="renderComposeWizard()">← Back</button>
+        <button class="btn btn-primary" onclick="renderWizardStepCompose(3,'${ltArg}')">Choose Strategy →</button>
+      </div>`;
+  }
+}
+
 function renderWizardStepCompose(step,lt){
   const el=document.getElementById('wizard-container');if(!el)return;
   const steps=['Context','Analysis','Strategy','Letter'];
   const stepsHtml=steps.map((s,i)=>`<div class="wiz-step ${i+1===step?'active':i+1<step?'done':''}">${i+1<step?'<div class="wiz-num">✓</div>':'<div class="wiz-num">'+(i+1)+'</div>'} ${s}</div>${i<3?'<div class="wiz-sep">›</div>':''}`).join('');
+  const ltArg=composeLetterTypeArg(lt);
 
   if(step===2){
     el.innerHTML=`<div class="wizard-steps">${stepsHtml}</div>
-    <div class="action-panel"><div id="comp-ana"><div class="processing"><div class="spinner"></div><div class="processing-text">Analyzing...</div></div></div></div>`;
-    setTimeout(()=>{
-      const el2=document.getElementById('comp-ana');if(!el2)return;
-      el2.innerHTML=`<div class="panel-header"><div class="panel-title">Step 2 — Analysis</div></div>
-        <div class="warn-teal"><div class="warn-teal-text"><strong>Letter Type:</strong> ${lt}<br><strong>Purpose:</strong> Formally document your position and demand a response from ${claimData.initial.insurer}.</div></div>
-        <div class="info-grid">
-          <div class="info-card"><div class="info-card-icon">🎯</div><div class="info-card-title">Key Points</div><div class="info-card-text">Reference specific policy sections · Cite documented evidence · State demands with amounts · Set a response deadline</div></div>
-          <div class="info-card"><div class="info-card-icon">⚖️</div><div class="info-card-title">Legal Context</div><div class="info-card-text">Your state requires carriers to respond within 15 business days · Unreasonable delays may constitute bad faith · All demands should be sent certified mail</div></div>
-        </div>
-        <div class="action-row"><button class="btn btn-secondary" onclick="renderComposeWizard()">← Back</button><button class="btn btn-primary" onclick="renderWizardStepCompose(3,'${lt}')">Choose Strategy →</button></div>`;
-    },1500);
+    <div class="action-panel"><div id="comp-ana"><div class="processing"><div class="spinner"></div><div class="processing-text">Analyzing your claim with AI — 15–30 seconds...</div></div></div></div>`;
+    runComposeSituationAnalysis(lt);
   } else if(step===3){
     el.innerHTML=`<div class="wizard-steps">${stepsHtml}</div>
     <div class="action-panel"><div class="panel-header"><div class="panel-title">Step 3 — Strategy</div></div>
@@ -4191,21 +4261,22 @@ function renderWizardStepCompose(step,lt){
         <div class="strategy-card recommended selected" onclick="selectStrategy(this,'professional')"><div class="rec-badge">RECOMMENDED</div><div class="strategy-name">Professional Demand</div><span class="risk-badge risk-low">LOW RISK</span><div class="strategy-desc">Firm, professional letter asserting your rights while maintaining cooperative tone.</div><div class="strategy-outcome">Expected: Carrier responds within 15 days</div></div>
         <div class="strategy-card" onclick="selectStrategy(this,'escalation')"><div class="strategy-name">Escalation Warning</div><span class="risk-badge risk-med">MODERATE</span><div class="strategy-desc">References regulatory complaints and appraisal rights to signal readiness to escalate.</div><div class="strategy-outcome">Expected: Creates urgency with carrier</div></div>
       </div>
-      <div class="action-row"><button class="btn btn-secondary" onclick="renderWizardStepCompose(2,'${lt}')">← Back</button><button class="btn btn-primary" onclick="renderWizardStepCompose(4,'${lt}')">Generate Letter →</button></div>
+      <div class="action-row"><button class="btn btn-secondary" onclick="renderWizardStepCompose(2,'${ltArg}')">← Back</button><button class="btn btn-primary" onclick="renderWizardStepCompose(4,'${ltArg}')">Generate Letter →</button></div>
     </div>`;
   } else if(step===4){
     el.innerHTML=`<div class="wizard-steps">${stepsHtml}</div>
-    <div class="action-panel"><div id="comp-letter"><div class="processing"><div class="spinner"></div><div class="processing-text">Generating ${lt} with AI — 15–30 seconds...</div></div></div></div>`;
+    <div class="action-panel"><div id="comp-letter"><div class="processing"><div class="spinner"></div><div class="processing-text">Generating ${escapeHtml(lt)} with AI — 15–30 seconds...</div></div></div></div>`;
     generateLetterContent(lt).then(letter=>{
       logCorrespondence(lt, letter);
       const el3=document.getElementById('comp-letter');if(!el3)return;
-      el3.innerHTML=`<div class="panel-header"><div class="panel-title">Step 4 — Your ${lt}</div></div>
-        <div class="letter-display">${letter}</div>
+      el3.innerHTML=`<div class="panel-header"><div class="panel-title">Step 4 — Your ${escapeHtml(lt)}</div></div>
+        <div class="letter-display">${escapeHtml(letter)}</div>
         <div class="flex gap-8" style="flex-wrap:wrap;margin-top:12px">
           <div style="font-size:12px;color:var(--emerald);font-weight:600;padding:8px 0">✓ Saved to Correspondence Journal</div>
-          <button class="btn btn-ghost" onclick="downloadComposeLetterPDF('${lt}')">⬇️ Download PDF</button>
+          <button class="btn btn-ghost" onclick="(function(){const el=document.querySelector('.letter-display');if(!el)return;navigator.clipboard.writeText(el.textContent).then(()=>{if(window.CNToast)CNToast.success('Copied');else alert('Copied');});})()">📋 Copy</button>
+          <button class="btn btn-ghost" onclick="downloadComposeLetterPDF('${ltArg}')">⬇️ Download PDF</button>
         </div>
-        <div class="action-row"><button class="btn btn-secondary" onclick="renderWizardStepCompose(3,'${lt}')">← Back</button></div>
+        <div class="action-row"><button class="btn btn-secondary" onclick="renderWizardStepCompose(3,'${ltArg}')">← Back</button></div>
         <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>`;
     }).catch(err=>{
       const el3=document.getElementById('comp-letter');if(!el3)return;
@@ -4618,7 +4689,9 @@ async function init(){
         claimData.initial.dateOfLoss = claim.date_of_loss || claimData.initial.dateOfLoss;
         claimData.initial.propertyType = claim.property_type || claimData.initial.propertyType;
         claimData.initial.description = claim.type_of_loss || claimData.initial.description;
-        if (claim.status) claimData.initial.claimStatus = claim.status;
+        if (!claimData.initial.claimStatus||claimData.initial.claimStatus==='active'){
+          claimData.initial.claimStatus='Active — Under Review';
+        }
       }
     } catch(e) {
       console.warn('Supabase claim hydration failed, using localStorage:', e);

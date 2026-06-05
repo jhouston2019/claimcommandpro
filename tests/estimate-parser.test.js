@@ -86,27 +86,28 @@ function testParser() {
     return false;
   }
   
-  // Test 3: Verify numeric extraction
+  // Test 3: Verify numeric extraction (post-RCV/ACV pairing uses rcv_total)
   console.log('\nTest 3: Verify Numeric Extraction');
   const firstItem = contractorParsed.lineItems[0];
+  const lineTotal = firstItem.rcv_total ?? firstItem.total;
   console.log(`Description: ${firstItem.description}`);
   console.log(`Quantity: ${firstItem.quantity} ${firstItem.unit}`);
   console.log(`Unit Price: $${firstItem.unit_price}`);
-  console.log(`Total: $${firstItem.total}`);
-  
-  if (!firstItem.quantity || !firstItem.unit_price || !firstItem.total) {
+  console.log(`Total: $${lineTotal}`);
+
+  if (!firstItem.quantity || !firstItem.unit_price || lineTotal == null) {
     console.error('✗ FAIL: Numeric fields not extracted');
     return false;
   }
-  
+
   // Test 4: Verify math
   const expectedTotal = firstItem.quantity * firstItem.unit_price;
   const tolerance = 0.01;
-  if (Math.abs(firstItem.total - expectedTotal) > tolerance) {
-    console.error(`✗ FAIL: Math validation failed. ${firstItem.quantity} * ${firstItem.unit_price} should equal ${firstItem.total}`);
+  if (Math.abs(lineTotal - expectedTotal) > tolerance) {
+    console.error(`✗ FAIL: Math validation failed. ${firstItem.quantity} * ${firstItem.unit_price} should equal ${lineTotal}`);
     return false;
   }
-  console.log(`✓ Math validated: ${firstItem.quantity} * ${firstItem.unit_price} = ${firstItem.total}`);
+  console.log(`✓ Math validated: ${firstItem.quantity} * ${firstItem.unit_price} = ${lineTotal}`);
   
   // Test 5: Verify normalization
   console.log('\nTest 4: Verify Normalization');
@@ -393,7 +394,7 @@ function testSimilarity() {
   const tests = [
     { str1: 'identical', str2: 'identical', expected: 1.00 },
     { str1: 'tear off shingles', str2: 'remove shingles', expected: 0.60 }, // Approximate
-    { str1: 'vinyl siding', str2: 'vinyl siding installation', expected: 0.70 } // Approximate
+    { str1: 'vinyl siding', str2: 'vinyl siding installation', expected: 0.48 } // Levenshtein ratio
   ];
   
   let passed = 0;

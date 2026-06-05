@@ -192,6 +192,11 @@ function calculateRCVACVDeltas(discrepancies) {
  * @param {number} carrierTotal - Carrier total
  * @returns {object} O&P exposure
  */
+function resolveOPTotal(side) {
+  if (!side) return 0;
+  return Number(side.total_op ?? side.total_op_amount ?? 0) || 0;
+}
+
 function calculateOPExposure(contractorLineItems, carrierLineItems, opAnalysis, contractorTotal, carrierTotal) {
   // RULE: If 3 or more distinct trades detected, O&P qualifies
   const tradesDetected = detectDistinctTrades(contractorLineItems);
@@ -204,6 +209,8 @@ function calculateOPExposure(contractorLineItems, carrierLineItems, opAnalysis, 
   // Check if carrier included O&P
   const carrierHasOP = opAnalysis?.carrier?.has_op || false;
   const contractorHasOP = opAnalysis?.contractor?.has_op || false;
+  const contractorOPTotal = resolveOPTotal(opAnalysis?.contractor);
+  const carrierOPTotal = resolveOPTotal(opAnalysis?.carrier);
   
   if (qualifiesForOP) {
     if (contractorHasOP && carrierHasOP) {
@@ -213,9 +220,10 @@ function calculateOPExposure(contractorLineItems, carrierLineItems, opAnalysis, 
         opAmount = Math.max(0, opGap); // Only count positive gaps (underpayment)
         reason = `O&P rate difference detected. Contractor: ${opAnalysis.contractor.combined_percent || 20}%, Carrier: ${opAnalysis.carrier.combined_percent || 0}%. Gap represents underpayment.`;
         calculation = {
-          contractor_op: opAnalysis.contractor.total_op || 0,
-          carrier_op: opAnalysis.carrier.total_op || 0,
-          gap: opGap
+          contractor_op: contractorOPTotal,
+          carrier_op: carrierOPTotal,
+          gap: opGap,
+          method: 'delta'
         };
       } else {
         reason = 'O&P rates aligned between estimates.';
@@ -223,17 +231,17 @@ function calculateOPExposure(contractorLineItems, carrierLineItems, opAnalysis, 
     } else if (contractorHasOP && !carrierHasOP) {
       // Contractor has O&P, carrier does NOT
       // Use contractor's ACTUAL O&P amount (delta approach - prevents overstatement)
-      opAmount = opAnalysis.contractor.total_op || 0;
+      opAmount = contractorOPTotal;
       reason = `Carrier estimate missing O&P. Contractor includes ${opAnalysis.contractor.combined_percent || 20}% O&P (${tradesDetected.length} trades: ${tradesDetected.join(', ')}). Using contractor's actual O&P amount.`;
       calculation = {
-        contractor_op: opAnalysis.contractor.total_op || 0,
+        contractor_op: contractorOPTotal,
         carrier_op: 0,
-        gap: opAnalysis.contractor.total_op || 0,
+        gap: contractorOPTotal,
         method: 'delta'
       };
     } else if (!contractorHasOP && carrierHasOP) {
       // Carrier has O&P, contractor does NOT (rare - possible overpayment)
-      const carrierOP = opAnalysis.carrier.total_op || 0;
+      const carrierOP = carrierOPTotal;
       opAmount = 0; // No exposure (carrier paying more)
       reason = `Carrier applied O&P (${opAnalysis.carrier.combined_percent || 0}%) but contractor did not include separate O&P. May be embedded in contractor pricing. No additional O&P exposure.`;
       calculation = {

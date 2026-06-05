@@ -341,16 +341,19 @@ Total ACV  7480.00
   console.log('Summary Depreciation Allocated:', result.metadata.summary_depreciation_allocated);
   console.log('Summary Depreciation Total:', result.metadata.summary_depreciation_total);
   
-  // Should have 2 line items (depreciation line excluded)
-  const pass1 = result.lineItems.length === 2;
+  // Should have 2 material line items (depreciation/subtotal/total lines excluded)
+  const materialItems = result.lineItems.filter(
+    (i) => !i.is_total && !i.is_subtotal && !i.is_summary_depreciation
+  );
+  const pass1 = materialItems.length === 2;
   
   // Should detect summary depreciation
   const pass2 = result.metadata.summary_depreciation_allocated === true;
   const pass3 = result.metadata.summary_depreciation_total === 1870.00;
   
   // Items should have allocated depreciation
-  const shingles = result.lineItems[0];
-  const ridgeVent = result.lineItems[1];
+  const shingles = materialItems[0];
+  const ridgeVent = materialItems[1];
   
   // Depreciation should be allocated proportionally
   // Shingles: 8750/9350 * 1870 = 1750
@@ -502,7 +505,7 @@ Total ACV  8400.00
   
   if (!pass) {
     console.log('Expected: Shingles $1,600, Labor $0');
-    console.log('Got: Shingles $' + shingles.depreciation + ', Labor $' + labor.depreciation);
+    console.log('Got: Shingles $' + (shingles?.depreciation ?? 'n/a') + ', Labor $' + (labor?.depreciation ?? 'n/a'));
   }
   
   return pass;
@@ -554,9 +557,9 @@ function runAllTests() {
   return passed === total;
 }
 
-// Run tests if executed directly
 if (require.main === module) {
-  runAllTests();
+  const ok = runAllTests();
+  process.exit(ok ? 0 : 1);
 }
 
 module.exports = {
@@ -571,22 +574,4 @@ module.exports = {
   testOPDeltaLogic,
   testEmbeddedOPDetection,
   testLaborExcludedFromDepreciation
-};
-
-// Run tests if executed directly
-if (require.main === module) {
-  runAllTests();
-}
-
-module.exports = {
-  runAllTests,
-  testRCVACVPairExtraction,
-  testNoSimulatedDepreciation,
-  testOPBaseExcludesTax,
-  testDeterministicOutput,
-  testRealDepreciationInExposure,
-  testDoubleCountProtection,
-  testSummaryDepreciationAllocation,
-  testOPDeltaLogic,
-  testEmbeddedOPDetection
 };

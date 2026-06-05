@@ -29,9 +29,42 @@ exports.handler = async (event) => {
     const claimData = body.claimData || {};
     const context = typeof body.context === 'string' ? body.context.trim() : '';
     const userId = body.userId || null;
+    const mode = body.mode === 'analysis' ? 'analysis' : 'letter';
 
     const claimJson = JSON.stringify(claimData).slice(0, 60000);
-    const userText = `Write a formal insurance claim letter.
+
+    let system;
+    let userText;
+    if (mode === 'analysis') {
+      system =
+        'You analyze property insurance claim correspondence situations. Output structured plain-text analysis only — never draft a full letter.';
+      userText = `Analyze the claim situation for preparing this correspondence:
+
+Letter type / purpose: ${letterType}
+
+Claim data (JSON): ${claimJson}
+
+${context ? `Additional context from the policyholder:\n${context}\n` : ''}
+${userId ? `(Internal reference user id: ${userId} — do not include this id in the output.)\n` : ''}
+
+Requirements:
+- Reference specific numbers, coverage, estimates, and documentation from the claim data when available.
+- Do not provide legal advice; frame as informational claim-handling guidance.
+- Output plain text only (no JSON, no markdown code fences) with these sections:
+
+PURPOSE:
+(one or two sentences)
+
+KEY POINTS:
+- (4–6 bullet points tailored to this claim and letter type)
+
+LEGAL CONTEXT:
+(2–3 sentences on response timelines, certified mail, and rights preservation — general, not state-specific legal advice)
+
+DOCUMENTATION NOTES:
+(what attachments or prior correspondence to reference)`;
+    } else {
+      userText = `Write a formal insurance claim letter.
 
 Letter type / purpose: ${letterType}
 
@@ -46,17 +79,23 @@ Requirements:
 - Reference claim number and date of loss when present in claim data.
 - Do not provide legal advice; frame as the insured's documented position.
 - Output the full letter body as plain text only (no JSON, no markdown code fences).`;
+      system =
+        'You draft policyholder correspondence for property insurance claims. Output only the letter text.';
+    }
 
     const letter = await anthropicMessagesText({
-      system:
-        'You draft policyholder correspondence for property insurance claims. Output only the letter text.',
+      system,
       userText,
-      maxTokens: 8192,
+      maxTokens: mode === 'analysis' ? 4096 : 8192,
     });
 
     const trimmed = (letter || '').trim();
     if (!trimmed) {
-      return cccJsonResponse(500, { error: 'Empty letter from model' });
+      return cccJsonResponse(500, { error: mode === 'analysis' ? 'Empty analysis from model' : 'Empty letter from model' });
+    }
+
+    if (mode === 'analysis') {
+      return cccJsonResponse(200, { analysis: trimmed });
     }
 
     return cccJsonResponse(200, { letter: trimmed });

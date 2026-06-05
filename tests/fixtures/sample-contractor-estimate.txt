@@ -1,0 +1,21 @@
+ABC Roofing & Construction
+Estimate #12345
+Date: 02/12/2024
+
+ROOFING
+Tear off existing shingles  25 SQ  $3.50  $87.50
+Architectural shingles  25 SQ  $95.00  $2,375.00
+Ice and water shield  10 LF  $4.50  $45.00
+Ridge vent installation  40 LF  $8.00  $320.00
+
+SIDING
+Remove damaged siding  200 SF  $2.00  $400.00
+Vinyl siding installation  200 SF  $6.50  $1,300.00
+
+INTERIOR
+Drywall repair  150 SF  $3.50  $525.00
+Paint interior walls  150 SF  $2.00  $300.00
+
+Subtotal: $5,352.50
+Tax (8%): $428.20
+Total: $5,780.70
