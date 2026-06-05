@@ -46,6 +46,14 @@ const SUITES = [
     skipFlag: '--skip-parser'
   },
   {
+    id: 'line-compare',
+    name: 'LINE_COMPARE Engine (fixture pair)',
+    erpEquivalent: 'compare-estimates LINE_COMPARE',
+    file: 'tests/estimate-comparison-engine.test.js',
+    tier: 'P0',
+    blocksRelease: true
+  },
+  {
     id: 'intelligence-pipeline',
     name: 'Intelligence Engines (loss/trade/code/labor)',
     erpEquivalent: 'claimIntelligencePipeline engines 1–7',
@@ -72,9 +80,9 @@ const ERP_ONLY_GAPS = [
   },
   {
     feature: 'compare-estimates LINE_COMPARE (carrier text vs contractor text)',
-    ccpPath: 'analyze-estimates-v2',
-    status: 'GAP',
-    notes: 'V3 passes contractor total only, not full contractor line items'
+    ccpPath: 'analyze-estimates-v2 → estimate-comparison-engine',
+    status: 'PARITY',
+    notes: 'Deterministic LINE_COMPARE wired; V3 passes contractor text + line items'
   },
   {
     feature: 'compare-estimates RECON_VS_CARRIER (fair-market reconstruction)',
@@ -84,9 +92,9 @@ const ERP_ONLY_GAPS = [
   },
   {
     feature: '12-engine deterministic intelligence pipeline',
-    ccpPath: 'ai-estimate-comparison (partial engines)',
+    ccpPath: 'estimate-comparison-engine + ai-estimate-comparison',
     status: 'PARTIAL',
-    notes: 'Engines exist but not wired to analyze-estimates-v2'
+    notes: 'Loss/trade/scope engines in V3 path; full 12-engine stack still in L3 tools only'
   },
   {
     feature: 'Founder scenario (geometry + engineering report deviation)',

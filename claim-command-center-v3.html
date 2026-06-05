@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="/lib/estimate-strategy-resolver.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -399,6 +400,18 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
 .sp-red{background:#fee2e2;color:#991b1b}
 .sp-blue{background:#dbeafe;color:#1e40af}
 .sp-gray{background:var(--gray-100);color:var(--gray-600)}
+/* parse / analysis confidence */
+.confidence-banner{padding:12px 16px;border-radius:8px;margin-bottom:14px;border:1px solid transparent}
+.confidence-banner.high{background:#ecfdf5;border-color:#6ee7b7}
+.confidence-banner.medium{background:#fffbeb;border-color:#fcd34d}
+.confidence-banner.low{background:#fef2f2;border-color:#fca5a5}
+.confidence-banner-title{font-size:12px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.confidence-banner-text{font-size:12px;line-height:1.5;color:var(--slate)}
+.confidence-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px;text-transform:uppercase}
+.confidence-badge.high{background:#d1fae5;color:#065f46}
+.confidence-badge.medium{background:#fef3c7;color:#92400e}
+.confidence-badge.low{background:#fee2e2;color:#991b1b}
+.confidence-badge.neutral{background:var(--gray-100);color:var(--gray-600)}
 /* risk badges */
 .risk-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.3px;margin-bottom:8px}
 .risk-high{background:#fee2e2;color:#991b1b}
@@ -696,7 +709,7 @@ const phases = [
   {id:'p03',num:'03',title:'Document Damage',substeps:['Photo Documentation','Damage Inventory','Evidence Organizer','✉ Proof of Loss Letter']},
   {id:'p04',num:'04',title:'Adjuster Inspection',substeps:['Pre-Inspection Prep','Inspection Log','✉ Post-Inspection Follow-Up']},
   {id:'p05',num:'05',title:'Contractor Estimate',substeps:['Upload Estimate','Scope Review','✉ Estimate Submission Letter']},
-  {id:'p06',num:'06',title:'Estimate Analysis',substeps:['Upload Carrier Estimate','Line-Item Comparison','Gap Analysis','✉ Supplement Request Letter']},
+  {id:'p06',num:'06',title:'Estimate Analysis',substeps:['Upload Carrier Estimate','Line-Item Comparison','Negotiation Strategy','Gap Analysis','✉ Supplement Request Letter']},
   {id:'p07',num:'07',title:'Contents & ALE',substeps:['Contents Inventory','ALE Daily Log','✉ Contents & ALE Demand Letter']},
   {id:'p08',num:'08',title:'Demand & Dispute',substeps:['Build Demand Package','Dispute Letter Generator','✉ Formal Demand Letter']},
   {id:'p09',num:'09',title:'Negotiate & Escalate',substeps:['Negotiation Strategy','Escalation Options','✉ Counter-Offer/Appraisal Demand']},
@@ -706,7 +719,7 @@ const phases = [
 const milestones = [
   'Claim reported to insurer','Policy uploaded and analyzed','Coverage gaps identified',
   'Damage fully documented','Adjuster inspection completed','Independent contractor estimate obtained',
-  'Carrier estimate received','Line-item comparison completed','Gap analysis completed',
+  'Carrier estimate received','Line-item comparison completed','Negotiation strategy confirmed','Gap analysis completed',
   'Proof of Loss filed','Demand letter sent','Contents inventory completed',
   'ALE expenses documented','Settlement negotiated'
 ];
@@ -1117,6 +1130,81 @@ function showNetlifyError(containerId, message) {
   el.innerHTML = '<div style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px;border-radius:6px;color:#991b1b;margin-top:12px"><strong>Error:</strong> ' + message + '<br><small>Please try again. If the problem continues, refresh the page.</small></div>';
 }
 
+async function hydrateDocumentText(supabase, claimDocs, normalizePath) {
+  const MIN_CHARS = 100;
+
+  const contractorDoc = claimDocs.find(d => d.document_type === 'contractor_estimate');
+  const carrierDoc = claimDocs.find(d => d.document_type === 'carrier_estimate');
+  const policyDoc = claimDocs.find(d => d.document_type === 'policy');
+
+  if (!claimData.structure) claimData.structure = { insurerEstimate: 0, userEstimate: 0, gap: 0 };
+  if (!claimData.policy) claimData.policy = { uploaded: false, dwellingCoverage: 0, deductible: 0, settlementType: 'RCV', contentsCoverage: 0, aleCoverage: 0, endorsements: [] };
+
+  async function resolveText(doc, documentType, currentText) {
+    if (!doc) return null;
+    if (currentText && currentText.length >= MIN_CHARS) return currentText;
+    if (doc.extracted_text && doc.extracted_text.length >= MIN_CHARS) {
+      return doc.extracted_text;
+    }
+    const path = normalizePath(doc);
+    if (!path) return null;
+    try {
+      const token = await window.CNAuth.getToken();
+      if (!token) return null;
+
+      const resp = await fetch('/.netlify/functions/text-extract', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          storage_path: path,
+          claim_id: window.CCC_CLAIM_ID,
+          document_type: documentType
+        })
+      });
+      if (!resp.ok) return null;
+      const result = await resp.json();
+      if (result.text && result.text.length >= MIN_CHARS) {
+        const docRecord = claimData.documents.find(d => d.path === path);
+        if (docRecord) {
+          docRecord.extractedText = result.text;
+          docRecord.extractionMethod = result.extraction_method;
+        }
+        return result.text;
+      }
+    } catch (e) {
+      console.warn('hydrateDocumentText re-extract failed for', documentType, e);
+    }
+    return null;
+  }
+
+  const contractorText = await resolveText(
+    contractorDoc, 'estimate', claimData.structure.contractorEstimateText
+  );
+  if (contractorText) {
+    claimData.structure.contractorEstimateText = contractorText;
+    const cm = contractorDoc?.extraction_method || claimData.documents.find(d => d.type === 'contractor_estimate')?.extractionMethod;
+    if (cm) claimData.structure.contractorEstimateExtractionMethod = cm;
+  }
+
+  const carrierText = await resolveText(
+    carrierDoc, 'estimate', claimData.structure.carrierEstimateText
+  );
+  if (carrierText) {
+    claimData.structure.carrierEstimateText = carrierText;
+    const cm = carrierDoc?.extraction_method || claimData.documents.find(d => d.type === 'carrier_estimate')?.extractionMethod;
+    if (cm) claimData.structure.carrierEstimateExtractionMethod = cm;
+  }
+
+  const policyText = await resolveText(
+    policyDoc, 'policy', claimData.policy.rawText
+  );
+  if (policyText) {
+    claimData.policy.rawText = policyText;
+    const cm = policyDoc?.extraction_method || claimData.documents.find(d => d.type === 'policy')?.extractionMethod;
+    if (cm) claimData.policy.extractionMethod = cm;
+  }
+}
+
 async function loadState(){
   // First load from localStorage (fast, synchronous cache)
   let onboarded = false;
@@ -1157,6 +1245,8 @@ async function loadState(){
   }catch(e){
     console.warn('loadState localStorage error:', e);
   }
+
+  migratePhase06SubstepIndices();
 
   // Then hydrate from Supabase if claim_id available (authoritative source)
   if (window.CCC_CLAIM_ID) {
@@ -1277,26 +1367,77 @@ async function loadState(){
         }
       }
 
+      // 7) claim_documents — metadata + extracted_text + extraction_method
       const { data: claimDocs } = await supabase
         .from('claim_documents')
-        .select('id, document_type, file_name, storage_path, file_size, uploaded_at')
+        .select('id, document_type, file_name, storage_path, file_path, file_size, uploaded_at, extracted_text, extraction_method')
         .eq('claim_id', window.CCC_CLAIM_ID)
         .order('uploaded_at', { ascending: false });
 
       if (claimDocs && claimDocs.length > 0) {
+        const normalizePath = (d) => d.storage_path || d.file_path || '';
+
         const fromDb = claimDocs.map(d => ({
           id: d.id,
           name: d.file_name || 'Document',
           type: d.document_type || 'evidence',
-          path: d.storage_path || '',
+          path: normalizePath(d),
           size: d.file_size || 0,
           uploadedAt: d.uploaded_at || new Date().toISOString(),
-          stored: 'supabase'
+          stored: 'supabase',
+          extractedText: d.extracted_text || null,
+          extractionMethod: d.extraction_method || null
         }));
+
         const localOnly = (claimData.documents || []).filter(ld =>
           !fromDb.some(fd => fd.id === ld.id || (fd.path && ld.path && fd.path === ld.path))
         );
         claimData.documents = [...fromDb, ...localOnly];
+
+        await hydrateDocumentText(supabase, claimDocs, normalizePath);
+      }
+
+      // 8) claim_outputs — restore carrier/contractor analysis if present
+      const { data: outputs } = await supabase
+        .from('claim_outputs')
+        .select('output_type, content, created_at')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .in('output_type', ['carrier_estimate_analysis', 'contractor_estimate_analysis', 'estimate_comparison', 'negotiation_strategy'])
+        .order('created_at', { ascending: false });
+
+      if (outputs && outputs.length > 0) {
+        const carrierOutput = outputs.find(o => o.output_type === 'carrier_estimate_analysis');
+        const contractorOutput = outputs.find(o => o.output_type === 'contractor_estimate_analysis');
+        const comparisonOutput = outputs.find(o => o.output_type === 'estimate_comparison');
+        const strategyOutput = outputs.find(o => o.output_type === 'negotiation_strategy');
+
+        if (!claimData.structure) claimData.structure = { insurerEstimate: 0, userEstimate: 0, gap: 0 };
+
+        if (strategyOutput && !claimData.structure.negotiationStrategy) {
+          try {
+            claimData.structure.negotiationStrategy = typeof strategyOutput.content === 'string'
+              ? JSON.parse(strategyOutput.content) : strategyOutput.content;
+          } catch (e) { console.warn('Could not parse negotiation_strategy output:', e); }
+        }
+
+        if (carrierOutput && !claimData.structure.carrierAnalysis) {
+          try {
+            claimData.structure.carrierAnalysis = typeof carrierOutput.content === 'string'
+              ? JSON.parse(carrierOutput.content) : carrierOutput.content;
+          } catch (e) { console.warn('Could not parse carrier_estimate_analysis output:', e); }
+        }
+        if (contractorOutput && !claimData.structure.contractorAnalysis) {
+          try {
+            claimData.structure.contractorAnalysis = typeof contractorOutput.content === 'string'
+              ? JSON.parse(contractorOutput.content) : contractorOutput.content;
+          } catch (e) { console.warn('Could not parse contractor_estimate_analysis output:', e); }
+        }
+        if (comparisonOutput && !claimData.structure.estimateComparison) {
+          try {
+            claimData.structure.estimateComparison = typeof comparisonOutput.content === 'string'
+              ? JSON.parse(comparisonOutput.content) : comparisonOutput.content;
+          } catch (e) { console.warn('Could not parse estimate_comparison output:', e); }
+        }
       }
 
     } catch(e) {
@@ -1498,7 +1639,8 @@ const MILESTONE_KEYS = [
   '4-0',  // Independent contractor estimate     → Phase 05 substep 0 (Upload Estimate)
   '5-0',  // Carrier estimate received           → Phase 06 substep 0 (Upload Carrier Estimate)
   '5-1',  // Line-item comparison completed      → Phase 06 substep 1 (Line-Item Comparison)
-  '5-2',  // Gap analysis completed              → Phase 06 substep 2 (Gap Analysis)
+  '5-2',  // Negotiation strategy confirmed      → Phase 06 substep 2 (Negotiation Strategy)
+  '5-3',  // Gap analysis completed              → Phase 06 substep 3 (Gap Analysis)
   '2-3',  // Proof of Loss filed                 → Phase 03 substep 3 (Proof of Loss Letter ✉)
   '7-2',  // Demand letter sent                  → Phase 08 substep 2 (Formal Demand Letter ✉)
   '6-0',  // Contents inventory completed        → Phase 07 substep 0 (Contents Inventory)
@@ -1678,7 +1820,7 @@ function renderContent(){
     '2-0':renderP03S0,'2-1':renderP03S1,'2-2':renderP03S2,
     '3-0':renderP04S0,'3-1':renderP04S1,
     '4-0':renderP05S0,'4-1':renderP05S1,
-    '5-0':renderP06S0,'5-1':renderP06S1,'5-2':renderP06S2,
+    '5-0':renderP06S0,'5-1':renderP06S1,'5-2':renderP06S2Strategy,'5-3':renderP06S3,
     '6-0':renderP07S0,'6-1':renderP07S1,
     '7-0':renderP08S0,'7-1':renderP08S1,
     '8-0':renderP09S0,'8-1':renderP09S1,
@@ -1692,6 +1834,118 @@ function renderContent(){
 function stepHeader(phaseIdx,sub,subtitle){
   const p=phases[phaseIdx];
   return `<div class="step-header"><div class="phase-pill">Phase ${p.num} — ${p.title}</div><div class="step-title">${sub}</div><div class="step-subtitle">${subtitle}</div></div>`;
+}
+
+/** Parse/analysis method → confidence tier (canary for AI vs deterministic paths) */
+function getParseConfidenceMeta(method){
+  const m=String(method||'').toLowerCase().trim();
+  if(m==='deterministic'){
+    return{level:'high',label:'Deterministic Parse',pill:'high',message:'Line items were extracted with the structured parser. Highest confidence for line-by-line comparison.'};
+  }
+  if(m==='hybrid'){
+    return{level:'medium',label:'Hybrid Parse',pill:'medium',message:'Some line items came from AI extraction merged with parser output. Verify amounts against your original PDF before relying on this analysis.'};
+  }
+  if(m==='ai'){
+    return{level:'low',label:'AI Extraction',pill:'low',message:'Line items were AI-extracted from document text. Confidence is lower — especially for scanned PDFs or non-standard formats. Cross-check every line against your original estimate.'};
+  }
+  if(m==='deterministic+ai_summary'||m==='deterministic+ai'){
+    return{level:'medium',label:'Deterministic Compare + AI Summary',pill:'medium',message:'Line-item comparison used the deterministic engine. Narrative summary was AI-enhanced. Dollar amounts in the table are parser-based; review summary language separately.'};
+  }
+  if(m==='manual'){
+    return{level:'neutral',label:'Manual Entry',pill:'neutral',message:'Carrier total was entered manually. Upload the carrier estimate PDF for line-item comparison.'};
+  }
+  if(m==='pdf_parse'){
+    return{level:'high',label:'PDF Text Extract',pill:'high',message:'Text was extracted directly from the PDF. Highest confidence for structured documents.'};
+  }
+  if(m==='text'){
+    return{level:'high',label:'Plain Text',pill:'high',message:'Text file read directly. Highest confidence.'};
+  }
+  if(m==='vision_ocr'){
+    return{level:'low',label:'Vision OCR',pill:'low',message:'Extracted via OCR — verify against original document. Scanned PDFs and images have lower confidence than native text extraction.'};
+  }
+  if(m==='recon_ai'){
+    return{level:'medium',label:'AI Reconstruction',pill:'medium',message:'Fair-market amounts are AI-estimated from carrier scope — not a contractor bid. Obtain an independent estimate to confirm.'};
+  }
+  if(m==='recon_fallback'){
+    return{level:'low',label:'Fallback — No Market Pricing',pill:'low',message:'AI reconstruction was unavailable. Displayed amounts mirror carrier pricing and do not reflect fair-market rates.'};
+  }
+  return null;
+}
+
+const MIN_CONTRACTOR_TEXT_CHARS=100;
+
+function hasSubstantiveContractorText(text){
+  return String(text||'').trim().length>=MIN_CONTRACTOR_TEXT_CHARS;
+}
+
+function goToContractorEstimateUpload(){
+  closeAllDrops();
+  setPhase(4);
+  setSubstep(0);
+  showView('fullplan');
+}
+
+function isReconCompareMode(){
+  return claimData.structure.carrierAnalysis?.compare_mode==='RECON_VS_CARRIER';
+}
+
+function getReconPath(){
+  return claimData.structure.carrierAnalysis?.recon_path||null;
+}
+
+function renderReconModeBanner(){
+  if(!isReconCompareMode()) return '';
+  const path=getReconPath();
+  if(path==='fallback'){
+    return `<div class="confidence-banner low" style="margin-bottom:14px"><div class="confidence-banner-title">Fallback Mode ${renderConfidenceBadge('recon_fallback')}</div><div class="confidence-banner-text">AI reconstruction was unavailable. Reconstructed amounts mirror carrier pricing and do not reflect fair-market rates. This comparison has no analytical value until an independent contractor estimate is provided.</div><div style="margin-top:12px"><button type="button" class="btn btn-primary" onclick="goToContractorEstimateUpload()">Upload Contractor Estimate →</button></div></div>`;
+  }
+  return `<div class="confidence-banner medium" style="margin-bottom:14px"><div class="confidence-banner-title">Reconstruction Mode ${renderConfidenceBadge('recon_ai')}</div><div class="confidence-banner-text">No contractor estimate provided. Amounts in the "Reconstructed" column reflect AI-estimated fair-market pricing, not a contractor bid. Obtain an independent estimate to confirm these figures.</div></div>`;
+}
+
+function getComparisonColumnLabels(){
+  if(isReconCompareMode()){
+    return{line:'Line Item',carrier:'Carrier',other:'Reconstructed Amount (Fair Market)',variance:'Variance from Fair Market'};
+  }
+  return{line:'Line Item',carrier:'Carrier',other:'Contractor',variance:'Variance'};
+}
+
+/** Map text-extract extraction_method to parse_method for downstream analysis */
+function mapExtractionToParseMethod(extractionMethod){
+  const m=String(extractionMethod||'').toLowerCase();
+  if(m==='vision_ocr') return 'ai';
+  if(m==='pdf_parse'||m==='text') return 'deterministic';
+  return extractionMethod||null;
+}
+
+function renderConfidenceBadge(method){
+  const meta=getParseConfidenceMeta(method);
+  if(!meta) return '';
+  return `<span class="confidence-badge ${meta.pill}">${meta.label}</span>`;
+}
+
+function renderConfidenceBanner(method,opts){
+  const meta=getParseConfidenceMeta(method);
+  if(!meta||opts&&opts.badgeOnly) return renderConfidenceBadge(method);
+  const title=opts&&opts.title?opts.title:meta.label;
+  return `<div class="confidence-banner ${meta.level}"><div class="confidence-banner-title">${title} ${renderConfidenceBadge(method)}</div><div class="confidence-banner-text">${meta.message}</div></div>`;
+}
+
+/** Phase 06: document extraction + parse + comparison confidence — always visible */
+function renderEstimateAnalysisConfidence(opts){
+  const contractorExtraction=opts.contractorExtractionMethod||(claimData.structure.contractorEstimateExtractionMethod)||(claimData.structure.carrierAnalysis&&claimData.structure.carrierAnalysis.contractor_extraction_method);
+  const carrierExtraction=opts.carrierExtractionMethod||(claimData.structure.carrierEstimateExtractionMethod)||(claimData.structure.carrierAnalysis&&claimData.structure.carrierAnalysis.carrier_extraction_method);
+  const contractorMethod=opts.contractorMethod||(claimData.structure.contractorAnalysis&&claimData.structure.contractorAnalysis.parse_method);
+  const comparisonMethod=opts.comparisonMethod||(claimData.structure.carrierAnalysis&&claimData.structure.carrierAnalysis.analysis_method);
+  const reconPath=opts.reconPath||getReconPath();
+  const parts=[];
+  if(contractorExtraction) parts.push(renderConfidenceBanner(contractorExtraction,{title:'Contractor document text'}));
+  if(carrierExtraction) parts.push(renderConfidenceBanner(carrierExtraction,{title:'Carrier document text'}));
+  if(contractorMethod) parts.push(renderConfidenceBanner(contractorMethod,{title:'Contractor estimate analysis'}));
+  if(isReconCompareMode()&&reconPath==='ai') parts.push(renderConfidenceBanner('recon_ai',{title:'Comparison mode'}));
+  else if(isReconCompareMode()&&reconPath==='fallback') parts.push(renderConfidenceBanner('recon_fallback',{title:'Comparison mode'}));
+  else if(comparisonMethod) parts.push(renderConfidenceBanner(comparisonMethod,{title:'Gap analysis'}));
+  if(!parts.length) return '';
+  return '<div class="estimate-confidence-stack">'+parts.join('')+'</div>';
 }
 
 function thinRow(label,chips){
@@ -1849,8 +2103,15 @@ async function uploadClaimFile(file, docType) {
 
     if (dbError) console.warn('DB insert failed but file uploaded:', dbError);
 
-    // Policy: do NOT use text-extract sidecar (Med Bill / ERP send the file in one analyze POST).
-    if (file.type === 'application/pdf' && (docType === 'contractor_estimate' || docType === 'carrier_estimate')) {
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    const isImage = /^image\//.test(file.type || '');
+    const extractDocumentType =
+      docType === 'policy' ? 'policy'
+      : (docType === 'contractor_estimate' || docType === 'carrier_estimate') ? 'estimate'
+      : null;
+    const shouldTextExtract = extractDocumentType && (isPdf || (docType === 'policy' && isImage));
+
+    if (shouldTextExtract) {
       try {
         const textRes = await fetch('/.netlify/functions/text-extract', {
           method: 'POST',
@@ -1860,14 +2121,27 @@ async function uploadClaimFile(file, docType) {
           },
           body: JSON.stringify({
             storage_path: storagePath,
-            claim_id: window.CCC_CLAIM_ID
+            claim_id: window.CCC_CLAIM_ID,
+            document_type: extractDocumentType
           })
         });
         if (textRes.ok) {
-          const { text } = await textRes.json();
+          const result = await textRes.json();
+          const text = result.text;
+          const extractionMethod = result.extraction_method || null;
           const usable = text && text.length >= 100 && text.length <= 50000;
-          if (docType === 'contractor_estimate' && usable) claimData.structure.contractorEstimateText = text;
-          if (docType === 'carrier_estimate' && usable) claimData.structure.carrierEstimateText = text;
+          if (docType === 'contractor_estimate' && usable) {
+            claimData.structure.contractorEstimateText = text;
+            claimData.structure.contractorEstimateExtractionMethod = extractionMethod;
+          }
+          if (docType === 'carrier_estimate' && usable) {
+            claimData.structure.carrierEstimateText = text;
+            claimData.structure.carrierEstimateExtractionMethod = extractionMethod;
+          }
+          if (docType === 'policy' && usable) {
+            claimData.policy.rawText = text;
+            claimData.policy.extractionMethod = extractionMethod;
+          }
         }
       } catch (e) { console.warn('Text extraction error:', e); }
     }
@@ -1889,7 +2163,6 @@ async function uploadClaimFile(file, docType) {
     if (docType === 'policy') {
       claimData.policy.uploaded = true;
       claimData.policy.fileName = file.name;
-      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
       if (isPdf) {
         try {
           const stage = await stagePolicyPdfFile(file);
@@ -3053,7 +3326,8 @@ async function analyzeContractorEst(){
       });
     } catch(e) { console.warn('Could not persist contractor analysis:', e); }
 
-    res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Contractor Estimate Analyzed — Total: ${fmt(result.total || result.total_estimate || 0)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p>${(result.line_items||[]).length?'<p style="margin-top:8px;font-size:12px;color:var(--gray-500)">'+result.line_items.length+' line items extracted.</p>':''}</div></div>`;
+    const parseMethod=result.parse_method||'ai';
+    res.innerHTML=`<hr class="divider">${renderConfidenceBanner(parseMethod,{title:'Contractor estimate analysis'})}<div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Contractor Estimate Analyzed — Total: ${fmt(result.total||result.total_estimate||0)}</div></div><div class="ar-body"><p>${result.summary||'Analysis complete.'}</p>${(result.line_items||[]).length?'<p style="margin-top:8px;font-size:12px;color:var(--gray-500)">'+result.line_items.length+' line items extracted.</p>':''}</div></div>`;
   } catch(err) {
     console.error('Contractor estimate analysis failed:', err);
     showNetlifyError('ce-result', err.message);
@@ -3085,6 +3359,7 @@ function renderP05S1(){
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Estimate Scope Review</div><div class="panel-subtitle">${subtitle}</div></div>
       ${!analysis?'<div class="warn-amber"><strong>⚠️ No estimate analyzed yet</strong><div class="warn-amber-text">Go back to Step 1 and upload + analyze your contractor estimate.</div></div>':''}
+      ${analysis&&analysis.parse_method?renderConfidenceBanner(analysis.parse_method,{title:'Contractor scope review'}):''}
       ${analysis&&analysis.notes?'<div class="warn-teal" style="margin-bottom:12px"><div class="warn-teal-text">💡 '+analysis.notes+'</div></div>':''}
       <table class="data-table"><thead><tr><th>Line Item</th><th>Quantity</th><th>Unit</th><th>Unit Price</th><th>Total</th><th>Status</th></tr></thead><tbody>${tableBody}</tbody></table>
       ${actionRow("setSubstep(0)","Mark Complete & Continue →","markComplete()")}
@@ -3133,15 +3408,30 @@ async function analyzeCarrierEst(){
 
   try {
     const manualTotal = parseFloat(document.getElementById('carrier-total-input')?.value || 0) || 0;
+    const contractorAnalysis = claimData.structure.contractorAnalysis || {};
+    const contractorText=(claimData.structure.contractorEstimateText||'').trim();
+    const hasContractorText=hasSubstantiveContractorText(contractorText);
     const result = await callNetlify('analyze-estimates-v2', {
+      claim_id: window.CCC_CLAIM_ID || null,
       carrier_estimate_text: claimData.structure.carrierEstimateText || '',
-      contractor_estimate: claimData.structure.userEstimate || 0,
+      contractor_estimate_text: hasContractorText ? contractorText : null,
+      contractor_line_items: hasContractorText ? (contractorAnalysis.line_items || []) : [],
+      contractor_parse_method: hasContractorText ? (contractorAnalysis.parse_method || mapExtractionToParseMethod(claimData.structure.contractorEstimateExtractionMethod)) : null,
+      contractor_extraction_method: hasContractorText ? (claimData.structure.contractorEstimateExtractionMethod || null) : null,
+      carrier_extraction_method: claimData.structure.carrierEstimateExtractionMethod || null,
+      contractor_estimate: hasContractorText ? (claimData.structure.userEstimate || 0) : 0,
       carrier_total: manualTotal,
-      claim_type: claimData.initial.claimType
+      claim_type: claimData.initial.claimType || 'general',
+      category: 'BUILDING'
     });
 
     if (result.carrier_total > 0) {
       claimData.structure.insurerEstimate = result.carrier_total;
+    }
+    if (result.compare_mode === 'RECON_VS_CARRIER') {
+      claimData.structure.reconstructedTotal = result.contractor_total || 0;
+      claimData.structure.gap = Math.max(0, result.gap_amount || 0);
+    } else if (result.carrier_total > 0) {
       claimData.structure.gap = Math.max(0, (claimData.structure.userEstimate || 0) - result.carrier_total);
     }
     claimData.structure.carrierAnalysis = result;
@@ -3159,7 +3449,10 @@ async function analyzeCarrierEst(){
       });
     } catch(e) { console.warn('Could not persist carrier analysis:', e); }
 
-    res.innerHTML = `<hr class="divider"><div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Carrier Estimate Analyzed — Gap: ${fmt(claimData.structure.gap)}</div></div><div class="ar-body"><p>${result.summary || 'Analysis complete.'}</p></div></div>`;
+    const lineCount=(result.line_items||[]).length;
+    const isRecon=result.compare_mode==='RECON_VS_CARRIER';
+    const gapLabel=isRecon?'Variance from Fair Market':'Gap';
+    res.innerHTML=`<hr class="divider">${renderEstimateAnalysisConfidence({comparisonMethod:result.analysis_method,reconPath:result.recon_path})}${isRecon?renderReconModeBanner():''}<div class="analysis-result"><div class="ar-header"><div class="ar-header-text">✅ Carrier Estimate Analyzed — ${gapLabel}: ${fmt(claimData.structure.gap)}</div></div><div class="ar-body"><p>${result.summary||result.gap_summary||'Analysis complete.'}</p>${lineCount?'<p style="margin-top:8px;font-size:12px;color:var(--gray-500)">'+lineCount+' line items '+(isRecon?'reconstructed':'compared')+'.</p>':''}</div></div>`;
   } catch(err) {
     console.error('Carrier estimate analysis failed:', err);
     showNetlifyError('ce2-result', err.message);
@@ -3171,10 +3464,14 @@ async function analyzeCarrierEst(){
 function renderP06S1(){
   const carrier=claimData.structure.insurerEstimate||0;
   const user=claimData.structure.userEstimate||0;
+  const recon=isReconCompareMode();
+  const reconTotal=claimData.structure.reconstructedTotal||(claimData.structure.carrierAnalysis&&claimData.structure.carrierAnalysis.contractor_total)||0;
+  const cols=getComparisonColumnLabels();
+  const gapAmt=recon?Math.max(0,claimData.structure.gap||0):Math.max(0,user-carrier);
   document.getElementById('content-view').innerHTML=`
-    ${stepHeader(5,'Line-Item Comparison','Side-by-side comparison of carrier vs. contractor estimates with variance analysis.')}
+    ${stepHeader(5,'Line-Item Comparison',recon?'Fair-market reconstruction of carrier scope with variance analysis.':'Side-by-side comparison of carrier vs. contractor estimates with variance analysis.')}
     ${thinRow('TASKS',[
-      taskChip('Compare every carrier line item to contractor pricing','p06s1t1'),
+      taskChip(recon?'Review each carrier line against fair-market reconstruction':'Compare every carrier line item to contractor pricing','p06s1t1'),
       taskChip('Flag all missing scope items','p06s1t2'),
       taskChip('Identify underpriced labor and materials','p06s1t3'),
       taskChip('Document total variance amount','p06s1t4'),
@@ -3184,29 +3481,37 @@ function renderP06S1(){
       toolChip('Depreciation Calculator','recommended'),
     ].join(''))}
     <div class="action-panel">
-      <div class="panel-header"><div class="panel-title">Line-Item Comparison</div><div class="panel-subtitle">Carrier: ${fmt(carrier)} vs. Contractor: ${fmt(user)}</div></div>
+      <div class="panel-header"><div class="panel-title">Line-Item Comparison</div><div class="panel-subtitle">Carrier: ${fmt(carrier)} vs. ${recon?'Reconstructed Fair Market':'Contractor'}: ${fmt(recon?reconTotal:user)}</div></div>
+      ${renderEstimateAnalysisConfidence({})}
+      ${renderReconModeBanner()}
       ${(function(){
         const cA=claimData.structure.carrierAnalysis;
         const items=cA&&Array.isArray(cA.line_items)?cA.line_items:[];
+        const path=getReconPath();
+        if(recon&&path==='fallback'&&!items.length){
+          return '<div class="warn-amber" style="margin-top:12px"><strong>Upload a contractor estimate</strong><div class="warn-amber-text">No comparison table is shown in fallback mode without parseable carrier line items. Upload an independent contractor estimate in Phase 05 to enable line-by-line comparison.</div><div style="margin-top:12px"><button type="button" class="btn btn-primary" onclick="goToContractorEstimateUpload()">Upload Contractor Estimate →</button></div></div>';
+        }
         if(!items.length) return (carrier>0?'<div class="warn-amber"><strong>Carrier estimate analyzed — total: '+fmt(carrier)+'.</strong><div class="warn-amber-text">Detailed line items not returned. Review both estimate PDFs directly.</div></div>':'<div class="warn-amber"><strong>⚠️ No carrier estimate analyzed</strong><div class="warn-amber-text">Upload and analyze the carrier estimate in Step 1.</div></div>');
-        return '<table class="data-table"><thead><tr><th>Line Item</th><th>Carrier</th><th>Contractor</th><th>Variance</th><th>Status</th></tr></thead><tbody>'+items.map(item=>{
+        return '<table class="data-table"><thead><tr><th>'+cols.line+'</th><th>Carrier</th><th>'+cols.other+'</th><th>'+cols.variance+'</th><th>Status</th></tr></thead><tbody>'+items.map(item=>{
           const ca=item.carrier_amount!=null?item.carrier_amount:(item.carrier||0);
           const co=item.contractor_amount!=null?item.contractor_amount:(item.contractor||0);
-          const v=co-ca;
-          const sc=ca===0&&co>0?'sp-red':v>100?'sp-amber':Math.abs(v)<=100?'sp-gray':'sp-green';
-          const sl=ca===0&&co>0?'Missing from Carrier':v>100?'Undervalued':Math.abs(v)<=100?'Match':'Reviewed';
-          return `<tr><td>${item.description||item.name||'—'}</td><td>${ca>0?'$'+Number(ca).toLocaleString():'$0'}</td><td>${co>0?'$'+Number(co).toLocaleString():'—'}</td><td style="color:${v<0?'var(--red)':v>0?'var(--emerald)':'inherit'}">${v!==0?(v>0?'+':'')+'$'+Math.abs(v).toLocaleString():'$0'}</td><td><span class="status-pill ${sc}">${sl}</span></td></tr>`;
+          const v=item.variance!=null?item.variance:(co-ca);
+          const sc=item.flagged||item.status==='Flagged'?'sp-red':ca===0&&co>0?'sp-red':v>100?'sp-amber':Math.abs(v)<=100?'sp-gray':'sp-green';
+          const sl=item.status||(item.flagged?'Flagged':ca===0&&co>0?'Missing from Carrier':v>100?'Undervalued':Math.abs(v)<=100?'Match':'Reviewed');
+          const otherLabel=recon?(item.contractorItem||item.description||item.name||'—'):'';
+          const lineLabel=recon?(item.description||item.carrierItem||item.name||'—'):(item.description||item.name||'—');
+          return `<tr><td>${lineLabel}</td><td>${ca>0?'$'+Number(ca).toLocaleString():'$0'}</td><td>${co>0?'$'+Number(co).toLocaleString():'—'}${recon&&otherLabel&&otherLabel!==lineLabel?'<br><small style="color:var(--gray-500)">'+otherLabel+'</small>':''}</td><td style="color:${v<0?'var(--red)':v>0?'var(--emerald)':'inherit'}">${v!==0?(v>0?'+':'')+'$'+Math.abs(v).toLocaleString():'$0'}</td><td><span class="status-pill ${sc}">${sl}</span></td></tr>`;
         }).join('')+'</tbody></table>';
       })()}
       <div class="money-moment" style="margin-top:16px">
-        <div class="money-label">Total Identified Gap</div>
-        <div class="money-amount">${fmt(user-carrier)}</div>
-        <div class="money-sub">This is the documented difference between what you are owed and what ${claimData.initial.insurer||'the carrier'} has offered</div>
+        <div class="money-label">${recon?'Total Variance from Fair Market':'Total Identified Gap'}</div>
+        <div class="money-amount">${fmt(gapAmt)}</div>
+        <div class="money-sub">${recon?'Difference between AI-estimated fair-market reconstruction and the carrier offer':'This is the documented difference between what you are owed and what '+(claimData.initial.insurer||'the carrier')+' has offered'}</div>
       </div>
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-secondary" onclick="downloadGapAnalysis()">⬇️ Download Comparison PDF</button>
       </div>
-      ${actionRow("setSubstep(0)","Run Gap Analysis →","setSubstep(2)")}
+      ${actionRow("setSubstep(0)","Continue to Strategy →","setSubstep(2)")}
     </div>`;
 }
 
@@ -3224,7 +3529,139 @@ function buildGapCategoryTable(totalGap){
   return g>0?`<div class="warn-teal"><div class="warn-teal-text">Total identified gap: <strong>${fmt(g)}</strong>. Detailed category breakdown will appear once carrier estimate is analyzed.</div></div>`:'<div class="warn-amber"><strong>⚠️ No gap data</strong><div class="warn-amber-text">Analyze carrier estimate in Phase 06 Step 1.</div></div>';
 }
 
-function renderP06S2(){
+function renderP06S2Strategy(){
+  const cv = document.getElementById('content-view');
+  if (!cv) return;
+
+  if (!window.EstimateStrategyResolver) {
+    cv.innerHTML = '<div class="warn-amber"><strong>Strategy resolver not loaded</strong><div class="warn-amber-text">Ensure /lib/estimate-strategy-resolver.js is available.</div></div>';
+    return;
+  }
+
+  if (!claimData.structure.negotiationStrategy) {
+    const ctx = window.EstimateStrategyResolver.buildStrategyContext(claimData);
+    const result = window.EstimateStrategyResolver.resolveStrategy(ctx);
+    claimData.structure.negotiationStrategy = {
+      ...result,
+      source: 'auto',
+      resolvedAt: new Date().toISOString()
+    };
+    saveNegotiationStrategy(result.recommendedStrategy, 'auto');
+  }
+
+  const strategy = claimData.structure.negotiationStrategy;
+  const codes = window.EstimateStrategyResolver.STRATEGY_CODES;
+
+  const strategyLabels = {
+    FULL_SUPPLEMENT_DEMAND: 'Full Supplement Demand',
+    PARTIAL_DISPUTE: 'Partial Dispute',
+    DEMAND_REINSPECTION: 'Demand Re-Inspection',
+    INVOKE_APPRAISAL: 'Invoke Appraisal Clause'
+  };
+
+  const riskColors = { low: '#10b981', moderate: '#f59e0b', high: '#ef4444' };
+  const selected = strategy.recommendedStrategy;
+
+  cv.innerHTML = `
+    ${stepHeader(5,'Negotiation Strategy','Based on your estimate analysis, select the strategy that best fits your claim position.')}
+    <div class="action-panel">
+      <div class="strategy-recommendation" style="background:#f0fdf4;border:2px solid #10b981;border-radius:8px;padding:20px;margin-bottom:24px;">
+        <div style="font-size:11px;font-weight:700;color:#059669;text-transform:uppercase;margin-bottom:6px;">Recommended Strategy</div>
+        <div style="font-size:20px;font-weight:700;color:#1a202c;margin-bottom:8px;">${strategyLabels[selected] || selected}</div>
+        <div style="font-size:13px;color:#4a5568;margin-bottom:12px;">${strategy.rationale || ''}</div>
+        <div style="display:inline-block;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;background:${riskColors[strategy.riskLevel] || riskColors.low};color:white;">
+          ${(strategy.riskLevel || 'low').toUpperCase()} RISK
+        </div>
+      </div>
+
+      <div class="strategy-options" style="display:grid;gap:12px;margin-bottom:24px;">
+        ${(strategy.availableStrategies || []).map(code => `
+          <div class="strategy-option ${selected === code ? 'selected' : ''}"
+               onclick="selectNegotiationStrategy('${code}')"
+               style="background:white;border:2px solid ${selected === code ? '#1e3a5f' : '#e2e8f0'};
+                      border-radius:8px;padding:16px;cursor:pointer;transition:all 0.2s;">
+            <div style="font-weight:600;color:#1a202c;">${strategyLabels[code] || code}</div>
+            ${code === codes.INVOKE_APPRAISAL ? '<div style="font-size:12px;color:#64748b;margin-top:4px;">Use when negotiation fails — invokes policy appraisal clause</div>' : ''}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="panel-header" style="margin-bottom:12px"><div class="panel-title">Downloads</div></div>
+      <div class="flex gap-8" style="flex-wrap:wrap;margin-bottom:24px">
+        <button class="btn btn-secondary" onclick="downloadNegotiationLetter()">Negotiation Brief (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadPushbackLetter()">Pushback Packet (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadAppraisalDemand()">Appraisal Demand (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadFullReport()">Full Report (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadClaimZip()">Download All (ZIP)</button>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="setSubstep(1)">← Back to Comparison</button>
+        <button class="btn btn-primary" onclick="confirmStrategy()">Continue to Gap Analysis →</button>
+      </div>
+      <div class="disclaimer">This tool generates informational analysis only. It does not constitute legal or insurance advice.</div>
+    </div>`;
+}
+
+function selectNegotiationStrategy(code) {
+  if (!claimData.structure.negotiationStrategy) return;
+  claimData.structure.negotiationStrategy.recommendedStrategy = code;
+  claimData.structure.negotiationStrategy.source = 'user';
+  saveNegotiationStrategy(code, 'user');
+  renderP06S2Strategy();
+}
+
+function confirmStrategy() {
+  markComplete();
+  setSubstep(3);
+}
+
+async function saveNegotiationStrategy(code, source) {
+  if (!claimData.structure) claimData.structure = {};
+  claimData.structure.negotiationStrategy = claimData.structure.negotiationStrategy || {};
+  claimData.structure.negotiationStrategy.recommendedStrategy = code;
+  claimData.structure.negotiationStrategy.source = source;
+  saveState();
+
+  if (!window.CCC_CLAIM_ID) return;
+  try {
+    const supabase = await window.getSupabaseClient();
+    const user = await window.CNAuth.currentUser();
+    if (!user) return;
+    await supabase.from('claim_outputs').insert({
+      claim_id: window.CCC_CLAIM_ID,
+      user_id: user.id,
+      output_type: 'negotiation_strategy',
+      content: claimData.structure.negotiationStrategy,
+      created_at: new Date().toISOString()
+    });
+  } catch (e) {
+    console.warn('saveNegotiationStrategy persist failed:', e);
+  }
+}
+
+function migratePhase06SubstepIndices() {
+  if (localStorage.getItem('ccc_p06_substep_migrated') === '1') return;
+  let changed = false;
+  if (completedSubsteps['5-3']) {
+    completedSubsteps['5-4'] = completedSubsteps['5-3'];
+    delete completedSubsteps['5-3'];
+    changed = true;
+  }
+  if (completedSubsteps['5-2']) {
+    completedSubsteps['5-3'] = completedSubsteps['5-2'];
+    delete completedSubsteps['5-2'];
+    changed = true;
+  }
+  if (activePhase === 5) {
+    if (activeSubstep === 3) { activeSubstep = 4; changed = true; }
+    else if (activeSubstep === 2) { activeSubstep = 3; changed = true; }
+  }
+  try { localStorage.setItem('ccc_p06_substep_migrated', '1'); } catch (e) {}
+  if (changed) saveState();
+}
+
+function renderP06S3(){
   const gap=claimData.structure.userEstimate-claimData.structure.insurerEstimate;
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(5,'Gap Analysis','Breakdown of the identified underpayment by category.')}
@@ -3240,6 +3677,7 @@ function renderP06S2(){
     ].join(''))}
     <div class="action-panel">
       <div class="panel-header"><div class="panel-title">Underpayment Analysis</div></div>
+      ${renderEstimateAnalysisConfidence({})}
       <div class="money-moment">
         <div class="money-label">You Are Currently Underpaid By</div>
         <div class="money-amount">${fmt(Math.max(0,gap))}</div>
@@ -3250,7 +3688,7 @@ function renderP06S2(){
       <div class="flex gap-8" style="margin-bottom:16px">
         <button class="btn btn-primary" onclick="downloadGapAnalysis()">⬇️ Download Gap Analysis PDF</button>
       </div>
-      ${actionRow("setSubstep(1)","Mark Complete & Continue →","markComplete()")}
+      ${actionRow("setSubstep(2)","Continue to Supplement Letter →","markComplete();setSubstep(4)")}
     </div>`;
 }
 
@@ -3406,7 +3844,7 @@ function renderALELog(){
 // ============================
 function renderP08S0(){
   const structure=claimData.structure;const contents=claimData.contents;const ale=claimData.ALE;
-  const total=(structure.userEstimate||68450)+(contents.totalValue||0)+(ale.total||0);
+  const total=(structure.userEstimate||0)+(contents.totalValue||0)+(ale.total||0);
   const docList=claimData.documents||[];
   const hd=(type)=>docList.some(d=>d.type===type);
   const uiChecklist=[
@@ -3439,15 +3877,15 @@ function renderP08S0(){
       <div class="money-moment">
         <div class="money-label">Total Documented Claim Value</div>
         <div class="money-amount">${fmt(total)}</div>
-        <div class="money-sub">Carrier has offered ${fmt(structure.insurerEstimate||38200)} · Recoverable gap: ${fmt(Math.max(0,total-(structure.insurerEstimate||38200)))}</div>
+        <div class="money-sub">Carrier has offered ${fmt(structure.insurerEstimate||0)} · Recoverable gap: ${fmt(Math.max(0,total-(structure.insurerEstimate||0)))}</div>
       </div>
       <table class="compare-table">
         <thead><tr><th>Component</th><th>Documented Amount</th><th>Carrier Acknowledged</th><th>Gap</th></tr></thead>
         <tbody>
-          <tr><td>Structural / Dwelling Damage</td><td>${fmt(structure.userEstimate||68450)}</td><td>${fmt(structure.insurerEstimate||38200)}</td><td style="color:var(--red)">${fmt(Math.max(0,(structure.userEstimate||68450)-(structure.insurerEstimate||38200)))}</td></tr>
+          <tr><td>Structural / Dwelling Damage</td><td>${fmt(structure.userEstimate||0)}</td><td>${fmt(structure.insurerEstimate||0)}</td><td style="color:var(--red)">${fmt(Math.max(0,(structure.userEstimate||0)-(structure.insurerEstimate||0)))}</td></tr>
           <tr><td>Personal Property / Contents</td><td>${fmt(contents.totalValue)}</td><td>$0</td><td style="color:var(--red)">${fmt(contents.totalValue)}</td></tr>
           <tr><td>Additional Living Expenses (ALE)</td><td>${fmt(ale.total)}</td><td>$0</td><td style="color:var(--red)">${fmt(ale.total)}</td></tr>
-          <tr><td><strong>Total</strong></td><td><strong>${fmt(total)}</strong></td><td><strong>${fmt(structure.insurerEstimate||38200)}</strong></td><td style="color:var(--red)"><strong>${fmt(Math.max(0,total-(structure.insurerEstimate||38200)))}</strong></td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>${fmt(total)}</strong></td><td><strong>${fmt(structure.insurerEstimate||0)}</strong></td><td style="color:var(--red)"><strong>${fmt(Math.max(0,total-(structure.insurerEstimate||0)))}</strong></td></tr>
         </tbody>
       </table>
       <div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Demand Package Checklist</div>
@@ -3529,8 +3967,8 @@ function renderP08S2(){
 // PHASE 09
 // ============================
 function renderP09S0(){
-  const carrier=claimData.structure.insurerEstimate||38200;
-  const user=claimData.structure.userEstimate||68450;
+  const carrier=claimData.structure.insurerEstimate||0;
+  const user=claimData.structure.userEstimate||0;
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(8,'Negotiation Strategy','Build your negotiation plan and track all settlement offers.')}
     ${thinRow('TASKS',[
@@ -3634,8 +4072,8 @@ function renderP09S1(){
 // PHASE 10
 // ============================
 function renderP10S0(){
-  const carrier=claimData.structure.insurerEstimate||38200;
-  const user=claimData.structure.userEstimate||68450;
+  const carrier=claimData.structure.insurerEstimate||0;
+  const user=claimData.structure.userEstimate||0;
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(9,'Final Offer Review','Carefully evaluate the final settlement before signing.')}
     ${thinRow('TASKS',[
@@ -3705,7 +4143,7 @@ function savePaymentRecord(){
 function analyzeFinalOffer(){
   const final=parseInt(document.getElementById('final-offer').value)||0;
   const holdback=parseInt(document.getElementById('rcv-holdback').value)||0;
-  const documented=claimData.structure.userEstimate||68450;
+  const documented=claimData.structure.userEstimate||0;
   const gap=documented-final-holdback;
   document.getElementById('final-result').innerHTML=`
     <div class="${gap>5000?'warn-amber':'warn-teal'}">
@@ -4939,6 +5377,131 @@ function downloadCoverageMap(){
 }
 
 // ============================
+// DOWNLOAD: Estimate review export matrix
+// ============================
+function _strategyLabel(code) {
+  const labels = {
+    FULL_SUPPLEMENT_DEMAND: 'Full Supplement Demand',
+    PARTIAL_DISPUTE: 'Partial Dispute',
+    DEMAND_REINSPECTION: 'Demand Re-Inspection',
+    INVOKE_APPRAISAL: 'Invoke Appraisal Clause'
+  };
+  return labels[code] || code || '—';
+}
+
+function downloadNegotiationLetter() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  pdfFooter(doc);
+  let y = pdfHeader(doc, 'Negotiation Brief', 'Supplement demand with gap summary');
+  const s = claimData.structure || {};
+  const strat = s.negotiationStrategy || {};
+  const lines = [
+    `Claim: ${claimData.initial.claimNumber || '—'}`,
+    `Carrier: ${claimData.initial.insurer || '—'}`,
+    `Strategy: ${_strategyLabel(strat.recommendedStrategy)}`,
+    `Carrier estimate: ${fmt(s.insurerEstimate || 0)}`,
+    `Documented value: ${fmt(s.userEstimate || 0)}`,
+    `Identified gap: ${fmt(Math.max(0, s.gap || 0))}`,
+    '',
+    strat.rationale || 'No strategy rationale on file.'
+  ];
+  doc.setFontSize(11);
+  doc.setTextColor(51, 65, 85);
+  lines.forEach(line => { doc.text(line, 14, y); y += 7; });
+  doc.save(`Negotiation_Brief_${claimData.initial.claimNumber || 'claim'}.pdf`);
+  logActivity('⬇️', 'Downloaded Negotiation Brief PDF');
+}
+
+function downloadPushbackLetter() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  pdfFooter(doc);
+  let y = pdfHeader(doc, 'Pushback Response Packet', 'Point-by-point rebuttal of carrier line items');
+  const cA = claimData.structure.carrierAnalysis || {};
+  const flagged = (cA.line_items || []).filter(i => i.flagged || i.status === 'Undervalued' || i.status === 'Missing');
+  if (!flagged.length) {
+    doc.setFontSize(11);
+    doc.text('No flagged line items available. Run carrier analysis first.', 14, y + 6);
+  } else {
+    doc.autoTable({
+      startY: y,
+      margin: { left: 14, right: 14 },
+      head: [['Line Item', 'Carrier', 'Contractor', 'Status', 'Note']],
+      body: flagged.map(i => [
+        i.description || i.name || '—',
+        fmt(i.carrier_amount != null ? i.carrier_amount : (i.carrier || 0)),
+        fmt(i.contractor_amount != null ? i.contractor_amount : (i.contractor || 0)),
+        i.status || (i.flagged ? 'Flagged' : '—'),
+        i.reason || i.note || ''
+      ]),
+      headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+      bodyStyles: { fontSize: 9, textColor: [51, 65, 85] }
+    });
+  }
+  doc.save(`Pushback_Packet_${claimData.initial.claimNumber || 'claim'}.pdf`);
+  logActivity('⬇️', 'Downloaded Pushback Packet PDF');
+}
+
+function downloadAppraisalDemand() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  pdfFooter(doc);
+  let y = pdfHeader(doc, 'Appraisal Demand', 'Formal invocation of policy appraisal clause');
+  const d = claimData.initial || {};
+  const s = claimData.structure || {};
+  const body = [
+    `Date: ${fmtDate()}`,
+    `Insurer: ${d.insurer || '—'}`,
+    `Policy: ${d.policyNumber || '—'}`,
+    `Claim: ${d.claimNumber || '—'}`,
+    '',
+    `Disputed amount gap: ${fmt(Math.max(0, s.gap || 0))}`,
+    '',
+    'The undersigned hereby invokes the appraisal clause of the subject policy regarding the amount of loss.',
+    'This demand is informational and does not constitute legal advice.'
+  ];
+  doc.setFontSize(11);
+  doc.setTextColor(51, 65, 85);
+  body.forEach(line => { doc.text(line, 14, y); y += 7; });
+  doc.save(`Appraisal_Demand_${d.claimNumber || 'claim'}.pdf`);
+  logActivity('⬇️', 'Downloaded Appraisal Demand PDF');
+}
+
+function downloadFullReport() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  pdfFooter(doc);
+  let y = pdfHeader(doc, 'Full Estimate Review Report', 'Analysis, strategy, and gap summary');
+  const s = claimData.structure || {};
+  const strat = s.negotiationStrategy || {};
+  const sections = [
+    ['Carrier estimate', fmt(s.insurerEstimate || 0)],
+    ['Documented value', fmt(s.userEstimate || 0)],
+    ['Gap', fmt(Math.max(0, s.gap || 0))],
+    ['Strategy', _strategyLabel(strat.recommendedStrategy)],
+    ['Risk level', (strat.riskLevel || '—').toString()]
+  ];
+  doc.autoTable({
+    startY: y,
+    margin: { left: 14, right: 14 },
+    head: [['Field', 'Value']],
+    body: sections,
+    headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+    bodyStyles: { fontSize: 9, textColor: [51, 65, 85] }
+  });
+  y = doc.lastAutoTable.finalY + 10;
+  doc.setFontSize(10);
+  doc.text(strat.rationale || '', 14, y, { maxWidth: 180 });
+  doc.save(`Full_Report_${claimData.initial.claimNumber || 'claim'}.pdf`);
+  logActivity('⬇️', 'Downloaded Full Report PDF');
+}
+
+function downloadClaimZip() {
+  alert('ZIP export coming soon — wire generate-archive.js in a follow-up.');
+}
+
+// ============================
 // DOWNLOAD: Gap Analysis
 // ============================
 function downloadGapAnalysis(){
@@ -4948,8 +5511,8 @@ function downloadGapAnalysis(){
   pdfFooter(doc);
   let y=pdfHeader(doc,'Estimate Gap Analysis','Documented underpayment breakdown by category');
 
-  const carrier=claimData.structure.insurerEstimate||38200;
-  const user=claimData.structure.userEstimate||68450;
+  const carrier=claimData.structure.insurerEstimate||0;
+  const user=claimData.structure.userEstimate||0;
   const gap=Math.max(0,user-carrier);
 
   // Key numbers
@@ -5184,8 +5747,8 @@ function downloadDemandPackage(){
   const structure=claimData.structure;
   const contents=claimData.contents;
   const ale=claimData.ALE;
-  const total=(structure.userEstimate||68450)+(contents.totalValue||0)+(ale.total||0);
-  const gap=Math.max(0,total-(structure.insurerEstimate||38200));
+  const total=(structure.userEstimate||0)+(contents.totalValue||0)+(ale.total||0);
+  const gap=Math.max(0,total-(structure.insurerEstimate||0));
 
   // Hero gap number
   doc.setFillColor(15,23,42);
@@ -5199,7 +5762,7 @@ function downloadDemandPackage(){
   y+=30;
 
   const boxW=(pageW-28-8)/3;
-  pdfHighlightBox(doc,'Structure Documented',fmt(structure.userEstimate||68450),14,y,boxW,[20,184,166]);
+  pdfHighlightBox(doc,'Structure Documented',fmt(structure.userEstimate||0),14,y,boxW,[20,184,166]);
   pdfHighlightBox(doc,'Contents Documented',fmt(contents.totalValue||0),14+boxW+4,y,boxW,[20,184,166]);
   pdfHighlightBox(doc,'ALE Documented',fmt(ale.total||0),14+boxW*2+8,y,boxW,[20,184,166]);
   y+=28;
@@ -5211,10 +5774,10 @@ function downloadDemandPackage(){
     margin:{left:14,right:14},
     head:[['Component','Your Documented Value','Carrier Acknowledged','Gap']],
     body:[
-      ['Structural / Dwelling Damage',fmt(structure.userEstimate||68450),fmt(structure.insurerEstimate||38200),fmt(Math.max(0,(structure.userEstimate||68450)-(structure.insurerEstimate||38200)))],
+      ['Structural / Dwelling Damage',fmt(structure.userEstimate||0),fmt(structure.insurerEstimate||0),fmt(Math.max(0,(structure.userEstimate||0)-(structure.insurerEstimate||0)))],
       ['Personal Property / Contents',fmt(contents.totalValue||0),'$0',fmt(contents.totalValue||0)],
       ['Additional Living Expenses',fmt(ale.total||0),'$0',fmt(ale.total||0)],
-      ['TOTAL',fmt(total),fmt(structure.insurerEstimate||38200),fmt(gap)],
+      ['TOTAL',fmt(total),fmt(structure.insurerEstimate||0),fmt(gap)],
     ],
     headStyles:{fillColor:[15,23,42],textColor:255,fontStyle:'bold',fontSize:9},
     bodyStyles:{fontSize:9,textColor:[51,65,85]},

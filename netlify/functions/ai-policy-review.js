@@ -145,6 +145,33 @@ function textHasPolicySignals(text) {
   return hasDollar && hasKw;
 }
 
+/** Pre-extracted text from text-extract sidecar (policy prompt / vision OCR). */
+function isSubstantivePreExtracted(text) {
+  const t = String(text || '').trim();
+  if (t.length < MIN_POLICY_TEXT) return false;
+  if (textHasPolicySignals(t)) return true;
+  return (
+    t.length >= 100 &&
+    /\$/.test(t) &&
+    /\b(coverage|deductible|dwelling|endorsement|exclusion|policy|liability)\b/i.test(t)
+  );
+}
+
+function truncatePolicyText(text) {
+  const t = String(text || '').trim();
+  if (t.length <= MAX_TEXT) return t;
+  return t.slice(0, MAX_TEXT) + '\n[TRUNCATED]';
+}
+
+function buildPreExtractedExtraction(policyText) {
+  return {
+    policyText: truncatePolicyText(policyText),
+    extractionDegraded: false,
+    usePdfDirect: false,
+    pdfDataUrl: null
+  };
+}
+
 function claimContext(body) {
   return {
     insurer: body.insurer || 'Unknown',
@@ -225,9 +252,13 @@ async function resolveExtraction(file, policyTextInput) {
   let usePdfDirect = false;
   let pdfDataUrl = null;
 
+  if (isSubstantivePreExtracted(policyText)) {
+    return buildPreExtractedExtraction(policyText);
+  }
+
   if (!file) {
     extractionDegraded = policyText.length > 0 && !textHasPolicySignals(policyText);
-    return { policyText, extractionDegraded, usePdfDirect: false, pdfDataUrl: null };
+    return { policyText: truncatePolicyText(policyText), extractionDegraded, usePdfDirect: false, pdfDataUrl: null };
   }
 
   if (file.mime === 'application/pdf') {
@@ -250,11 +281,12 @@ async function resolveExtraction(file, policyTextInput) {
     policyText = policyText || '[Image policy document — analyze from file]';
   }
 
-  if (policyText.length > MAX_TEXT) {
-    policyText = policyText.slice(0, MAX_TEXT) + '\n[TRUNCATED]';
-  }
-
-  return { policyText, extractionDegraded, usePdfDirect, pdfDataUrl };
+  return {
+    policyText: truncatePolicyText(policyText),
+    extractionDegraded,
+    usePdfDirect,
+    pdfDataUrl
+  };
 }
 
 function parseJsonFromLlm(raw) {
@@ -748,6 +780,20 @@ exports.handler = async (event) => {
       timeout: 110000,
       maxRetries: 1
     });
+
+    const preExtracted = (body.policy_text || '').trim();
+    const usePreExtracted = isSubstantivePreExtracted(preExtracted);
+
+    // Prefer text-extract sidecar output (policy-specific prompt / vision OCR) over re-parsing the file.
+    if (usePreExtracted) {
+      console.log('[ai-policy-review] using pre-extracted policy_text:', preExtracted.length, 'chars');
+      const { result: analyzed, lastParsed } = await runPolicyAnalysis(
+        openai,
+        buildPreExtractedExtraction(preExtracted),
+        ctx
+      );
+      return finalizePolicyResult(analyzed, body, supabase, ctx, lastParsed);
+    }
 
     // ChatGPT-style path: file already on OpenAI — analyze with file_id only (small JSON body).
     if (body.openai_file_id) {

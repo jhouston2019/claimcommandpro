@@ -30,6 +30,7 @@ node tests/estimate-review-parity-suite.js --skip-parser --verbose
 | `estimate-parser.test.js` | xactimate-parser + LINE_COMPARE local | P1 | full pipeline pass |
 | `comprehensive-pipeline-test.js` | intelligence engines 1–7 | P1 | 5/5 pass |
 | `rcv-acv-extraction.test.js` | Xactimate RCV/ACV pairing | P2 | pass |
+| `estimate-comparison-engine.test.js` | compare-estimates LINE_COMPARE | P0 | pass |
 
 ---
 
@@ -42,8 +43,8 @@ node tests/estimate-review-parity-suite.js --skip-parser --verbose
 | Scope omissions / under-scoping | `estimate-engine.js` | ✅ TC-OM/US | L3 scope-omission mode | **PARITY** |
 | Single-estimate structural analysis | `ai-estimate-comparison` | Engine parity | `/app/tools/estimate-review.html` | **PARITY** |
 | Loss expectation / trade completeness | Intelligence engines in `ai-estimate-comparison` | `comprehensive-pipeline-test.js` | Resource Center tool | **PARTIAL** (not in V3) |
-| Carrier vs contractor LINE_COMPARE | `analyze-estimates-v2` (GPT) | — | Phase 06.1 | **GAP** — contractor total only, not line items |
-| Deterministic parse → match → reconcile | `estimate-parser/matcher/reconciler` | `estimate-parser.test.js` | — | **BUILT, NOT WIRED** to V3 |
+| Carrier vs contractor LINE_COMPARE | `analyze-estimates-v2` → `estimate-comparison-engine` | `estimate-comparison-engine.test.js` | Phase 06.1 | **PARITY** |
+| Deterministic parse → match → reconcile | `estimate-comparison-engine.js` | `estimate-parser.test.js` + LINE_COMPARE | V3 Phase 06 | **LIVE** |
 | RECON_VS_CARRIER (no contractor est.) | — | — | — | **MISSING** |
 | 6-step wizard + deliverables hub | Phases 05–06 + letters | — | V3 walkthrough | **PARTIAL** |
 | Strategy selection step | — | — | — | **MISSING** |
@@ -155,10 +156,16 @@ Invoke-RestMethod -Method POST `
 
 ---
 
+## Engineering sequence (recommended)
+
+1. **Vision OCR fallback** — shared `text-extract` path for policy + estimates when `pdf-parse` yields thin/garbled text (character count, word density, encoding). Highest leverage.
+2. **RECON_VS_CARRIER** — carrier-only users without a contractor estimate (majority early in claim).
+3. **6-step wizard + multi-format export** — delivery polish after infrastructure gaps close.
+
 ## Known gaps to close for full ERP parity
 
-1. **Wire deterministic pipeline into `analyze-estimates-v2`** — pass contractor line items from Phase 05 into reconciler, not just contractor total.
-2. **Feed full contractor text** into carrier comparison (ERP `LINE_COMPARE` behavior).
+1. ~~Wire deterministic pipeline into `analyze-estimates-v2`~~ — **DONE** (June 2026).
+2. ~~Feed full contractor text into carrier comparison~~ — **DONE** via `contractor_estimate_text` + `contractor_line_items`.
 3. **Hydrate `claim_outputs`** on V3 load so re-opened claims show prior analysis.
 4. **Add strategy step** or map ERP `recommendedStrategy` into Phase 06 summary.
 5. **Port founder scenario** as `tests/founder-scenario-test.js` once geometry engine exists.

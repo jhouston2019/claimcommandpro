@@ -6,6 +6,9 @@
 const OpenAI = require('openai');
 const pdfParse = require('pdf-parse');
 const { createClient } = require('@supabase/supabase-js');
+const { parseEstimate } = require('./lib/estimate-parser');
+const { sumEstimateTotal } = require('./lib/estimate-comparison-engine');
+const EstimateEngine = require('../../app/assets/js/intelligence/estimate-engine');
 
 function getSupabaseClient() {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
@@ -159,7 +162,7 @@ ${extractedText.substring(0, 8000)}`;
   }
 }
 
-function buildContractorResponse(parsedData) {
+function buildContractorResponse(parsedData, extras = {}) {
   const lineItems = (parsedData.line_items || []).map((item) => ({
     description: item.description || item.name || '—',
     quantity: item.quantity != null ? item.quantity : null,
@@ -175,8 +178,75 @@ function buildContractorResponse(parsedData) {
     total,
     line_items: lineItems,
     notes: parsedData.notes || '',
-    summary: parsedData.summary || `Contractor estimate analyzed — ${lineItems.length} line items, total ${total}.`
+    summary: parsedData.summary || `Contractor estimate analyzed — ${lineItems.length} line items, total ${total}.`,
+    ...extras
   };
+}
+
+function buildFromDeterministicParse(extractedText) {
+  const parsed = parseEstimate(extractedText, 'contractor');
+  const materialItems = (parsed.lineItems || []).filter(
+    (item) => !item.is_tax && !item.is_op && !item.is_subtotal && !item.is_total && !item.is_summary_depreciation
+  );
+  const lineItems = materialItems.map((item) => ({
+    description: item.description,
+    quantity: item.quantity,
+    unit: item.unit,
+    unit_price: item.unit_price,
+    total: item.rcv_total ?? item.total ?? 0,
+    status: 'Complete',
+    category: item.category
+  }));
+  const total = sumEstimateTotal(materialItems);
+  return {
+    line_items: lineItems,
+    total,
+    parse_metadata: parsed.metadata,
+    parse_success_rate: Number(parsed.metadata?.parse_success_rate || 0)
+  };
+}
+
+function mergeContractorResults(deterministic, aiParsed) {
+  const detCount = deterministic.line_items?.length || 0;
+  const aiCount = aiParsed.line_items?.length || 0;
+  const useDeterministic = detCount >= 3 && deterministic.parse_success_rate >= 50;
+
+  if (useDeterministic) {
+    return buildContractorResponse({
+      contractor_name: aiParsed.contractor_name,
+      estimate_date: aiParsed.estimate_date,
+      total: deterministic.total || aiParsed.total,
+      line_items: deterministic.line_items,
+      notes: aiParsed.notes,
+      summary: `Deterministic parse: ${detCount} line items extracted (${deterministic.parse_success_rate}% success). ${aiParsed.summary || ''}`.trim()
+    }, {
+      parse_method: 'deterministic',
+      parse_metadata: deterministic.parse_metadata,
+      scope_analysis: null
+    });
+  }
+
+  if (detCount > 0 && aiCount > 0) {
+    const seen = new Set(aiParsed.line_items.map((i) => (i.description || '').toLowerCase()));
+    const merged = [...aiParsed.line_items];
+    for (const item of deterministic.line_items) {
+      const key = (item.description || '').toLowerCase();
+      if (!seen.has(key)) {
+        merged.push(item);
+        seen.add(key);
+      }
+    }
+    return buildContractorResponse({
+      ...aiParsed,
+      line_items: merged,
+      total: Math.max(aiParsed.total, deterministic.total)
+    }, {
+      parse_method: 'hybrid',
+      parse_metadata: deterministic.parse_metadata
+    });
+  }
+
+  return buildContractorResponse(aiParsed, { parse_method: 'ai' });
 }
 
 /**
@@ -387,9 +457,26 @@ exports.handler = async (event) => {
       };
     }
 
-    // Parse line items with AI
+    const deterministic = buildFromDeterministicParse(extractedText);
     const parsedData = await parseLineItemsWithAI(extractedText, resolvedLossType, severity, areas);
-    const response = buildContractorResponse(parsedData);
+    const response = mergeContractorResults(deterministic, parsedData);
+
+    try {
+      const scopeCheck = EstimateEngine.analyzeEstimate({
+        estimateText: extractedText.slice(0, 12000),
+        lineItems: [],
+        userInput: '',
+        metadata: { lossType: resolvedLossType }
+      });
+      if (scopeCheck.success) {
+        response.scope_analysis = {
+          classification: scopeCheck.classification,
+          analysis: scopeCheck.analysis
+        };
+      }
+    } catch (scopeErr) {
+      console.warn('Scope analysis skipped:', scopeErr.message);
+    }
 
     // Store interpretation in database (optional)
     if (supabase && userId && claimId) {
