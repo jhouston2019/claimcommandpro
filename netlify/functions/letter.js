@@ -33,6 +33,16 @@ exports.handler = async (event) => {
 
     const claimJson = JSON.stringify(claimData).slice(0, 60000);
 
+    const strategyCode = body.negotiationStrategy
+      || claimData?.structure?.negotiationStrategy?.recommendedStrategy
+      || null;
+
+    const strategyRationale = claimData?.structure?.negotiationStrategy?.rationale || null;
+
+    const strategyFragment = strategyCode
+      ? `\nSelected negotiation strategy: ${strategyCode}${strategyRationale ? '\nStrategy rationale: ' + strategyRationale : ''}\nTailor the letter tone and demands to match this strategy.`
+      : '';
+
     let system;
     let userText;
     if (mode === 'analysis') {
@@ -82,6 +92,8 @@ Requirements:
       system =
         'You draft policyholder correspondence for property insurance claims. Output only the letter text.';
     }
+
+    userText += strategyFragment;
 
     const letter = await anthropicMessagesText({
       system,

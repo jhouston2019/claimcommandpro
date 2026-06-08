@@ -755,6 +755,7 @@ async function callLetterAI(letterType, extraContext){
   return callNetlify('letter',{
     letterType: letterType,
     claimData: letterClaimPayload(),
+    negotiationStrategy: claimData.structure?.negotiationStrategy?.recommendedStrategy || null,
     userId: user?.id||null,
     context: context
   });
