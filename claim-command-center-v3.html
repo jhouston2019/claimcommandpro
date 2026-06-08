@@ -8,6 +8,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="/lib/estimate-strategy-resolver.js"></script>
+<script src="/lib/estimate-export-templates.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -3592,7 +3593,7 @@ function renderP06S2Strategy(){
         <button class="btn btn-secondary" onclick="downloadPushbackLetter()">Pushback Packet (PDF)</button>
         <button class="btn btn-secondary" onclick="downloadAppraisalDemand()">Appraisal Demand (PDF)</button>
         <button class="btn btn-secondary" onclick="downloadFullReport()">Full Report (PDF)</button>
-        <button class="btn btn-secondary" onclick="downloadClaimZip()">Download All (ZIP)</button>
+        <button class="btn btn-secondary" id="btn-download-zip" onclick="downloadClaimZip()">⬇ Download ZIP</button>
       </div>
 
       <div class="action-row">
@@ -5379,126 +5380,161 @@ function downloadCoverageMap(){
 // ============================
 // DOWNLOAD: Estimate review export matrix
 // ============================
-function _strategyLabel(code) {
-  const labels = {
-    FULL_SUPPLEMENT_DEMAND: 'Full Supplement Demand',
-    PARTIAL_DISPUTE: 'Partial Dispute',
-    DEMAND_REINSPECTION: 'Demand Re-Inspection',
-    INVOKE_APPRAISAL: 'Invoke Appraisal Clause'
-  };
-  return labels[code] || code || '—';
+function canExportNegotiation() {
+  const s = claimData.structure || {};
+  if (!s.negotiationStrategy?.recommendedStrategy) {
+    alert('Complete the Negotiation Strategy step before downloading this letter.');
+    return false;
+  }
+  if (!s.insurerEstimate || s.insurerEstimate <= 0) {
+    alert('Carrier estimate analysis required before downloading this letter.');
+    return false;
+  }
+  return true;
+}
+
+function canExportPushback() {
+  const lineItems = claimData.structure?.carrierAnalysis?.line_items || [];
+  if (lineItems.length === 0) {
+    alert('Run carrier estimate analysis first to generate flagged line items.');
+    return false;
+  }
+  return true;
+}
+
+function canExportAppraisal() {
+  if (!claimData.initial?.claimNumber) {
+    alert('Enter your claim number in the onboarding step before generating an appraisal demand.');
+    return false;
+  }
+  return true;
+}
+
+function canExportFull() {
+  return canExportNegotiation() && canExportPushback();
+}
+
+function canExportZip() {
+  if (!window.CCC_CLAIM_ID) {
+    alert('Save your claim before downloading the ZIP package.');
+    return false;
+  }
+  return true;
+}
+
+function renderContentToPdf(content, filename) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 14;
+  const maxWidth = pageW - margin * 2;
+  const bottomMargin = 20;
+
+  pdfFooter(doc);
+  let y = pdfHeader(doc, content.title || 'Export', '');
+
+  (content.sections || []).forEach(section => {
+    if (section.heading && section.heading !== '---') {
+      if (y > pageH - bottomMargin - 20) {
+        doc.addPage();
+        y = margin;
+      }
+      y = pdfSectionTitle(doc, section.heading, y);
+    } else if (section.heading === '---') {
+      y += 6;
+    }
+
+    if (section.body) {
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(51, 65, 85);
+      const lines = doc.splitTextToSize(section.body, maxWidth);
+      lines.forEach(line => {
+        if (y > pageH - bottomMargin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(line, margin, y);
+        y += 6;
+      });
+      y += 4;
+    }
+  });
+
+  doc.save(filename);
 }
 
 function downloadNegotiationLetter() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  pdfFooter(doc);
-  let y = pdfHeader(doc, 'Negotiation Brief', 'Supplement demand with gap summary');
-  const s = claimData.structure || {};
-  const strat = s.negotiationStrategy || {};
-  const lines = [
-    `Claim: ${claimData.initial.claimNumber || '—'}`,
-    `Carrier: ${claimData.initial.insurer || '—'}`,
-    `Strategy: ${_strategyLabel(strat.recommendedStrategy)}`,
-    `Carrier estimate: ${fmt(s.insurerEstimate || 0)}`,
-    `Documented value: ${fmt(s.userEstimate || 0)}`,
-    `Identified gap: ${fmt(Math.max(0, s.gap || 0))}`,
-    '',
-    strat.rationale || 'No strategy rationale on file.'
-  ];
-  doc.setFontSize(11);
-  doc.setTextColor(51, 65, 85);
-  lines.forEach(line => { doc.text(line, 14, y); y += 7; });
-  doc.save(`Negotiation_Brief_${claimData.initial.claimNumber || 'claim'}.pdf`);
-  logActivity('⬇️', 'Downloaded Negotiation Brief PDF');
+  if (!canExportNegotiation()) return;
+  const content = window.EstimateExportTemplates.buildNegotiationLetterContent(claimData);
+  renderContentToPdf(content, 'negotiation-letter.pdf');
+  logActivity('⬇️', 'Downloaded Negotiation Letter PDF');
 }
 
 function downloadPushbackLetter() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  pdfFooter(doc);
-  let y = pdfHeader(doc, 'Pushback Response Packet', 'Point-by-point rebuttal of carrier line items');
-  const cA = claimData.structure.carrierAnalysis || {};
-  const flagged = (cA.line_items || []).filter(i => i.flagged || i.status === 'Undervalued' || i.status === 'Missing');
-  if (!flagged.length) {
-    doc.setFontSize(11);
-    doc.text('No flagged line items available. Run carrier analysis first.', 14, y + 6);
-  } else {
-    doc.autoTable({
-      startY: y,
-      margin: { left: 14, right: 14 },
-      head: [['Line Item', 'Carrier', 'Contractor', 'Status', 'Note']],
-      body: flagged.map(i => [
-        i.description || i.name || '—',
-        fmt(i.carrier_amount != null ? i.carrier_amount : (i.carrier || 0)),
-        fmt(i.contractor_amount != null ? i.contractor_amount : (i.contractor || 0)),
-        i.status || (i.flagged ? 'Flagged' : '—'),
-        i.reason || i.note || ''
-      ]),
-      headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', fontSize: 9 },
-      bodyStyles: { fontSize: 9, textColor: [51, 65, 85] }
-    });
-  }
-  doc.save(`Pushback_Packet_${claimData.initial.claimNumber || 'claim'}.pdf`);
-  logActivity('⬇️', 'Downloaded Pushback Packet PDF');
+  if (!canExportPushback()) return;
+  const content = window.EstimateExportTemplates.buildPushbackLetterContent(claimData);
+  renderContentToPdf(content, 'pushback-letter.pdf');
+  logActivity('⬇️', 'Downloaded Pushback Letter PDF');
 }
 
 function downloadAppraisalDemand() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  pdfFooter(doc);
-  let y = pdfHeader(doc, 'Appraisal Demand', 'Formal invocation of policy appraisal clause');
-  const d = claimData.initial || {};
-  const s = claimData.structure || {};
-  const body = [
-    `Date: ${fmtDate()}`,
-    `Insurer: ${d.insurer || '—'}`,
-    `Policy: ${d.policyNumber || '—'}`,
-    `Claim: ${d.claimNumber || '—'}`,
-    '',
-    `Disputed amount gap: ${fmt(Math.max(0, s.gap || 0))}`,
-    '',
-    'The undersigned hereby invokes the appraisal clause of the subject policy regarding the amount of loss.',
-    'This demand is informational and does not constitute legal advice.'
-  ];
-  doc.setFontSize(11);
-  doc.setTextColor(51, 65, 85);
-  body.forEach(line => { doc.text(line, 14, y); y += 7; });
-  doc.save(`Appraisal_Demand_${d.claimNumber || 'claim'}.pdf`);
+  if (!canExportAppraisal()) return;
+  const content = window.EstimateExportTemplates.buildAppraisalDemandContent(claimData);
+  renderContentToPdf(content, 'appraisal-demand.pdf');
   logActivity('⬇️', 'Downloaded Appraisal Demand PDF');
 }
 
 function downloadFullReport() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  pdfFooter(doc);
-  let y = pdfHeader(doc, 'Full Estimate Review Report', 'Analysis, strategy, and gap summary');
-  const s = claimData.structure || {};
-  const strat = s.negotiationStrategy || {};
-  const sections = [
-    ['Carrier estimate', fmt(s.insurerEstimate || 0)],
-    ['Documented value', fmt(s.userEstimate || 0)],
-    ['Gap', fmt(Math.max(0, s.gap || 0))],
-    ['Strategy', _strategyLabel(strat.recommendedStrategy)],
-    ['Risk level', (strat.riskLevel || '—').toString()]
-  ];
-  doc.autoTable({
-    startY: y,
-    margin: { left: 14, right: 14 },
-    head: [['Field', 'Value']],
-    body: sections,
-    headStyles: { fillColor: [15, 23, 42], textColor: 255, fontStyle: 'bold', fontSize: 9 },
-    bodyStyles: { fontSize: 9, textColor: [51, 65, 85] }
-  });
-  y = doc.lastAutoTable.finalY + 10;
-  doc.setFontSize(10);
-  doc.text(strat.rationale || '', 14, y, { maxWidth: 180 });
-  doc.save(`Full_Report_${claimData.initial.claimNumber || 'claim'}.pdf`);
+  if (!canExportFull()) return;
+  const content = window.EstimateExportTemplates.buildFullReportContent(claimData);
+  renderContentToPdf(content, 'full-claim-report.pdf');
   logActivity('⬇️', 'Downloaded Full Report PDF');
 }
 
-function downloadClaimZip() {
-  alert('ZIP export coming soon — wire generate-archive.js in a follow-up.');
+async function downloadClaimZip() {
+  if (!canExportZip()) return;
+  try {
+    const token = await window.CNAuth.getToken();
+    if (!token) { alert('Authentication required.'); return; }
+
+    const btn = document.getElementById('btn-download-zip');
+    if (btn) { btn.disabled = true; btn.textContent = 'Preparing ZIP…'; }
+
+    const res = await fetch('/.netlify/functions/generate-archive', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({
+        claim_id: window.CCC_CLAIM_ID,
+        include_outputs: true
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const msg = typeof err.error === 'string' ? err.error : (err.error?.message || res.status);
+      alert('ZIP generation failed: ' + msg);
+      return;
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `claim-${claimData.initial?.claimNumber || 'package'}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+    logActivity('⬇️', 'Downloaded claim ZIP package');
+  } catch (e) {
+    alert('ZIP download failed: ' + e.message);
+  } finally {
+    const btn = document.getElementById('btn-download-zip');
+    if (btn) { btn.disabled = false; btn.textContent = '⬇ Download ZIP'; }
+  }
 }
 
 // ============================

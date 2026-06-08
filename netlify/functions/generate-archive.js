@@ -149,8 +149,11 @@ For questions, contact support.
     // Add analysis outputs as JSON
     if (outputs.length > 0) {
       outputs.forEach(output => {
-        const filename = `analysis/${output.output_type}_step${output.step_number}.json`;
-        archive.append(JSON.stringify(output.output_json, null, 2), { name: filename });
+        const filename = `analysis/${output.output_type}${output.step_number != null ? '_step' + output.step_number : ''}.json`;
+        const outputContent = output.content
+          ? (typeof output.content === 'string' ? output.content : JSON.stringify(output.content, null, 2))
+          : '{}';
+        archive.append(outputContent, { name: filename });
       });
     }
 
