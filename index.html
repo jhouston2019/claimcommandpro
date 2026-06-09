@@ -193,23 +193,21 @@
 
     .hero-question {
       font-family: 'DM Serif Display', serif;
-      font-size: 3.5rem;
+      font-size: 2.25rem;
       font-style: normal;
       color: rgba(255,255,255,0.9);
-      margin-bottom: 3.5rem;
+      margin-bottom: 3rem;
       letter-spacing: -0.02em;
-      line-height: 1.15;
+      line-height: 1.25;
       text-align: center;
-      max-width: 900px;
+      max-width: 100%;
       margin-left: auto;
       margin-right: auto;
       padding-top: 1rem;
     }
 
-    @media (min-width: 769px) {
-      .hero-question-l1 {
-        white-space: nowrap;
-      }
+    .hero-question-line {
+      display: block;
     }
 
     .hero-answer {
@@ -2180,7 +2178,7 @@
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .hero-question { font-size: 2.25rem; padding-top: 0; }
+      .hero-question { font-size: 1.875rem; padding-top: 0; }
       .hero-left { text-align: center; padding-bottom: 0; }
       .hero-ctas { justify-content: center; }
 
@@ -2244,7 +2242,7 @@
         display: flex;
       }
 
-      .hero-question { font-size: 1.75rem; }
+      .hero-question { font-size: 1.375rem; }
       .difference-amount { font-size: 3.5rem; }
       .found-statement { font-size: 1.25rem; }
       .hero-ctas { flex-direction: column; align-items: center; }
@@ -2416,7 +2414,12 @@
   <section class="hero">
     <div class="hero-container">
 
-      <h1 class="hero-question"><span class="hero-question-l1">Most homeowners are underpaid by $15,000 or more.</span><br>Don't be one of them.<br>Collect every dollar your policy provides<br>with Claim Command Pro</h1>
+      <h1 class="hero-question">
+        <span class="hero-question-line">Most homeowners are underpaid by $15,000 or more.</span>
+        <span class="hero-question-line">Don't be one of them.</span>
+        <span class="hero-question-line">Collect every dollar your policy provides</span>
+        <span class="hero-question-line">with Claim Command Pro</span>
+      </h1>
 
       <div class="hero-grid">
 
