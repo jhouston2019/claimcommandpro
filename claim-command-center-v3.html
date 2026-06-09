@@ -9,6 +9,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="/lib/estimate-strategy-resolver.js"></script>
 <script src="/lib/estimate-export-templates.js"></script>
+<script src="/lib/estimate-docx-export.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -3510,8 +3511,9 @@ function renderP06S1(){
         <div class="money-amount">${fmt(gapAmt)}</div>
         <div class="money-sub">${recon?'Difference between AI-estimated fair-market reconstruction and the carrier offer':'This is the documented difference between what you are owed and what '+(claimData.initial.insurer||'the carrier')+' has offered'}</div>
       </div>
-      <div class="flex gap-8" style="margin-bottom:16px">
+      <div class="flex gap-8" style="margin-bottom:16px;flex-wrap:wrap">
         <button class="btn btn-secondary" onclick="downloadGapAnalysis()">⬇️ Download Comparison PDF</button>
+        <button class="btn btn-secondary" onclick="downloadGapAnalysisDocx()">⬇️ Download Comparison Word</button>
       </div>
       ${actionRow("setSubstep(0)","Continue to Strategy →","setSubstep(2)")}
     </div>`;
@@ -3591,9 +3593,13 @@ function renderP06S2Strategy(){
       <div class="panel-header" style="margin-bottom:12px"><div class="panel-title">Downloads</div></div>
       <div class="flex gap-8" style="flex-wrap:wrap;margin-bottom:24px">
         <button class="btn btn-secondary" onclick="downloadNegotiationLetter()">Negotiation Brief (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadNegotiationLetterDocx()">Negotiation Brief (Word)</button>
         <button class="btn btn-secondary" onclick="downloadPushbackLetter()">Pushback Packet (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadPushbackLetterDocx()">Pushback Packet (Word)</button>
         <button class="btn btn-secondary" onclick="downloadAppraisalDemand()">Appraisal Demand (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadAppraisalDemandDocx()">Appraisal Demand (Word)</button>
         <button class="btn btn-secondary" onclick="downloadFullReport()">Full Report (PDF)</button>
+        <button class="btn btn-secondary" onclick="downloadFullReportDocx()">Full Report (Word)</button>
         <button class="btn btn-secondary" id="btn-download-zip" onclick="downloadClaimZip()">⬇ Download ZIP</button>
       </div>
 
@@ -3687,8 +3693,9 @@ function renderP06S3(){
       </div>
       ${buildGapCategoryTable(gap)}
       <div class="warn-teal"><div class="warn-teal-text">💡 A Supplement Request Letter citing these specific line items and amounts is your strongest next action. Include your contractor's line items and the supporting documentation for each gap category.</div></div>
-      <div class="flex gap-8" style="margin-bottom:16px">
+      <div class="flex gap-8" style="margin-bottom:16px;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="downloadGapAnalysis()">⬇️ Download Gap Analysis PDF</button>
+        <button class="btn btn-secondary" onclick="downloadGapAnalysisDocx()">⬇️ Download Gap Analysis Word</button>
       </div>
       ${actionRow("setSubstep(2)","Continue to Supplement Letter →","markComplete();setSubstep(4)")}
     </div>`;
@@ -4230,6 +4237,7 @@ function renderP10S2(){
         <button class="btn btn-primary" onclick="downloadDemandPackage()">⬇️ Download Demand Package PDF</button>
         <button class="btn btn-secondary" onclick="downloadFinancialSummary()">📊 Financial Summary PDF</button>
         <button class="btn btn-secondary" onclick="downloadGapAnalysis()">📋 Gap Analysis PDF</button>
+        <button class="btn btn-secondary" onclick="downloadGapAnalysisDocx()">📋 Gap Analysis Word</button>
         <button class="btn btn-secondary" onclick="showView('correspondence')">✉️ Correspondence Journal</button>
       </div>
       <div class="warn-teal" style="margin-top:12px"><div class="warn-teal-text">🎉 <strong>Congratulations on completing your claim.</strong> Your documentation is preserved and archived. If additional damage is discovered or payments are missed, this file is your foundation for any future action.</div></div>
@@ -5492,6 +5500,62 @@ function downloadFullReport() {
   const content = window.EstimateExportTemplates.buildFullReportContent(claimData);
   renderContentToPdf(content, 'full-claim-report.pdf');
   logActivity('⬇️', 'Downloaded Full Report PDF');
+}
+
+async function downloadContentDocx(content, filename, logLabel) {
+  if (!window.EstimateDocxExport) {
+    alert('Word export module not loaded. Refresh the page and try again.');
+    return;
+  }
+  try {
+    await window.EstimateDocxExport.downloadEstimateDocx(content, filename, claimData);
+    logActivity('⬇️', logLabel || 'Downloaded Word document');
+  } catch (e) {
+    alert('Word download failed: ' + e.message);
+  }
+}
+
+function gapAnalysisDocxFilename() {
+  const claimNum = claimData.initial?.claimNumber || 'claim';
+  return `Gap_Analysis_${claimNum}.docx`;
+}
+
+async function downloadGapAnalysisDocx() {
+  if (!window.EstimateExportTemplates?.buildGapAnalysisContent) {
+    alert('Export templates not loaded. Refresh the page and try again.');
+    return;
+  }
+  const carrier = claimData.structure?.insurerEstimate || 0;
+  if (carrier <= 0) {
+    alert('Analyze the carrier estimate first to generate a gap analysis export.');
+    return;
+  }
+  const content = window.EstimateExportTemplates.buildGapAnalysisContent(claimData);
+  await downloadContentDocx(content, gapAnalysisDocxFilename(), 'Downloaded Gap Analysis Word');
+}
+
+async function downloadNegotiationLetterDocx() {
+  if (!canExportNegotiation()) return;
+  const content = window.EstimateExportTemplates.buildNegotiationLetterContent(claimData);
+  await downloadContentDocx(content, 'negotiation-letter.docx', 'Downloaded Negotiation Letter Word');
+}
+
+async function downloadPushbackLetterDocx() {
+  if (!canExportPushback()) return;
+  const content = window.EstimateExportTemplates.buildPushbackLetterContent(claimData);
+  await downloadContentDocx(content, 'pushback-letter.docx', 'Downloaded Pushback Letter Word');
+}
+
+async function downloadAppraisalDemandDocx() {
+  if (!canExportAppraisal()) return;
+  const content = window.EstimateExportTemplates.buildAppraisalDemandContent(claimData);
+  await downloadContentDocx(content, 'appraisal-demand.docx', 'Downloaded Appraisal Demand Word');
+}
+
+async function downloadFullReportDocx() {
+  if (!canExportFull()) return;
+  const content = window.EstimateExportTemplates.buildFullReportContent(claimData);
+  await downloadContentDocx(content, 'full-claim-report.docx', 'Downloaded Full Report Word');
 }
 
 async function downloadClaimZip() {

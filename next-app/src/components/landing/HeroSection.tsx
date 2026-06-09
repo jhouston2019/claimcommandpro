@@ -8,7 +8,7 @@ export default function HeroSection() {
       <div className="section-container py-20">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
-            Handle your insurance claim the right way and get paid what you're owed.
+            Most homeowners are underpaid by $15,000 or more. Don't be one of them. Collect every dollar your policy provides with CCP.
           </h1>
           
           <p className="text-2xl md:text-3xl text-primary-100 text-center mb-8 max-w-4xl mx-auto leading-relaxed">
