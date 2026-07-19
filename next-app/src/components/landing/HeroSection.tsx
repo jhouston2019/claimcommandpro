@@ -8,9 +8,9 @@ export default function HeroSection() {
       <div className="section-container py-20">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
-            <span className="block">Most homeowners are underpaid</span>
-            <span className="block">by $15,000 or more.</span>
-            <span className="block">Don&apos;t be one of them.</span>
+            <span className="block whitespace-nowrap">Most homeowners are underpaid</span>
+            <span className="block whitespace-nowrap">by $15,000 or more.</span>
+            <span className="block whitespace-nowrap">Don&apos;t be one of them.</span>
           </h1>
           
           <p className="text-xl text-primary-100 text-center mb-8 max-w-4xl mx-auto">

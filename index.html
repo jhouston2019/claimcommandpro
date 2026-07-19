@@ -210,6 +210,22 @@
       display: block;
     }
 
+    .hero-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.75rem, 4.8vw, 3.25rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.93);
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      margin: 0 auto 0.85rem;
+      text-align: center;
+    }
+
+    .hero-headline-line {
+      display: block;
+      white-space: nowrap;
+    }
+
     .hero-answer {
       font-family: 'DM Sans', sans-serif;
       font-size: 1.1rem;
@@ -2413,8 +2429,10 @@
   <!-- HERO SECTION -->
   <section class="hero" style="padding: 5rem 0 5.5rem;">
     <div class="hero-container" style="text-align: center;">
-      <h1 style="font-family: 'DM Serif Display', serif; font-size: 3.25rem; font-weight: 400; color: rgba(255,255,255,0.93); line-height: 1.18; letter-spacing: -0.025em; margin: 0 auto 0.85rem; max-width: 720px;">
-        Most homeowners are underpaid<br>by <span style="color: #14b8a6;">$15,000</span> or more.<br>Don't be one of them.
+      <h1 class="hero-headline">
+        <span class="hero-headline-line">Most homeowners are underpaid</span>
+        <span class="hero-headline-line">by <span style="color: #14b8a6;">$15,000</span> or more.</span>
+        <span class="hero-headline-line">Don't be one of them.</span>
       </h1>
       <p style="font-size: 1.1rem; color: rgba(255,255,255,0.5); margin: 0 auto 2.25rem; max-width: 480px; line-height: 1.6;">
         Collect every dollar your policy provides with Claim Command Pro.
