@@ -8,8 +8,14 @@ export default function HeroSection() {
       <div className="section-container py-20">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight text-center">
-            Most homeowners are underpaid by $15,000 or more. Don't be one of them. Collect every dollar your policy provides with CCP.
+            <span className="block">Most homeowners are underpaid</span>
+            <span className="block">by $15,000 or more.</span>
+            <span className="block">Don&apos;t be one of them.</span>
           </h1>
+          
+          <p className="text-xl text-primary-100 text-center mb-8 max-w-4xl mx-auto">
+            Collect every dollar your policy provides with CCP.
+          </p>
           
           <p className="text-2xl md:text-3xl text-primary-100 text-center mb-8 max-w-4xl mx-auto leading-relaxed">
             Most policyholders don't know how to prove their loss correctly and it costs them. We show you exactly what to do, what to document, and how to recover the full value of your claim.
