@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insurance Claim Glossary — Every Term Explained | Claim Command Pro</title>
+  <meta name="description" content="Plain-language definitions of every insurance claim term you will encounter during a property damage claim — from ACV to Xactimate.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero-breadcrumb { font-size: 0.78rem; color: rgba(255,255,255,0.4);
+                       margin-bottom: 0.75rem; text-align: center; }
+    .hero-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; }
+    .hero h1 { font-family: 'DM Serif Display', serif;
+               font-size: clamp(2rem, 5vw, 3rem); color: white;
+               line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .definition-box { background: var(--navy); color: white;
+                      padding: 1.75rem 2rem; border-radius: 12px;
+                      margin-bottom: 2rem; }
+    .definition-box .def-label { font-size: 0.75rem; font-weight: 700;
+                                  text-transform: uppercase; letter-spacing: 0.1em;
+                                  color: var(--teal); margin-bottom: 0.5rem; }
+    .definition-box .def-text { font-family: 'DM Serif Display', serif;
+                                 font-size: 1.4rem; color: white;
+                                 line-height: 1.4; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Insurance Claim Glossary",
+  "description": "Plain-language definitions of every insurance claim term encountered during a property damage claim",
+  "numberOfItems": 75,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Ordinance and Law Coverage",
+      "url": "https://claimcommandpro.com/app/learn/ordinance-and-law-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Replacement Cost Value",
+      "url": "https://claimcommandpro.com/app/learn/replacement-cost-value.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Actual Cash Value",
+      "url": "https://claimcommandpro.com/app/learn/actual-cash-value.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "Recoverable Depreciation",
+      "url": "https://claimcommandpro.com/app/learn/recoverable-depreciation.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "name": "Matching Coverage",
+      "url": "https://claimcommandpro.com/app/learn/matching-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "name": "Extended Replacement Cost",
+      "url": "https://claimcommandpro.com/app/learn/extended-replacement-cost.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "name": "Dwelling Coverage",
+      "url": "https://claimcommandpro.com/app/learn/dwelling-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "name": "Loss of Use Coverage",
+      "url": "https://claimcommandpro.com/app/learn/loss-of-use-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "name": "Contents Coverage",
+      "url": "https://claimcommandpro.com/app/learn/contents-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 10,
+      "name": "Other Structures Coverage",
+      "url": "https://claimcommandpro.com/app/learn/other-structures-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 11,
+      "name": "Policy Endorsement",
+      "url": "https://claimcommandpro.com/app/learn/policy-endorsement.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 12,
+      "name": "Policy Exclusion",
+      "url": "https://claimcommandpro.com/app/learn/policy-exclusion.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 13,
+      "name": "Named Perils Policy",
+      "url": "https://claimcommandpro.com/app/learn/named-perils-policy.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 14,
+      "name": "Open Perils Policy",
+      "url": "https://claimcommandpro.com/app/learn/open-perils-policy.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 15,
+      "name": "Declarations Page",
+      "url": "https://claimcommandpro.com/app/learn/declarations-page.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 16,
+      "name": "Xactimate",
+      "url": "https://claimcommandpro.com/app/learn/xactimate.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 17,
+      "name": "Overhead and Profit",
+      "url": "https://claimcommandpro.com/app/learn/overhead-and-profit.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 18,
+      "name": "Insurance Supplement",
+      "url": "https://claimcommandpro.com/app/learn/insurance-supplement.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 19,
+      "name": "Labor Rate Suppression",
+      "url": "https://claimcommandpro.com/app/learn/labor-rate-suppression.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 20,
+      "name": "Scope of Loss",
+      "url": "https://claimcommandpro.com/app/learn/scope-of-loss.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 21,
+      "name": "Line Item",
+      "url": "https://claimcommandpro.com/app/learn/line-item-estimate.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 22,
+      "name": "Depreciation",
+      "url": "https://claimcommandpro.com/app/learn/depreciation-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 23,
+      "name": "Code Upgrade Coverage",
+      "url": "https://claimcommandpro.com/app/learn/code-upgrade-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 24,
+      "name": "Drip Edge",
+      "url": "https://claimcommandpro.com/app/learn/drip-edge-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 25,
+      "name": "Ice and Water Shield",
+      "url": "https://claimcommandpro.com/app/learn/ice-and-water-shield.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 26,
+      "name": "General Contractor",
+      "url": "https://claimcommandpro.com/app/learn/general-contractor-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 27,
+      "name": "Betterment",
+      "url": "https://claimcommandpro.com/app/learn/betterment-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 28,
+      "name": "Unit Price",
+      "url": "https://claimcommandpro.com/app/learn/unit-price-estimate.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 29,
+      "name": "Roofing Squares",
+      "url": "https://claimcommandpro.com/app/learn/roofing-squares.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 30,
+      "name": "Debris Removal",
+      "url": "https://claimcommandpro.com/app/learn/debris-removal-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 31,
+      "name": "First Notice of Loss",
+      "url": "https://claimcommandpro.com/app/learn/first-notice-of-loss.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 32,
+      "name": "Claim Number",
+      "url": "https://claimcommandpro.com/app/learn/claim-number.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 33,
+      "name": "Field Adjuster",
+      "url": "https://claimcommandpro.com/app/learn/field-adjuster.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 34,
+      "name": "Independent Adjuster",
+      "url": "https://claimcommandpro.com/app/learn/independent-adjuster.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 35,
+      "name": "Public Adjuster",
+      "url": "https://claimcommandpro.com/app/learn/public-adjuster.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 36,
+      "name": "Staff Adjuster",
+      "url": "https://claimcommandpro.com/app/learn/staff-adjuster.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 37,
+      "name": "Claim Diary",
+      "url": "https://claimcommandpro.com/app/learn/claim-diary.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 38,
+      "name": "Mitigation",
+      "url": "https://claimcommandpro.com/app/learn/mitigation-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 39,
+      "name": "Subrogation",
+      "url": "https://claimcommandpro.com/app/learn/subrogation.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 40,
+      "name": "Mortgage Clause",
+      "url": "https://claimcommandpro.com/app/learn/mortgage-clause.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 41,
+      "name": "Proof of Loss",
+      "url": "https://claimcommandpro.com/app/learn/proof-of-loss-claim.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 42,
+      "name": "Appraisal Clause",
+      "url": "https://claimcommandpro.com/app/learn/appraisal-clause.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 43,
+      "name": "Reservation of Rights Letter",
+      "url": "https://claimcommandpro.com/app/learn/reservation-of-rights.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 44,
+      "name": "Examination Under Oath",
+      "url": "https://claimcommandpro.com/app/learn/examination-under-oath.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 45,
+      "name": "Bad Faith Insurance",
+      "url": "https://claimcommandpro.com/app/learn/bad-faith-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 46,
+      "name": "Release of Claims",
+      "url": "https://claimcommandpro.com/app/learn/release-of-claims.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 47,
+      "name": "ACV vs RCV",
+      "url": "https://claimcommandpro.com/app/learn/acv-vs-rcv.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 48,
+      "name": "Statute of Limitations",
+      "url": "https://claimcommandpro.com/app/learn/statute-of-limitations-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 49,
+      "name": "Final Settlement Offer",
+      "url": "https://claimcommandpro.com/app/learn/final-settlement-offer.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 50,
+      "name": "Holdback",
+      "url": "https://claimcommandpro.com/app/learn/insurance-holdback.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 51,
+      "name": "Depreciation Recovery",
+      "url": "https://claimcommandpro.com/app/learn/depreciation-recovery.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 52,
+      "name": "Demand Letter",
+      "url": "https://claimcommandpro.com/app/learn/demand-letter-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 53,
+      "name": "Underpayment",
+      "url": "https://claimcommandpro.com/app/learn/insurance-underpayment.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 54,
+      "name": "Lowball Offer",
+      "url": "https://claimcommandpro.com/app/learn/lowball-offer.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 55,
+      "name": "Structured Settlement",
+      "url": "https://claimcommandpro.com/app/learn/structured-settlement-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 56,
+      "name": "Insurance Denial",
+      "url": "https://claimcommandpro.com/app/learn/insurance-denial.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 57,
+      "name": "Insurance Appeal",
+      "url": "https://claimcommandpro.com/app/learn/insurance-appeal.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 58,
+      "name": "Department of Insurance Complaint",
+      "url": "https://claimcommandpro.com/app/learn/department-of-insurance-complaint.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 59,
+      "name": "Insurance Mediation",
+      "url": "https://claimcommandpro.com/app/learn/insurance-mediation.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 60,
+      "name": "Insurance Arbitration",
+      "url": "https://claimcommandpro.com/app/learn/insurance-arbitration.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 61,
+      "name": "Appraisal Process",
+      "url": "https://claimcommandpro.com/app/learn/appraisal-process.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 62,
+      "name": "Insurance Umpire",
+      "url": "https://claimcommandpro.com/app/learn/insurance-umpire.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 63,
+      "name": "Bad Faith Damages",
+      "url": "https://claimcommandpro.com/app/learn/bad-faith-damages.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 64,
+      "name": "Unfair Claims Practices",
+      "url": "https://claimcommandpro.com/app/learn/unfair-claims-practices.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 65,
+      "name": "Policyholder's Bill of Rights",
+      "url": "https://claimcommandpro.com/app/learn/policyholders-bill-of-rights.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 66,
+      "name": "Total Loss",
+      "url": "https://claimcommandpro.com/app/learn/total-loss-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 67,
+      "name": "Partial Loss",
+      "url": "https://claimcommandpro.com/app/learn/partial-loss-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 68,
+      "name": "Hail Damage Claim",
+      "url": "https://claimcommandpro.com/app/learn/hail-damage-claim.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 69,
+      "name": "Wind Damage Claim",
+      "url": "https://claimcommandpro.com/app/learn/wind-damage-claim.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 70,
+      "name": "Water Damage Coverage",
+      "url": "https://claimcommandpro.com/app/learn/water-damage-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 71,
+      "name": "Fire Damage Coverage",
+      "url": "https://claimcommandpro.com/app/learn/fire-damage-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 72,
+      "name": "Smoke Damage Coverage",
+      "url": "https://claimcommandpro.com/app/learn/smoke-damage-coverage.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 73,
+      "name": "Mold Coverage",
+      "url": "https://claimcommandpro.com/app/learn/mold-coverage-insurance.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 74,
+      "name": "Additional Living Expenses",
+      "url": "https://claimcommandpro.com/app/learn/additional-living-expenses.html"
+    },
+    {
+      "@type": "ListItem",
+      "position": 75,
+      "name": "Business Interruption",
+      "url": "https://claimcommandpro.com/app/learn/business-interruption-insurance.html"
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p class="hero-eyebrow">Insurance Claim Glossary</p>
+    <h1>Insurance Claim Glossary</h1>
+    <p class="hero-sub">Every term you will encounter during a property insurance claim — explained plainly, with context for how each one affects your settlement.</p>
+  </section>
+
+  <div class="content">
+    <p style="font-size:1.05rem; color:var(--gray-600); margin-bottom:2.5rem; line-height:1.8;">
+      Insurance policies and claim processes use specialized language that insurers understand and policyholders often don't. That gap costs money. This glossary covers every term you will encounter from first notice of loss through final settlement — with plain definitions and context for how each term affects your claim.
+    </p>
+
+    <h2>Coverage</h2>
+    <ul>
+      <li><a href="/app/learn/ordinance-and-law-coverage.html" style="color:var(--navy);font-weight:600;">Ordinance and Law Coverage</a> — pays for building code upgrade costs during a covered repair</li>
+      <li><a href="/app/learn/replacement-cost-value.html" style="color:var(--navy);font-weight:600;">Replacement Cost Value (RCV)</a> — pays to replace damaged property with new materials at current prices</li>
+      <li><a href="/app/learn/actual-cash-value.html" style="color:var(--navy);font-weight:600;">Actual Cash Value (ACV)</a> — replacement cost minus depreciation</li>
+      <li><a href="/app/learn/recoverable-depreciation.html" style="color:var(--navy);font-weight:600;">Recoverable Depreciation</a> — the depreciation holdback you can recover after completing repairs</li>
+      <li><a href="/app/learn/matching-coverage.html" style="color:var(--navy);font-weight:600;">Matching Coverage</a> — requires full surface replacement when damaged sections cannot match</li>
+      <li><a href="/app/learn/extended-replacement-cost.html" style="color:var(--navy);font-weight:600;">Extended Replacement Cost</a> — adds 25 to 50 percent above your dwelling limit</li>
+      <li><a href="/app/learn/dwelling-coverage.html" style="color:var(--navy);font-weight:600;">Dwelling Coverage (Coverage A)</a> — covers the structure of your home</li>
+      <li><a href="/app/learn/loss-of-use-coverage.html" style="color:var(--navy);font-weight:600;">Loss of Use Coverage (Coverage D)</a> — pays additional living expenses when your home is uninhabitable</li>
+      <li><a href="/app/learn/contents-coverage.html" style="color:var(--navy);font-weight:600;">Contents Coverage (Coverage C)</a> — covers personal property damaged in a covered loss</li>
+      <li><a href="/app/learn/other-structures-coverage.html" style="color:var(--navy);font-weight:600;">Other Structures Coverage (Coverage B)</a> — covers detached structures like garages, fences, and sheds</li>
+      <li><a href="/app/learn/policy-endorsement.html" style="color:var(--navy);font-weight:600;">Policy Endorsement</a> — a modification to your base policy that adds, removes, or changes coverage</li>
+      <li><a href="/app/learn/policy-exclusion.html" style="color:var(--navy);font-weight:600;">Policy Exclusion</a> — a specific loss or condition your policy does not cover</li>
+      <li><a href="/app/learn/named-perils-policy.html" style="color:var(--navy);font-weight:600;">Named Perils Policy</a> — covers only the causes of loss specifically listed in the policy</li>
+      <li><a href="/app/learn/open-perils-policy.html" style="color:var(--navy);font-weight:600;">Open Perils Policy</a> — covers all causes of loss except those specifically excluded</li>
+      <li><a href="/app/learn/declarations-page.html" style="color:var(--navy);font-weight:600;">Declarations Page</a> — the summary page of your policy showing coverage limits and deductible</li>
+    </ul>
+
+    <h2>Estimate and Repair</h2>
+    <ul>
+      <li><a href="/app/learn/xactimate.html"
+             style="color:var(--navy);font-weight:600;">
+        Xactimate</a> —
+        the estimating software insurers use and why its prices lag the market
+      </li>
+      <li><a href="/app/learn/overhead-and-profit.html"
+             style="color:var(--navy);font-weight:600;">
+        Overhead and Profit (O&amp;P)</a> —
+        the general contractor management cost insurers routinely omit
+      </li>
+      <li><a href="/app/learn/insurance-supplement.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Supplement</a> —
+        how to add missed items to an existing estimate
+      </li>
+      <li><a href="/app/learn/labor-rate-suppression.html"
+             style="color:var(--navy);font-weight:600;">
+        Labor Rate Suppression</a> —
+        when insurer labor rates are below what contractors actually charge
+      </li>
+      <li><a href="/app/learn/scope-of-loss.html"
+             style="color:var(--navy);font-weight:600;">
+        Scope of Loss</a> —
+        the complete description of all damage from a covered event
+      </li>
+      <li><a href="/app/learn/line-item-estimate.html"
+             style="color:var(--navy);font-weight:600;">
+        Line Item</a> —
+        the atomic unit of claim negotiation in an estimate
+      </li>
+      <li><a href="/app/learn/depreciation-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Depreciation</a> —
+        how age and wear reduce your insurance payout
+      </li>
+      <li><a href="/app/learn/code-upgrade-coverage.html"
+             style="color:var(--navy);font-weight:600;">
+        Code Upgrade Coverage</a> —
+        pays for building code compliance costs during covered repairs
+      </li>
+      <li><a href="/app/learn/drip-edge-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Drip Edge</a> —
+        code-required roof component frequently omitted from estimates
+      </li>
+      <li><a href="/app/learn/ice-and-water-shield.html"
+             style="color:var(--navy);font-weight:600;">
+        Ice and Water Shield</a> —
+        code-required membrane omitted from most roof estimates in cold climates
+      </li>
+      <li><a href="/app/learn/general-contractor-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        General Contractor</a> —
+        why their management cost is a covered claim expense
+      </li>
+      <li><a href="/app/learn/betterment-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Betterment</a> —
+        when insurers reduce claims for improvements beyond pre-loss condition
+      </li>
+      <li><a href="/app/learn/unit-price-estimate.html"
+             style="color:var(--navy);font-weight:600;">
+        Unit Price</a> —
+        cost per unit in an estimate and how suppression works
+      </li>
+      <li><a href="/app/learn/roofing-squares.html"
+             style="color:var(--navy);font-weight:600;">
+        Roofing Squares</a> —
+        how roofing is measured and where measurement errors occur
+      </li>
+      <li><a href="/app/learn/debris-removal-coverage.html"
+             style="color:var(--navy);font-weight:600;">
+        Debris Removal</a> —
+        coverage for removing damaged materials after a covered loss
+      </li>
+    </ul>
+
+    <h2>Claim Process</h2>
+    <ul>
+      <li><a href="/app/learn/first-notice-of-loss.html"
+             style="color:var(--navy);font-weight:600;">
+        First Notice of Loss (FNOL)</a> —
+        the initial report to your insurer that starts the claims process
+      </li>
+      <li><a href="/app/learn/claim-number.html"
+             style="color:var(--navy);font-weight:600;">
+        Claim Number</a> —
+        the unique identifier for your claim that goes on every document
+      </li>
+      <li><a href="/app/learn/field-adjuster.html"
+             style="color:var(--navy);font-weight:600;">
+        Field Adjuster</a> —
+        who inspects your property and why they work for the insurer
+      </li>
+      <li><a href="/app/learn/independent-adjuster.html"
+             style="color:var(--navy);font-weight:600;">
+        Independent Adjuster</a> —
+        a contractor hired by the insurer during high-volume claim periods
+      </li>
+      <li><a href="/app/learn/public-adjuster.html"
+             style="color:var(--navy);font-weight:600;">
+        Public Adjuster</a> —
+        the professional who represents policyholders for a percentage fee
+      </li>
+      <li><a href="/app/learn/staff-adjuster.html"
+             style="color:var(--navy);font-weight:600;">
+        Staff Adjuster</a> —
+        an insurer employee who handles claims internally
+      </li>
+      <li><a href="/app/learn/claim-diary.html"
+             style="color:var(--navy);font-weight:600;">
+        Claim Diary</a> —
+        your legal record of every insurer contact and commitment
+      </li>
+      <li><a href="/app/learn/mitigation-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Mitigation</a> —
+        your obligation to prevent further damage — and the coverage for it
+      </li>
+      <li><a href="/app/learn/subrogation.html"
+             style="color:var(--navy);font-weight:600;">
+        Subrogation</a> —
+        the insurer's right to pursue the party who caused your loss
+      </li>
+      <li><a href="/app/learn/mortgage-clause.html"
+             style="color:var(--navy);font-weight:600;">
+        Mortgage Clause</a> —
+        why your lender is named on your insurance check
+      </li>
+      <li><a href="/app/learn/proof-of-loss-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Proof of Loss</a> —
+        the sworn statement that sets the ceiling of your claim
+      </li>
+      <li><a href="/app/learn/appraisal-clause.html"
+             style="color:var(--navy);font-weight:600;">
+        Appraisal Clause</a> —
+        the binding dispute mechanism most policyholders never use
+      </li>
+      <li><a href="/app/learn/reservation-of-rights.html"
+             style="color:var(--navy);font-weight:600;">
+        Reservation of Rights Letter</a> —
+        what it means and why it is not a denial
+      </li>
+      <li><a href="/app/learn/examination-under-oath.html"
+             style="color:var(--navy);font-weight:600;">
+        Examination Under Oath (EUO)</a> —
+        a formal recorded interview — not a casual conversation
+      </li>
+      <li><a href="/app/learn/bad-faith-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Bad Faith Insurance</a> —
+        when the insurer's conduct crosses from dispute to violation
+      </li>
+    </ul>
+
+    <h2>Settlement</h2>
+    <ul>
+      <li><a href="/app/learn/release-of-claims.html"
+             style="color:var(--navy);font-weight:600;">
+        Release of Claims</a> —
+        what you waive when you sign — and what to verify first
+      </li>
+      <li><a href="/app/learn/acv-vs-rcv.html"
+             style="color:var(--navy);font-weight:600;">
+        ACV vs RCV</a> —
+        the settlement type difference that can mean tens of thousands of dollars
+      </li>
+      <li><a href="/app/learn/statute-of-limitations-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Statute of Limitations</a> —
+        the absolute deadline to sue — after which you lose all rights
+      </li>
+      <li><a href="/app/learn/final-settlement-offer.html"
+             style="color:var(--navy);font-weight:600;">
+        Final Settlement Offer</a> —
+        how to evaluate whether to accept or escalate
+      </li>
+      <li><a href="/app/learn/insurance-holdback.html"
+             style="color:var(--navy);font-weight:600;">
+        Holdback</a> —
+        the money the insurer withholds until repairs are complete
+      </li>
+      <li><a href="/app/learn/depreciation-recovery.html"
+             style="color:var(--navy);font-weight:600;">
+        Depreciation Recovery</a> —
+        the step-by-step process to collect your withheld funds
+      </li>
+      <li><a href="/app/learn/demand-letter-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Demand Letter</a> —
+        the document that moves insurers off their initial position
+      </li>
+      <li><a href="/app/learn/insurance-underpayment.html"
+             style="color:var(--navy);font-weight:600;">
+        Underpayment</a> —
+        how it happens, how to identify it, and how to recover it
+      </li>
+      <li><a href="/app/learn/lowball-offer.html"
+             style="color:var(--navy);font-weight:600;">
+        Lowball Offer</a> —
+        how to recognize one and respond with documented evidence
+      </li>
+      <li><a href="/app/learn/structured-settlement-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Structured Settlement</a> —
+        when insurers propose phased payments and what to watch for
+      </li>
+    </ul>
+
+    <h2>Dispute and Legal</h2>
+    <ul>
+      <li><a href="/app/learn/insurance-denial.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Denial</a> —
+        what a valid denial requires and how to identify when one is wrong
+      </li>
+      <li><a href="/app/learn/insurance-appeal.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Appeal</a> —
+        how to build an effective challenge to a denial or underpayment
+      </li>
+      <li><a href="/app/learn/department-of-insurance-complaint.html"
+             style="color:var(--navy);font-weight:600;">
+        Department of Insurance Complaint</a> —
+        a free filing that triggers mandatory insurer response
+      </li>
+      <li><a href="/app/learn/insurance-mediation.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Mediation</a> —
+        voluntary dispute resolution faster and cheaper than litigation
+      </li>
+      <li><a href="/app/learn/insurance-arbitration.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Arbitration</a> —
+        binding dispute resolution outside of court
+      </li>
+      <li><a href="/app/learn/appraisal-process.html"
+             style="color:var(--navy);font-weight:600;">
+        Appraisal Process</a> —
+        step by step from invocation to binding award
+      </li>
+      <li><a href="/app/learn/insurance-umpire.html"
+             style="color:var(--navy);font-weight:600;">
+        Insurance Umpire</a> —
+        the neutral tie-breaker in the appraisal process
+      </li>
+      <li><a href="/app/learn/bad-faith-damages.html"
+             style="color:var(--navy);font-weight:600;">
+        Bad Faith Damages</a> —
+        what you may be entitled to beyond the claim value
+      </li>
+      <li><a href="/app/learn/unfair-claims-practices.html"
+             style="color:var(--navy);font-weight:600;">
+        Unfair Claims Practices</a> —
+        prohibited insurer behaviors and how to report them
+      </li>
+      <li><a href="/app/learn/policyholders-bill-of-rights.html"
+             style="color:var(--navy);font-weight:600;">
+        Policyholder's Bill of Rights</a> —
+        state-codified rights during the claims process
+      </li>
+    </ul>
+
+    <h2>Loss Types</h2>
+    <ul>
+      <li><a href="/app/learn/total-loss-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Total Loss</a> —
+        when damage exceeds the threshold and full replacement is owed
+      </li>
+      <li><a href="/app/learn/partial-loss-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Partial Loss</a> —
+        the most common claim type and where underpayment most often occurs
+      </li>
+      <li><a href="/app/learn/hail-damage-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Hail Damage Claim</a> —
+        the most disputed property claim type
+      </li>
+      <li><a href="/app/learn/wind-damage-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Wind Damage Claim</a> —
+        what is covered and how to document the cause
+      </li>
+      <li><a href="/app/learn/water-damage-coverage.html"
+             style="color:var(--navy);font-weight:600;">
+        Water Damage Coverage</a> —
+        sudden and accidental is covered — gradual and flood are not
+      </li>
+      <li><a href="/app/learn/fire-damage-coverage.html"
+             style="color:var(--navy);font-weight:600;">
+        Fire Damage Coverage</a> —
+        the most complex claim type involving multiple simultaneous coverages
+      </li>
+      <li><a href="/app/learn/smoke-damage-coverage.html"
+             style="color:var(--navy);font-weight:600;">
+        Smoke Damage Coverage</a> —
+        extends far beyond the burn area and requires its own scope
+      </li>
+      <li><a href="/app/learn/mold-coverage-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Mold Coverage</a> —
+        covered when from a covered event and mitigated promptly
+      </li>
+      <li><a href="/app/learn/additional-living-expenses.html"
+             style="color:var(--navy);font-weight:600;">
+        Additional Living Expenses (ALE)</a> —
+        displacement costs covered when your home is uninhabitable
+      </li>
+      <li><a href="/app/learn/business-interruption-insurance.html"
+             style="color:var(--navy);font-weight:600;">
+        Business Interruption</a> —
+        lost income coverage when a covered event forces business closure
+      </li>
+      <li><a href="/app/learn/hail-claim-roof.html"
+             style="color:var(--navy);font-weight:600;">
+        Hail Claim — Roof</a> —
+        step-by-step process and where most roof hail claims fall short
+      </li>
+      <li><a href="/app/learn/fallen-tree-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Fallen Tree Claim</a> —
+        coverage depends on what the tree hit — not just that it fell
+      </li>
+      <li><a href="/app/learn/storm-damage-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Storm Damage Claim</a> —
+        the most common claim type and where documentation starts
+      </li>
+      <li><a href="/app/learn/hurricane-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Hurricane Claim</a> —
+        separating covered wind damage from excluded flood damage
+      </li>
+      <li><a href="/app/learn/lightning-damage-claim.html"
+             style="color:var(--navy);font-weight:600;">
+        Lightning Damage Claim</a> —
+        covers direct strikes and power surge damage throughout the structure
+      </li>
+    </ul>
+
+    <div class="cta-block">
+      <h2>Use AI to Apply These Terms to Your Claim</h2>
+      <p>Understanding the terminology is step one. Claim Command Pro applies every one of these concepts to your specific policy and claim — identifying which coverages apply, which were missed, and what the documented gap is worth.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/app/learn/">Glossary</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

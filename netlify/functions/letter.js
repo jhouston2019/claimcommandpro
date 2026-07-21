@@ -35,12 +35,23 @@ exports.handler = async (event) => {
 
     const strategyCode = body.negotiationStrategy
       || claimData?.structure?.negotiationStrategy?.recommendedStrategy
+      || claimData?.meta?.negotiationStrategy?.recommendedStrategy
       || null;
 
-    const strategyRationale = claimData?.structure?.negotiationStrategy?.rationale || null;
+    const strategyRationale = claimData?.structure?.negotiationStrategy?.rationale
+      || claimData?.meta?.negotiationStrategy?.rationale
+      || null;
 
     const strategyFragment = strategyCode
       ? `\nSelected negotiation strategy: ${strategyCode}${strategyRationale ? '\nStrategy rationale: ' + strategyRationale : ''}\nTailor the letter tone and demands to match this strategy.`
+      : '';
+
+    const enforcementReport = body.enforcementReport
+      || claimData?.meta?.enforcementReport
+      || null;
+
+    const enforcementFragment = enforcementReport
+      ? `\nEnforcement analysis:\n${JSON.stringify(enforcementReport).slice(0, 8000)}\nUse the code upgrade detections, carrier pattern findings, and gap amounts from this enforcement report to support specific demands in the letter.`
       : '';
 
     let system;
@@ -94,6 +105,7 @@ Requirements:
     }
 
     userText += strategyFragment;
+    userText += enforcementFragment;
 
     const letter = await anthropicMessagesText({
       system,

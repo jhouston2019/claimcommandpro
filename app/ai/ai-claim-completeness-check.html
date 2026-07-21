@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can AI Tell Me If My Insurance Claim Is Complete? | Claim Command Pro</title>
+  <meta name="description" content="Yes. AI audits your claim file against professional documentation standards and tells you exactly what is complete, what is missing, and what to do next.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3rem);
+               color: white; line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When should I run an AI completeness check on my claim?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run it before submitting your proof of loss, before responding to any insurer offer, and before signing any settlement release. Those are the three moments where an incomplete file costs you the most."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does AI do when it finds something missing?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It identifies exactly what is missing, explains why it matters, and either generates the missing document or tells you exactly what to obtain and how."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can AI check completeness for any claim type?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The completeness requirements vary by claim type — fire claims have different documentation than water claims — and the AI adjusts the checklist accordingly."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How complete does my claim need to be before I can submit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All required documents must be present before submission. Optional documents strengthen your position but are not required. AI distinguishes between required and recommended items in the completeness report."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:0.75rem; text-align:center;">
+      <a href="/ai/" style="color:rgba(255,255,255,0.4); text-decoration:none;">AI Claim Tools</a> › AI Completeness Check
+    </p>
+    <p class="hero-eyebrow">AI Completeness Check</p>
+    <h1>Can AI Tell Me If My Insurance Claim Is Complete?</h1>
+    <p class="hero-sub">Yes. AI runs the same completeness check that professional adjusters use — and tells you what to fix before it costs you money.</p>
+    <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+  </section>
+
+  <div class="content">
+    <h2>What Claim Completeness Means</h2>
+
+    <p>A complete claim is one where every dollar claimed is supported by a corresponding document — photographs proving the damage exists, contractor estimates proving the cost to repair it, inventory sheets proving the value of damaged contents, and correspondence logs proving every required notification was made on time.</p>
+
+    <h2>What AI Completeness Check Evaluates</h2>
+
+    <ul>
+      <li>Notice of loss — submitted in writing within policy timeframe</li>
+      <li>Proof of loss — complete, accurate, and within deadline</li>
+      <li>Damage documentation — photographs covering all damaged areas</li>
+      <li>Contractor estimate — line-item format from licensed contractor</li>
+      <li>Contents inventory — all personal property with values</li>
+      <li>ALE documentation — receipts for all displacement expenses</li>
+      <li>Correspondence log — all adjuster contacts recorded in writing</li>
+      <li>Policy documentation — declarations page and endorsements on file</li>
+      <li>Response to insurer letters — no unanswered insurer communications</li>
+    </ul>
+
+    <h2>What Happens When a Claim Is Incomplete</h2>
+
+    <p>Incomplete claims are the leading cause of underpayment. The insurer does not pay for what is not documented. A missing contents inventory means contents go unpaid. A missing ALE receipt means living expenses go unreimbursed. AI completeness check closes these gaps before submission.</p>
+
+    <div class="callout"><p>Professional public adjusters run a completeness check before submitting every claim. Claim Command Pro gives you the same check — automatically, at every stage of your claim.</p></div>
+    <section class="cta-block">
+      <h2>Check Your Claim Completeness Now</h2>
+      <p>Find out what is missing before you submit — and fix it first.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can AI Explain My Insurance Policy? | Claim Command Pro</title>
+  <meta name="description" content="Yes. AI translates your homeowners insurance policy from legal language into plain English — coverage limits, exclusions, and endorsements explained clearly.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3rem);
+               color: white; line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can AI explain complex insurance policy language accurately?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. AI is trained on insurance policy language and can translate standard coverage terms, conditions, and exclusions into plain English. It cites the original policy language alongside the explanation so you can verify."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if my policy has unusual endorsements?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Claim Command Pro identifies and explains non-standard endorsements. If an endorsement language is unclear, the AI flags it for your review and suggests questions to ask your insurer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will AI tell me if my claim is covered?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI identifies which policy sections apply to your cause of loss and whether coverage appears to apply based on the policy language. This is documentation support, not legal advice."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can AI compare my policy to a standard HO-3?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Claim Command Pro can identify where your policy differs from the standard HO-3 form — either providing broader coverage through endorsements or narrower coverage through exclusions."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:0.75rem; text-align:center;">
+      <a href="/ai/" style="color:rgba(255,255,255,0.4); text-decoration:none;">AI Claim Tools</a> › AI Policy Explanation
+    </p>
+    <p class="hero-eyebrow">AI Policy Explanation</p>
+    <h1>Can AI Explain My Insurance Policy in Plain English?</h1>
+    <p class="hero-sub">Yes. Upload your policy and AI tells you exactly what it covers, what it excludes, and what the fine print actually means for your claim.</p>
+    <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+  </section>
+
+  <div class="content">
+    <h2>Why Policies Are Hard to Read</h2>
+
+    <p>Standard homeowners insurance policies are 40 to 80 pages of legal language written to protect the insurer, not to inform the policyholder. Coverage is defined in one section, modified by endorsements in another, and excluded in a third — with cross-references throughout. Most policyholders have never read their full policy before they need to file a claim.</p>
+
+    <h2>What AI Policy Explanation Covers</h2>
+
+    <ul>
+      <li>What each coverage section pays for in plain language</li>
+      <li>The dollar limit for each coverage</li>
+      <li>What is specifically excluded and why</li>
+      <li>What endorsements you have and what they change</li>
+      <li>Whether you have RCV or ACV settlement</li>
+      <li>What your deductible applies to</li>
+      <li>What ordinance and law coverage means for your renovation costs</li>
+      <li>Whether you have matching coverage and what triggers it</li>
+    </ul>
+
+    <h2>How It Works</h2>
+
+    <p>Upload your policy PDF. The AI extracts the text, identifies every coverage section, and produces a plain-language coverage guide specific to your policy. It then highlights the sections most relevant to your reported cause of loss.</p>
+
+    <div class="callout"><p>Understanding your policy before you accept a settlement is the most important thing you can do for your claim. The insurer's adjuster already knows your policy better than you do. AI closes that gap.</p></div>
+    <section class="cta-block">
+      <h2>Get Your Policy Explained in Plain English</h2>
+      <p>Upload your policy and understand exactly what you are covered for.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

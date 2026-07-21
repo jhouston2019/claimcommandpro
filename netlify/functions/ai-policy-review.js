@@ -300,6 +300,19 @@ function parseJsonFromLlm(raw) {
   return JSON.parse(s);
 }
 
+function coerceLimit(val) {
+  if (typeof val === 'number') return val;
+  if (val === null || val === undefined) return null;
+  if (typeof val === 'string') {
+    // Strip $, commas, spaces — handle "$350,000" → 350000
+    const cleaned = val.replace(/[\$,\s]/g, '');
+    if (cleaned === '' || cleaned.toLowerCase() === 'null') return null;
+    const n = Number(cleaned);
+    return isFinite(n) && cleaned !== '' ? n : null;
+  }
+  return null;
+}
+
 function validateCanonical(p) {
   if (!p || typeof p !== 'object') return false;
   if (!Array.isArray(p.coverages)) return false;
@@ -334,7 +347,7 @@ function normalizeCoverageLabel(c) {
 function normalizeCanonical(parsed, ctx, extractionDegraded) {
   const coverages = (parsed.coverages || []).map((c) => ({
     label: normalizeCoverageLabel(c),
-    limit: typeof c.limit === 'number' ? c.limit : null,
+    limit: coerceLimit(c.limit),
     applied_by_carrier: ['yes', 'no', 'partial', 'unknown'].includes(c.applied_by_carrier)
       ? c.applied_by_carrier
       : 'unknown',
@@ -345,9 +358,7 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
     coverages.find((c) => keys.some((k) => c.label.toLowerCase().includes(k)))?.limit ?? null;
 
   const deductibleAmount =
-    typeof parsed.deductible === 'number'
-      ? parsed.deductible
-      : findLimit(['deductible']);
+    coerceLimit(parsed.deductible) ?? findLimit(['deductible']);
   if (deductibleAmount != null && !coverages.some((c) => /deductible/i.test(c.label))) {
     coverages.push({
       label: 'Deductible',
@@ -369,13 +380,13 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
 
   let dwelling =
     findLimit(['dwelling', 'coverage a']) ??
-    (typeof parsed.dwelling_coverage === 'number' ? parsed.dwelling_coverage : null);
+    coerceLimit(parsed.dwelling_coverage);
   let contents =
     findLimit(['personal property', 'coverage c', 'contents']) ??
-    (typeof parsed.contents_coverage === 'number' ? parsed.contents_coverage : null);
+    coerceLimit(parsed.contents_coverage);
   let ale =
     findLimit(['loss of use', 'coverage d', 'ale', 'additional living']) ??
-    (typeof parsed.ale_coverage === 'number' ? parsed.ale_coverage : null);
+    coerceLimit(parsed.ale_coverage);
 
   if (!ale || ale === 0) {
     const aleEntry = coverages.find((c) =>
@@ -418,7 +429,7 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
     coverages,
     endorsements: (parsed.endorsements || []).map((e) => ({
       name: String(e.name || ''),
-      limit: typeof e.limit === 'number' ? e.limit : null,
+      limit: coerceLimit(e.limit),
       applies_to_claim: e.applies_to_claim === true,
       description: String(e.description || '')
     })),

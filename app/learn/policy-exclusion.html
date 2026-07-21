@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What Is a Policy Exclusion? | Claim Command Pro</title>
+  <meta name="description" content="A policy exclusion is a specific loss or condition your insurance policy does not cover. Here is how exclusions work, how insurers misapply them, and how to challenge a wrongful exclusion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero-breadcrumb { font-size: 0.78rem; color: rgba(255,255,255,0.4);
+                       margin-bottom: 0.75rem; text-align: center; }
+    .hero-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; }
+    .hero h1 { font-family: 'DM Serif Display', serif;
+               font-size: clamp(2rem, 5vw, 3rem); color: white;
+               line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .definition-box { background: var(--navy); color: white;
+                      padding: 1.75rem 2rem; border-radius: 12px;
+                      margin-bottom: 2rem; }
+    .definition-box .def-label { font-size: 0.75rem; font-weight: 700;
+                                  text-transform: uppercase; letter-spacing: 0.1em;
+                                  color: var(--teal); margin-bottom: 0.5rem; }
+    .definition-box .def-text { font-family: 'DM Serif Display', serif;
+                                 font-size: 1.4rem; color: white;
+                                 line-height: 1.4; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a policy exclusion in homeowners insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A policy exclusion is a specific loss or condition your policy explicitly does not cover. In an open perils policy, all losses are covered except those specifically excluded."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I challenge an exclusion-based denial?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if the exclusion does not accurately describe your cause of loss. Read the exclusion language carefully and compare it to the documented cause of your damage. If they do not match, the denial is appealable."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I find the exclusions in my policy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Exclusions are listed in a dedicated section of your policy — typically titled \"Exclusions\" or \"What We Do Not Cover.\" Read them in full, including any exceptions to the exclusions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is an exception to an exclusion?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some exclusions contain exceptions — situations where the exclusion does not apply. For example, a policy may exclude water damage but include an exception for sudden discharge from a plumbing system. Exceptions to exclusions create coverage and are frequently overlooked."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p class="hero-breadcrumb">
+      <a href="/app/learn/">Insurance Claim Glossary</a> › Coverage Terms
+    </p>
+    <p class="hero-eyebrow">Coverage Terms</p>
+    <h1>What Is a Policy Exclusion?</h1>
+    <p class="hero-sub">Exclusions are how insurers deny claims. Here is how to read them correctly — and how to identify when one does not actually apply to your loss.</p>
+  </section>
+
+  <div class="content">
+    <div class="definition-box">
+      <div class="def-label">Definition</div>
+      <div class="def-text">A policy exclusion is a specific loss, cause of loss, or condition that your homeowners insurance policy explicitly does not cover — removing it from the otherwise broad coverage provided by the policy.</div>
+    </div>
+
+    <h2>How Exclusions Work</h2>
+
+    <p>In an open perils policy like the HO-3, all causes of loss are covered unless specifically excluded. Exclusions are listed in a dedicated section of your policy. An insurer denying a claim on exclusion grounds must cite the specific exclusion language and explain how it applies to your cause of loss. A vague reference to an exclusion is not a valid denial.</p>
+
+    <h2>Common Exclusions in Standard Policies</h2>
+
+    <ul>
+      <li>Flood — rising water from outside the home</li>
+      <li>Earthquake — ground movement</li>
+      <li>Normal wear and tear — gradual deterioration</li>
+      <li>Intentional acts — damage caused on purpose</li>
+      <li>Neglect — failure to maintain the property</li>
+      <li>Business activities — losses from business use of the home</li>
+      <li>Government action — condemnation or seizure</li>
+    </ul>
+
+    <h2>How Insurers Misapply Exclusions</h2>
+
+    <p>The most common wrongful denial involves exclusion misapplication — citing an exclusion that does not actually apply to the cause of loss when the policy is read carefully. Common examples include calling sudden storm damage "wear and tear," reclassifying an acute pipe failure as "gradual leakage," or applying the flood exclusion to internal water damage that did not result from rising external water.</p>
+
+    <div class="callout"><p>When an insurer denies your claim citing an exclusion, request the specific exclusion language in writing. Read it carefully against your actual cause of loss. If the exclusion does not describe what happened to your property, the denial is appealable.</p></div>
+
+    <div class="cta-block">
+      <h2>Check Whether Your Denial Exclusion Applies</h2>
+      <p>AI policy analysis identifies whether the exclusion cited in your denial actually applies to your cause of loss.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/app/learn/">Glossary</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

@@ -48,32 +48,6 @@
       padding: 40px;
     }
 
-    .mode-selector {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 30px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-
-    .mode-btn {
-      flex: 1;
-      padding: 12px 20px;
-      border: 2px solid #dee2e6;
-      background: white;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.95em;
-      transition: all 0.2s;
-    }
-
-    .mode-btn.active {
-      background: #2a5298;
-      color: white;
-      border-color: #2a5298;
-    }
-
     .form-section {
       margin-bottom: 30px;
     }
@@ -285,15 +259,6 @@
     </div>
 
     <div class="content">
-      <div class="mode-selector">
-        <button class="mode-btn active" data-mode="backend">
-          🔒 Secure Mode (Recommended)
-        </button>
-        <button class="mode-btn" data-mode="client">
-          🔑 Client Mode (Your API Key)
-        </button>
-      </div>
-
       <div class="error" id="error"></div>
 
       <form id="gapForm">
@@ -417,14 +382,6 @@
           </div>
         </div>
 
-        <div class="form-group" id="apiKeyGroup" style="display: none;">
-          <label for="apiKey">OpenAI API Key *</label>
-          <input type="password" id="apiKey" placeholder="sk-...">
-          <small style="color: #6c757d; display: block; margin-top: 5px;">
-            Your key is stored locally and never sent to our servers
-          </small>
-        </div>
-
         <button type="submit" class="btn btn-primary" id="submitBtn">
           🔍 Detect Coverage Gaps
         </button>
@@ -467,27 +424,6 @@
   </div>
 
   <script>
-    let currentMode = 'backend';
-
-    // Mode switching
-    document.querySelectorAll('.mode-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentMode = btn.dataset.mode;
-        
-        const apiKeyGroup = document.getElementById('apiKeyGroup');
-        apiKeyGroup.style.display = currentMode === 'client' ? 'block' : 'none';
-        
-        if (currentMode === 'client') {
-          const savedKey = localStorage.getItem('openai_api_key');
-          if (savedKey) {
-            document.getElementById('apiKey').value = savedKey;
-          }
-        }
-      });
-    });
-
     // Form submission
     document.getElementById('gapForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -517,45 +453,23 @@
       document.getElementById('submitBtn').disabled = true;
 
       try {
-        let analysis;
-        
-        if (currentMode === 'backend') {
-          analysis = await analyzeWithBackend(claimNumber, policyNumber, {
-            dwelling: dwellingLimit,
-            otherStructures,
-            personalProperty,
-            lossOfUse,
-            deductible
-          }, {
-            dwelling: insurerDwelling,
-            otherStructures: insurerOtherStructures,
-            personalProperty: insurerPersonalProperty,
-            lossOfUse: insurerLossOfUse
-          }, {
-            dwelling: actualDwelling,
-            otherStructures: actualOtherStructures,
-            personalProperty: actualPersonalProperty,
-            lossOfUse: actualLossOfUse
-          }, policyType, rcvAcv, notes);
-        } else {
-          analysis = await analyzeWithClient(claimNumber, policyNumber, {
-            dwelling: dwellingLimit,
-            otherStructures,
-            personalProperty,
-            lossOfUse,
-            deductible
-          }, {
-            dwelling: insurerDwelling,
-            otherStructures: insurerOtherStructures,
-            personalProperty: insurerPersonalProperty,
-            lossOfUse: insurerLossOfUse
-          }, {
-            dwelling: actualDwelling,
-            otherStructures: actualOtherStructures,
-            personalProperty: actualPersonalProperty,
-            lossOfUse: actualLossOfUse
-          }, policyType, rcvAcv, notes);
-        }
+        const analysis = await analyzeWithBackend(claimNumber, policyNumber, {
+          dwelling: dwellingLimit,
+          otherStructures,
+          personalProperty,
+          lossOfUse,
+          deductible
+        }, {
+          dwelling: insurerDwelling,
+          otherStructures: insurerOtherStructures,
+          personalProperty: insurerPersonalProperty,
+          lossOfUse: insurerLossOfUse
+        }, {
+          dwelling: actualDwelling,
+          otherStructures: actualOtherStructures,
+          personalProperty: actualPersonalProperty,
+          lossOfUse: actualLossOfUse
+        }, policyType, rcvAcv, notes);
 
         displayResults(analysis);
         saveToLocalStorage(claimNumber, analysis);
@@ -601,113 +515,6 @@
       }
 
       return await response.json();
-    }
-
-    async function analyzeWithClient(claimNumber, policyNumber, limits, insurerPayment, actualLoss, policyType, rcvAcv, notes) {
-      const apiKey = document.getElementById('apiKey').value.trim();
-      if (!apiKey) {
-        throw new Error('OpenAI API key required for client mode');
-      }
-
-      localStorage.setItem('openai_api_key', apiKey);
-
-      const totalInsurerPayment = insurerPayment.dwelling + insurerPayment.otherStructures + 
-                                  insurerPayment.personalProperty + insurerPayment.lossOfUse;
-      const totalActualLoss = actualLoss.dwelling + actualLoss.otherStructures + 
-                              actualLoss.personalProperty + actualLoss.lossOfUse;
-      const totalGap = totalActualLoss - totalInsurerPayment;
-
-      const prompt = `Analyze this insurance coverage gap situation:
-
-CLAIM INFO:
-- Claim Number: ${claimNumber}
-- Policy Number: ${policyNumber}
-- Policy Type: ${policyType}
-- Coverage Type: ${rcvAcv}
-
-COVERAGE LIMITS:
-- Dwelling: $${limits.dwelling.toLocaleString()}
-- Other Structures: $${limits.otherStructures.toLocaleString()}
-- Personal Property: $${limits.personalProperty.toLocaleString()}
-- Loss of Use/ALE: $${limits.lossOfUse.toLocaleString()}
-- Deductible: $${limits.deductible.toLocaleString()}
-
-INSURER'S PAYMENT:
-- Dwelling: $${insurerPayment.dwelling.toLocaleString()}
-- Other Structures: $${insurerPayment.otherStructures.toLocaleString()}
-- Personal Property: $${insurerPayment.personalProperty.toLocaleString()}
-- Loss of Use/ALE: $${insurerPayment.lossOfUse.toLocaleString()}
-- TOTAL: $${totalInsurerPayment.toLocaleString()}
-
-YOUR DOCUMENTED LOSS:
-- Dwelling: $${actualLoss.dwelling.toLocaleString()}
-- Other Structures: $${actualLoss.otherStructures.toLocaleString()}
-- Personal Property: $${actualLoss.personalProperty.toLocaleString()}
-- Loss of Use/ALE: $${actualLoss.lossOfUse.toLocaleString()}
-- TOTAL: $${totalActualLoss.toLocaleString()}
-
-TOTAL GAP: $${totalGap.toLocaleString()}
-
-${notes ? `ADDITIONAL CONTEXT:\n${notes}\n` : ''}
-
-Provide a comprehensive coverage gap analysis in JSON format:
-{
-  "total_gap": number,
-  "gaps_by_category": [
-    {
-      "category": "Dwelling|OtherStructures|PersonalProperty|LossOfUse",
-      "limit": number,
-      "insurer_payment": number,
-      "actual_loss": number,
-      "gap": number,
-      "explanation": "string",
-      "policy_provision": "string or null"
-    }
-  ],
-  "policy_analysis": {
-    "coverage_adequacy": "string - whether limits are sufficient",
-    "deductible_impact": "string - how deductible affects recovery",
-    "rcv_acv_implications": "string - RCV vs ACV impact",
-    "exclusions_concerns": "string - any exclusions that may apply"
-  },
-  "recommendations": [
-    "string - specific action to take"
-  ],
-  "next_steps": [
-    "string - immediate next steps"
-  ]
-}`;
-
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an expert insurance coverage analyst. Identify gaps between policy coverage, insurer payments, and actual losses. Return only valid JSON with no additional text.'
-            },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          temperature: 0.2,
-          response_format: { type: 'json_object' }
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || 'OpenAI API request failed');
-      }
-
-      const data = await response.json();
-      return JSON.parse(data.choices[0].message.content);
     }
 
     function displayResults(analysis) {

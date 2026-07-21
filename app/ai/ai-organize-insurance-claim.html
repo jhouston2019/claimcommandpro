@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can AI Help Me Organize My Insurance Claim? | Claim Command Pro</title>
+  <meta name="description" content="Yes. AI structures your claim file, tracks missing documents, maintains your correspondence log, and keeps your deadlines — so nothing falls through the cracks.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3rem);
+               color: white; line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can AI keep track of my insurance claim deadlines?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Claim Command Pro calculates all key deadlines from your date of loss and sends alerts when deadlines are approaching. Missing a deadline is one of the most costly mistakes a policyholder can make."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to my claim data if I do not log in for a while?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your claim data is stored securely in Claim Command Pro and available whenever you return. Deadline alerts continue regardless of login frequency."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Claim Command Pro for multiple claims?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Each claim is a separate workspace. Multiple active claims are supported."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my claim information secure?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Claim Command Pro uses encrypted storage and row-level security — only you can access your claim data."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:0.75rem; text-align:center;">
+      <a href="/ai/" style="color:rgba(255,255,255,0.4); text-decoration:none;">AI Claim Tools</a> › AI Claim Organization
+    </p>
+    <p class="hero-eyebrow">AI Claim Organization</p>
+    <h1>Can AI Help Me Organize My Insurance Claim?</h1>
+    <p class="hero-sub">Yes. Claim Command Pro is the command center for your entire claim — every document, every deadline, every letter, in one organized place.</p>
+    <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+  </section>
+
+  <div class="content">
+    <h2>Why Claim Organization Matters</h2>
+
+    <p>A disorganized claim is an underpaid claim. When documents are scattered across email, phone photos, and paper files, things get missed. When deadlines are tracked in your head, they get missed. When adjuster conversations go undocumented, they get disputed. Professional claim organization is not a convenience — it is a financial necessity.</p>
+
+    <h2>What AI Claim Organization Does</h2>
+
+    <ul>
+      <li>Structures your claim file by phase — documentation, estimate, negotiation, settlement</li>
+      <li>Tracks every required document with status — submitted, missing, or pending</li>
+      <li>Maintains a dated correspondence log of every insurer contact</li>
+      <li>Alerts you to upcoming deadlines — proof of loss, response windows, regulatory limits</li>
+      <li>Stores all generated letters and AI analysis outputs in one place</li>
+      <li>Provides a claim readiness status — tells you whether your file is complete enough to submit</li>
+    </ul>
+
+    <h2>The Claim Command Center</h2>
+
+    <p>Claim Command Pro's Claim Command Center is a 10-phase guided workspace that walks you through every stage of your claim — from policy review through final settlement. Each phase has a checklist, required documents, AI tools, and deadline tracking. Your entire claim history is stored and searchable.</p>
+
+    <div class="callout"><p>Public adjusters charge 10 to 15 percent of your settlement to do exactly what Claim Command Pro does — organize your claim, identify underpayment, generate letters, and track deadlines. The difference is the cost.</p></div>
+
+    <h2>What Gets Tracked Automatically</h2>
+
+    <ul>
+      <li>Date of loss and all subsequent deadlines calculated from it</li>
+      <li>Proof of loss deadline</li>
+      <li>Insurer response deadlines</li>
+      <li>Statute of limitations for legal action</li>
+      <li>RCV recovery window after repairs complete</li>
+    </ul>
+    <section class="cta-block">
+      <h2>Start Organizing Your Claim Now</h2>
+      <p>One place for every document, every deadline, and every letter — from first notice to final payment.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Can AI Tell Me If My Insurance Company Missed Coverage? | Claim Command Pro</title>
+  <meta name="description" content="Yes. AI cross-references your policy against your claim and flags every coverage the insurer did not apply — including endorsements, hidden coverages, and matching clauses.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0f172a;
+      --teal: #14b8a6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+    body { font-family: 'DM Sans', sans-serif; color: var(--gray-900);
+           background: white; line-height: 1.6; }
+    .nav { background: var(--navy); padding: 1rem 2rem;
+           display: flex; justify-content: space-between; align-items: center; }
+    .nav-logo { font-family: 'DM Serif Display', serif; color: white;
+                font-size: 1.4rem; text-decoration: none; }
+    .nav-cta { background: var(--teal); color: white; padding: 0.6rem 1.4rem;
+               border-radius: 8px; font-weight: 600; font-size: 0.9rem;
+               text-decoration: none; }
+    .hero { background: var(--navy); padding: 4rem 2rem; text-align: center; }
+    .hero-eyebrow { color: var(--teal); font-size: 0.8rem; font-weight: 700;
+                    text-transform: uppercase; letter-spacing: 0.1em;
+                    margin-bottom: 1rem; }
+    .hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2rem, 5vw, 3rem);
+               color: white; line-height: 1.2; margin-bottom: 1.25rem;
+               max-width: 800px; margin-left: auto; margin-right: auto; }
+    .hero-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7);
+                max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+    .btn-primary { display: inline-block; background: var(--teal); color: white;
+                   padding: 0.95rem 2.25rem; border-radius: 10px; font-weight: 700;
+                   font-size: 1.05rem; text-decoration: none;
+                   box-shadow: 0 4px 16px rgba(20,184,166,0.35); }
+    .btn-primary:hover { background: #0d9488; }
+    .content { max-width: 820px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .content h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                  color: var(--navy); margin: 2.5rem 0 1rem; }
+    .content h2:first-child { margin-top: 0; }
+    .content p { font-size: 1.05rem; color: var(--gray-600);
+                 line-height: 1.8; margin-bottom: 1.25rem; }
+    .content ul { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .content ul li { font-size: 1.05rem; color: var(--gray-600);
+                     line-height: 1.8; margin-bottom: 0.5rem; }
+    .callout { background: var(--gray-50); border-left: 4px solid var(--teal);
+               padding: 1.5rem 1.75rem; border-radius: 0 8px 8px 0;
+               margin: 2rem 0; }
+    .callout p { margin: 0; color: var(--navy); font-weight: 500; }
+    .cta-block { background: var(--navy); color: white; padding: 3rem 2rem;
+                 text-align: center; margin-top: 4rem; border-radius: 12px; }
+    .cta-block h2 { font-family: 'DM Serif Display', serif; font-size: 1.75rem;
+                    color: white; margin-bottom: 1rem; }
+    .cta-block p { color: rgba(255,255,255,0.7); margin-bottom: 1.75rem;
+                   font-size: 1.05rem; }
+    footer { background: var(--gray-50); border-top: 1px solid var(--gray-200);
+             padding: 2rem; text-align: center; color: var(--gray-600);
+             font-size: 0.875rem; margin-top: 4rem; }
+    footer a { color: var(--gray-600); text-decoration: none; margin: 0 1rem; }
+  </style>
+  <script type="application/ld+json">
+  {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does AI know which coverages should apply to my claim?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI cross-references your policy language against your reported cause of loss, the scope of damage, and the insurer's estimate. Any coverage that exists in your policy and is not reflected in the estimate is flagged as a potential gap."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I demand payment for coverage the insurer missed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Your policy is a contract. If coverage exists in the policy and applies to your loss, the insurer is obligated to pay it. Claim Command Pro generates the written demand citing the specific policy section."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if the insurer says a coverage does not apply?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Request the specific policy section they are citing and why. If their interpretation is incorrect, Claim Command Pro generates a rebuttal citing the correct policy language and your state's claim handling regulations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does AI coverage detection work for all policy types?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — HO-3, HO-5, HO-6, and HO-4 policies from all major carriers. Commercial property policies are supported in select plan tiers."
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <nav class="nav">
+    <a href="/" class="nav-logo">Claim Command Pro</a>
+    <a href="/app/free-policy-analysis.html" class="nav-cta">Start Free Analysis →</a>
+  </nav>
+
+  <section class="hero">
+    <p style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin-bottom:0.75rem; text-align:center;">
+      <a href="/ai/" style="color:rgba(255,255,255,0.4); text-decoration:none;">AI Claim Tools</a> › AI Coverage Gap Detection
+    </p>
+    <p class="hero-eyebrow">AI Coverage Gap Detection</p>
+    <h1>Can AI Tell Me If My Insurance Company Missed Coverage?</h1>
+    <p class="hero-sub">Yes. AI reads your policy and your claim simultaneously — and flags every coverage that should have been applied but wasn't.</p>
+    <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+  </section>
+
+  <div class="content">
+    <h2>How Coverage Gets Missed</h2>
+
+    <p>Insurance adjusters process claims quickly. They apply the coverages that are obvious and standard. Endorsements that modify base coverage, matching clauses that require full surface replacement, ordinance and law provisions that pay for code upgrades, and extended replacement cost provisions that increase the dwelling limit — these are frequently overlooked because they require careful policy reading that field adjusters rarely have time for.</p>
+
+    <h2>Coverages AI Most Frequently Finds Missing</h2>
+
+    <ul>
+      <li>Ordinance and law coverage — pays for building code upgrade costs during repair</li>
+      <li>Extended replacement cost — adds 25 to 50 percent above dwelling limit</li>
+      <li>Matching clause — requires full surface replacement when damaged sections cannot match</li>
+      <li>Recoverable depreciation — RCV holdback not released after repairs</li>
+      <li>Contents replacement cost — ACV applied when RCV endorsement exists</li>
+      <li>Business use endorsement — coverage for home office equipment</li>
+      <li>Scheduled property endorsements — specific high-value items with separate limits</li>
+    </ul>
+
+    <h2>How AI Coverage Gap Detection Works</h2>
+
+    <p>Upload your policy and describe your claim. AI cross-references every coverage section, endorsement, and condition against your reported loss type and the insurer's estimate. For each coverage that exists in your policy but was not applied in the estimate, AI produces a written coverage citation you can submit to your insurer demanding application.</p>
+
+    <div class="callout"><p>The most valuable missed coverages — ordinance and law, extended replacement cost, and matching — are also the most commonly ignored. On a $50,000 claim, these three alone can add $10,000 to $20,000 in legitimate additional coverage.</p></div>
+    <section class="cta-block">
+      <h2>Find Your Missing Coverage Now</h2>
+      <p>Upload your policy and see every coverage the insurer should have applied.</p>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </section>
+  </div>
+
+  <footer>
+    <p>© 2025 Claim Command Pro ·
+      <a href="/">Home</a>
+      <a href="/pricing.html">Pricing</a>
+      <a href="/app/free-policy-analysis.html">Free Analysis</a>
+    </p>
+    <p style="margin-top: 0.5rem;">
+      Not legal advice. Not licensed adjusting services.
+      AI-assisted claim documentation tool.
+    </p>
+  </footer>
+</body>
+</html>

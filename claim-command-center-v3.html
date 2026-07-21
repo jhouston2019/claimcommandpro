@@ -756,7 +756,10 @@ async function callLetterAI(letterType, extraContext){
   return callNetlify('letter',{
     letterType: letterType,
     claimData: letterClaimPayload(),
-    negotiationStrategy: claimData.structure?.negotiationStrategy?.recommendedStrategy || null,
+    negotiationStrategy: claimData.structure?.negotiationStrategy?.recommendedStrategy
+                      || claimData.meta?.negotiationStrategy?.recommendedStrategy
+                      || null,
+    enforcementReport: claimData.meta?.enforcementReport || null,
     userId: user?.id||null,
     context: context
   });
@@ -769,6 +772,10 @@ async function callLetterAnalysisAI(letterType, extraContext){
     mode: 'analysis',
     letterType: letterType,
     claimData: letterClaimPayload(),
+    negotiationStrategy: claimData.structure?.negotiationStrategy?.recommendedStrategy
+                      || claimData.meta?.negotiationStrategy?.recommendedStrategy
+                      || null,
+    enforcementReport: claimData.meta?.enforcementReport || null,
     userId: user?.id||null,
     context: context
   });
@@ -1323,11 +1330,47 @@ async function loadState(){
         .single();
 
       if (financial) {
-        claimData.structure.insurerEstimate = financial.insurer_estimate || 0;
-        claimData.structure.userEstimate = financial.claimant_estimate || 0;
-        claimData.structure.gap = financial.gap_amount || 0;
-        claimData.contents.totalValue = financial.contents_total || 0;
-        claimData.ALE.total = financial.ale_total || 0;
+        if (financial.insurer_estimate != null) 
+          claimData.structure.insurerEstimate = financial.insurer_estimate;
+        if (financial.claimant_estimate != null) 
+          claimData.structure.userEstimate = financial.claimant_estimate;
+        if (financial.gap_amount != null) 
+          claimData.structure.gap = financial.gap_amount;
+        if (financial.contents_total != null) 
+          claimData.contents.totalValue = financial.contents_total;
+        if (financial.ale_total != null) 
+          claimData.ALE.total = financial.ale_total;
+      }
+
+      // Load AI outputs
+      {
+      const { data: outputs } = await supabase
+        .from('claim_outputs')
+        .select('output_type, output_data, created_at')
+        .eq('claim_id', window.CCC_CLAIM_ID)
+        .order('created_at', { ascending: false });
+
+      if (outputs && outputs.length > 0) {
+        if (!claimData.meta) claimData.meta = {};
+
+        const latest = {};
+        outputs.forEach(row => {
+          if (!latest[row.output_type]) {
+            latest[row.output_type] = row.output_data;
+          }
+        });
+
+        if (latest.policy_analysis) 
+          claimData.meta.policyAnalysis = latest.policy_analysis;
+        if (latest.estimate_gap) 
+          claimData.meta.estimateGap = latest.estimate_gap;
+        if (latest.negotiation_strategy) 
+          claimData.meta.negotiationStrategy = latest.negotiation_strategy;
+        if (latest.photo_analysis) 
+          claimData.meta.photoAnalysis = latest.photo_analysis;
+        if (latest.enforcement_report) 
+          claimData.meta.enforcementReport = latest.enforcement_report;
+      }
       }
 
       const activityKey = a => (a.date || '') + '|' + (a.time || '') + '|' + (a.text || '');
@@ -1970,7 +2013,7 @@ const TOOL_ROUTES={
   'What to Say Guide':{phase:3,sub:0},'Tactic Counter Guide':{phase:3,sub:0},'Inspection Log':{phase:3,sub:1},
   'Communication Logger':{view:'activity'},'Contractor Estimate Analyzer':{phase:4,sub:0},'Scope Verification Checklist':{phase:4,sub:1},
   'Labor Rate Validator':{phase:4,sub:1},'Carrier Estimate Analyzer':{phase:5,sub:0},'Line-Item Comparison Tool':{phase:5,sub:1},
-  'Depreciation Calculator':{phase:5,sub:1},'Gap Analysis Calculator':{phase:5,sub:2},'Supplement Request Builder':{phase:5,sub:3},
+  'Depreciation Calculator':{phase:5,sub:1},'Gap Analysis Calculator':{phase:5,sub:3},'Supplement Request Builder':{phase:5,sub:4},
   'Contents Inventory Builder':{phase:6,sub:0},'Replacement Cost Calculator':{phase:6,sub:0},'ALE Tracker':{phase:6,sub:1},
   'ALE Calculator':{phase:6,sub:1},'Demand Package Builder':{phase:7,sub:0},'Settlement Calculator':{phase:7,sub:0},
   'Dispute Letter Generator':{phase:7,sub:1},'Policy Citation Tool':{phase:7,sub:1},'Bad Faith Tracker':{phase:7,sub:1},
@@ -5130,15 +5173,18 @@ async function init(){
         .eq('id', window.CCC_CLAIM_ID)
         .single();
       if (claim) {
-        claimData.initial.insuredName = claim.insured_name || claimData.initial.insuredName;
-        claimData.initial.claimNumber = claim.claim_number || claimData.initial.claimNumber;
-        claimData.initial.insurer = claim.insurer || claimData.initial.insurer;
-        claimData.initial.adjusterName = claim.adjuster_name || claimData.initial.adjusterName;
-        claimData.initial.dateOfLoss = claim.date_of_loss || claimData.initial.dateOfLoss;
-        claimData.initial.propertyType = claim.property_type || claimData.initial.propertyType;
-        claimData.initial.description = claim.type_of_loss || claimData.initial.description;
-        if (!claimData.initial.claimStatus||claimData.initial.claimStatus==='active'){
-          claimData.initial.claimStatus='Active — Under Review';
+        claimData.initial.insuredName    = claim.insured_name    || claimData.initial.insuredName;
+        claimData.initial.claimNumber    = claim.claim_number    || claimData.initial.claimNumber;
+        claimData.initial.insurer        = claim.insurer         || claimData.initial.insurer;
+        claimData.initial.adjusterName   = claim.adjuster_name   || claimData.initial.adjusterName;
+        claimData.initial.adjusterPhone  = claim.adjuster_phone  || claimData.initial.adjusterPhone  || '';
+        claimData.initial.adjusterEmail  = claim.adjuster_email  || claimData.initial.adjusterEmail  || '';
+        claimData.initial.adjusterCompany= claim.adjuster_company|| claimData.initial.adjusterCompany|| '';
+        claimData.initial.dateOfLoss     = claim.date_of_loss    || claimData.initial.dateOfLoss;
+        claimData.initial.propertyType   = claim.property_type   || claimData.initial.propertyType;
+        claimData.initial.description    = claim.type_of_loss    || claimData.initial.description;
+        if (claim.claim_status) {
+          claimData.initial.claimStatus  = claim.claim_status;
         }
       }
     } catch(e) {
