@@ -3,6 +3,8 @@ Allow: /
 
 # Explicitly allow SEO content directories
 Allow: /seo/
+Allow: /ai/
+Allow: /learn/
 Allow: /cities/
 Allow: /complaints/
 Allow: /case-studies/
@@ -28,5 +30,5 @@ Allow: /terms.html
 Allow: /privacy.html
 Allow: /disclaimer.html
 
-# Sitemap Index
-Sitemap: https://claimcommandpro.com/sitemap-index.xml
+# Sitemap
+Sitemap: https://claimcommandpro.com/sitemap.xml
