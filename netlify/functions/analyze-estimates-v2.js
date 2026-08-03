@@ -288,21 +288,39 @@ async function extractTextFromPdfUrl(url) {
 async function enrichWithAI(deterministicResult, carrierText, contractorText, contractorTotal, claimType) {
   if (!process.env.OPENAI_API_KEY) return null;
 
-  const systemPrompt = `You are an insurance claim estimate analyst. Review a deterministic line-by-line comparison and write a clear gap narrative.
+  const systemPrompt = `You are a senior property insurance estimate analyst with expert knowledge of Xactimate pricing, regional construction cost databases, trade-level labor and material rates, and standard claim handling practices.
+
+You receive a deterministic line-by-line comparison and write a structured gap narrative explaining the findings in plain language that a policyholder can use in a supplement request.
+
+DOMAIN EXPERTISE TO APPLY:
+- O&P (overhead and profit): standard 10% + 10% = 20% required when general contractor coordinates 3+ trades. Most common omission in carrier estimates.
+- Labor rate suppression: Xactimate regional averages typically lag local contractor rates by 15-30% in most markets
+- Code upgrades: drip edge, ice and water shield, and ventilation requirements added to most building codes after 2012 — frequently omitted from carrier estimates
+- Depreciation of non-depreciable items: labor, permits, and disposal are not depreciable — flag if applied
+- Matching: when damaged materials cannot match undamaged materials, full surface replacement is required under like kind and quality standard
+
+GAP CATEGORY TERMINOLOGY — use these exact terms:
+- "O&P Omission" — overhead and profit missing from carrier estimate
+- "Labor Rate Suppression" — carrier labor rates below market
+- "Missing Scope Items" — line items in contractor estimate absent from carrier
+- "Improper Depreciation" — depreciation applied to non-depreciable items
+- "Code Upgrade Omission" — required building code items not included
+- "Quantity Discrepancy" — same item but different measurements
 
 Return ONLY valid JSON:
 {
-  "gap_summary": "string — one paragraph explaining key gaps",
-  "summary": "string — overall comparison summary",
+  "gap_summary": "One paragraph explaining the most significant gaps with specific dollar amounts and industry terminology — suitable for a supplement request letter",
+  "summary": "One paragraph overall comparison summary — what the carrier got right and what they missed",
   "gap_categories": [
-    { "category": "string", "amount": number, "description": "string" }
+    {
+      "category": "Use exact terminology from the list above",
+      "amount": number,
+      "description": "Specific explanation of this gap with dollar amount"
+    }
   ]
 }
 
-Rules:
-- Use the deterministic comparison data provided; do not invent line items
-- gap_categories should align with the documented gap amount
-- Neutral, informational tone only — no legal advice or negotiation language`;
+Rules: use only data from the deterministic comparison — do not invent line items. gap_categories amounts must sum to the total gap. Use specific dollar amounts in every description string.`;
 
   const userPrompt = `Claim type: ${claimType || 'property-claim'}
 Contractor total: $${Number(contractorTotal || 0).toLocaleString()}
@@ -332,7 +350,28 @@ ${sanitizeInput(contractorText).slice(0, 4000)}`;
 }
 
 async function analyzeWithOpenAIFallback(carrierText, contractorText, contractorTotal, claimType) {
-  const systemPrompt = `You are an insurance claim estimate analyst. Compare carrier vs contractor estimates line-by-line.
+  const systemPrompt = `You are a senior property insurance estimate analyst with expert knowledge of Xactimate pricing, ISO HO-3 policy forms, regional construction cost databases, and standard claim handling practices.
+
+Compare carrier and contractor estimates line by line. Apply these standards when analyzing variances:
+
+- O&P at 20% (10+10) is required when general contractor is involved
+- Labor rates: flag any line where carrier rate is more than 10% below the contractor rate as labor rate suppression
+- Depreciation: identify any non-depreciable items (labor, permits, disposal) where depreciation was applied
+- Missing items: any line in contractor estimate absent from carrier estimate is a scope omission — identify each specifically
+- Code items: drip edge, ice and water shield, and ventilation are code-required in most jurisdictions — flag if absent from carrier
+
+For status field use exactly: "match" | "undervalued" | "missing" | "quantity_discrepancy" | "improper_depreciation"
+
+Return ONLY valid JSON matching the schema in the user message.`;
+
+  const userPrompt = `Claim type: ${claimType || 'property-claim'}
+Contractor documented total: $${Number(contractorTotal || 0).toLocaleString()}
+
+Contractor estimate:
+${sanitizeInput(contractorText).slice(0, 20000)}
+
+Carrier estimate:
+${sanitizeInput(carrierText).slice(0, 20000)}
 
 Return ONLY valid JSON:
 {
@@ -343,22 +382,13 @@ Return ONLY valid JSON:
       "carrier_amount": number,
       "contractor_amount": number,
       "variance": number,
-      "status": "Match" | "Undervalued" | "Missing from Carrier" | "Disputed"
+      "status": "match" | "undervalued" | "missing" | "quantity_discrepancy" | "improper_depreciation"
     }
   ],
   "gap_categories": [{ "category": "string", "amount": number, "description": "string" }],
   "gap_summary": "string",
   "summary": "string"
 }`;
-
-  const userPrompt = `Claim type: ${claimType || 'property-claim'}
-Contractor documented total: $${Number(contractorTotal || 0).toLocaleString()}
-
-Contractor estimate:
-${sanitizeInput(contractorText).slice(0, 20000)}
-
-Carrier estimate:
-${sanitizeInput(carrierText).slice(0, 20000)}`;
 
   const raw = await runOpenAI(systemPrompt, userPrompt, {
     model: 'gpt-4o',
@@ -378,7 +408,7 @@ ${sanitizeInput(carrierText).slice(0, 20000)}`;
       carrier_amount: carrier,
       contractor_amount: contractor,
       variance,
-      status: item.status || 'Disputed'
+      status: item.status || 'undervalued'
     };
   });
 

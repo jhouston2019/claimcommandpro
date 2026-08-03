@@ -93,7 +93,11 @@ exports.handler = async (event, context) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance settlement analyst with expertise in RCV/ACV calculations, depreciation schedules, and settlement negotiations. Analyze settlement offers to identify underpayments, improper depreciation, and missing items. Before providing your analysis, consider: 1) Is depreciation properly applied given the coverage type? 2) Are all line items from the contractor estimate addressed? 3) Is the deductible correctly calculated? 4) Are there any red flags or concerning patterns? Return only valid JSON with no additional text.'
+            content: `You are a senior property insurance claim analyst with expert knowledge of ISO HO-3 policy forms, RCV/ACV settlement mechanics, depreciation schedules under industry standard useful-life tables, the NAIC Model Unfair Claims Settlement Practices Act, and state prompt payment statutes across all 50 jurisdictions.
+
+You identify underpayment patterns that insurers systematically apply: labor depreciation (improper in most states), O&P omission on multi-trade claims, matching clause violations, code upgrade exclusions, and depreciation rates that exceed industry standards for the material type.
+
+Return only valid JSON. No prose, no markdown, no explanation outside the JSON structure.`
           },
           {
             role: 'user',
@@ -105,34 +109,32 @@ Policy: HO3 with RCV coverage`
           {
             role: 'assistant',
             content: `{
-  "rcv_total": 28000,
-  "acv_paid": 19800,
-  "depreciation_withheld": 8200,
+  "rcv_total": 45000,
+  "acv_paid": 32000,
+  "depreciation_withheld": 9800,
   "deductible": 2500,
-  "net_payment": 17300,
+  "net_payment": 29500,
+  "breakdown": [
+    { "category": "Structure", "rcv": 38000, "acv": 27000, "depreciation": 8500 },
+    { "category": "Contents", "rcv": 5000, "acv": 3800, "depreciation": 1200 },
+    { "category": "ALE", "rcv": 2000, "acv": 1200, "depreciation": 100 }
+  ],
   "issues": [
-    {
-      "issue": "Settlement significantly below contractor estimate",
-      "impact": "Underpayment of $8,750 ($36,750 contractor vs $28,000 RCV)",
-      "severity": "high"
-    },
-    {
-      "issue": "Depreciation applied to RCV policy",
-      "impact": "Improper withholding of $8,200 - RCV policies should pay full replacement cost upon completion",
-      "severity": "critical"
-    }
+    "Labor depreciation of $3,200 applied — improper under standard policy language",
+    "Overhead and profit ($7,500) omitted — required when general contractor coordinates 3+ trades",
+    "Roofing depreciation rate of 60% applied to 12-year-old roof — exceeds standard for 25-year shingles"
   ],
-  "missing_items": [
-    "Ridge vent installation",
-    "Fascia board replacement",
-    "Code upgrade costs"
+  "recommendation": "Reject offer and submit supplement request citing O&P omission and improper labor depreciation — documented gap is $13,000",
+  "next_steps": [
+    "Submit supplement request within 10 business days citing O&P and labor depreciation",
+    "Obtain second contractor estimate documenting O&P requirement",
+    "After repairs complete, submit proof to recover $9,800 depreciation holdback"
   ],
-  "recommendations": [
-    "Demand full RCV payment of contractor estimate ($36,750)",
-    "Challenge improper depreciation withholding",
-    "Submit supplement for missing line items",
-    "Request itemized breakdown of how $28,000 RCV was calculated"
-  ]
+  "document_header": {
+    "claim_number": "CLM-2024-08456",
+    "document_type": "Settlement Analysis",
+    "generated_date": "2026-07-20T10:00:00Z"
+  }
 }`
           },
           {
@@ -141,6 +143,7 @@ Policy: HO3 with RCV coverage`
           }
         ],
         temperature: 0.1,
+        max_tokens: 3000,
         response_format: { type: 'json_object' }
       });
 

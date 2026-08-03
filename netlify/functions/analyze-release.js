@@ -97,7 +97,11 @@ exports.handler = async (event, context) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance attorney specializing in settlement releases with deep knowledge of contract law, bad faith claims, and policyholder rights. You protect policyholders from signing away important rights. Before analyzing, consider: 1) Does this release waive future claims or unknown damages? 2) Are there overly broad indemnification clauses? 3) Does it release bad faith claims? 4) Are there confidentiality provisions that prevent legal action? Return only valid JSON with no additional text.'
+            content: `You are an expert insurance policyholder rights attorney with deep knowledge of settlement release contract law, bad faith insurance litigation, the NAIC Model Act, and policyholder bill of rights statutes across all 50 states.
+
+You identify release language that systematically strips policyholders of future rights — broad unknown claims waivers, bad faith releases, confidentiality clauses preventing regulatory complaints, and absent carve-outs for depreciation recovery and supplemental claims.
+
+Return only valid JSON. overall_verdict must be exactly "danger", "caution", or "safe". risk_level must be an integer 1-10. No prose outside the JSON.`
           },
           {
             role: 'user',
@@ -108,30 +112,58 @@ Settlement amount: $25,000`
           {
             role: 'assistant',
             content: `{
+  "overall_verdict": "danger",
+  "recommendation": "do_not_sign",
+  "summary": "Release contains a broad unknown claims waiver and bad faith release — signing eliminates your right to pursue additional damages discovered after settlement and any bad faith claim against the carrier.",
+  "risk_level": 9,
   "problematic_clauses": [
     {
-      "clause": "releases all claims, known and unknown",
-      "issue": "Waives right to future claims for hidden damage",
       "severity": "critical",
-      "explanation": "This prevents you from making additional claims if hidden damage is discovered after signing, even if caused by the same loss event",
-      "suggested_revision": "Limit release to 'all claims related to the specific line items listed in the settlement agreement dated [date]'"
+      "clause_text": "Claimant releases all claims, known and unknown, arising from or related to the loss",
+      "issue": "Waives rights to future claims for damage discovered after signing — including hidden damage and consequential losses not yet assessed",
+      "recommendation": "Replace with language limiting release to specific line items listed in Exhibit A of the settlement agreement"
     },
     {
-      "clause": "any bad faith claims",
-      "issue": "Waives right to sue for bad faith handling",
-      "severity": "critical",
-      "explanation": "Even if the insurer acted in bad faith during the claim process, you cannot pursue statutory penalties or damages",
-      "suggested_revision": "Remove bad faith waiver entirely or limit to 'claims related solely to the valuation of the specific damages listed'"
+      "severity": "high",
+      "clause_text": "Claimant releases insurer from any and all claims including extracontractual damages",
+      "issue": "Waives bad faith claim before any bad faith liability has been established — insurer benefits from their own delay or underpayment",
+      "recommendation": "Remove extracontractual damages waiver or limit to claims arising from this specific settlement negotiation only"
     }
   ],
-  "acceptable_clauses": [],
-  "overall_verdict": "DO NOT SIGN - Critical issues present",
-  "risk_level": "high",
-  "recommendations": [
-    "Demand removal of 'unknown claims' language",
-    "Refuse to waive bad faith claims",
-    "Request itemized list of what is being released",
-    "Consider attorney review before signing"
+  "red_flags": [
+    "Broad unknown claims waiver eliminates supplemental claim rights",
+    "Bad faith waiver present before full claim resolution",
+    "No carve-out preserving depreciation recovery after repairs"
+  ],
+  "missing_protections": [
+    "No carve-out for supplemental claims on newly discovered damage",
+    "No preservation of RCV depreciation holdback rights",
+    "No limitation of release to specific settlement line items"
+  ],
+  "suggested_revisions": [
+    {
+      "original": "Claimant releases all claims, known and unknown, arising from or related to the loss",
+      "revised": "Claimant releases only those claims specifically identified in Exhibit A attached to this settlement agreement"
+    },
+    {
+      "original": "Claimant releases insurer from any and all claims including extracontractual damages",
+      "revised": "This release does not waive any claims for bad faith, statutory penalties, or extracontractual damages"
+    }
+  ],
+  "acceptable_clauses": [
+    {
+      "clause_text": "Settlement amount of $25,000",
+      "explanation": "Specific dollar amount is clearly stated and limits scope of payment obligation"
+    }
+  ],
+  "next_steps": [
+    "Return release unsigned with marked revisions within 10 business days",
+    "Request itemized list of all claims being released",
+    "Consult attorney before signing any modified release"
+  ],
+  "action_items": [
+    "Document all release concerns in writing to the adjuster",
+    "Preserve all claim file documentation in case of future bad faith action"
   ]
 }`
           },
@@ -141,6 +173,7 @@ Settlement amount: $25,000`
           }
         ],
         temperature: 0.2,
+        max_tokens: 3000,
         response_format: { type: 'json_object' }
       });
 

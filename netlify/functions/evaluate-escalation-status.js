@@ -232,7 +232,29 @@ Return ONLY valid JSON, no additional text.`;
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance dispute resolution advisor with expertise in appraisal, mediation, litigation, and state insurance regulations. Before recommending escalation, analyze: 1) Cost-benefit ratio (dispute amount vs. escalation costs), 2) Evidence strength and likelihood of success, 3) Time sensitivity and urgency factors, 4) Carrier behavior patterns indicating bad faith, 5) State-specific advantages or disadvantages. Provide strategic, data-driven recommendations. Return only valid JSON.'
+            content: `You are an expert insurance dispute resolution strategist with comprehensive knowledge of:
+
+APPRAISAL: Binding mechanism available in virtually all standard homeowners policies. Resolves amount disputes only — not coverage disputes. Each party selects an independent appraiser; they jointly select an umpire. Any two-of-three agreement is binding. Typical cost $2,000-$5,000, timeline 60-90 days. Most effective when documentation is complete and gap is significant.
+
+MEDIATION: Voluntary, non-binding unless settled. Neutral mediator facilitates negotiation. Covers both amount and coverage disputes. Cost $1,000-$3,000. Timeline 30-60 days. Best when relationship preservation matters or coverage question is at issue.
+
+LITIGATION: Last resort. Formal legal proceeding. Cost $10,000-$50,000+. Timeline 12-24 months. Reserved for bad faith, significant underpayment with clear policy breach, or when appraisal is unavailable or refused.
+
+DOI COMPLAINT: Free. Triggers mandatory regulatory response. Best for unreasonable delays, improper denials, and regulatory violations. Does not stop statute of limitations clock. Resolution typically 30-60 days.
+
+STATE-SPECIFIC EXPERTISE:
+- Texas: Strong appraisal rights under Insurance Code. Courts consistently uphold awards. Bad faith statute provides attorney fees.
+- Florida: Assignment of benefits issues. Hurricane deductibles apply. Concurrent causation doctrine favorable to policyholders.
+- California: Fair Claims Settlement Practices regulations strict. 15-day acknowledgment, 40-day determination requirements.
+- All states: Unfair Claims Practices Act violations support bad faith.
+
+COST-BENEFIT THRESHOLD:
+- Appraisal justified when gap exceeds $5,000
+- Litigation justified when gap exceeds $25,000 with strong evidence
+- DOI complaint always appropriate for regulatory violations
+- Continue negotiating when carrier is responsive and making progress
+
+Return only valid JSON matching the schema in the user message. No prose outside the JSON structure.`
           },
           {
             role: 'user',
@@ -248,21 +270,55 @@ State: Texas`
             content: `{
   "recommendation": "appraisal",
   "confidence": 9,
-  "reasoning": "Strong evidence, significant underpayment, and carrier delay patterns make appraisal highly favorable. Texas appraisal rights are well-established and binding.",
-  "pros": [
-    "Binding decision on valuation dispute",
-    "Faster than litigation (60-90 days vs 12-24 months)",
-    "Cost-effective ($2,500-4,000 vs $15,000+ for litigation)",
-    "High success rate with documented contractor estimates"
-  ],
-  "cons": [
-    "Upfront cost of $2,500-4,000 for appraiser",
-    "Only resolves valuation, not coverage disputes",
-    "Carrier may still delay payment after award"
-  ],
+  "reasoning": "Documented gap of $18,550 with strong contractor evidence in Texas makes appraisal the optimal path. Texas courts consistently uphold appraisal awards and the carrier's 75-day delay pattern supports bad faith leverage if needed.",
+  "readiness_scores": {
+    "appraisal": 9,
+    "mediation": 6,
+    "litigation": 4
+  },
+  "pros_and_cons": {
+    "appraisal": {
+      "pros": [
+        "Binding on both parties — carrier cannot appeal valuation outcome",
+        "Faster resolution than litigation — 60-90 days typical in Texas",
+        "Cost-effective at $2,500-$4,000 vs $15,000+ for litigation",
+        "Texas appraisal rights are well-established and enforceable",
+        "Strong contractor documentation gives appraiser clear support"
+      ],
+      "cons": [
+        "Upfront appraiser cost of $2,500-$4,000 required",
+        "Resolves valuation only — does not address bad faith",
+        "Carrier may delay payment after award"
+      ]
+    },
+    "mediation": {
+      "pros": [
+        "Lower cost than appraisal or litigation",
+        "Can address both amount and coverage questions"
+      ],
+      "cons": [
+        "Non-binding — carrier can walk away",
+        "Less effective than appraisal for pure valuation disputes",
+        "Adds 30-60 days without guaranteed resolution"
+      ]
+    },
+    "litigation": {
+      "pros": [
+        "Can recover bad faith damages beyond claim value",
+        "Attorney fees recoverable under Texas bad faith statute",
+        "Punitive damages available for egregious conduct"
+      ],
+      "cons": [
+        "12-24 month timeline",
+        "$15,000-$50,000+ cost",
+        "Uncertain outcome compared to appraisal",
+        "Premature given appraisal not yet attempted"
+      ]
+    }
+  },
   "cost_estimates": {
     "appraisal": "$2,500-$4,000",
-    "mediation": "$1,500-$3,000",
+    "mediation": "$1,000-$3,000",
     "litigation": "$15,000-$50,000+"
   },
   "timeline_estimates": {
@@ -272,26 +328,26 @@ State: Texas`
   },
   "success_probability": {
     "appraisal": 85,
-    "mediation": 70,
-    "litigation": 75
+    "mediation": 65,
+    "litigation": 70
   },
   "preparation_steps": [
-    "Invoke appraisal clause in writing within policy deadline",
-    "Select qualified umpire from approved list",
-    "Compile all documentation for appraiser review",
-    "Prepare itemized list of disputed line items"
+    "Invoke appraisal clause in writing citing specific policy section",
+    "Select qualified independent appraiser with property insurance experience",
+    "Compile all documentation — contractor estimate, photos, correspondence log",
+    "Prepare itemized list of every disputed line item with dollar variances"
   ],
   "risks": [
     "Appraisal award could be less than contractor estimate",
-    "Carrier may challenge umpire selection",
-    "Additional costs if carrier disputes award"
+    "Carrier may challenge umpire selection adding 2-4 weeks",
+    "Policy appraisal clause may have specific procedural requirements to follow exactly"
   ],
-  "state_specific_notes": "Texas Insurance Code strongly favors appraisal for valuation disputes. Courts consistently uphold appraisal awards. Carrier must participate once properly invoked.",
+  "state_specific_notes": "Texas Insurance Code Chapter 542 provides strong appraisal rights. Courts consistently uphold binding awards. Carrier must participate once properly invoked. Bad faith claim preserved separately and not waived by appraisal.",
   "urgency_level": "high",
   "bad_faith_indicators": [
-    "75 days elapsed with minimal substantive response",
-    "Multiple delays without justification",
-    "Failure to address documented evidence"
+    "75 days elapsed with no substantive response to documented supplement",
+    "Multiple delay letters without coverage position stated",
+    "Failure to acknowledge contractor estimate submitted 45 days ago"
   ]
 }`
           },
@@ -301,6 +357,7 @@ State: Texas`
           }
         ],
         temperature: 0.3,
+        max_tokens: 3000,
         response_format: { type: 'json_object' }
       });
 

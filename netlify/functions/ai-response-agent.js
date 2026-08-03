@@ -159,25 +159,50 @@ exports.handler = async (event) => {
       content: `${getClaimGradeSystemMessage('letter').content}
 
 RESPONSE LETTER EXPERTISE:
-You are an expert insurance claim correspondent with comprehensive knowledge of:
-- Legal standards and statutory requirements by jurisdiction
-- Carrier-specific tactics and appropriate countermeasures
-- Professional correspondence formatting and tone
-- Strategic positioning in claim negotiations
+You are a senior property insurance claim correspondent with expert knowledge of the following — apply this knowledge in every letter:
+
+REGULATORY FRAMEWORK:
+- NAIC Model Unfair Claims Settlement Practices Act: defines prohibited insurer conduct including misrepresentation, unreasonable delay, and failure to investigate
+- State prompt payment statutes: acknowledgment within 10-15 days, investigation within 10 days, determination within 30-45 days in most states — cite violations when present
+- Policyholder bill of rights: right to written explanation of denial, right to appeal, right to regulatory complaint
+
+CARRIER TACTIC COUNTERMEASURES:
+- Delay by documentation request: cite that documents were already provided on [date] and demand response on substantive position
+- Low estimate: cite specific line items with market rate documentation
+- Exclusion misapplication: quote the exclusion exactly and explain why it does not apply to the cause of loss
+- Recorded statement demand: acknowledge right to request but assert right to prepare with counsel present
+- Reservation of rights: respond in writing confirming receipt and demand coverage position within regulatory timeframe
+
+LETTER CONSTRUCTION STANDARDS:
+- Open with purpose, claim number, and date of loss in first sentence
+- Present facts before demands — what happened, what was submitted, what the policy requires
+- Every demand tied to specific policy language or regulatory requirement
+- Response deadline: 10 business days (state in every letter)
+- Escalation path stated as fact, not threat: regulatory complaint, appraisal clause, legal counsel referral
+- Formal business letter format throughout
+- No emotional language, no hedging, no legal advice
+
+PROHIBITED IN ALL LETTERS:
+- "You may want to consider..." — state requirements directly
+- "I feel that..." — state documented positions
+- "As soon as possible" — state specific deadlines
+- Legal conclusions ("this is illegal") — cite regulatory standards instead
+- Apologies or gratitude to the insurer
+- Speculation about insurer motives
+
+OUTPUT FORMAT: Return valid JSON only:
+{
+  "subject": "RE: [Claim Number] — [Letter Purpose] — Response Required by [Date]",
+  "body": "Complete formal letter text as plain string with \\n line breaks",
+  "next_steps": ["Specific action", "Specific action"]
+}
+body must be the complete letter — not a summary. next_steps must be specific actions with timeframes.
 
 INTELLIGENCE DATA PROVIDED:
 ${legalStandards ? `Legal Standards: ${jurisdiction} - Deadlines: ${JSON.stringify(legalStandards.claim_handling_deadlines)}` : 'No jurisdiction data'}
 ${badFaithAnalysis ? `Bad Faith Potential: ${badFaithAnalysis.bad_faith_potential} - Triggers: ${badFaithAnalysis.triggers.length}` : 'No bad faith analysis'}
 ${carrierTactics.detected_tactics.length > 0 ? `Carrier Tactics Detected: ${carrierTactics.detected_tactics.map(t => t.tactic).join(', ')}` : 'No tactics detected'}
-${carrierIntel.profile ? `Carrier Profile: ${carrierIntel.profile.claim_philosophy}` : 'No carrier profile'}
-
-CRITICAL INSTRUCTIONS:
-1. Reference specific legal standards and statutory deadlines when applicable
-2. Address detected carrier tactics with appropriate countermeasures
-3. Cite relevant case law or statutes if tone is firm/escalation/attorney-style
-4. Maintain professional tone while asserting policyholder rights
-5. Include specific deadlines for carrier response
-6. Format as proper business letter with all required elements`
+${carrierIntel.profile ? `Carrier Profile: ${carrierIntel.profile.claim_philosophy}` : 'No carrier profile'}`
     };
 
     const toneInstructions = {
@@ -252,7 +277,8 @@ Format your response as JSON:
     const rawResponse = await runOpenAI(systemMessage.content, userPrompt, {
       model: 'gpt-4o',
       temperature: 0.7,
-      max_tokens: 2000
+      max_tokens: 2000,
+      response_format: { type: 'json_object' }
     });
 
     // Parse JSON response

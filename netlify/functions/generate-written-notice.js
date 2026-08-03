@@ -45,8 +45,11 @@ exports.handler = async (event) => {
       loss_date,
       loss_type,
       damage_description,
-      estimated_amount,
-      emergency_measures
+      emergency_measures,
+      claim_number,
+      adjuster_name,
+      phone,
+      email
     } = JSON.parse(event.body);
 
     if (!policyholder_name || !property_address || !policy_number || !insurer_name || !loss_date || !loss_type || !damage_description) {
@@ -77,46 +80,93 @@ exports.handler = async (event) => {
 
     const todayDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    const prompt = `Generate a formal written notice of loss letter with the following details:
+    const name = policyholder_name;
+    const propertyAddress = property_address;
+    const policyNumber = policy_number;
+    const insurerName = insurer_name;
+    const dateOfLoss = loss_date;
+    const lossType = loss_type;
+    const damageDescription = damage_description;
+    const claimNumber = claim_number || 'Pending Assignment';
+    const adjusterName = adjuster_name || '[Adjuster Name]';
 
-POLICYHOLDER:
-- Name: ${policyholder_name}
-- Property Address: ${property_address}
-- Policy Number: ${policy_number}
+    const prompt = `Generate a formal written notice of loss with the following details:
+
+POLICYHOLDER INFORMATION:
+Name: ${name}
+Property Address: ${propertyAddress || '[Property Address]'}
+Policy Number: ${policyNumber}
+Phone: ${phone || '[Phone]'}
+Email: ${email || '[Email]'}
 
 INSURANCE COMPANY:
-- Name: ${insurer_name}
-${insurer_address ? `- Address: ${insurer_address}` : ''}
+Name: ${insurerName}
+Address: ${insurer_address || '[Carrier Mailing Address]'}
+Adjuster: ${adjusterName}
 
 LOSS DETAILS:
-- Date of Loss: ${loss_date}
-- Type of Loss: ${loss_type}
-- Damage Description: ${damage_description}
-${estimated_amount ? `- Estimated Loss Amount: $${parseFloat(estimated_amount).toLocaleString()}` : ''}
-${emergency_measures ? `- Emergency Measures Taken: ${emergency_measures}` : ''}
+Date of Loss: ${dateOfLoss}
+Claim Number: ${claimNumber}
+Type of Loss: ${lossType}
+General Description: ${damageDescription}
+${emergency_measures ? 'Emergency Measures Taken: ' + emergency_measures : ''}
 
-REQUIREMENTS:
-1. Professional business letter format
-2. Include proper date (${todayDate}), addresses, and Re: line with policy number
-3. State that this is formal written notice of loss as required by the insurance policy
-4. Clearly state date of loss and type of damage
-5. Provide preliminary description of damage
-6. Mention emergency measures taken (if any)
-7. State that full documentation and supporting evidence will follow
-8. Request prompt inspection and claim processing
-9. Include policy number prominently in Re: line
-10. Professional but firm tone
-11. Close with expectation of timely response
-12. Length: 250-400 words
+LETTER REQUIREMENTS:
+1. Line 1: ${todayDate}
+2. Line 2: "Sent via Certified Mail, Return Receipt Requested"
+3. Carrier name and address block
+4. RE: Formal Written Notice of Loss — Policy No. ${policyNumber} — Date of Loss ${dateOfLoss}
+5. Formal salutation
+6. Opening paragraph: state this is formal written notice per policy requirements
+7. Loss description paragraph: date, time, cause, general nature of damage
+8. Emergency measures paragraph (if any taken)
+9. Documentation paragraph: state that complete documentation, damage inventory, and supporting evidence will follow
+10. Inspection request: request prompt adjuster inspection and assignment
+11. Contact information for scheduling
+12. Professional closing with expectation of timely response
+13. Signature block with all policyholder information
 
-Return ONLY the letter text, properly formatted with line breaks and proper spacing.`;
+CRITICAL RULES:
+- Do not estimate total damage dollar amount
+- Do not describe detailed scope — general description only
+- Every word chosen to preserve maximum claim rights
+- Certified mail notation must appear below the date
+- Length: 300-450 words — complete but not excessive
+- Output letter text only`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
           role: 'system',
-          content: 'You are an expert insurance claims professional with 20+ years of experience. Generate formal, legally compliant written notices of loss that protect the policyholder\'s rights, trigger the claim process, and establish a clear timeline. Before drafting, consider: 1) Does this meet policy notice requirements? 2) Does it preserve all claim rights? 3) Is it specific enough to trigger coverage but not so detailed it limits the claim? The notice should be professional, clear, and assertive.'
+          content: `You are a senior insurance claim advocate expert in written notice of loss requirements across all 50 states and standard ISO policy forms.
+
+LEGAL REQUIREMENTS FOR WRITTEN NOTICE:
+- Most policies require written notice within a "reasonable time" — interpreted as 24-72 hours in most states
+- Notice must be sent via certified mail with return receipt to create legally documented record of timely reporting
+- The postmark date is the legal evidence of timely notice
+- Failure to provide timely written notice can void coverage in some jurisdictions — the written notice protects this right
+
+WHAT TO INCLUDE IN INITIAL NOTICE:
+- Date, time, and location of loss
+- Cause of loss (general description — not detailed assessment)
+- General nature of damage (not detailed scope)
+- Claim number if already assigned
+- Request for prompt inspection and adjuster assignment
+- Statement that full documentation will follow
+- Contact information for scheduling
+
+WHAT TO EXCLUDE FROM INITIAL NOTICE:
+- Do not estimate total damage amounts — this can limit the claim before full assessment is complete
+- Do not speculate about cause if uncertain — describe observable facts only
+- Do not describe full scope of damage in detail — this is for the proof of loss after complete assessment
+- Do not make admissions about pre-existing conditions
+- Do not waive any rights or agree to any limitations
+
+CERTIFIED MAIL LANGUAGE:
+Every notice must include "Sent via Certified Mail, Return Receipt Requested, USPS Tracking No. [TRACKING NUMBER]" below the date.
+
+Output only the complete letter text — no JSON, no markdown fences, no commentary before or after.`
         },
         {
           role: 'user',

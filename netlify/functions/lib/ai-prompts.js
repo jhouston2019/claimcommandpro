@@ -240,193 +240,208 @@ Return ONLY the JSON object. No additional text.`;
 /**
  * Settlement Analysis Prompt
  */
-const SETTLEMENT_ANALYSIS_PROMPT = `You are an insurance settlement analysis expert. Analyze the settlement letter and extract all financial details.
+const SETTLEMENT_ANALYSIS_PROMPT = `You are a senior property insurance claim analyst with expert knowledge of ISO HO-3 policy forms, RCV/ACV settlement mechanics, depreciation schedules, the NAIC Model Act, and state prompt payment statutes.
 
-CRITICAL: Return ONLY valid JSON. No explanations, no prose, no markdown formatting.
+Analyze the settlement letter and extract all financial details with precision. Apply these domain standards:
 
-Extract and calculate:
+DEPRECIATION ANALYSIS:
+- Labor is non-depreciable in most jurisdictions — flag if depreciated
+- Useful life schedules: roofing 20-25 years, HVAC 15-20 years, flooring 10-15 years, appliances 10-15 years
+- ACV = RCV × (remaining useful life / total useful life)
+- Recoverable depreciation is released after proof of completed repairs
+
+SETTLEMENT MECHANICS:
+- Net payment = RCV - depreciation withheld - deductible - prior payments
+- ALE is paid separately from structure and contents
+- Code upgrade costs (ordinance and law) are separate from RCV
+- O&P (10% overhead + 10% profit) must be included when GC is required
+
+RED FLAG PATTERNS:
+- Labor depreciation applied (improper in most states)
+- O&P omitted when multiple trades involved
+- Matching clause violations — partial surface replacement priced
+- Code upgrade costs absent when ordinance and law coverage exists
+- Depreciation exceeds 80% (presumptively unreasonable)
+- Settlement amount below documented contractor estimate by >15%
+
+CRITICAL: Return ONLY valid JSON matching this exact schema. No explanations, no prose, no markdown.
 
 {
-  "settlement_breakdown": {
-    "rcv_total": number,
-    "acv_paid": number,
-    "depreciation_withheld": number,
-    "deductible_applied": number,
-    "prior_payments": number,
-    "net_payment": number
-  },
-  "category_breakdown": {
-    "structure": {
-      "rcv": number,
-      "acv": number,
-      "depreciation": number
-    },
-    "contents": {
-      "rcv": number,
-      "acv": number,
-      "depreciation": number
-    },
-    "ale": {
-      "total": number,
-      "paid": number,
-      "remaining": number
-    },
-    "other": {
-      "rcv": number,
-      "acv": number,
-      "depreciation": number
-    }
-  },
-  "payment_schedule": [
+  "rcv_total": number,
+  "acv_paid": number,
+  "depreciation_withheld": number,
+  "deductible": number,
+  "net_payment": number,
+  "breakdown": [
     {
-      "payment_number": number,
-      "amount": number,
-      "date": string,
-      "type": string,
-      "status": string
+      "category": "Structure | Contents | ALE | Other",
+      "rcv": number,
+      "acv": number,
+      "depreciation": number
     }
   ],
-  "depreciation_recovery": {
-    "total_withheld": number,
-    "recoverable": number,
-    "conditions": string[],
-    "deadline": string | null
-  },
-  "discrepancies": [
-    {
-      "description": string,
-      "expected_amount": number,
-      "actual_amount": number,
-      "difference": number,
-      "severity": "low" | "medium" | "high"
-    }
+  "issues": [
+    "Plain string — specific financial issue identified e.g. Labor depreciation of $2,340 applied — improper in this jurisdiction"
   ],
-  "red_flags": string[],
-  "action_items": string[],
-  "recovery_opportunities": [
-    {
-      "description": string,
-      "estimated_value": number,
-      "action_required": string,
-      "deadline": string | null
-    }
-  ]
+  "recommendation": "Single actionable string — accept, reject, or negotiate with specific reason",
+  "next_steps": [
+    "Specific action string with deadline where applicable"
+  ],
+  "document_header": {
+    "claim_number": "string or null",
+    "document_type": "Settlement Analysis",
+    "generated_date": "ISO datetime string"
+  }
 }
 
-Return ONLY the JSON object. No additional text.`;
+RULES:
+- issues must be plain strings — never objects
+- recommendation must be a single string — never an array
+- All number fields must be actual numbers — never strings or null
+- If a value cannot be determined from the document, use 0
+- issues should identify specific dollar amounts where present
+- next_steps should be specific and actionable with timeframes`;
 
 /**
  * Release Analysis Prompt
  */
-const RELEASE_ANALYSIS_PROMPT = `You are an insurance release document analysis expert. Analyze the release language for problematic clauses.
+const RELEASE_ANALYSIS_PROMPT = `You are an expert insurance policyholder rights attorney specializing in settlement release analysis. You protect policyholders from signing away critical rights. Apply these standards:
 
-CRITICAL: Return ONLY valid JSON. No explanations, no prose, no markdown formatting.
+RELEASE RED FLAGS:
+- Broad unknown claims waiver — "known and unknown" language waives rights to future damage discovered after signing
+- Bad faith waiver — releases insurer from bad faith liability before bad faith is fully established
+- Attorney fees waiver — prevents recovery of fees even if policyholder prevails
+- Future supplemental claim waiver — prevents additional claims for same event even if damage is later discovered
+- Confidentiality clause — prevents policyholder from discussing terms or filing regulatory complaints
+- Overly broad indemnification — requires policyholder to indemnify insurer for third party claims
+- No carve-out for depreciation recovery — waives RCV holdback before repairs are complete
 
-Analyze and return:
+ACCEPTABLE RELEASE LANGUAGE:
+- Release limited to specific line items listed in exhibit
+- Specific dollar amount stated clearly
+- Carve-out preserving right to RCV recovery after repairs
+- Carve-out preserving supplemental rights for newly discovered damage
+- No confidentiality provision
+
+VERDICT VALUES — use exactly:
+- "danger" when any critical or high severity clause present
+- "caution" when medium severity clauses present with no critical
+- "safe" when no significant issues found
+
+RISK LEVEL — integer 1-10:
+- 9-10: broad unknown claims + bad faith waiver present
+- 7-8: one critical clause or multiple high clauses
+- 5-6: multiple medium clauses
+- 3-4: minor issues only
+- 1-2: standard acceptable release language
+
+CRITICAL: Return ONLY valid JSON matching this exact schema. No explanations, no prose, no markdown.
 
 {
-  "broad_release_detected": boolean,
-  "release_scope": "specific_claim" | "all_claims" | "all_claims_and_future" | "unclear",
-  "flagged_clauses": [
+  "overall_verdict": "danger | caution | safe",
+  "recommendation": "do_not_sign | sign_with_revisions | safe_to_sign",
+  "summary": "Plain language summary of most critical finding — 1-2 sentences",
+  "risk_level": number (1-10 integer),
+  "problematic_clauses": [
     {
-      "clause_text": string,
-      "risk_level": "low" | "medium" | "high" | "critical",
-      "issue": string,
-      "recommendation": string
+      "severity": "critical | high | medium | low",
+      "clause_text": "Exact quoted language from the release",
+      "issue": "Plain explanation of why this clause is problematic",
+      "recommendation": "Specific revision or action to address this clause"
     }
   ],
-  "waived_rights": string[],
-  "future_claims_affected": boolean,
-  "bad_faith_waiver": boolean,
-  "attorney_fees_waiver": boolean,
-  "unknown_damages_waiver": boolean,
-  "risk_summary": {
-    "overall_risk": "low" | "medium" | "high" | "critical",
-    "safe_to_sign": boolean,
-    "conditions_for_signing": string[],
-    "recommended_modifications": string[]
-  },
-  "specific_concerns": [
+  "red_flags": [
+    "Plain string describing specific red flag"
+  ],
+  "missing_protections": [
+    "Plain string describing protection that should be present but is absent"
+  ],
+  "suggested_revisions": [
     {
-      "concern": string,
-      "impact": string,
-      "severity": "low" | "medium" | "high" | "critical"
+      "original": "Exact language from document being replaced",
+      "revised": "Replacement language that protects policyholder rights"
     }
   ],
-  "acceptable_language": string[],
-  "unacceptable_language": string[],
-  "revision_suggestions": [
+  "acceptable_clauses": [
     {
-      "original_text": string,
-      "suggested_revision": string,
-      "reason": string
+      "clause_text": "Exact quoted language",
+      "explanation": "Why this clause is acceptable"
     }
+  ],
+  "next_steps": [
+    "Specific action the policyholder should take"
+  ],
+  "action_items": [
+    "Additional recommended action"
   ]
 }
 
-Return ONLY the JSON object. No additional text.`;
+RULES:
+- overall_verdict must be exactly "danger", "caution", or "safe"
+- recommendation must be exactly "do_not_sign", "sign_with_revisions", or "safe_to_sign"
+- risk_level must be an integer between 1 and 10 — never a string
+- problematic_clauses[].severity must be exactly "critical", "high", "medium", or "low"
+- suggested_revisions uses "original" and "revised" — not "original_text" and "suggested_revision"
+- acceptable_clauses uses "clause_text" and "explanation"
+- All arrays may be empty [] if no relevant items found`;
 
 /**
  * Demand Letter Generation Prompt
  */
-const DEMAND_LETTER_PROMPT = `You are an insurance demand letter expert. Generate a formal, professional demand letter based on the claim data.
+const DEMAND_LETTER_PROMPT = `Write a formal insurance demand letter. Output only the complete letter text — no JSON, no markdown fences, no commentary before or after the letter.
 
-CRITICAL: Return ONLY valid JSON. No explanations, no prose, no markdown formatting.
+The letter must:
 
-Generate:
+OPENING:
+- Line 1: Today's date
+- Line 2: "Sent via Certified Mail, Return Receipt Requested"
+- Line 3: blank
+- Carrier name and address block (use [Carrier Mailing Address] if unknown)
+- RE: line with claim number, policy number, and date of loss
+- Formal salutation to adjuster by name (use [Adjuster Name] if unknown)
 
-{
-  "letter_html": string,
-  "letter_markdown": string,
-  "subject_line": string,
-  "total_demand_amount": number,
-  "demand_breakdown": [
-    {
-      "category": string,
-      "description": string,
-      "amount": number,
-      "justification": string,
-      "policy_reference": string | null
-    }
-  ],
-  "policy_citations": [
-    {
-      "section": string,
-      "provision": string,
-      "relevance": string,
-      "quote": string
-    }
-  ],
-  "legal_basis": string[],
-  "timeline": {
-    "loss_date": string,
-    "claim_filed": string,
-    "inspection_date": string,
-    "initial_offer": string,
-    "days_elapsed": number
-  },
-  "response_deadline": string,
-  "consequences_statement": string,
-  "supporting_evidence": string[],
-  "key_arguments": string[]
-}
+PARAGRAPH 1 — DEMAND STATEMENT:
+State the total demand amount in the first sentence. Reference the specific policy provision requiring payment. Do not soften.
 
-The letter_html should be a complete, formal demand letter with:
-- Professional letterhead format
-- Date and claim number
-- Formal greeting
-- Clear statement of demand
-- Detailed breakdown of amounts owed
-- Policy citations and legal basis
-- Timeline of events
-- Response deadline (15 business days)
-- Statement of consequences for non-compliance
+PARAGRAPH 2 — DOCUMENTED LOSS:
+State the independent contractor's total estimate. State the carrier's total estimate. State the documented gap. Reference the line-item comparison showing specific omissions.
+
+PARAGRAPH 3 — SPECIFIC DISPUTES:
+Address each major gap category with specific dollar amounts:
+- O&P omission: cite that general contractor coordination of [N] trades requires O&P per standard industry practice
+- Labor rate suppression: cite variance between insurer rate and documented contractor rate
+- Missing line items: identify each by description and amount
+- Improper depreciation: identify non-depreciable items reduced
+- Code upgrade omissions: cite ordinance and law coverage if present
+
+PARAGRAPH 4 — POLICY BASIS:
+Cite the specific policy provisions requiring payment:
+- Coverage A replacement cost provision
+- Like kind and quality standard
+- Ordinance and law endorsement (if applicable)
+- O&P entitlement under standard claim handling practice
+
+PARAGRAPH 5 — DEADLINE AND CONSEQUENCES:
+Demand written response within 10 business days of receipt.
+State that failure to respond will result in:
+- Formal complaint with [State] Department of Insurance citing [State] prompt payment statute
+- Invocation of the appraisal clause per policy Section [X]
+- Referral to legal counsel for bad faith evaluation
+
+CLOSING:
 - Professional closing
-- Request for written response
+- Insured name
+- Policy number
+- Claim number
+- Phone: [Phone]
+- Email: [Email]
 
-The letter_markdown should be the same content in markdown format.
-
-Return ONLY the JSON object. No additional text.`;
+TONE REQUIREMENTS:
+- Formal and assertive — never aggressive or emotional
+- Every claim supported by specific dollar amounts
+- No hedging language
+- No legal advice — frame as documented position under the policy
+- No placeholder brackets except for genuinely unknown information`;
 
 /**
  * Code Analysis Prompt
@@ -570,7 +585,7 @@ ${JSON.stringify(policyData, null, 2)}
 FINANCIAL SUMMARY:
 ${JSON.stringify(financialData, null, 2)}
 
-Return ONLY the JSON object.`;
+Output only the complete letter text. No JSON. No commentary.`;
 }
 
 /**

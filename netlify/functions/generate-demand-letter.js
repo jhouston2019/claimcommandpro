@@ -128,7 +128,18 @@ exports.handler = async (event, context) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert insurance demand letter writer with 20+ years of experience in property claims and bad faith litigation. Generate professional, legally sound demand letters that maximize recovery while maintaining professional tone. Use specific policy provisions, cite documented evidence, and create urgency through deadlines and bad faith implications.'
+            content: `You are a senior insurance claim advocate with 20+ years drafting demand letters in property insurance disputes. You have expert knowledge of:
+
+- ISO HO-3 policy forms and the replacement cost value provision
+- Standard O&P entitlement on claims requiring general contractor coordination
+- Xactimate pricing and how carrier estimates systematically suppress labor rates, omit O&P, and exclude code upgrade costs
+- State prompt payment statutes and the consequences of non-compliance
+- The appraisal clause as a binding dispute mechanism
+- Bad faith claim handling standards under the NAIC Model Act
+
+Your demand letters are effective because they are specific — they cite exact dollar amounts, exact policy provisions, and exact regulatory consequences. Generic language gets ignored. Specificity gets responses.
+
+Output only the complete letter text. No JSON. No commentary.`
           },
           {
             role: 'user',
@@ -139,47 +150,34 @@ Key issues: Depreciation applied to RCV policy, missing line items, undervalued 
           },
           {
             role: 'assistant',
-            content: `[Date]
+            content: `March 15, 2026
+Sent via Certified Mail, Return Receipt Requested
 
 [Insurance Company Name]
 Claims Department
-[Address]
+[Carrier Mailing Address]
 
-Re: Formal Demand for Payment – Claim No. [XXX] – Policy No. [XXX]
+RE: Formal Demand for Payment — Claim No. CLM-2024-08456 — Policy No. HO-884521 — Date of Loss: June 12, 2025
 
-Dear Claims Department:
+Dear [Adjuster Name]:
 
-This letter constitutes formal demand for immediate payment of the full amount owed under Policy No. [XXX] for the wind and hail damage sustained on [date]. Your company has underpaid this claim by $18,550, in direct violation of the policy terms and Texas insurance regulations.
+I demand payment of $18,550 within ten (10) business days of your receipt of this letter, representing the documented underpayment owed under Policy No. HO-884521 pursuant to the Coverage A Replacement Cost provision and your obligation to pay the full cost of repair using like kind and quality materials.
 
-POLICY VIOLATIONS:
+The independent contractor estimate documents total replacement cost of $36,750. Your carrier estimate totals $18,200, creating a documented gap of $18,550. Line-item comparison confirms systematic omissions and undervaluation across roofing, exterior, and code-related items.
 
-Your estimate improperly applies depreciation despite this being a Replacement Cost Value (RCV) policy. Section [X] of the policy explicitly provides for replacement cost coverage. The application of depreciation constitutes a material breach of the policy contract.
+Specific disputes requiring immediate correction include: (1) O&P omission of $3,675 — this loss requires general contractor coordination of four trades (roofing, siding, gutters, and interior drywall) per standard industry practice; (2) labor rate suppression of $2,840 — your estimate applies $42/hour where documented contractor rates of $58/hour apply; (3) missing line items totaling $4,450 — fascia board replacement ($2,400), ridge vent installation ($850), and underlayment upgrade ($1,200); (4) improper depreciation of $5,200 applied to non-depreciable labor and removal items on an RCV policy; (5) code upgrade omission of $2,385 despite Ordinance and Law endorsement on the policy.
 
-Additionally, your estimate omits the following covered items:
-• Fascia board replacement: $2,400
-• Ridge vent installation: $850
-• Underlayment upgrade per code: $1,200
+Payment is required under Coverage A — Replacement Cost, the like kind and quality standard, your Ordinance and Law endorsement, and standard claim handling practice entitling the insured to overhead and profit where a general contractor coordinates multiple trades.
 
-DOCUMENTED EVIDENCE:
-
-We have obtained an independent contractor estimate from [Licensed Contractor], a licensed and insured contractor with 15+ years of experience. This estimate, prepared in accordance with industry standards and local building codes, documents the full scope of necessary repairs at $36,750.
-
-Supporting documentation includes:
-• Independent contractor estimate
-• Photographic evidence of all damage
-• Material cost verification
-• Local building code requirements
-
-DEMAND FOR PAYMENT:
-
-We demand payment of $18,550 within 15 business days of receipt of this letter. This amount represents the difference between the actual replacement cost and your company's inadequate estimate.
-
-Failure to issue payment within this timeframe will be considered evidence of bad faith under [State] Insurance Code Section [XXX], and we will pursue all available remedies, including statutory penalties, attorney fees, and consequential damages.
-
-We expect your prompt attention to this matter.
+Provide written response within ten (10) business days of receipt. Failure to respond will result in: (1) formal complaint with the Texas Department of Insurance citing Texas Insurance Code prompt payment requirements; (2) invocation of the appraisal clause per policy Section [X]; and (3) referral to legal counsel for bad faith evaluation under applicable Texas standards.
 
 Sincerely,
-[Policyholder Name]`
+
+[Policyholder Name]
+Policy No. HO-884521
+Claim No. CLM-2024-08456
+Phone: [Phone]
+Email: [Email]`
           },
           {
             role: 'user',
@@ -187,7 +185,7 @@ Sincerely,
           }
         ],
         temperature: 0.3,
-        max_tokens: 2000
+        max_tokens: 3000
       });
 
       demandLetter = completion.choices[0].message.content;
@@ -238,6 +236,7 @@ Document ID: ${claim.claim_number}-DL-${Date.now()}
     return {
       statusCode: 200,
       body: JSON.stringify({
+        success: true,
         data: {
           letter_content: formattedLetter,
           demand_amount: demandAmount,
