@@ -2257,13 +2257,6 @@ async function uploadClaimFile(file, docType) {
   }
 }
 
-function showSpinner(id,delay,callback){
-  const el=document.getElementById(id);
-  if(!el)return;
-  el.innerHTML=`<div class="processing"><div class="spinner"></div><div class="processing-text">Analyzing your document with AI...</div></div>`;
-  setTimeout(()=>{callback(el);},delay);
-}
-
 function pasteAccordion(){
   return `<div>
     <div class="paste-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=(this.nextElementSibling.classList.contains('open')?'▾ Hide':'▾ Or paste specific text')">▾ Or paste specific text</div>
@@ -3870,10 +3863,6 @@ function addALEEntry(){
   logActivity('💸','ALE expense logged: '+cat,amount);
   updateNavMetrics();
   renderALELog();
-  const gt=document.getElementById('ale-grand-total');if(gt)gt.textContent=fmt(claimData.ALE.total);
-  const td=document.getElementById('ale-total-disp');if(td)td.textContent=fmt(claimData.ALE.total);
-  const dd=document.getElementById('ale-days-disp');if(dd)dd.textContent=claimData.ALE.entries.length;
-  const avg=document.getElementById('ale-avg-disp');if(avg&&claimData.ALE.entries.length>0)avg.textContent=fmt(Math.round(claimData.ALE.total/claimData.ALE.entries.length));
 }
 
 function renderALELog(){
@@ -4009,10 +3998,6 @@ async function generateDisputeLetter(){
   }catch(err){
     res.innerHTML='<div style="background:#fee2e2;border-left:4px solid var(--red);padding:16px;border-radius:6px;color:#991b1b"><strong>Error:</strong> '+err.message+'</div>';
   }finally{if(btn){btn.disabled=false;btn.textContent='Generate Dispute Letter →';}}
-}
-
-function renderP08S2(){
-  renderCorrespondenceWizard('✉ Formal Demand Letter');
 }
 
 // ============================
@@ -5075,31 +5060,6 @@ async function obSkip(){
   saveState();
 }
 
-async function obStart(){
-  const overlay = document.getElementById('onboarding-overlay');
-  overlay.style.display = 'none';
-  overlay.style.visibility = 'hidden';
-  localStorage.setItem('ccc_onboarded','true');
-  activePhase=0;activeSubstep=0;
-  updateNavMetrics();buildPhaseRow();buildSubstepBar();renderProgressMilestones();renderActivityStrip();renderContent();
-  if(!window.CCC_CLAIM_ID){
-    try{
-      const user=await window.CNAuth.currentUser();
-      if(user){
-        const supabase=await window.getSupabaseClient();
-        const{data:newClaim,error}=await supabase.from('claims').insert({
-          user_id:user.id,insured_name:claimData.initial.insuredName,claim_number:claimData.initial.claimNumber,
-          insurer:claimData.initial.insurer,adjuster_name:claimData.initial.adjusterName||'',
-          date_of_loss:claimData.initial.dateOfLoss,property_type:claimData.initial.propertyType,
-          type_of_loss:claimData.initial.description,status:'active',created_at:new Date().toISOString()
-        }).select('id').single();
-        if(!error&&newClaim)window.CCC_CLAIM_ID=newClaim.id;
-      }
-    }catch(e){console.warn('Supabase claim creation failed:',e);}
-  }
-  saveState();
-}
-
 function hardReset(){
   if(!confirm('Clear all saved progress and start fresh?'))return;
   localStorage.clear();
@@ -5306,12 +5266,6 @@ function pdfHighlightBox(doc, label, value, x, y, w, color){
   doc.setFontSize(12);
   doc.setFont('helvetica','bold');
   doc.text(value,x+6,y+14);
-}
-
-function newPage(doc){
-  doc.addPage();
-  pdfFooter(doc);
-  return 20;
 }
 
 // ============================
