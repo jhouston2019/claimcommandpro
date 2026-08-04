@@ -1,6 +1,6 @@
 {
   "name": "Claim Command Pro",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered claim documentation tools with Netlify Functions",
   "scripts": {
     "build": "node scripts/inject-ccc-v3-config.mjs && node build-css.js && node scripts/generate-site-index.mjs && echo \"Build complete\"",
