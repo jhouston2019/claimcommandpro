@@ -39,7 +39,7 @@ Coverage extraction rules (mandatory):
 2. Include Additional Coverages listed (Ordinance/Law, Water Backup, Sewer Backup, etc.) as separate rows or in endorsements with named limits.
 3. Extract Loss of Use / Coverage D / ALE as its own row with the exact label from the policy (e.g. "Coverage D — Loss of Use").
 4. Extract Other Structures / Coverage B as its own row.
-5. Add the policy deductible as a separate coverages row with label "Deductible" and the dollar amount as limit (not negative).
+5. Add each deductible as a separate coverages row. If the policy has split deductibles (e.g. different amounts for Windstorm/Hail, Tropical Cyclone, and All Other Perils), add one row per peril with label "Deductible — [Peril Name]" (e.g. "Deductible — Windstorm and Hail", "Deductible — All Other Perils"). If a single deductible applies to all perils, add one row with label "Deductible". Never merge multiple deductible tiers into a single row.
 6. Never merge multiple coverages into one row. Never use the generic label "Coverage" alone.
 
 Top-level limits (must match declarations — also set from coverages when present):
@@ -69,12 +69,13 @@ const SYSTEM_PROMPT = `You are an expert property insurance policy analyst. Extr
   "policy_number": "string|null",
   "settlement_type": "RCV|ACV",
   "deductible": "number|null",
+  "deductibles": [{"peril": "string", "amount": "number"}],
   "dwelling_coverage": "number|null",
   "contents_coverage": "number|null",
   "ale_coverage": "number|null",
   "coverages": [
     {
-      "label": "REQUIRED — exact coverage name from policy (e.g. Coverage A — Dwelling, Coverage B — Other Structures, Coverage C — Personal Property, Coverage D — Loss of Use / ALE, Personal Liability, Medical Payments, Deductible). Never use generic label Coverage alone.",
+      "label": "REQUIRED — exact coverage name from policy (e.g. Coverage A — Dwelling, Coverage B — Other Structures, Coverage C — Personal Property, Coverage D — Loss of Use / ALE, Personal Liability, Medical Payments, Deductible — All Other Perils, Deductible — Windstorm and Hail). Never use generic label Coverage alone.",
       "limit": "number|null",
       "applied_by_carrier": "yes|no|partial|unknown",
       "description": "one sentence describing what this coverage covers"
@@ -357,6 +358,22 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
   const findLimit = (keys) =>
     coverages.find((c) => keys.some((k) => c.label.toLowerCase().includes(k)))?.limit ?? null;
 
+  // Handle split deductibles from deductibles[] array
+  const parsedDeductibles = Array.isArray(parsed.deductibles) ? parsed.deductibles : [];
+  parsedDeductibles.forEach(d => {
+    const label = `Deductible — ${d.peril || 'All Perils'}`;
+    const amount = coerceLimit(d.amount);
+    if (amount != null && !coverages.some(c => c.label.toLowerCase() === label.toLowerCase())) {
+      coverages.push({
+        label,
+        limit: amount,
+        applied_by_carrier: 'unknown',
+        description: `Deductible applies to ${d.peril || 'all perils'}`
+      });
+    }
+  });
+
+  // Fallback: single deductible if no split deductibles extracted
   const deductibleAmount =
     coerceLimit(parsed.deductible) ?? findLimit(['deductible']);
   if (deductibleAmount != null && !coverages.some((c) => /deductible/i.test(c.label))) {
@@ -364,7 +381,7 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
       label: 'Deductible',
       limit: deductibleAmount,
       applied_by_carrier: 'unknown',
-      description: 'Policy deductible'
+      description: 'Policy deductible — applies to all perils'
     });
   }
 
@@ -423,6 +440,7 @@ function normalizeCanonical(parsed, ctx, extractionDegraded) {
     policy_number: parsed.policy_number != null ? String(parsed.policy_number) : null,
     settlement_type: ['RCV', 'ACV'].includes(settlementType) ? settlementType : 'RCV',
     deductible: deductibleAmount,
+    deductibles: parsedDeductibles,
     dwelling_coverage: dwelling,
     contents_coverage: contents,
     ale_coverage: ale,

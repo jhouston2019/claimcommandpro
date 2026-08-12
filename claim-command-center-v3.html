@@ -4561,7 +4561,13 @@ function renderClaimSummary(){
         <div class="cov-card"><div class="cov-type">Dwelling (A)</div><div class="cov-amount">${fmt(pol.analysis?.dwelling_coverage||pol.dwellingCoverage||0)}</div></div>
         <div class="cov-card"><div class="cov-type">Contents (C)</div><div class="cov-amount">${fmt(pol.analysis?.contents_coverage||pol.contentsCoverage||0)}</div></div>
         <div class="cov-card"><div class="cov-type">ALE (D)</div><div class="cov-amount">${fmt(pol.analysis?.ale_coverage||pol.aleCoverage||0)}</div></div>
-        <div class="cov-card"><div class="cov-type">Deductible</div><div class="cov-amount">${fmt(pol.analysis?.deductible||pol.deductible||0)}</div></div>
+        ${(()=>{
+  const deds = pol.analysis?.coverages?.filter(c => /deductible/i.test(c.label)) || [];
+  if(deds.length > 1){
+    return deds.map(d => `<div class="cov-card"><div class="cov-type">${d.label}</div><div class="cov-amount">${d.limit != null ? fmt(d.limit) : '—'}</div></div>`).join('');
+  }
+  return `<div class="cov-card"><div class="cov-type">Deductible</div><div class="cov-amount">${fmt(pol.analysis?.deductible||pol.deductible||0)}</div></div>`;
+})()}
         <div class="cov-card"><div class="cov-type">Settlement</div><div class="cov-amount" style="font-size:14px">${pol.analysis?.settlement_type||pol.settlementType||'—'}</div></div>
       </div>`:''}
       <hr class="divider">
