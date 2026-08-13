@@ -86,10 +86,10 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--na
 /* Phase cards row */
 #phase-row{
   background:var(--navy);display:flex;align-items:flex-end;justify-content:center;
-  padding:8px 16px 0;gap:4px;flex-shrink:0;overflow-x:auto;border-bottom:none;
+  padding:8px 16px 0;gap:3px;flex-shrink:0;overflow-x:auto;border-bottom:none;
 }
 .phase-card{
-  min-width:140px;max-width:170px;flex:1;padding:14px 14px 16px;border-radius:10px 10px 0 0;cursor:pointer;
+  min-width:110px;max-width:140px;flex:1;padding:14px 14px 16px;border-radius:10px 10px 0 0;cursor:pointer;
   border:1px solid var(--gray-200);border-bottom:none;background:#fff;
   transition:all .15s;position:relative;flex-shrink:0;
   height:100px;display:flex;flex-direction:column;justify-content:space-between;
@@ -687,11 +687,14 @@ let claimData = {
   policy:{uploaded:false,dwellingCoverage:0,deductible:0,settlementType:'RCV',contentsCoverage:0,aleCoverage:0,endorsements:[]},
   structure:{insurerEstimate:0,userEstimate:0,gap:0},
   structureItems:[],
+  damageChecklist:[],
+  damageAreas:[],
+  evidenceLog:[],
   contents:{items:[],totalValue:0,recovered:0},
   ALE:{entries:[],total:0,dailyRate:0,baseline:0},
   documents:[],messages:[],
   deadlines:[],
-  meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null,carrierPayments:0,aleReceived:0,contentsReceived:0,offerLog:[],inspectionLog:null}
+  meta:{valueIdentified:0,documentsGenerated:0,lastALEEntryDate:null,carrierPayments:0,aleReceived:0,contentsReceived:0,offerLog:[],inspectionLog:null,polStatus:'not_required',polDeadline:'',proofOfLoss:null,damageReport:null,damageReportDate:null}
 };
 let activePhase = 0;
 let activeSubstep = 0;
@@ -708,16 +711,17 @@ let selectedStrategy = null;
 // PHASES DATA
 // ============================
 const phases = [
-  {id:'p01',num:'01',title:'Understand & Report',substeps:['Claim Overview','Report the Loss','✉ Written Notice of Loss']},
+  {id:'p01',num:'01',title:'Report the Loss',substeps:['Claim Overview','Report the Loss','✉ Written Notice of Loss']},
   {id:'p02',num:'02',title:'Policy Analysis',substeps:['Upload Policy','Coverage Analysis','Coverage Map','✉ Coverage Clarification Request']},
-  {id:'p03',num:'03',title:'Document Damage',substeps:['Photo Documentation','Damage Inventory','Evidence Organizer','✉ Proof of Loss Letter']},
+  {id:'p03',num:'03',title:'Document Damage',substeps:['Damage Checklist','Area Documentation','Evidence Log','Documentation Review','Damage Report']},
   {id:'p04',num:'04',title:'Adjuster Inspection',substeps:['Pre-Inspection Prep','Inspection Log','✉ Post-Inspection Follow-Up']},
   {id:'p05',num:'05',title:'Contractor Estimate',substeps:['Upload Estimate','Scope Review','✉ Estimate Submission Letter']},
   {id:'p06',num:'06',title:'Estimate Analysis',substeps:['Upload Carrier Estimate','Line-Item Comparison','Negotiation Strategy','Gap Analysis','✉ Supplement Request Letter']},
   {id:'p07',num:'07',title:'Contents & ALE',substeps:['Contents Inventory','ALE Daily Log','✉ Contents & ALE Demand Letter']},
-  {id:'p08',num:'08',title:'Demand & Dispute',substeps:['Build Demand Package','Dispute Letter Generator','✉ Formal Demand Letter']},
-  {id:'p09',num:'09',title:'Negotiate & Escalate',substeps:['Negotiation Strategy','Escalation Options','✉ Counter-Offer/Appraisal Demand']},
-  {id:'p10',num:'10',title:'Close & Recover',substeps:['Final Offer Review','RCV Recovery','Claim Archive','✉ RCV Claim Submission Letter']},
+  {id:'p08',num:'08',title:'Proof of Loss',substeps:['Requirements Review','Claim Amount Review','Supporting Evidence Review','Proof of Loss Preparation','✉ Final Review & Submission']},
+  {id:'p09',num:'09',title:'Demand & Dispute',substeps:['Build Demand Package','Dispute Letter Generator','✉ Formal Demand Letter']},
+  {id:'p10',num:'10',title:'Negotiate & Escalate',substeps:['Negotiation Strategy','Escalation Options','✉ Counter-Offer/Appraisal Demand']},
+  {id:'p11',num:'11',title:'Settle & Recover',substeps:['Final Offer Review','RCV Recovery','Claim Archive','✉ RCV Claim Submission Letter']},
 ];
 
 const milestones = [
@@ -1679,21 +1683,21 @@ function renderActivityStrip(){
 
 // Map each milestone label to the completedSubsteps key that signals it's done
 const MILESTONE_KEYS = [
-  '0-1',  // Claim reported to insurer          → Phase 01 substep 1 (Report the Loss)
-  '1-0',  // Policy uploaded and analyzed        → Phase 02 substep 0 (Upload Policy)
-  '1-1',  // Coverage gaps identified             → Phase 02 substep 1 (Coverage Analysis)
-  '2-0',  // Damage fully documented             → Phase 03 substep 0 (Photo Documentation)
-  '3-1',  // Adjuster inspection completed       → Phase 04 substep 1 (Inspection Log)
-  '4-0',  // Independent contractor estimate     → Phase 05 substep 0 (Upload Estimate)
-  '5-0',  // Carrier estimate received           → Phase 06 substep 0 (Upload Carrier Estimate)
-  '5-1',  // Line-item comparison completed      → Phase 06 substep 1 (Line-Item Comparison)
-  '5-2',  // Negotiation strategy confirmed      → Phase 06 substep 2 (Negotiation Strategy)
-  '5-3',  // Gap analysis completed              → Phase 06 substep 3 (Gap Analysis)
-  '2-3',  // Proof of Loss filed                 → Phase 03 substep 3 (Proof of Loss Letter ✉)
-  '7-2',  // Demand letter sent                  → Phase 08 substep 2 (Formal Demand Letter ✉)
-  '6-0',  // Contents inventory completed        → Phase 07 substep 0 (Contents Inventory)
-  '6-1',  // ALE expenses documented             → Phase 07 substep 1 (ALE Daily Log)
-  '8-0',  // Settlement negotiated               → Phase 09 substep 0 (Negotiation Strategy)
+  '0-1',  // Claim reported to insurer
+  '1-0',  // Policy uploaded and analyzed
+  '1-1',  // Coverage gaps identified
+  '2-4',  // Damage fully documented  ← was 2-0, now fires at Documentation Review complete
+  '3-1',  // Adjuster inspection completed
+  '4-0',  // Independent contractor estimate obtained
+  '5-0',  // Carrier estimate received
+  '5-1',  // Line-item comparison completed
+  '5-2',  // Negotiation strategy confirmed
+  '5-3',  // Gap analysis completed
+  '7-4',  // Proof of Loss filed  ← new, phase 8 substep 4
+  '8-2',  // Demand letter sent  ← was 7-2, now phase 9 substep 2
+  '6-0',  // Contents inventory completed
+  '6-1',  // ALE expenses documented
+  '9-0',  // Settlement negotiated  ← was 8-0, now phase 10 substep 0
 ];
 
 function renderProgressMilestones(){
@@ -1793,14 +1797,16 @@ function markComplete(){
   const key=activePhase+'-'+activeSubstep;
   const gates={
     '1-0':()=>claimData.policy.uploaded,
-    '2-0':()=>(claimData.documents||[]).some(d=>d.type==='photo'),
+    '2-0':()=>(claimData.damageChecklist||[]).some(item=>item.status!==''),
+    '2-1':()=>(claimData.damageAreas||[]).length>0,
     '4-0':()=>claimData.structure.userEstimate>0,
     '5-0':()=>claimData.structure.insurerEstimate>0,
   };
   if(gates[key]&&!gates[key]()){
     const msgs={
       '1-0':'Upload and analyze your policy before completing this step.',
-      '2-0':'Upload at least one damage photo before completing this step.',
+      '2-0':'Complete the damage checklist before continuing.',
+      '2-1':'Document at least one area before continuing.',
       '4-0':'Analyze your contractor estimate before completing this step.',
       '5-0':'Analyze the carrier estimate before completing this step.',
     };
@@ -1865,14 +1871,15 @@ function renderContent(){
   const renderers={
     '0-0':renderP01S0,'0-1':renderP01S1,
     '1-0':renderP02S0,'1-1':renderP02S1,'1-2':renderP02S2,
-    '2-0':renderP03S0,'2-1':renderP03S1,'2-2':renderP03S2,
+    '2-0':renderP03S0,'2-1':renderP03S1,'2-2':renderP03S2,'2-3':renderP03S3,'2-4':renderP03S4,
     '3-0':renderP04S0,'3-1':renderP04S1,
     '4-0':renderP05S0,'4-1':renderP05S1,
     '5-0':renderP06S0,'5-1':renderP06S1,'5-2':renderP06S2Strategy,'5-3':renderP06S3,
     '6-0':renderP07S0,'6-1':renderP07S1,
-    '7-0':renderP08S0,'7-1':renderP08S1,
+    '7-0':renderP08S0,'7-1':renderP08S1,'7-2':renderP08S2,'7-3':renderP08S3,'7-4':renderP08S4,
     '8-0':renderP09S0,'8-1':renderP09S1,
-    '9-0':renderP10S0,'9-1':renderP10S1,'9-2':renderP10S2,
+    '9-0':renderP10S0,'9-1':renderP10S1,
+    '10-0':renderP11S0,'10-1':renderP11S1,'10-2':renderP11S2,
   };
   const key=activePhase+'-'+activeSubstep;
   if(renderers[key])renderers[key]();
@@ -3014,7 +3021,7 @@ function renderP02S2(){
 // ============================
 // PHASE 03
 // ============================
-function renderP03S0(){
+function renderP03S0_DEPRECATED_PhotoUpload(){
   const photoCount=(claimData.documents||[]).filter(d=>d.type==='photo').length;
   const pa=claimData.meta&&claimData.meta.photoAnalysis;
   const analysisHtml=pa?`<div class="analysis-result" id="photo-analysis-result"><div class="ar-header"><div class="ar-header-text">✅ AI Photo Analysis — ${pa.severity||'assessed'}</div></div><div class="ar-body"><p>${pa.summary||''}</p>${(pa.damage_types&&pa.damage_types.length)?'<p style="margin-top:8px"><strong>Damage types:</strong> '+pa.damage_types.join(', ')+'</p>':''}${pa.notes?'<p style="margin-top:8px;font-size:12px;color:var(--slate)">'+pa.notes+'</p>':''}</div></div>`:'<div id="photo-analysis-result"></div>';
@@ -3072,7 +3079,7 @@ async function analyzePhotosWithAI(){
     const types=(result.damage_types||[]).join(', ')||'general damage';
     logActivity('📸','AI photo analysis complete — '+types);
     saveState();
-    renderP03S0();
+    renderP03S0_DEPRECATED_PhotoUpload();
   }catch(e){
     console.warn('analyzePhotosWithAI failed:',e);
     if(res)res.innerHTML='<div class="warn-amber" style="margin-top:12px"><strong>Analysis failed</strong><div class="warn-amber-text">'+e.message+'</div></div>';
@@ -3080,7 +3087,7 @@ async function analyzePhotosWithAI(){
   }
 }
 
-function renderP03S1(){
+function renderP03S1_DEPRECATED_DamageInventory(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(2,'Damage Inventory','Create a comprehensive room-by-room inventory of all damaged property.')}
     ${thinRow('TASKS',[
@@ -3152,7 +3159,7 @@ function renderInventoryList(){
   const el2=document.getElementById('inv-total');if(el2)el2.textContent=fmt(total);
 }
 
-function renderP03S2(){
+function renderP03S2_DEPRECATED_EvidenceOrganizer(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(2,'Evidence Organizer','Centralized repository for all claim documentation organized by category.')}
     ${thinRow('TASKS',[
@@ -3219,6 +3226,599 @@ function getCategoryForUpload(docType){
   if(docType!=='evidence')return null;
   const sel=document.getElementById('evidence-cat-select');
   return sel?sel.value:null;
+}
+
+// ============================
+// PHASE 03 — DOCUMENT DAMAGE (REDESIGNED)
+// ============================
+
+function renderP03S0() {
+  const peril = claimData.initial.claimType || 'property-claim';
+  const propType = claimData.initial.propertyType || 'Single Family Home';
+
+  const checklistItems = buildDamageChecklist(peril, propType);
+  if (!claimData.damageChecklist) claimData.damageChecklist = [];
+
+  const statusOptions = ['Damage Found','No Visible Damage','Not Inspected','Unsure'];
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(2,'Damage Checklist','Go through every area of your property. Mark what you found. Do not skip areas — unevaluated areas become carrier arguments against you later.')}
+    ${thinRow('TASKS',[
+      taskChip('Walk the entire property systematically','p03s0t1'),
+      taskChip('Mark every area — even undamaged ones','p03s0t2'),
+      taskChip('Note areas needing closer inspection','p03s0t3'),
+    ].join(''))}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Property Damage Checklist</div>
+        <div class="panel-subtitle">${propType} · ${formatPerilLabel(peril)} loss. Mark each area as you inspect it.</div>
+      </div>
+      <div id="checklist-container">
+        ${checklistItems.map((item, i) => {
+          const saved = (claimData.damageChecklist || []).find(c => c.area === item.area && c.component === item.component);
+          const status = saved ? saved.status : '';
+          return `<div class="checklist-row" id="clrow-${i}">
+            <div class="checklist-label">
+              <div class="checklist-area">${item.area}</div>
+              <div class="checklist-component">${item.component}</div>
+            </div>
+            <div class="checklist-status-group">
+              ${statusOptions.map(opt => `
+                <label class="status-radio ${status === opt ? 'selected-'+opt.toLowerCase().replace(/ /g,'-') : ''}">
+                  <input type="radio" name="clrow-${i}" value="${opt}" ${status === opt ? 'checked' : ''}
+                    onchange="saveChecklistItem(${i},'${item.area}','${item.component}',this.value)">
+                  ${opt}
+                </label>`).join('')}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div id="checklist-summary" style="margin-top:16px;font-size:12px;color:var(--gray-500)">
+        ${renderChecklistSummary()}
+      </div>
+      ${actionRow(null,'Area Documentation →','markComplete()')}
+    </div>`;
+}
+
+function buildDamageChecklist(peril, propType) {
+  const base = [
+    {area:'Roof',component:'Shingles / Covering'},
+    {area:'Roof',component:'Gutters & Downspouts'},
+    {area:'Roof',component:'Fascia & Soffit'},
+    {area:'Roof',component:'Flashing & Penetrations'},
+    {area:'Exterior',component:'Siding / Cladding'},
+    {area:'Exterior',component:'Windows & Frames'},
+    {area:'Exterior',component:'Doors & Frames'},
+    {area:'Exterior',component:'Garage Door'},
+    {area:'Exterior',component:'Fencing & Gates'},
+    {area:'Exterior',component:'Driveway & Flatwork'},
+    {area:'Interior',component:'Ceilings'},
+    {area:'Interior',component:'Walls'},
+    {area:'Interior',component:'Flooring'},
+    {area:'Interior',component:'Baseboards & Trim'},
+    {area:'Interior',component:'Doors & Hardware'},
+    {area:'Kitchen',component:'Cabinets & Countertops'},
+    {area:'Kitchen',component:'Appliances'},
+    {area:'Kitchen',component:'Plumbing Fixtures'},
+    {area:'Bathrooms',component:'Fixtures & Vanity'},
+    {area:'Bathrooms',component:'Tile & Surround'},
+    {area:'Electrical',component:'Panel & Wiring'},
+    {area:'HVAC',component:'System & Ductwork'},
+    {area:'Plumbing',component:'Supply & Drain Lines'},
+    {area:'Attic',component:'Insulation & Decking'},
+    {area:'Basement / Crawl',component:'Walls & Floor'},
+    {area:'Personal Property',component:'Furniture & Furnishings'},
+    {area:'Personal Property',component:'Electronics & Appliances'},
+    {area:'Personal Property',component:'Clothing & Textiles'},
+  ];
+
+  const windHail = [
+    {area:'Roof',component:'Ridge Cap & Hip Shingles'},
+    {area:'Roof',component:'Ventilation Caps & Covers'},
+    {area:'Exterior',component:'AC Condenser Fins'},
+    {area:'Exterior',component:'Screens & Screen Frames'},
+  ];
+  const water = [
+    {area:'Interior',component:'Water Staining & Stains'},
+    {area:'Interior',component:'Mold & Microbial Growth'},
+    {area:'Interior',component:'Subfloor Condition'},
+    {area:'Attic',component:'Wet or Compressed Insulation'},
+    {area:'Basement / Crawl',component:'Standing Water & Moisture'},
+  ];
+  const fire = [
+    {area:'Structural',component:'Load-Bearing Members'},
+    {area:'Interior',component:'Smoke & Soot Penetration'},
+    {area:'HVAC',component:'Smoke Contamination in Ducts'},
+    {area:'Exterior',component:'Char & Heat Damage'},
+  ];
+
+  const p = (peril || '').toLowerCase();
+  if (p.includes('wind') || p.includes('hail')) return [...base, ...windHail];
+  if (p.includes('water') || p.includes('plumbing') || p.includes('flood')) return [...base, ...water];
+  if (p.includes('fire')) return [...base, ...fire];
+  return base;
+}
+
+function saveChecklistItem(index, area, component, status) {
+  if (!claimData.damageChecklist) claimData.damageChecklist = [];
+  const existing = claimData.damageChecklist.findIndex(c => c.area === area && c.component === component);
+  const entry = {area, component, status, updatedAt: new Date().toISOString()};
+  if (existing >= 0) claimData.damageChecklist[existing] = entry;
+  else claimData.damageChecklist.push(entry);
+  saveState();
+  const summary = document.getElementById('checklist-summary');
+  if (summary) summary.innerHTML = renderChecklistSummary();
+}
+
+function renderChecklistSummary() {
+  const cl = claimData.damageChecklist || [];
+  const damaged = cl.filter(c => c.status === 'Damage Found').length;
+  const inspected = cl.filter(c => c.status !== '').length;
+  const total = buildDamageChecklist(claimData.initial.claimType, claimData.initial.propertyType).length;
+  if (inspected === 0) return 'No areas marked yet. Walk the property and mark each area.';
+  return `${inspected} of ${total} areas evaluated · <strong style="color:var(--red)">${damaged} with damage found</strong>`;
+}
+
+function formatPerilLabel(peril) {
+  const map = {'fire':'Fire','water':'Water / Plumbing','wind':'Wind / Hail','theft':'Theft','other':'Other'};
+  return map[peril] || peril;
+}
+
+function renderP03S1() {
+  if (!claimData.damageAreas) claimData.damageAreas = [];
+
+  const damagedAreas = (claimData.damageChecklist || [])
+    .filter(c => c.status === 'Damage Found')
+    .map(c => c.area + ' — ' + c.component);
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(2,'Area Documentation','Document each damaged area in detail. Use dropdowns where available. The more specific you are, the harder your claim is to underpay.')}
+    ${thinRow('TASKS',[
+      taskChip('Document each area with damage found','p03s1t1'),
+      taskChip('Include measurements where possible','p03s1t2'),
+      taskChip('Note cause and relationship to the loss event','p03s1t3'),
+      taskChip('Flag areas with continuing deterioration','p03s1t4'),
+    ].join(''))}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Add Damaged Area</div>
+        <div class="panel-subtitle">
+          ${damagedAreas.length > 0
+            ? `${damagedAreas.length} areas flagged in your checklist: ${damagedAreas.slice(0,4).join(', ')}${damagedAreas.length > 4 ? ' and more' : ''}.`
+            : 'Add each area where damage was found.'}
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Area / Location</label>
+          <input class="form-input" id="da-area" placeholder="e.g. Master Bedroom, Roof — North Slope, Kitchen">
+        </div>
+        <div class="form-group"><label class="form-label">Damage Type</label>
+          <select class="form-select" id="da-type">
+            <option>Water Intrusion / Saturation</option>
+            <option>Impact / Puncture</option>
+            <option>Wind Uplift</option>
+            <option>Fire / Char</option>
+            <option>Smoke / Soot</option>
+            <option>Structural Compromise</option>
+            <option>Mold / Microbial</option>
+            <option>Mechanical Failure</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group full"><label class="form-label">Material / Component</label>
+          <input class="form-input" id="da-material" placeholder="e.g. Engineered hardwood flooring, 5/8 drywall ceiling, asphalt shingle">
+        </div>
+        <div class="form-group full"><label class="form-label">Cause / Relationship to Loss</label>
+          <input class="form-input" id="da-cause" placeholder="e.g. Water entry through damaged roof during storm event on date of loss">
+        </div>
+        <div class="form-group"><label class="form-label">Extent of Damage</label>
+          <select class="form-select" id="da-extent">
+            <option>Total Loss — Full Replacement Required</option>
+            <option>Severe — Majority Affected</option>
+            <option>Moderate — Significant Portion Affected</option>
+            <option>Minor — Localized Damage</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Pre-Loss Condition</label>
+          <select class="form-select" id="da-condition">
+            <option>Excellent — New or Like-New</option>
+            <option>Good — Minor Wear Only</option>
+            <option>Fair — Visible Wear, Functional</option>
+            <option>Poor — Significant Wear</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Measurements / Quantity</label>
+          <input class="form-input" id="da-measurements" placeholder="e.g. 320 SF, 14 LF, 3 windows">
+        </div>
+        <div class="form-group"><label class="form-label">Continuing Deterioration?</label>
+          <select class="form-select" id="da-deterioration">
+            <option value="no">No — Damage is Stable</option>
+            <option value="yes">Yes — Active / Progressive Damage</option>
+            <option value="unknown">Unknown — Requires Further Evaluation</option>
+          </select>
+        </div>
+        <div class="form-group full"><label class="form-label">Additional Notes</label>
+          <textarea class="form-textarea" id="da-notes" placeholder="Any additional observations, access issues, hidden damage suspected, etc." style="height:60px"></textarea>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addDamageArea()">+ Add Area Record</button>
+      <div id="da-ai-followup" style="margin-top:12px"></div>
+      <div id="da-list" class="log-list" style="margin-top:16px">${renderDamageAreaList()}</div>
+      ${actionRow("setSubstep(0)",'Evidence Log →','markComplete()')}
+    </div>`;
+}
+
+function addDamageArea() {
+  const area = document.getElementById('da-area').value.trim();
+  if (!area) { if (window.CNToast) CNToast.error('Enter an area name.'); return; }
+  const entry = {
+    id: 'da-' + Date.now(),
+    area,
+    type: document.getElementById('da-type').value,
+    material: document.getElementById('da-material').value,
+    cause: document.getElementById('da-cause').value,
+    extent: document.getElementById('da-extent').value,
+    condition: document.getElementById('da-condition').value,
+    measurements: document.getElementById('da-measurements').value,
+    deterioration: document.getElementById('da-deterioration').value,
+    notes: document.getElementById('da-notes').value,
+    addedAt: new Date().toISOString(),
+  };
+  if (!claimData.damageAreas) claimData.damageAreas = [];
+  claimData.damageAreas.push(entry);
+  saveState();
+  logActivity('📋', 'Damage area documented: ' + area);
+  document.getElementById('da-area').value = '';
+  document.getElementById('da-material').value = '';
+  document.getElementById('da-cause').value = '';
+  document.getElementById('da-measurements').value = '';
+  document.getElementById('da-notes').value = '';
+  const list = document.getElementById('da-list');
+  if (list) list.innerHTML = renderDamageAreaList();
+  runGuidedDamageInterview(entry);
+}
+
+function renderDamageAreaList() {
+  const areas = claimData.damageAreas || [];
+  if (!areas.length) return '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No areas documented yet</div><div class="empty-sub">Add your first damaged area above</div></div>';
+  return areas.map((a, i) => `
+    <div class="log-entry">
+      <div class="log-entry-icon">📋</div>
+      <div class="log-entry-content">
+        <div class="log-entry-title">${a.area} — ${a.type}</div>
+        <div class="log-entry-sub">${a.material || ''} ${a.measurements ? '· ' + a.measurements : ''}</div>
+        <div class="log-entry-meta">${a.extent} · ${a.condition} · Added ${new Date(a.addedAt).toLocaleDateString()}</div>
+        ${a.cause ? '<div class="log-entry-meta" style="margin-top:2px">Cause: ' + escapeHtml(a.cause) + '</div>' : ''}
+        ${a.deterioration === 'yes' ? '<div style="font-size:11px;color:var(--red);font-weight:600;margin-top:3px">⚠ Active deterioration noted</div>' : ''}
+      </div>
+    </div>`).join('');
+}
+
+async function runGuidedDamageInterview(entry) {
+  const container = document.getElementById('da-ai-followup');
+  if (!container) return;
+  container.innerHTML = '<div class="warn-teal"><strong>⏳ Reviewing your entry for gaps...</strong></div>';
+  try {
+    const prompt = `You are a licensed public adjuster reviewing a property damage entry. The claimant documented: Area: ${entry.area}, Damage Type: ${entry.type}, Material: ${entry.material}, Cause: ${entry.cause}, Extent: ${entry.extent}.
+
+Based on this damage type and area, identify up to 4 specific adjacent or related damage items the claimant may have missed documenting. Be specific and direct. Format as a JSON array of strings, each a short question or prompt. Example: ["Is the drywall above the ceiling affected?","Was insulation in contact with the water?"]. Return only the JSON array, no other text.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '[]';
+    let questions = [];
+    try { questions = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) { questions = []; }
+    if (!questions.length) { container.innerHTML = ''; return; }
+    container.innerHTML = `
+      <div class="warn-amber">
+        <strong>🔍 Have you also documented these?</strong>
+        <div class="warn-amber-text" style="margin-top:8px">
+          ${questions.map(q => `<div style="padding:3px 0">· ${escapeHtml(q)}</div>`).join('')}
+        </div>
+        <button class="btn btn-ghost" style="margin-top:8px;font-size:11px" onclick="this.parentElement.parentElement.innerHTML=''">Dismiss</button>
+      </div>`;
+  } catch(e) {
+    container.innerHTML = '';
+  }
+}
+
+function renderP03S2() {
+  if (!claimData.evidenceLog) claimData.evidenceLog = [];
+
+  const nextRef = 'D-' + String((claimData.evidenceLog.length + 1)).padStart(3,'0');
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(2,'Evidence Log','Create an indexed record of all your documentation. CCP does not store your files — you record where they are. Reference numbers from this log will appear in your demand letters and dispute documents.')}
+    ${thinRow('TASKS',[
+      taskChip('Log all photo sets with file name ranges','p03s2t1'),
+      taskChip('Log any video walkthroughs','p03s2t2'),
+      taskChip('Log contractor reports and moisture readings','p03s2t3'),
+      taskChip('Log receipts and emergency mitigation invoices','p03s2t4'),
+    ].join(''))}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Add Evidence Entry</div>
+        <div class="panel-subtitle">Next reference number: <strong>${nextRef}</strong></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Evidence Type</label>
+          <select class="form-select" id="ev-type">
+            <option>Photos</option>
+            <option>Video</option>
+            <option>Contractor Report</option>
+            <option>Moisture Reading</option>
+            <option>Receipt / Invoice</option>
+            <option>Weather Documentation</option>
+            <option>Inspection Report</option>
+            <option>Correspondence</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Date Captured / Created</label>
+          <input class="form-input" id="ev-date" type="date">
+        </div>
+        <div class="form-group full"><label class="form-label">Description</label>
+          <input class="form-input" id="ev-desc" placeholder="e.g. Roof damage photos — north slope and ridge">
+        </div>
+        <div class="form-group full"><label class="form-label">File Names / Range</label>
+          <input class="form-input" id="ev-files" placeholder="e.g. IMG_1842–IMG_1867 (26 photos)">
+        </div>
+        <div class="form-group full"><label class="form-label">Storage Location (optional)</label>
+          <input class="form-input" id="ev-location" placeholder="e.g. Google Drive / Claims Folder, iPhone Camera Roll, USB Drive">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addEvidenceEntry()">+ Add to Evidence Register</button>
+      <div id="ev-list" class="log-list" style="margin-top:16px">${renderEvidenceList()}</div>
+      ${actionRow("setSubstep(1)",'Documentation Review →','markComplete()')}
+    </div>`;
+}
+
+function addEvidenceEntry() {
+  if (!claimData.evidenceLog) claimData.evidenceLog = [];
+  const ref = 'D-' + String((claimData.evidenceLog.length + 1)).padStart(3,'0');
+  const desc = document.getElementById('ev-desc').value.trim();
+  if (!desc) { if (window.CNToast) CNToast.error('Enter a description.'); return; }
+  const entry = {
+    ref,
+    type: document.getElementById('ev-type').value,
+    date: document.getElementById('ev-date').value,
+    description: desc,
+    files: document.getElementById('ev-files').value,
+    location: document.getElementById('ev-location').value,
+    addedAt: new Date().toISOString(),
+  };
+  claimData.evidenceLog.push(entry);
+  saveState();
+  logActivity('📁', ref + ' — ' + desc.slice(0,40));
+  document.getElementById('ev-desc').value = '';
+  document.getElementById('ev-files').value = '';
+  document.getElementById('ev-location').value = '';
+  document.getElementById('ev-date').value = '';
+  const list = document.getElementById('ev-list');
+  if (list) list.innerHTML = renderEvidenceList();
+  const panel = document.querySelector('.panel-subtitle strong');
+  if (panel) panel.textContent = 'D-' + String((claimData.evidenceLog.length + 1)).padStart(3,'0');
+}
+
+function renderEvidenceList() {
+  const log = claimData.evidenceLog || [];
+  if (!log.length) return '<div class="empty-state"><div class="empty-icon">📁</div><div class="empty-title">No evidence logged yet</div><div class="empty-sub">Add your first evidence entry above</div></div>';
+  return log.map(e => `
+    <div class="log-entry">
+      <div class="log-entry-icon">📁</div>
+      <div class="log-entry-content">
+        <div class="log-entry-title"><strong>${e.ref}</strong> — ${e.type}</div>
+        <div class="log-entry-sub">${e.description}</div>
+        <div class="log-entry-meta">${e.files ? e.files + ' · ' : ''}${e.location || 'Location not recorded'} · ${e.date || 'Date not recorded'}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderP03S3() {
+  const checklist = claimData.damageChecklist || [];
+  const areas = claimData.damageAreas || [];
+  const evidence = claimData.evidenceLog || [];
+  const damagedItems = checklist.filter(c => c.status === 'Damage Found');
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(2,'Documentation Review','CCP reviews everything you\'ve documented and identifies what may be missing before the adjuster arrives. Address gaps now — they are much harder to add after inspection.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Documentation Status</div>
+        <div class="panel-subtitle">${damagedItems.length} areas with damage · ${areas.length} area records · ${evidence.length} evidence entries</div>
+      </div>
+      <div id="doc-review-result">
+        <div class="processing"><div class="spinner"></div><div class="processing-text">Reviewing your documentation for gaps...</div></div>
+      </div>
+      ${actionRow("setSubstep(2)",'Generate Damage Report →','markComplete()')}
+    </div>`;
+
+  runDocumentationReview(damagedItems, areas, evidence);
+}
+
+async function runDocumentationReview(damagedItems, areas, evidence) {
+  const container = document.getElementById('doc-review-result');
+  if (!container) return;
+  try {
+    const peril = claimData.initial.claimType || 'property-claim';
+    const prompt = `You are a senior public adjuster conducting a pre-inspection documentation review for a property insurance claim.
+
+Claim type: ${formatPerilLabel(peril)}
+Property: ${claimData.initial.propertyType || 'Single Family Home'}
+
+Damage checklist items marked "Damage Found":
+${damagedItems.map(c => '- ' + c.area + ': ' + c.component).join('\n') || 'None recorded'}
+
+Area documentation records:
+${areas.map(a => '- ' + a.area + ': ' + a.type + ', ' + a.extent).join('\n') || 'None recorded'}
+
+Evidence log entries:
+${evidence.map(e => '- ' + e.ref + ': ' + e.type + ' — ' + e.description).join('\n') || 'None recorded'}
+
+Identify specific documentation gaps. For each gap, state: (1) what is missing, (2) why it matters to the claim. Be specific — reference actual areas and damage types from the data above. Also flag any common adjacent damage for this peril type that was not documented. Return as JSON: {"gaps": [{"issue": "...", "why": "...", "severity": "high|medium|low"}], "strengths": ["..."], "ready": true|false}. Return only JSON.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '{}';
+    let result = {};
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) { result = {gaps:[], strengths:[], ready:false}; }
+
+    const gaps = result.gaps || [];
+    const strengths = result.strengths || [];
+    const ready = result.ready;
+
+    const severityColor = s => s === 'high' ? 'var(--red)' : s === 'medium' ? 'var(--amber)' : 'var(--teal)';
+    const severityBg = s => s === 'high' ? '#fef2f2' : s === 'medium' ? '#fffbeb' : 'rgba(20,184,166,.06)';
+
+    container.innerHTML = `
+      ${ready
+        ? '<div class="warn-teal" style="margin-bottom:12px"><strong>✅ Documentation is substantially complete</strong><div class="warn-teal-text">Your documentation package is ready to support your claim. Review any items below before the adjuster arrives.</div></div>'
+        : '<div class="warn-amber" style="margin-bottom:12px"><strong>⚠ Documentation gaps identified</strong><div class="warn-amber-text">Address the items below before the adjuster inspection. Undocumented damage is easier for carriers to deny.</div></div>'
+      }
+      ${gaps.length ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:8px">Gaps to Address</div>
+        ${gaps.map(g => `
+          <div style="background:${severityBg(g.severity)};border-left:3px solid ${severityColor(g.severity)};padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:8px">
+            <div style="font-size:12px;font-weight:700;color:var(--gray-800)">${escapeHtml(g.issue)}</div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:3px">${escapeHtml(g.why)}</div>
+          </div>`).join('')}` : ''}
+      ${strengths.length ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin:12px 0 8px">What\'s Well Documented</div>
+        ${strengths.map(s => `<div style="font-size:12px;color:var(--gray-600);padding:4px 0">✓ ${escapeHtml(s)}</div>`).join('')}` : ''}
+      <div style="margin-top:16px">
+        <button class="btn btn-secondary" onclick="renderP03S3()">Re-run Review</button>
+      </div>`;
+
+    logActivity('🔍', 'Documentation review complete — ' + gaps.length + ' gaps identified');
+    saveState();
+  } catch(e) {
+    container.innerHTML = '<div class="warn-amber"><strong>Review unavailable</strong><div class="warn-amber-text">Could not complete automated review. Manually verify documentation before proceeding.</div></div>';
+  }
+}
+
+function renderP03S4() {
+  const areas = claimData.damageAreas || [];
+  const evidence = claimData.evidenceLog || [];
+  const checklist = claimData.damageChecklist || [];
+  const totalAreas = checklist.filter(c => c.status === 'Damage Found').length;
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(2,'Damage Report','Generate your structured damage report. This document establishes your documented position before the adjuster inspection.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Damage Report Summary</div>
+        <div class="panel-subtitle">${totalAreas} areas with damage · ${areas.length} detailed records · ${evidence.length} evidence entries</div>
+      </div>
+      ${areas.length === 0
+        ? '<div class="warn-amber"><strong>No area records found</strong><div class="warn-amber-text">Return to Area Documentation and document your damaged areas before generating the report.</div></div>'
+        : `<div class="warn-teal"><strong>Ready to generate</strong><div class="warn-teal-text">Your damage documentation will be compiled into a structured report. This report should be retained as part of your claim file and provided to your adjuster, contractor, or attorney as needed.</div></div>`
+      }
+      <div id="damage-report-output" style="margin-top:16px"></div>
+      <div class="flex gap-8" style="margin-top:16px">
+        <button class="btn btn-primary" onclick="generateDamageReport()" ${areas.length === 0 ? 'disabled' : ''}>Generate Damage Report</button>
+        <button class="btn btn-secondary" id="download-damage-report-btn" style="display:none" onclick="downloadDamageReportPDF()">⬇️ Download PDF</button>
+      </div>
+      ${actionRow("setSubstep(3)",'Proceed to Adjuster Inspection →','markComplete()')}
+    </div>`;
+}
+
+async function generateDamageReport() {
+  const container = document.getElementById('damage-report-output');
+  const downloadBtn = document.getElementById('download-damage-report-btn');
+  if (!container) return;
+  container.innerHTML = '<div class="processing"><div class="spinner"></div><div class="processing-text">Generating damage report...</div></div>';
+
+  const areas = claimData.damageAreas || [];
+  const evidence = claimData.evidenceLog || [];
+  const checklist = claimData.damageChecklist || [];
+  const d = claimData.initial;
+
+  try {
+    const prompt = `You are a senior public adjuster preparing a professional property damage report for an insurance claim.
+
+Claimant: ${d.insuredName || '[Insured]'}
+Carrier: ${d.insurer || '[Carrier]'}
+Claim Number: ${d.claimNumber || '[Pending]'}
+Date of Loss: ${d.dateOfLoss || '[Date]'}
+Property Type: ${d.propertyType || 'Single Family Home'}
+Cause of Loss: ${formatPerilLabel(d.claimType)}
+Description: ${d.description || ''}
+
+Checklist Summary:
+- Damage Found: ${checklist.filter(c=>c.status==='Damage Found').map(c=>c.area+': '+c.component).join(', ')}
+- No Visible Damage: ${checklist.filter(c=>c.status==='No Visible Damage').map(c=>c.area+': '+c.component).join(', ')}
+- Not Inspected: ${checklist.filter(c=>c.status==='Not Inspected').map(c=>c.area+': '+c.component).join(', ')}
+
+Documented Areas:
+${areas.map(a => `${a.area}: ${a.type} — ${a.material}. Cause: ${a.cause}. Extent: ${a.extent}. Condition: ${a.condition}. Measurements: ${a.measurements || 'not recorded'}. Deterioration: ${a.deterioration}. Notes: ${a.notes || 'none'}.`).join('\n')}
+
+Evidence Register:
+${evidence.map(e => `${e.ref}: ${e.type} — ${e.description} (${e.files || 'no file reference'})`).join('\n')}
+
+Write a professional structured property damage report. Include: (1) Loss Summary, (2) Affected Areas with professional damage descriptions converted from the claimant's input, (3) Evidence Register table, (4) Areas Requiring Further Evaluation, (5) Documented Pre-Loss Conditions. Write in professional claims language. Format clearly with section headers. This document will be presented to the insurance carrier.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const report = data.content?.find(b => b.type === 'text')?.text || '';
+
+    claimData.meta = claimData.meta || {};
+    claimData.meta.damageReport = report;
+    claimData.meta.damageReportDate = new Date().toISOString();
+    saveState();
+    logActivity('📄','Damage Report generated');
+
+    container.innerHTML = `
+      <div class="analysis-result">
+        <div class="ar-header"><div class="ar-header-text">📄 Damage Report — ${fmtDate()}</div></div>
+        <div class="ar-body" style="white-space:pre-wrap;font-size:13px;line-height:1.6">${escapeHtml(report)}</div>
+      </div>`;
+    if (downloadBtn) downloadBtn.style.display = 'inline-flex';
+  } catch(e) {
+    container.innerHTML = '<div class="warn-amber"><strong>Generation failed</strong><div class="warn-amber-text">' + e.message + '</div></div>';
+  }
+}
+
+function downloadDamageReportPDF() {
+  const report = claimData.meta?.damageReport;
+  if (!report) return;
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  pdfFooter(doc);
+  let y = pdfHeader(doc,'Property Damage Report','Structured documentation of all identified damage');
+  const lines = doc.splitTextToSize(report, 180);
+  doc.setFontSize(9);
+  doc.setTextColor(51,65,85);
+  lines.forEach(line => {
+    if (y > 270) { doc.addPage(); pdfFooter(doc); y = 20; }
+    doc.text(line, 14, y);
+    y += 5;
+  });
+  doc.save(`Damage_Report_${claimData.initial.claimNumber || 'claim'}.pdf`);
+  logActivity('⬇️','Downloaded Damage Report PDF');
 }
 
 // ============================
@@ -3883,9 +4483,251 @@ function renderALELog(){
 }
 
 // ============================
+// PHASE 08 — PROOF OF LOSS
+// ============================
+
+function renderP08S0() {
+  const polStatus = claimData.meta?.polStatus || 'not_required';
+  const polDeadline = claimData.meta?.polDeadline || '';
+  const policyNotes = claimData.policy?.analysis?.proof_of_loss_notes || '';
+
+  const statusLabels = {
+    'not_required': {label:'Not Yet Required', color:'var(--gray-400)', bg:'var(--gray-100)'},
+    'required': {label:'Required', color:'var(--red)', bg:'#fef2f2'},
+    'requested': {label:'Requested by Carrier', color:'var(--amber)', bg:'#fffbeb'},
+    'completed': {label:'Completed', color:'var(--emerald)', bg:'#f0fdf4'},
+  };
+  const st = statusLabels[polStatus] || statusLabels['not_required'];
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(7,'Requirements Review','Review your policy\'s Proof of Loss provisions and establish the current status. This step exists in every claim — its state changes as the claim progresses.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Proof of Loss Status</div>
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:${st.bg};border:1px solid ${st.color};border-radius:8px;padding:10px 16px;margin-bottom:16px">
+        <span style="font-size:13px;font-weight:700;color:${st.color}">${st.label}</span>
+        ${polDeadline ? `<span style="font-size:12px;color:var(--gray-500)">· Due ${polDeadline}</span>` : ''}
+      </div>
+      <div class="form-grid" style="margin-bottom:16px">
+        <div class="form-group"><label class="form-label">Current Status</label>
+          <select class="form-select" id="pol-status-select" onchange="updatePOLStatus(this.value)">
+            <option value="not_required" ${polStatus==='not_required'?'selected':''}>Not Yet Required</option>
+            <option value="required" ${polStatus==='required'?'selected':''}>Required</option>
+            <option value="requested" ${polStatus==='requested'?'selected':''}>Requested by Carrier</option>
+            <option value="completed" ${polStatus==='completed'?'selected':''}>Completed</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Deadline (if known)</label>
+          <input class="form-input" id="pol-deadline-input" type="date" value="${polDeadline}" onchange="updatePOLDeadline(this.value)">
+        </div>
+      </div>
+      ${policyNotes
+        ? `<div class="warn-teal"><strong>Policy Provision Identified</strong><div class="warn-teal-text">${escapeHtml(policyNotes)}</div></div>`
+        : `<div class="warn-amber"><strong>Policy Analysis Required</strong><div class="warn-amber-text">Complete Policy Analysis (Step 2) to automatically pull your Proof of Loss provision, deadline, and requirements. Until then, review your policy's Conditions section manually.</div></div>`
+      }
+      <div style="margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:8px">What to Verify in Your Policy</div>
+        ${[
+          'Time limit to file after loss or carrier request',
+          'Required form — carrier form vs. statutory form',
+          'Sworn statement requirement',
+          'Supporting documentation required (estimates, inventories, receipts)',
+          'Consequences of non-compliance',
+          'Whether filing starts or tolls other deadlines',
+        ].map(item => `<div style="font-size:12px;color:var(--gray-600);padding:4px 0">· ${item}</div>`).join('')}
+      </div>
+      ${actionRow(null,'Claim Amount Review →','markComplete()')}
+    </div>`;
+}
+
+function updatePOLStatus(val) {
+  if (!claimData.meta) claimData.meta = {};
+  claimData.meta.polStatus = val;
+  saveState();
+}
+
+function updatePOLDeadline(val) {
+  if (!claimData.meta) claimData.meta = {};
+  claimData.meta.polDeadline = val;
+  saveState();
+}
+
+function renderP08S1() {
+  const structure = claimData.structure || {};
+  const contents = claimData.contents || {};
+  const ale = claimData.ALE || {};
+  const policy = claimData.policy || {};
+
+  const structureAmt = structure.userEstimate || 0;
+  const contentsAmt = contents.totalValue || 0;
+  const aleAmt = ale.total || 0;
+  const totalClaimed = structureAmt + contentsAmt + aleAmt;
+  const deductible = policy.deductible || 0;
+  const netClaim = Math.max(0, totalClaimed - deductible);
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(7,'Claim Amount Review','Verify all documented claim amounts before preparing your Proof of Loss. These figures will be sworn to — confirm they are accurate and complete.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Claimed Amounts by Category</div>
+        <div class="panel-subtitle">Sourced from prior steps. Return to those steps to update amounts.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        ${[
+          {label:'Structural / Dwelling Damage', amount: structureAmt, source:'Contractor Estimate (Step 5)', status: structureAmt > 0 ? 'ok' : 'missing'},
+          {label:'Personal Property / Contents', amount: contentsAmt, source:'Contents Inventory (Step 7)', status: contentsAmt > 0 ? 'ok' : 'missing'},
+          {label:'Additional Living Expenses', amount: aleAmt, source:'ALE Daily Log (Step 7)', status: aleAmt > 0 ? 'ok' : 'missing'},
+        ].map(row => `
+          <div style="background:#fff;border:1px solid ${row.status==='ok'?'var(--gray-200)':'#fca5a5'};border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800)">${row.label}</div>
+              <div style="font-size:11px;color:var(--gray-400);margin-top:2px">${row.source}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:16px;font-weight:700;color:${row.status==='ok'?'var(--gray-900)':'var(--red)'}">${fmt(row.amount)}</div>
+              ${row.status==='missing'?'<div style="font-size:10px;color:var(--red);font-weight:600">Not yet documented</div>':''}
+            </div>
+          </div>`).join('')}
+        <div style="background:var(--navy);border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Total Claimed</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Less deductible: ${fmt(deductible)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:22px;font-weight:700;color:#34d399">${fmt(totalClaimed)}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.5)">Net: ${fmt(netClaim)}</div>
+          </div>
+        </div>
+      </div>
+      ${actionRow("setSubstep(0)",'Supporting Evidence Review →','markComplete()')}
+    </div>`;
+}
+
+function renderP08S2() {
+  const evidence = claimData.evidenceLog || [];
+  const areas = claimData.damageAreas || [];
+  const contents = claimData.contents || {};
+  const ale = claimData.ALE || {};
+
+  const checks = [
+    {label:'Contractor / Independent Estimate', ok: claimData.structure.userEstimate > 0, fix:'Go to Step 5 — Contractor Estimate', fixPhase:4},
+    {label:'Damage Documentation Record', ok: areas.length > 0, fix:'Go to Step 3 — Area Documentation', fixPhase:2, fixSub:1},
+    {label:'Evidence Log with Reference Numbers', ok: evidence.length > 0, fix:'Go to Step 3 — Evidence Log', fixPhase:2, fixSub:2},
+    {label:'Contents Inventory', ok: (contents.items||[]).length > 0, fix:'Go to Step 7 — Contents Inventory', fixPhase:6},
+    {label:'ALE Expense Documentation', ok: (ale.entries||[]).length > 0, fix:'Go to Step 7 — ALE Daily Log', fixPhase:6, fixSub:1},
+    {label:'Policy Uploaded and Analyzed', ok: !!claimData.policy.analysis, fix:'Go to Step 2 — Policy Analysis', fixPhase:1},
+  ];
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(7,'Supporting Evidence Review','Verify that documented evidence supports each component of your claim. Address gaps before preparing your Proof of Loss.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Evidence Support Check</div>
+        <div class="panel-subtitle">${checks.filter(c=>c.ok).length} of ${checks.length} components supported</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+        ${checks.map(c => `
+          <div style="background:#fff;border:1px solid ${c.ok?'#a7f3d0':'#fca5a5'};border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:16px">${c.ok?'✅':'❌'}</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800)">${c.label}</div>
+              ${!c.ok?`<div style="font-size:11px;color:var(--red);margin-top:2px">${c.fix}</div>`:''}
+            </div>
+            ${!c.ok?`<button class="btn btn-ghost" style="font-size:11px" onclick="setPhase(${c.fixPhase});${c.fixSub!==undefined?'setSubstep('+c.fixSub+');':''}showView('fullplan')">Fix →</button>`:''}
+          </div>`).join('')}
+      </div>
+      ${evidence.length > 0 ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:8px">Evidence Register (${evidence.length} entries)</div>
+        ${evidence.slice(0,5).map(e=>`<div style="font-size:12px;color:var(--gray-600);padding:3px 0"><strong>${e.ref}</strong> — ${e.type}: ${e.description}</div>`).join('')}
+        ${evidence.length > 5 ? `<div style="font-size:11px;color:var(--gray-400);margin-top:4px">+ ${evidence.length - 5} more entries</div>` : ''}
+      ` : ''}
+      ${actionRow("setSubstep(1)",'Proof of Loss Preparation →','markComplete()')}
+    </div>`;
+}
+
+function renderP08S3() {
+  const d = claimData.initial || {};
+  const policy = claimData.policy || {};
+  const structure = claimData.structure || {};
+  const contents = claimData.contents || {};
+  const ale = claimData.ALE || {};
+  const pol = claimData.meta?.proofOfLoss || {};
+
+  const totalClaimed = (structure.userEstimate||0) + (contents.totalValue||0) + (ale.total||0);
+
+  document.getElementById('content-view').innerHTML = `
+    ${stepHeader(7,'Proof of Loss Preparation','Review and confirm each field. This document is a sworn statement — every figure must be accurate. CCP has pre-populated from your claim data.')}
+    <div class="action-panel">
+      <div class="panel-header">
+        <div class="panel-title">Proof of Loss — Draft</div>
+        <div class="panel-subtitle">Pre-populated from your claim. Edit any field that needs correction before generating.</div>
+      </div>
+      <div class="warn-red" style="margin-bottom:16px"><strong>⚠ Sworn Statement</strong><div class="warn-red-text">A Proof of Loss is a formal legal document signed under oath. Errors, omissions, or misrepresentations can void your claim. Verify every field before submitting.</div></div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Insured Name</label>
+          <input class="form-input" id="pol-name" value="${escapeHtml(pol.insuredName||d.insuredName||'')}">
+        </div>
+        <div class="form-group"><label class="form-label">Policy Number</label>
+          <input class="form-input" id="pol-policy-num" value="${escapeHtml(pol.policyNumber||policy.policyNumber||'')}">
+        </div>
+        <div class="form-group"><label class="form-label">Date of Loss</label>
+          <input class="form-input" id="pol-dol" value="${escapeHtml(pol.dateOfLoss||d.dateOfLoss||'')}">
+        </div>
+        <div class="form-group"><label class="form-label">Cause of Loss</label>
+          <input class="form-input" id="pol-cause" value="${escapeHtml(pol.causeOfLoss||formatPerilLabel(d.claimType)||'')}">
+        </div>
+        <div class="form-group full"><label class="form-label">Property Description</label>
+          <input class="form-input" id="pol-property" value="${escapeHtml(pol.propertyDesc||d.propertyType||'')}">
+        </div>
+        <div class="form-group"><label class="form-label">Dwelling / Structural Loss</label>
+          <input class="form-input" id="pol-struct" type="number" value="${structure.userEstimate||0}">
+        </div>
+        <div class="form-group"><label class="form-label">Personal Property Loss</label>
+          <input class="form-input" id="pol-contents" type="number" value="${contents.totalValue||0}">
+        </div>
+        <div class="form-group"><label class="form-label">Additional Living Expenses</label>
+          <input class="form-input" id="pol-ale" type="number" value="${ale.total||0}">
+        </div>
+        <div class="form-group"><label class="form-label">Deductible</label>
+          <input class="form-input" id="pol-deductible" type="number" value="${policy.deductible||0}">
+        </div>
+        <div class="form-group"><label class="form-label">Total Claimed (Gross)</label>
+          <input class="form-input" value="${fmt(totalClaimed)}" disabled style="background:var(--gray-100)">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:8px" onclick="savePOLDraft()">Save Draft</button>
+      ${actionRow("setSubstep(2)",'Final Review & Submission →','markComplete()')}
+    </div>`;
+}
+
+function savePOLDraft() {
+  if (!claimData.meta) claimData.meta = {};
+  claimData.meta.proofOfLoss = {
+    insuredName: document.getElementById('pol-name').value,
+    policyNumber: document.getElementById('pol-policy-num').value,
+    dateOfLoss: document.getElementById('pol-dol').value,
+    causeOfLoss: document.getElementById('pol-cause').value,
+    propertyDesc: document.getElementById('pol-property').value,
+    dwelling: parseFloat(document.getElementById('pol-struct').value)||0,
+    contents: parseFloat(document.getElementById('pol-contents').value)||0,
+    ale: parseFloat(document.getElementById('pol-ale').value)||0,
+    deductible: parseFloat(document.getElementById('pol-deductible').value)||0,
+    savedAt: new Date().toISOString(),
+  };
+  saveState();
+  logActivity('📝','Proof of Loss draft saved');
+  if (window.CNToast) CNToast.success('Draft saved');
+}
+
+function renderP08S4() {
+  renderCorrespondenceWizard('✉ Final Review & Submission');
+}
+
+// ============================
 // PHASE 08
 // ============================
-function renderP08S0(){
+function renderP09S0(){
   const structure=claimData.structure;const contents=claimData.contents;const ale=claimData.ALE;
   const total=(structure.userEstimate||0)+(contents.totalValue||0)+(ale.total||0);
   const docList=claimData.documents||[];
@@ -3941,7 +4783,7 @@ function renderP08S0(){
     </div>`;
 }
 
-function renderP08S1(){
+function renderP09S1(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(7,'Dispute Letter Generator','Generate a targeted dispute letter for specific denial or underpayment issues.')}
     ${thinRow('TASKS',[
@@ -4005,7 +4847,7 @@ async function generateDisputeLetter(){
 // ============================
 // PHASE 09
 // ============================
-function renderP09S0(){
+function renderP10S0(){
   const carrier=claimData.structure.insurerEstimate||0;
   const user=claimData.structure.userEstimate||0;
   document.getElementById('content-view').innerHTML=`
@@ -4082,7 +4924,7 @@ function calcNegotiation(){
     </div></div>`;
 }
 
-function renderP09S1(){
+function renderP10S1(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(8,'Escalation Options','Evaluate your escalation paths if negotiation reaches an impasse.')}
     ${thinRow('TASKS',[
@@ -4110,7 +4952,7 @@ function renderP09S1(){
 // ============================
 // PHASE 10
 // ============================
-function renderP10S0(){
+function renderP11S0(){
   const carrier=claimData.structure.insurerEstimate||0;
   const user=claimData.structure.userEstimate||0;
   document.getElementById('content-view').innerHTML=`
@@ -4195,7 +5037,7 @@ function analyzeFinalOffer(){
     </div>`;
 }
 
-function renderP10S1(){
+function renderP11S1(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(9,'RCV Recovery','Submit repair documentation to recover withheld depreciation.')}
     ${thinRow('TASKS',[
@@ -4242,7 +5084,7 @@ function submitRCV(){
   document.getElementById('rcv-result').innerHTML=`<div class="warn-teal"><div class="warn-teal-text">✅ Recorded. <strong>Date:</strong> ${repairDate} · <strong>Cost:</strong> $${parseFloat(repairCost).toLocaleString()} · <strong>Contractor:</strong> ${contractor}<br><br>Next: <button class="btn btn-primary" style="font-size:12px;margin-top:6px" onclick="setSubstep(3);renderContent()">Generate RCV Submission Letter →</button></div></div>`;
 }
 
-function renderP10S2(){
+function renderP11S2(){
   document.getElementById('content-view').innerHTML=`
     ${stepHeader(9,'Claim Archive','Your complete claim file — preserve this permanently.')}
     ${thinRow('TASKS',[
