@@ -755,13 +755,45 @@ function claimLifecycleStatus(displayStatus){
 }
 
 function letterClaimPayload(){
+  const damageReport = claimData.meta?.damageReport || null;
+  const damageAreasSummary = (claimData.damageAreas || []).map(a =>
+    `${a.area}: ${a.type} — ${a.material || ''}. Extent: ${a.extent}. Cause: ${a.cause || ''}. ${a.deterioration === 'yes' ? 'Active deterioration noted.' : ''}`
+  ).join('\n');
+  const evidenceSummary = (claimData.evidenceLog || []).map(e =>
+    `${e.ref}: ${e.type} — ${e.description}`
+  ).join('\n');
+  const checklistSummary = (claimData.damageChecklist || [])
+    .filter(c => c.status === 'Damage Found')
+    .map(c => `${c.area}: ${c.component}`)
+    .join(', ');
+  const polData = claimData.meta?.proofOfLoss || null;
+  const polStatus = claimData.meta?.polStatus || 'not_required';
+  const polDeadline = claimData.meta?.polDeadline || null;
+
   return {
     initial: claimData.initial,
     structure: claimData.structure,
     policy: claimData.policy,
     contents: claimData.contents,
     ALE: claimData.ALE,
-    meta: claimData.meta
+    meta: claimData.meta,
+    damage: {
+      report: damageReport,
+      areasSummary: damageAreasSummary,
+      evidenceSummary: evidenceSummary,
+      checklistSummary: checklistSummary,
+      areaCount: (claimData.damageAreas || []).length,
+      evidenceCount: (claimData.evidenceLog || []).length,
+    },
+    proofOfLoss: {
+      status: polStatus,
+      deadline: polDeadline,
+      draft: polData,
+    },
+    correspondence: {
+      priorLetterCount: correspondenceJournal.length,
+      journal: correspondenceJournal.slice(-5),
+    },
   };
 }
 
@@ -4383,9 +4415,92 @@ function renderP07S0(){
       <div class="flex gap-8" style="margin-top:12px">
         <button class="btn btn-secondary" onclick="downloadContentsInventory()">⬇️ Download Contents Inventory PDF</button>
       </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200)">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:4px">Contents Valuation Assist</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px">AI reviews your contents inventory and identifies commonly underclaimed categories, replacement cost guidance, and depreciation flags based on your policy settlement type.</div>
+        <button class="btn btn-secondary" onclick="runContentsValuationAssist()" ${(claimData.contents?.items||[]).length === 0 ? 'disabled' : ''}>Review My Contents Inventory</button>
+        <div id="contents-valuation-result" style="margin-top:12px"></div>
+      </div>
       ${actionRow("setPhase(5)","Mark Complete & Continue →","markComplete()")}
     </div>`;
   renderContentsList();
+}
+
+async function runContentsValuationAssist(){
+  const container = document.getElementById('contents-valuation-result');
+  if(!container) return;
+  container.innerHTML = '<div class="processing"><div class="spinner"></div><div class="processing-text">Reviewing contents inventory...</div></div>';
+
+  const items = claimData.contents?.items || [];
+  const settlementType = claimData.policy?.settlementType || 'RCV';
+  const totalValue = claimData.contents?.totalValue || 0;
+
+  try {
+    const prompt = `You are a senior public adjuster reviewing a personal property contents inventory for a property insurance claim.
+
+Policy Settlement Type: ${settlementType}
+Current Inventory Total: $${totalValue}
+Number of Items: ${items.length}
+
+Inventory:
+${items.map(item => `- ${item.description || item.name || 'Item'}: $${item.value || item.rcv || 0} (${item.condition || 'condition not noted'})`).join('\n')}
+
+Perform the following analysis:
+1. Identify categories that are commonly present in this type of property but not represented in the inventory (electronics, clothing, tools, kitchen items, linens, furniture, collectibles, sporting goods, etc.)
+2. Flag any items where the documented value appears significantly below replacement cost
+3. If settlement type is RCV, identify items where depreciation recovery should be tracked
+4. Identify any high-value categories that typically require separate scheduling or have sub-limits under standard policies
+5. Estimate whether the total appears consistent with a fully documented residential loss or appears significantly underclaimed
+
+Return JSON: {"missing_categories": [{"category": "...", "why": "...", "examples": ["..."]}], "undervalued_flags": [{"item": "...", "concern": "..."}], "rcv_tracking": ["..."], "sublimit_warnings": ["..."], "assessment": "appears_complete|likely_underclaimed|significantly_underclaimed", "summary": "..."}. Return only JSON.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '{}';
+    let result = {};
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) { result = {missing_categories:[], undervalued_flags:[], summary:'Analysis unavailable.'}; }
+
+    const assessmentConfig = {
+      'appears_complete': {color:'var(--emerald)', bg:'#f0fdf4', label:'✅ Inventory appears substantially complete'},
+      'likely_underclaimed': {color:'var(--amber)', bg:'#fffbeb', label:'⚠ Inventory may be underclaimed'},
+      'significantly_underclaimed': {color:'var(--red)', bg:'#fef2f2', label:'⛔ Inventory appears significantly underclaimed'},
+    };
+    const ac = assessmentConfig[result.assessment] || assessmentConfig['likely_underclaimed'];
+
+    container.innerHTML = `
+      <div style="background:${ac.bg};border-left:4px solid ${ac.color};padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:${ac.color}">${ac.label}</div>
+        <div style="font-size:12px;color:var(--gray-600);margin-top:4px">${escapeHtml(result.summary||'')}</div>
+      </div>
+      ${(result.missing_categories||[]).length ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:8px">Categories Not Yet Documented</div>
+        ${result.missing_categories.map(c => `
+          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:10px 14px;margin-bottom:6px">
+            <div style="font-size:12px;font-weight:700;color:var(--gray-800)">${escapeHtml(c.category)}</div>
+            <div style="font-size:12px;color:var(--gray-600);margin-top:2px">${escapeHtml(c.why)}</div>
+            ${c.examples?.length ? `<div style="font-size:11px;color:var(--gray-400);margin-top:4px">Examples: ${c.examples.map(e=>escapeHtml(e)).join(', ')}</div>` : ''}
+          </div>`).join('')}` : ''}
+      ${(result.undervalued_flags||[]).length ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin:12px 0 8px">Potentially Undervalued Items</div>
+        ${result.undervalued_flags.map(f => `
+          <div style="font-size:12px;color:var(--gray-700);padding:4px 0;border-bottom:1px solid var(--gray-100)">⚠ <strong>${escapeHtml(f.item)}</strong> — ${escapeHtml(f.concern)}</div>`).join('')}` : ''}
+      ${(result.sublimit_warnings||[]).length ? `
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin:12px 0 8px">Policy Sub-Limit Warnings</div>
+        ${result.sublimit_warnings.map(w => `<div style="font-size:12px;color:var(--red);padding:3px 0">· ${escapeHtml(w)}</div>`).join('')}` : ''}
+      <button class="btn btn-ghost" style="margin-top:12px;font-size:11px" onclick="runContentsValuationAssist()">Re-run Analysis</button>`;
+
+    logActivity('📦','Contents valuation assist complete');
+  } catch(e) {
+    container.innerHTML = '<div class="warn-amber"><strong>Analysis unavailable</strong><div class="warn-amber-text">Could not complete contents review. Verify your inventory manually against common household categories.</div></div>';
+  }
 }
 
 function addContentsItem(){
@@ -4706,6 +4821,12 @@ function renderP08S3() {
         </div>
       </div>
       <button class="btn btn-primary" style="margin-top:8px" onclick="savePOLDraft()">Save Draft</button>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-200)">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:8px">Pre-Submission Consistency Check</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px">AI reviews your Proof of Loss draft against your documented claim data and flags inconsistencies before you sign.</div>
+        <button class="btn btn-secondary" onclick="runPOLConsistencyCheck()">Run Consistency Check</button>
+        <div id="pol-consistency-result" style="margin-top:12px"></div>
+      </div>
       ${actionRow("setSubstep(2)",'Final Review & Submission →','markComplete()')}
     </div>`;
 }
@@ -4727,6 +4848,89 @@ function savePOLDraft() {
   saveState();
   logActivity('📝','Proof of Loss draft saved');
   if (window.CNToast) CNToast.success('Draft saved');
+}
+
+async function runPOLConsistencyCheck(){
+  const container = document.getElementById('pol-consistency-result');
+  if(!container) return;
+  container.innerHTML = '<div class="processing"><div class="spinner"></div><div class="processing-text">Checking for inconsistencies...</div></div>';
+
+  const pol = claimData.meta?.proofOfLoss;
+  if(!pol){ container.innerHTML = '<div class="warn-amber"><strong>Save your draft first</strong><div class="warn-amber-text">Click Save Draft before running the consistency check.</div></div>'; return; }
+
+  const structure = claimData.structure || {};
+  const contents = claimData.contents || {};
+  const ale = claimData.ALE || {};
+  const policy = claimData.policy || {};
+  const damageReport = claimData.meta?.damageReport || '';
+  const evidenceCount = (claimData.evidenceLog || []).length;
+  const areaCount = (claimData.damageAreas || []).length;
+
+  try {
+    const prompt = `You are a senior public adjuster performing a pre-submission review of a Proof of Loss document.
+
+PROOF OF LOSS DRAFT:
+Insured: ${pol.insuredName}
+Policy Number: ${pol.policyNumber}
+Date of Loss: ${pol.dateOfLoss}
+Cause of Loss: ${pol.causeOfLoss}
+Property: ${pol.propertyDesc}
+Dwelling Claimed: $${pol.dwelling}
+Contents Claimed: $${pol.contents}
+ALE Claimed: $${pol.ale}
+Deductible: $${pol.deductible}
+
+DOCUMENTED CLAIM DATA:
+Contractor Estimate (dwelling): $${structure.userEstimate || 0}
+Carrier Estimate: $${structure.insurerEstimate || 0}
+Contents Inventory Total: $${contents.totalValue || 0}
+ALE Log Total: $${ale.total || 0}
+Policy Deductible: $${policy.deductible || 0}
+Settlement Type: ${policy.settlementType || 'unknown'}
+Evidence Entries: ${evidenceCount}
+Documented Damage Areas: ${areaCount}
+Policy Analyzed: ${!!policy.analysis}
+Damage Report Generated: ${!!damageReport}
+
+Identify inconsistencies, missing fields, unsupported figures, or risks. Be specific. Flag: (1) amount mismatches between POL and documented data, (2) missing or blank required fields, (3) cause of loss mismatches, (4) figures that exceed policy limits, (5) anything that could give the carrier grounds to reject the POL.
+
+Return JSON: {"issues": [{"field": "...", "issue": "...", "severity": "high|medium|low", "recommendation": "..."}], "ready": true|false, "summary": "..."}. Return only JSON.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '{}';
+    let result = {};
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) { result = {issues:[], ready:false, summary:'Review unavailable.'}; }
+
+    const issues = result.issues || [];
+    const severityColor = s => s==='high'?'var(--red)':s==='medium'?'var(--amber)':'var(--teal)';
+    const severityBg = s => s==='high'?'#fef2f2':s==='medium'?'#fffbeb':'rgba(20,184,166,.06)';
+
+    container.innerHTML = `
+      ${result.ready
+        ? '<div class="warn-teal" style="margin-bottom:12px"><strong>✅ No critical issues found</strong><div class="warn-teal-text">' + escapeHtml(result.summary||'') + '</div></div>'
+        : '<div class="warn-red" style="margin-bottom:12px"><strong>⚠ Issues found — review before signing</strong><div class="warn-red-text">' + escapeHtml(result.summary||'') + '</div></div>'
+      }
+      ${issues.map(issue => `
+        <div style="background:${severityBg(issue.severity)};border-left:3px solid ${severityColor(issue.severity)};padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:8px">
+          <div style="font-size:11px;font-weight:700;color:${severityColor(issue.severity)};text-transform:uppercase;letter-spacing:.3px">${issue.severity} — ${escapeHtml(issue.field)}</div>
+          <div style="font-size:12px;font-weight:600;color:var(--gray-800);margin-top:3px">${escapeHtml(issue.issue)}</div>
+          <div style="font-size:12px;color:var(--gray-600);margin-top:3px">${escapeHtml(issue.recommendation)}</div>
+        </div>`).join('')}
+      <button class="btn btn-ghost" style="margin-top:8px;font-size:11px" onclick="runPOLConsistencyCheck()">Re-run Check</button>`;
+
+    logActivity('🔍', 'POL consistency check — ' + issues.length + ' issues found');
+  } catch(e) {
+    container.innerHTML = '<div class="warn-amber"><strong>Check unavailable</strong><div class="warn-amber-text">Could not complete consistency check. Review your figures manually before submitting.</div></div>';
+  }
 }
 
 function renderP08S4() {
@@ -5010,8 +5214,100 @@ function renderP11S0(){
         </div>
       </div>
       <div id="payment-saved-msg" style="display:none;font-size:12px;color:var(--emerald);font-weight:600;padding:6px 0">✓ Payments recorded</div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--gray-200)">
+        <div style="font-size:13px;font-weight:700;color:var(--gray-800);margin-bottom:4px">⚠ Release Language Review</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px">Before signing any settlement release or agreement, paste the release language below. AI will flag broad waivers, RCV supplement forfeiture, unknown damage clauses, and other language that could extinguish your remaining rights.</div>
+        <textarea class="form-textarea" id="release-text" placeholder="Paste the carrier's release or settlement agreement language here..." style="height:120px;width:100%"></textarea>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="runReleaseReview()">Review Release Language</button>
+        <div id="release-review-result" style="margin-top:12px"></div>
+      </div>
       ${actionRow("setPhase(8)","Mark Complete & Continue →","markComplete()")}
     </div>`;
+}
+
+async function runReleaseReview(){
+  const container = document.getElementById('release-review-result');
+  const text = document.getElementById('release-text')?.value?.trim();
+  if(!container) return;
+  if(!text){ container.innerHTML = '<div class="warn-amber"><strong>Paste release language first</strong></div>'; return; }
+  container.innerHTML = '<div class="processing"><div class="spinner"></div><div class="processing-text">Reviewing release language...</div></div>';
+
+  const structure = claimData.structure || {};
+  const policy = claimData.policy || {};
+  const polStatus = claimData.meta?.polStatus || '';
+  const rcvType = policy.settlementType || 'unknown';
+
+  try {
+    const prompt = `You are a senior public adjuster and claims attorney reviewing a property insurance settlement release on behalf of a policyholder before they sign.
+
+CLAIM CONTEXT:
+Settlement Type: ${rcvType}
+Carrier Offer: $${structure.insurerEstimate || 0}
+Claimant Documented Value: $${structure.userEstimate || 0}
+Gap: $${Math.max(0,(structure.userEstimate||0)-(structure.insurerEstimate||0))}
+Proof of Loss Status: ${polStatus}
+
+RELEASE LANGUAGE TO REVIEW:
+${text}
+
+Analyze this release for the following specific risks:
+1. Full and final release language that bars future supplements or RCV recovery
+2. Waiver of unknown or undiscovered damage
+3. Waiver of appraisal or other dispute rights
+4. Release of bad faith or statutory claims
+5. Scope limitations that contradict the documented damage
+6. Any language inconsistent with an RCV policy where depreciation has not yet been recovered
+7. Any ambiguous terms that could be construed against the insured
+
+For each issue found: state the specific language, the risk it creates, and the recommended action (refuse, negotiate revision, or acceptable with caveats).
+
+Return JSON: {"flags": [{"language": "...", "risk": "...", "action": "refuse|negotiate|acceptable", "recommendation": "..."}], "overall": "safe|caution|do_not_sign", "summary": "..."}. Return only JSON.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+    const data = await response.json();
+    const raw = data.content?.find(b => b.type === 'text')?.text || '{}';
+    let result = {};
+    try { result = JSON.parse(raw.replace(/```json|```/g,'').trim()); } catch(e) { result = {flags:[], overall:'caution', summary:'Review unavailable.'}; }
+
+    const flags = result.flags || [];
+    const overall = result.overall || 'caution';
+    const overallConfig = {
+      'safe': {color:'var(--emerald)', bg:'#f0fdf4', label:'✅ No critical issues found'},
+      'caution': {color:'var(--amber)', bg:'#fffbeb', label:'⚠ Review recommended before signing'},
+      'do_not_sign': {color:'var(--red)', bg:'#fef2f2', label:'⛔ Do not sign — significant risks identified'},
+    };
+    const oc = overallConfig[overall] || overallConfig['caution'];
+    const actionColor = a => a==='refuse'?'var(--red)':a==='negotiate'?'var(--amber)':'var(--emerald)';
+    const actionLabel = a => a==='refuse'?'REFUSE':a==='negotiate'?'NEGOTIATE':'ACCEPTABLE';
+
+    container.innerHTML = `
+      <div style="background:${oc.bg};border-left:4px solid ${oc.color};padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:${oc.color}">${oc.label}</div>
+        <div style="font-size:12px;color:var(--gray-600);margin-top:4px">${escapeHtml(result.summary||'')}</div>
+      </div>
+      ${flags.map(f => `
+        <div style="background:#fff;border:1px solid var(--gray-200);border-radius:8px;padding:12px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:700;color:${actionColor(f.action)};background:${f.action==='refuse'?'#fee2e2':f.action==='negotiate'?'#fef3c7':'#d1fae5'};padding:2px 8px;border-radius:20px">${actionLabel(f.action)}</span>
+          </div>
+          <div style="font-size:11px;font-style:italic;color:var(--gray-500);margin-bottom:6px;background:var(--gray-50);padding:6px 8px;border-radius:4px">"${escapeHtml(f.language)}"</div>
+          <div style="font-size:12px;font-weight:600;color:var(--gray-800);margin-bottom:4px">${escapeHtml(f.risk)}</div>
+          <div style="font-size:12px;color:var(--gray-600)">${escapeHtml(f.recommendation)}</div>
+        </div>`).join('')}
+      <button class="btn btn-ghost" style="margin-top:8px;font-size:11px" onclick="runReleaseReview()">Re-run Review</button>`;
+
+    logActivity('⚖️','Release language reviewed — ' + overall);
+  } catch(e) {
+    container.innerHTML = '<div class="warn-amber"><strong>Review unavailable</strong><div class="warn-amber-text">Could not complete release review. Have an attorney review the language before signing.</div></div>';
+  }
 }
 
 function savePaymentRecord(){
@@ -5139,6 +5435,7 @@ function renderCorrespondenceWizard(substepLabel){
     'Estimate Submission Letter':'Estimate Submission Letter',
     'Supplement Request Letter':'Supplement Request Letter',
     'Contents & ALE Demand Letter':'Contents & ALE Demand Letter',
+    'Final Review & Submission':'Proof of Loss Transmittal Letter',
     'Formal Demand Letter':'Formal Demand for Payment',
     'Counter-Offer/Appraisal Demand':'Counter-Offer Letter',
     'RCV Claim Submission Letter':'RCV Recovery Request',
@@ -5210,23 +5507,48 @@ async function renderWizardStep(step, letterType){
   }
 
   else if(step===2){
-    wc.innerHTML=stepsHtml+`<div class="action-panel"><div id="wz-analysis-spinner"></div></div>`;
-    const d=claimData.initial;
-    const kp=buildLetterSituationKeyPoints();
-    document.getElementById('wz-analysis-spinner').innerHTML=`
-      <div class="panel-header"><div class="panel-title">Step 2 — Situation Analysis</div><div class="panel-subtitle">What this ${escapeHtml(letterType)} needs to accomplish based on your actual claim data.</div></div>
-      <div class="warn-teal"><strong>Claim Context</strong><div class="warn-teal-text">
-        <strong>Insured:</strong> ${escapeHtml(d.insuredName||'[Not set]')} · <strong>Carrier:</strong> ${escapeHtml(d.insurer||'[Not set]')} · <strong>Claim #:</strong> ${escapeHtml(d.claimNumber||'[Not set]')}<br>
-        <strong>Loss Date:</strong> ${escapeHtml(d.dateOfLoss||'[Not set]')} · <strong>Phase:</strong> ${phases[activePhase]?.num||''} — ${phases[activePhase]?.title||''}
-      </div></div>
-      <div style="margin-bottom:16px">
-        <div style="font-size:12px;font-weight:700;color:var(--gray-700);margin-bottom:8px">Key Points to Address</div>
-        ${kp.map(p=>`<div class="log-entry"><div class="log-entry-icon">${p.i}</div><div class="log-entry-content"><div class="log-entry-title">${escapeHtml(p.t)}</div><div class="log-entry-sub">${escapeHtml(p.s)}</div></div></div>`).join('')}
+    const ltArg=letterType.replace(/'/g,"\\'");
+    wc.innerHTML=stepsHtml+`<div class="action-panel"><div id="wz-analysis-spinner">
+      <div class="panel-header">
+        <div class="panel-title">Step 2 — Situation Analysis</div>
+        <div class="panel-subtitle">Analyzing your claim to identify what this ${escapeHtml(letterType)} needs to accomplish.</div>
       </div>
-      <div class="action-row">
-        <button class="btn btn-secondary" onclick="renderWizardStep(1,'${letterType.replace(/'/g,"\\'")}')">← Back</button>
-        <button class="btn btn-primary" onclick="renderWizardStep(3,'${letterType.replace(/'/g,"\\'")}')">Choose Strategy →</button>
-      </div>`;
+      <div class="processing"><div class="spinner"></div><div class="processing-text">Analyzing claim context...</div></div>
+    </div></div>`;
+
+    const spinnerEl=document.getElementById('wz-analysis-spinner');
+    try {
+      const result = await callLetterAnalysisAI(letterType);
+      const analysis = result.analysis || result.content || result.text || '';
+
+      if(analysis){
+        spinnerEl.innerHTML = `
+          <div class="panel-header">
+            <div class="panel-title">Step 2 — Situation Analysis</div>
+            <div class="panel-subtitle">AI analysis of what this ${escapeHtml(letterType)} needs to accomplish based on your claim.</div>
+          </div>
+          <div class="analysis-result">
+            <div class="ar-header"><div class="ar-header-text">✅ Claim Context Analysis</div></div>
+            <div class="ar-body" style="white-space:pre-wrap;font-size:13px;line-height:1.6">${escapeHtml(analysis)}</div>
+          </div>
+          <div class="action-row" style="margin-top:16px">
+            <button class="btn btn-secondary" onclick="renderWizardStep(1,'${ltArg}')">← Back</button>
+            <button class="btn btn-primary" onclick="renderWizardStep(3,'${ltArg}')">Review Strategy →</button>
+          </div>`;
+      } else {
+        spinnerEl.innerHTML = buildLetterSituationFallbackHtml(letterType) + `
+          <div class="action-row" style="margin-top:16px">
+            <button class="btn btn-secondary" onclick="renderWizardStep(1,'${ltArg}')">← Back</button>
+            <button class="btn btn-primary" onclick="renderWizardStep(3,'${ltArg}')">Review Strategy →</button>
+          </div>`;
+      }
+    } catch(e) {
+      spinnerEl.innerHTML = buildLetterSituationFallbackHtml(letterType) + `
+        <div class="action-row" style="margin-top:16px">
+          <button class="btn btn-secondary" onclick="renderWizardStep(1,'${ltArg}')">← Back</button>
+          <button class="btn btn-primary" onclick="renderWizardStep(3,'${ltArg}')">Review Strategy →</button>
+        </div>`;
+    }
   }
 
   else if(step===3){
@@ -5259,28 +5581,28 @@ async function renderWizardStep(step, letterType){
         <div class="panel-header"><div class="panel-title">Step 3 — Strategy</div><div class="panel-subtitle">Select your approach. The recommended option reflects your claim analysis and documentation strength.</div></div>
         ${recommendationNote?`<div class="warn-teal" style="margin-bottom:12px"><div class="warn-teal-text">💡 <strong>Recommended:</strong> ${recommendationNote}</div></div>`:''}
         <div class="strategy-grid">
-          <div class="strategy-card${isRec('assert')}" id="sc-1" onclick="selectStrategy(1)">
+          <div class="strategy-card${isRec('assert')}" id="sc-1" data-strategy="Assert &amp; Demand" onclick="selectStrategy(this)">
             ${recBadge('assert')}
             <div class="sc-title">Assert &amp; Demand</div>
             <span class="risk-badge risk-low">LOW RISK</span>
             <div class="sc-desc">Formally assert your documented position and demand written response. Strong when documentation is solid.</div>
             <div class="sc-outcome">Outcome: Forces written carrier response. Establishes record for escalation if needed.</div>
           </div>
-          <div class="strategy-card${isRec('clarification')}" id="sc-2" onclick="selectStrategy(2)">
+          <div class="strategy-card${isRec('clarification')}" id="sc-2" data-strategy="Request Clarification" onclick="selectStrategy(this)">
             ${recBadge('clarification')}
             <div class="sc-title">Request Clarification</div>
             <span class="risk-badge risk-low">LOW RISK</span>
             <div class="sc-desc">Request written explanation of the carrier's position with specific policy citations. Use when their position is unclear.</div>
             <div class="sc-outcome">Outcome: Gets their position in writing. Useful for identifying weak points.</div>
           </div>
-          <div class="strategy-card${isRec('escalation')}" id="sc-3" onclick="selectStrategy(3)">
+          <div class="strategy-card${isRec('escalation')}" id="sc-3" data-strategy="Escalation Warning" onclick="selectStrategy(this)">
             ${recBadge('escalation')}
             <div class="sc-title">Escalation Warning</div>
             <span class="risk-badge risk-med">MODERATE RISK</span>
             <div class="sc-desc">Assert your position and signal intent to escalate to appraisal or DOI complaint if not resolved.</div>
             <div class="sc-outcome">Outcome: Creates urgency. Use after at least one prior written demand has been ignored.</div>
           </div>
-          <div class="strategy-card${isRec('custom')}" id="sc-4" onclick="selectStrategy(4)">
+          <div class="strategy-card${isRec('custom')}" id="sc-4" data-strategy="Custom Approach" onclick="selectStrategy(this)">
             ${recBadge('custom')}
             <div class="sc-title">Custom Approach</div>
             <span class="risk-badge risk-med">MODERATE RISK</span>
@@ -5330,8 +5652,19 @@ async function renderWizardStep(step, letterType){
   }
 }
 
-function selectStrategy(n){
-  document.querySelectorAll('.strategy-card').forEach((c,i)=>{c.classList.toggle('selected',i===n-1);});
+function selectStrategy(el, strategyName){
+  if(typeof el==='number'){
+    document.querySelectorAll('.strategy-card').forEach((c,i)=>{c.classList.toggle('selected',i===el-1);});
+    const strategies=['Assert & Demand','Request Clarification','Escalation Warning','Custom Approach'];
+    selectedStrategy=strategies[el-1]||null;
+    return;
+  }
+  document.querySelectorAll('.strategy-card').forEach(c => { c.classList.remove('active'); c.classList.remove('selected'); });
+  if(el&&el.classList){
+    el.classList.add('active');
+    el.classList.add('selected');
+  }
+  selectedStrategy = strategyName || el?.dataset?.strategy || el?.querySelector('.strategy-title')?.textContent || el?.querySelector('.sc-title')?.textContent || el?.querySelector('.strategy-name')?.textContent || null;
 }
 
 async function generateLetterContent(letterType){
@@ -5343,7 +5676,10 @@ async function generateLetterContent(letterType){
   }
 
   try {
-    const result = await callLetterAI(letterType);
+    const strategyContext = selectedStrategy
+      ? `Selected letter strategy: ${selectedStrategy}.`
+      : '';
+    const result = await callLetterAI(letterType, strategyContext);
     const letterContent = result.letter || result.content || result.text || '';
 
     return letterContent;
