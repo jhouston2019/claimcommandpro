@@ -2007,12 +2007,18 @@ function updateClaimReadiness() {
   const el = document.getElementById('readiness-score');
   if (el) el.textContent = percentage + '%';
 
+  const block = document.getElementById('readiness-block');
+  if (block) {
+    if (percentage > 0) block.classList.remove('dim');
+    else block.classList.add('dim');
+  }
+
   // Update proof strip
   layers.forEach(layer => {
     const stateEl = document.getElementById('proof-state-' + layer.id);
     if (!stateEl) return;
-    stateEl.className = 'proof-state ' + layer.state;
-    const stateLabels = { ok: 'Established', warn: 'Partial', risk: 'At Risk', none: 'Not started' };
+    stateEl.className = 'proof-state ' + (layer.state === 'partial' ? 'warn' : layer.state);
+    const stateLabels = { ok: 'Established', warn: 'Partial', partial: 'Partial', risk: 'At Risk', none: 'Not started' };
     stateEl.textContent = stateLabels[layer.state] || 'Not started';
   });
 }
@@ -2701,11 +2707,11 @@ function updateMissingPanel() {
   const docs = claimData.documents || [];
   const hasType = (type) => docs.some(d => d.type === type);
   const checks = [
-    { ok:hasType('policy'),                               text:'Insurance policy not uploaded',      fix:"closeAllDrops();setPhase(1);showView('fullplan')" },
-    { ok:hasType('contractor_estimate'),                  text:'Contractor estimate not uploaded',   fix:"closeAllDrops();setPhase(4);showView('fullplan')" },
-    { ok:hasType('carrier_estimate'),                     text:'Carrier estimate not uploaded',      fix:"closeAllDrops();setPhase(5);showView('fullplan')" },
-    { ok:(claimData.contents.items||[]).length > 0,       text:'Contents inventory incomplete',      fix:"closeAllDrops();setPhase(6);showView('fullplan')" },
-    { ok:(claimData.ALE.entries||[]).length > 0,          text:'ALE daily log not started',          fix:"closeAllDrops();setPhase(6);setSubstep(1);showView('fullplan')" },
+    { ok:hasType('policy'),                               text:'Insurance policy not uploaded',      fix:"setPhase(1);showView('fullplan')" },
+    { ok:hasType('contractor_estimate'),                  text:'Contractor estimate not uploaded',   fix:"setPhase(4);showView('fullplan')" },
+    { ok:hasType('carrier_estimate'),                     text:'Carrier estimate not uploaded',      fix:"setPhase(5);showView('fullplan')" },
+    { ok:(claimData.contents.items||[]).length > 0,       text:'Contents inventory incomplete',      fix:"setPhase(6);showView('fullplan')" },
+    { ok:(claimData.ALE.entries||[]).length > 0,          text:'ALE daily log not started',          fix:"setPhase(6);setSubstep(1);showView('fullplan')" },
   ];
   const missing = checks.filter(x => !x.ok);
   el.innerHTML = missing.length === 0
