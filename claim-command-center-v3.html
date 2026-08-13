@@ -48,7 +48,7 @@ html,body{height:100%;font-family:var(--font);font-size:14px;background:var(--na
 .nav1-avatar{width:30px;height:30px;background:var(--teal-dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-left:auto}
 /* NAV ROW 2 */
 #nav2{
-  background:var(--navy-light);height:var(--nav2-h);display:flex;align-items:center;justify-content:center;
+  background:var(--navy-light);height:auto;min-height:var(--nav2-h);display:flex;align-items:center;justify-content:center;
   padding:0 16px;gap:4px;flex-shrink:0;border-bottom:1px solid var(--navy-border);z-index:200;overflow-x:auto;
 }
 .nav2-pill{
@@ -498,6 +498,58 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
 .sc-title{font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:6px}
 .sc-desc{font-size:12px;color:var(--gray-500);line-height:1.5;margin-bottom:8px}
 .sc-outcome{font-size:11px;color:var(--teal-dark);font-weight:600}
+
+/* Claim readiness block in nav1 */
+.readiness-block{display:flex;align-items:center;gap:6px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);border-radius:8px;padding:3px 12px;margin-left:8px}
+.readiness-block-label{font-size:9px;font-weight:700;color:rgba(20,184,166,.8);text-transform:uppercase;letter-spacing:.5px}
+.readiness-block-score{font-size:16px;font-weight:700;color:#14b8a6;font-variant-numeric:tabular-nums}
+.readiness-block.dim .readiness-block-score{color:rgba(255,255,255,.2)}
+.readiness-block.dim{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+
+/* Proof strip — replaces status strip */
+#proof-strip{background:#182840;display:flex;align-items:stretch;border-bottom:1px solid #1e293b;overflow-x:auto;flex-shrink:0;z-index:150}
+.proof-item{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding:7px 14px;border-right:1px solid #1e293b;cursor:pointer;transition:background .15s;flex:1;min-width:88px;background:transparent;border-top:none;border-bottom:none;border-left:none;font-family:var(--font)}
+.proof-item:last-child{border-right:none}
+.proof-item:hover{background:rgba(255,255,255,.04)}
+.proof-name{font-size:9px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.proof-state{font-size:11px;font-weight:600;white-space:nowrap}
+.proof-state.ok{color:#34d399}
+.proof-state.warn{color:#fbbf24}
+.proof-state.risk{color:#f87171}
+.proof-state.none{color:rgba(255,255,255,.18)}
+
+/* Primary tab — Your Step-by-Step Claim System */
+.nav2-pill.primary-tab{background:var(--teal);color:#fff;border-color:var(--teal);font-weight:700;line-height:1.2;padding:3px 16px;height:auto;white-space:normal;text-align:center}
+.nav2-pill.primary-tab:hover{background:var(--teal-dark);border-color:var(--teal-dark);color:#fff}
+.nav2-pill.primary-tab.active{background:var(--teal-dark);border-color:var(--teal-dark)}
+
+/* Claim Plan landing screen */
+.cp-hero{background:#0f172a;border-radius:16px;padding:32px;margin-bottom:24px}
+.cp-eyebrow{font-size:11px;font-weight:700;color:#14b8a6;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.cp-title{font-size:26px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:8px}
+.cp-title span{color:#14b8a6}
+.cp-sub{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6;max-width:540px;margin-bottom:20px}
+.cp-meta{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.cp-meta-item{font-size:12px;color:rgba(255,255,255,.4)}
+.cp-meta-item strong{color:rgba(255,255,255,.7)}
+.cp-start-btn{display:inline-flex;align-items:center;gap:8px;background:#14b8a6;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background .15s}
+.cp-start-btn:hover{background:#0d9488}
+.cp-req-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.cp-req-card{background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start}
+.cp-req-card.established{border-color:#a7f3d0;background:#f0fdf9}
+.cp-req-num{width:28px;height:28px;border-radius:50%;background:var(--gray-100);border:2px solid var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gray-400);flex-shrink:0;margin-top:1px}
+.cp-req-card.established .cp-req-num{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+.cp-req-content{flex:1;min-width:0}
+.cp-req-title{font-size:13px;font-weight:700;color:var(--gray-900);margin-bottom:4px;line-height:1.3}
+.cp-req-desc{font-size:11px;color:var(--gray-500);line-height:1.5}
+.cp-req-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px;letter-spacing:.3px;background:rgba(20,184,166,.1);color:#0d9488}
+.cp-req-card.established .cp-req-badge{background:#d1fae5;color:#065f46}
+.cp-phase-row-mini{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;flex-wrap:nowrap}
+.cp-phase-mini{flex-shrink:0;background:var(--gray-100);border:1px solid var(--gray-200);border-radius:8px;padding:7px 12px;font-size:11px;font-weight:600;color:var(--gray-600);white-space:nowrap;cursor:pointer;transition:all .15s}
+.cp-phase-mini:hover{border-color:var(--navy);color:var(--navy)}
+.cp-phase-mini.active-phase{background:var(--navy);color:#fff;border-color:var(--navy)}
+.cp-readiness-bar{background:var(--gray-200);border-radius:20px;height:6px;margin:12px 0 4px;overflow:hidden}
+.cp-readiness-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--emerald));border-radius:20px;transition:width .5s ease}
 </style>
 <script>
   window.CCC_BUILD = '1.0.1';
@@ -516,6 +568,10 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
       Claim Command Center
     </div>
     <span class="claim-type-pill">Property Claim</span>
+    <div class="readiness-block dim" id="readiness-block">
+      <span class="readiness-block-label">Claim Readiness</span>
+      <span class="readiness-block-score" id="readiness-score">—</span>
+    </div>
     <span class="day-badge">· Day <span id="dayCount">85</span></span>
     <div class="nav1-metrics">
       <div class="metric-item">
@@ -536,7 +592,8 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
 
   <!-- NAV ROW 2 -->
   <div id="nav2">
-    <button class="nav2-pill active" onclick="showView('fullplan')">Full Plan</button>
+    <button class="nav2-pill active" onclick="showView('claim-plan')">Claim Plan</button>
+    <button class="nav2-pill primary-tab" onclick="showView('fullplan')">Your Step-by-Step<br>Claim System</button>
     <button class="nav2-pill" onclick="showView('claim-summary')">Claim Summary</button>
     <button class="nav2-pill" onclick="showView('financial')">Financial Summary</button>
     <button class="nav2-pill" onclick="showView('correspondence')">Correspondence</button>
@@ -546,80 +603,48 @@ hr.divider{border:none;border-top:1px solid var(--gray-200);margin:12px 0}
     <button class="nav2-pill" onclick="showView('deadlines')">Deadlines</button>
   </div>
 
-  <!-- STATUS STRIP -->
-  <div id="status-strip">
-    <button class="drop-trigger" id="dt-recovery" onclick="toggleDrop('recovery',this)">
-      <span class="drop-label">Recovery ▼</span>
-      <span class="drop-value" id="sv-recovery">Collected: $0</span>
+  <!-- PROOF STRIP -->
+  <div id="proof-strip">
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Coverage</span>
+      <span class="proof-state none" id="proof-state-coverage">Not started</span>
     </button>
-    <button class="drop-trigger" id="dt-progress" onclick="toggleDrop('progress',this)">
-      <span class="drop-label">Progress ▼</span>
-      <span style="display:flex;flex-direction:column;align-items:flex-start;min-width:0">
-        <span class="drop-value" id="sv-progress">0 of 14 complete</span>
-        <span class="drop-value" id="sv-progress-sub" style="font-size:10px;opacity:.65;margin-top:2px"></span>
-      </span>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Causation</span>
+      <span class="proof-state none" id="proof-state-causation">Not started</span>
     </button>
-    <button class="drop-trigger" id="dt-findings" onclick="toggleDrop('findings',this)">
-      <span class="drop-label">Findings ▼</span>
-      <span class="drop-value" id="sv-findings">Gaps: $0</span>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Damage</span>
+      <span class="proof-state none" id="proof-state-damage">Not started</span>
     </button>
-    <button class="drop-trigger" id="dt-missing" onclick="toggleDrop('missing',this)">
-      <span class="drop-label">Missing ▼</span>
-      <span class="drop-value" id="sv-missing" style="color:#fbbf24">4 items need attention</span>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Scope</span>
+      <span class="proof-state none" id="proof-state-scope">Not started</span>
     </button>
-    <button class="drop-trigger" id="dt-documents" onclick="toggleDrop('documents',this)">
-      <span class="drop-label">Documents ▼</span>
-      <span class="drop-value" id="sv-docs">0 of 5 uploaded</span>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Cost</span>
+      <span class="proof-state none" id="proof-state-cost">Not started</span>
     </button>
-    <button class="drop-trigger" id="dt-activity" onclick="toggleDrop('activity',this)" style="border-right:none">
-      <span class="drop-label">Activity ▼</span>
-      <span class="drop-value" id="sv-activity">No recent activity</span>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Compliance</span>
+      <span class="proof-state none" id="proof-state-compliance">Not started</span>
     </button>
-    <!-- Drop panels -->
-    <div class="drop-panel" id="dp-recovery">
-      <div class="drop-inner">
-        <div class="dp-row"><span class="dp-row-label">Carrier Payments Received</span><span class="dp-row-value" id="dp-carrier-pay">$0</span></div>
-        <div class="dp-row"><span class="dp-row-label">ALE Reimbursed</span><span class="dp-row-value" id="dp-ale-recv">$0</span></div>
-        <div class="dp-row"><span class="dp-row-label">Contents Recovered</span><span class="dp-row-value" id="dp-cont-recv">$0</span></div>
-        <div class="dp-row dp-row-total"><span class="dp-row-label">Total Collected</span><span class="dp-row-value" id="dp-total-collected">$0</span></div>
-      </div>
-    </div>
-    <div class="drop-panel" id="dp-progress">
-      <div class="drop-inner">
-        <div id="progress-milestones-header" style="font-size:11px;color:rgba(255,255,255,.5);padding:4px 12px 8px;font-weight:500"></div>
-        <div id="progress-milestones"></div>
-      </div>
-    </div>
-    <div class="drop-panel" id="dp-findings">
-      <div class="drop-inner">
-        <div class="dp-row"><span class="dp-row-label">Policy Coverage Gaps</span><span class="dp-row-value">$0</span></div>
-        <div class="dp-row"><span class="dp-row-label">Estimate Deficiencies</span><span class="dp-row-value" id="dp-est-def">$0</span></div>
-        <div class="dp-row"><span class="dp-row-label">Contents Gap</span><span class="dp-row-value white">TBD</span></div>
-        <div class="dp-row"><span class="dp-row-label">ALE Unclaimed</span><span class="dp-row-value">$0</span></div>
-      </div>
-    </div>
-    <div class="drop-panel" id="dp-missing">
-      <div class="drop-inner" id="dp-missing-list">
-        <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">Carrier estimate not uploaded</span><button class="fix-btn" onclick="closeAllDrops();setPhase(5);showView('fullplan')">Fix →</button></div>
-        <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">Contents inventory incomplete</span><button class="fix-btn" onclick="closeAllDrops();setPhase(6);showView('fullplan')">Fix →</button></div>
-        <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">ALE daily log not started</span><button class="fix-btn" onclick="closeAllDrops();setPhase(6);setSubstep(1);showView('fullplan')">Fix →</button></div>
-        <div class="missing-item"><span class="missing-icon">●</span><span class="missing-text">Contractor estimate not uploaded</span><button class="fix-btn" onclick="closeAllDrops();setPhase(4);showView('fullplan')">Fix →</button></div>
-      </div>
-    </div>
-    <div class="drop-panel" id="dp-documents">
-      <div class="drop-inner" id="dp-doc-list">
-        <div class="doc-item"><span class="doc-icon">📋</span><span class="doc-name">Insurance Policy</span><span class="doc-status missing">✖ Missing</span></div>
-        <div class="doc-item"><span class="doc-icon">📸</span><span class="doc-name">Damage Photos</span><span class="doc-status missing">✖ Missing</span></div>
-        <div class="doc-item"><span class="doc-icon">📊</span><span class="doc-name">Carrier Estimate</span><span class="doc-status missing">✖ Missing</span></div>
-        <div class="doc-item"><span class="doc-icon">🏠</span><span class="doc-name">Contractor Estimate</span><span class="doc-status missing">✖ Missing</span></div>
-        <div class="doc-item"><span class="doc-icon">📦</span><span class="doc-name">Contents Inventory</span><span class="doc-status missing">✖ Incomplete</span></div>
-      </div>
-    </div>
-    <div class="drop-panel" id="dp-activity">
-      <div class="drop-inner" id="dp-activity-list">
-        <div style="color:rgba(255,255,255,.35);font-size:12px;text-align:center;padding:12px 0">No activity logged yet</div>
-      </div>
-    </div>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Evidence</span>
+      <span class="proof-state none" id="proof-state-evidence">Not started</span>
+    </button>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Carrier Position</span>
+      <span class="proof-state none" id="proof-state-carrier">Not started</span>
+    </button>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Demand</span>
+      <span class="proof-state none" id="proof-state-demand">Not started</span>
+    </button>
+    <button class="proof-item" onclick="showView('claim-plan')">
+      <span class="proof-name">Resolution</span>
+      <span class="proof-state none" id="proof-state-resolution">Not started</span>
+    </button>
   </div>
 
   <!-- PHASE CARDS ROW (only shown in fullplan view) -->
@@ -1033,9 +1058,8 @@ async function saveState(){
     localStorage.setItem('ccc_activity_log',JSON.stringify(activityLog));
     localStorage.setItem('ccc_structure_items',JSON.stringify(claimData.structureItems||[]));
     localStorage.setItem('ccc_onboarded','true');
+    updateClaimReadiness();
   }catch(e){}
-  updateDocumentsPanel();
-  updateMissingPanel();
 
   // Write to Supabase if claim_id is available
   if (!window.CCC_CLAIM_ID) return;
@@ -1681,18 +1705,18 @@ function updateNavMetrics(){
   const gap=claimData.structure.userEstimate-claimData.structure.insurerEstimate;
   claimData.structure.gap=gap;
   document.getElementById('metricGap').textContent=fmt(Math.max(0,gap));
-  document.getElementById('sv-recovery').textContent='Collected: '+fmt(claimData.structure.insurerEstimate);
-  document.getElementById('sv-findings').textContent='Gaps: '+fmt(Math.max(0,gap));
+  const svRec=document.getElementById('sv-recovery');if(svRec)svRec.textContent='Collected: '+fmt(claimData.structure.insurerEstimate);
+  const svFind=document.getElementById('sv-findings');if(svFind)svFind.textContent='Gaps: '+fmt(Math.max(0,gap));
   const cpay=claimData.meta.carrierPayments||0;
   const arecv=claimData.meta.aleReceived||0;
   const crecv=claimData.meta.contentsReceived||0;
   const tcoll=cpay+arecv+crecv;
-  document.getElementById('dp-carrier-pay').textContent=fmt(cpay);
-  document.getElementById('dp-ale-recv').textContent=fmt(arecv);
+  const dcp=document.getElementById('dp-carrier-pay');if(dcp)dcp.textContent=fmt(cpay);
+  const dar=document.getElementById('dp-ale-recv');if(dar)dar.textContent=fmt(arecv);
   const dce=document.getElementById('dp-cont-recv');if(dce)dce.textContent=fmt(crecv);
-  document.getElementById('dp-total-collected').textContent=fmt(tcoll);
-  document.getElementById('sv-recovery').textContent='Collected: '+fmt(tcoll);
-  document.getElementById('dp-est-def').textContent=fmt(Math.max(0,gap));
+  const dtc=document.getElementById('dp-total-collected');if(dtc)dtc.textContent=fmt(tcoll);
+  if(svRec)svRec.textContent='Collected: '+fmt(tcoll);
+  const ded=document.getElementById('dp-est-def');if(ded)ded.textContent=fmt(Math.max(0,gap));
   const dc=document.getElementById('dayCount');
   if(dc)dc.textContent=String(claimData.initial.daysSinceLoss||0);
   const av=document.querySelector('.nav1-avatar');
@@ -1700,6 +1724,297 @@ function updateNavMetrics(){
     const n=(claimData.initial.insuredName||'').trim();
     av.textContent=n?n.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase():'—';
   }
+}
+
+// ============================
+// CLAIM READINESS ENGINE
+// ============================
+function computeClaimReadiness() {
+  const layers = [
+    {
+      id: 'coverage',
+      name: 'Coverage',
+      score: (function() {
+        if (!claimData.policy.uploaded) return 0;
+        if (!claimData.policy.analysis) return 0.4;
+        return 1;
+      })(),
+      state: (function() {
+        if (!claimData.policy.uploaded) return 'none';
+        if (!claimData.policy.analysis) return 'partial';
+        return 'ok';
+      })(),
+      detail: (function() {
+        if (!claimData.policy.uploaded) return 'Policy not yet uploaded';
+        if (!claimData.policy.analysis) return 'Policy uploaded — analysis pending';
+        const gaps = (claimData.policy.analysis.coverage_gaps || []).length;
+        return 'Policy analyzed' + (gaps > 0 ? ' · ' + gaps + ' coverage gap' + (gaps !== 1 ? 's' : '') + ' identified' : ' · All coverages mapped');
+      })(),
+      fixPhase: 1, fixSub: 0
+    },
+    {
+      id: 'causation',
+      name: 'Causation',
+      score: (function() {
+        const areas = claimData.damageAreas || [];
+        if (!areas.length) return 0;
+        const withCause = areas.filter(a => a.cause && a.cause.trim().length > 10).length;
+        return withCause / areas.length;
+      })(),
+      state: (function() {
+        const areas = claimData.damageAreas || [];
+        if (!areas.length) return 'none';
+        const withCause = areas.filter(a => a.cause && a.cause.trim().length > 10).length;
+        if (withCause === areas.length) return 'ok';
+        if (withCause > 0) return 'warn';
+        return 'risk';
+      })(),
+      detail: (function() {
+        const areas = claimData.damageAreas || [];
+        if (!areas.length) return 'No damage areas documented yet';
+        const withCause = areas.filter(a => a.cause && a.cause.trim().length > 10).length;
+        const missing = areas.length - withCause;
+        if (missing === 0) return 'Cause of loss established for all ' + areas.length + ' areas';
+        return missing + ' area' + (missing !== 1 ? 's' : '') + ' missing cause-of-loss link';
+      })(),
+      fixPhase: 2, fixSub: 1
+    },
+    {
+      id: 'damage',
+      name: 'Damage',
+      score: (function() {
+        const checklist = claimData.damageChecklist || [];
+        const areas = claimData.damageAreas || [];
+        const evidence = claimData.evidenceLog || [];
+        const hasReport = !!claimData.meta?.damageReport;
+        if (!checklist.length && !areas.length) return 0;
+        let s = 0;
+        if (checklist.some(c => c.status !== '')) s += 0.25;
+        if (areas.length > 0) s += 0.35;
+        if (evidence.length > 0) s += 0.2;
+        if (hasReport) s += 0.2;
+        return Math.min(s, 1);
+      })(),
+      state: (function() {
+        const areas = claimData.damageAreas || [];
+        const hasReport = !!claimData.meta?.damageReport;
+        if (!areas.length) return 'none';
+        if (hasReport) return 'ok';
+        if (areas.length > 0) return 'warn';
+        return 'risk';
+      })(),
+      detail: (function() {
+        const areas = claimData.damageAreas || [];
+        const evidence = claimData.evidenceLog || [];
+        const hasReport = !!claimData.meta?.damageReport;
+        if (!areas.length) return 'No damage areas documented';
+        return areas.length + ' area' + (areas.length !== 1 ? 's' : '') + ' documented · ' + evidence.length + ' evidence entries' + (hasReport ? ' · Damage report generated' : ' · Report not yet generated');
+      })(),
+      fixPhase: 2, fixSub: 1
+    },
+    {
+      id: 'scope',
+      name: 'Scope',
+      score: (function() {
+        const hasEstimate = claimData.structure.userEstimate > 0;
+        const hasAnalysis = !!claimData.structure.contractorAnalysis;
+        if (!hasEstimate) return 0;
+        if (!hasAnalysis) return 0.5;
+        return 1;
+      })(),
+      state: (function() {
+        if (!claimData.structure.userEstimate) return 'none';
+        if (!claimData.structure.contractorAnalysis) return 'warn';
+        return 'ok';
+      })(),
+      detail: (function() {
+        if (!claimData.structure.userEstimate) return 'Contractor estimate not yet obtained';
+        if (!claimData.structure.contractorAnalysis) return 'Estimate uploaded — scope analysis pending';
+        return 'Contractor scope established: ' + fmt(claimData.structure.userEstimate);
+      })(),
+      fixPhase: 4, fixSub: 0
+    },
+    {
+      id: 'cost',
+      name: 'Cost',
+      score: (function() {
+        const hasGap = claimData.structure.gap > 0;
+        const hasComparison = !!claimData.structure.carrierAnalysis;
+        const hasStrategy = !!claimData.structure.negotiationStrategy;
+        if (!claimData.structure.insurerEstimate) return 0;
+        let s = 0.3;
+        if (hasGap) s += 0.3;
+        if (hasComparison) s += 0.2;
+        if (hasStrategy) s += 0.2;
+        return Math.min(s, 1);
+      })(),
+      state: (function() {
+        if (!claimData.structure.insurerEstimate) return 'none';
+        if (!claimData.structure.carrierAnalysis) return 'warn';
+        return 'ok';
+      })(),
+      detail: (function() {
+        if (!claimData.structure.insurerEstimate) return 'Carrier estimate not yet received';
+        const gap = claimData.structure.gap || 0;
+        return 'Carrier: ' + fmt(claimData.structure.insurerEstimate) + ' · Your value: ' + fmt(claimData.structure.userEstimate) + (gap > 0 ? ' · Gap: ' + fmt(gap) : '');
+      })(),
+      fixPhase: 5, fixSub: 0
+    },
+    {
+      id: 'compliance',
+      name: 'Compliance',
+      score: (function() {
+        const polStatus = claimData.meta?.polStatus || 'not_required';
+        const polCompleted = polStatus === 'completed';
+        const noticeLogged = correspondenceJournal.some(e => e.type && e.type.toLowerCase().includes('notice'));
+        let s = 0;
+        if (noticeLogged) s += 0.4;
+        if (polStatus === 'not_required') s += 0.3;
+        if (polCompleted) s += 0.3;
+        return Math.min(s, 1);
+      })(),
+      state: (function() {
+        const polStatus = claimData.meta?.polStatus || 'not_required';
+        const polDeadline = claimData.meta?.polDeadline || '';
+        if (polStatus === 'required' && polDeadline) {
+          const daysUntil = Math.ceil((new Date(polDeadline) - new Date()) / (1000 * 60 * 60 * 24));
+          if (daysUntil <= 14) return 'risk';
+          return 'warn';
+        }
+        if (polStatus === 'completed') return 'ok';
+        if (polStatus === 'not_required') return 'warn';
+        return 'none';
+      })(),
+      detail: (function() {
+        const polStatus = claimData.meta?.polStatus || 'not_required';
+        const polDeadline = claimData.meta?.polDeadline || '';
+        const noticeLogged = correspondenceJournal.some(e => e.type && e.type.toLowerCase().includes('notice'));
+        const parts = [];
+        if (noticeLogged) parts.push('Written notice on record');
+        if (polStatus === 'completed') parts.push('Proof of Loss filed');
+        else if (polStatus === 'required' && polDeadline) parts.push('Proof of Loss due ' + polDeadline);
+        else if (polStatus === 'requested') parts.push('Proof of Loss requested by carrier');
+        else parts.push('Proof of Loss not yet required');
+        return parts.join(' · ') || 'Compliance status not yet established';
+      })(),
+      fixPhase: 7, fixSub: 0
+    },
+    {
+      id: 'evidence',
+      name: 'Evidence',
+      score: (function() {
+        const evidence = claimData.evidenceLog || [];
+        const letters = correspondenceJournal.length;
+        if (!evidence.length && !letters) return 0;
+        let s = 0;
+        if (evidence.length > 0) s += 0.5;
+        if (evidence.length >= 5) s += 0.25;
+        if (letters > 0) s += 0.25;
+        return Math.min(s, 1);
+      })(),
+      state: (function() {
+        const evidence = claimData.evidenceLog || [];
+        if (!evidence.length) return 'none';
+        if (evidence.length < 3) return 'warn';
+        return 'ok';
+      })(),
+      detail: (function() {
+        const evidence = claimData.evidenceLog || [];
+        const letters = correspondenceJournal.length;
+        if (!evidence.length) return 'No evidence indexed yet';
+        return evidence.length + ' evidence ' + (evidence.length === 1 ? 'entry' : 'entries') + (letters > 0 ? ' · ' + letters + ' letter' + (letters !== 1 ? 's' : '') + ' on record' : '');
+      })(),
+      fixPhase: 2, fixSub: 2
+    },
+    {
+      id: 'carrier',
+      name: 'Carrier Position',
+      score: (function() {
+        if (!claimData.structure.insurerEstimate) return 0;
+        if (!claimData.structure.carrierAnalysis) return 0.3;
+        if (!claimData.structure.negotiationStrategy) return 0.6;
+        return 1;
+      })(),
+      state: (function() {
+        if (!claimData.structure.insurerEstimate) return 'none';
+        if (!claimData.structure.carrierAnalysis) return 'warn';
+        return 'ok';
+      })(),
+      detail: (function() {
+        if (!claimData.structure.insurerEstimate) return 'Carrier estimate not yet received';
+        if (!claimData.structure.carrierAnalysis) return 'Carrier estimate received — analysis pending';
+        const lineItems = (claimData.structure.carrierAnalysis.line_items || []).length;
+        return 'Carrier position analyzed · ' + lineItems + ' line item' + (lineItems !== 1 ? 's' : '') + ' compared';
+      })(),
+      fixPhase: 5, fixSub: 1
+    },
+    {
+      id: 'demand',
+      name: 'Demand',
+      score: (function() {
+        const hasDemand = correspondenceJournal.some(e => e.type && (e.type.toLowerCase().includes('demand') || e.type.toLowerCase().includes('dispute')));
+        const hasDispute = correspondenceJournal.some(e => e.type && e.type.toLowerCase().includes('dispute'));
+        if (!hasDemand) return 0;
+        if (!hasDispute) return 0.5;
+        return 1;
+      })(),
+      state: (function() {
+        const hasDemand = correspondenceJournal.some(e => e.type && e.type.toLowerCase().includes('demand'));
+        if (!hasDemand) return 'none';
+        return 'ok';
+      })(),
+      detail: (function() {
+        const demandLetters = correspondenceJournal.filter(e => e.type && (e.type.toLowerCase().includes('demand') || e.type.toLowerCase().includes('dispute')));
+        if (!demandLetters.length) return 'Formal demand not yet submitted';
+        return demandLetters.length + ' demand/dispute letter' + (demandLetters.length !== 1 ? 's' : '') + ' submitted';
+      })(),
+      fixPhase: 8, fixSub: 0
+    },
+    {
+      id: 'resolution',
+      name: 'Resolution',
+      score: (function() {
+        const offers = (claimData.meta?.offerLog || []).length;
+        const polStatus = claimData.meta?.polStatus;
+        if (!offers) return 0;
+        if (polStatus === 'completed') return 0.7;
+        return 0.3;
+      })(),
+      state: (function() {
+        const offers = (claimData.meta?.offerLog || []).length;
+        if (!offers) return 'none';
+        return 'warn';
+      })(),
+      detail: (function() {
+        const offers = claimData.meta?.offerLog || [];
+        if (!offers.length) return 'No settlement offers received yet';
+        return offers.length + ' offer' + (offers.length !== 1 ? 's' : '') + ' tracked';
+      })(),
+      fixPhase: 10, fixSub: 0
+    },
+  ];
+
+  const totalScore = layers.reduce((sum, l) => sum + l.score, 0);
+  const percentage = Math.round((totalScore / layers.length) * 100);
+
+  return { layers, percentage };
+}
+
+function updateClaimReadiness() {
+  const { layers, percentage } = computeClaimReadiness();
+
+  // Update nav1 readiness score
+  const el = document.getElementById('readiness-score');
+  if (el) el.textContent = percentage + '%';
+
+  // Update proof strip
+  layers.forEach(layer => {
+    const stateEl = document.getElementById('proof-state-' + layer.id);
+    if (!stateEl) return;
+    stateEl.className = 'proof-state ' + layer.state;
+    const stateLabels = { ok: 'Established', warn: 'Partial', risk: 'At Risk', none: 'Not started' };
+    stateEl.textContent = stateLabels[layer.state] || 'Not started';
+  });
 }
 
 function renderActivityStrip(){
@@ -1746,7 +2061,8 @@ function renderProgressMilestones(){
   const total=phases.reduce((s,p)=>s+p.substeps.length,0);
   const milestoneDone=MILESTONE_KEYS.filter(k=>!!completedSubsteps[k]).length;
 
-  document.getElementById('sv-progress').textContent=done+' of '+total+' steps';
+  const svProgress=document.getElementById('sv-progress');
+  if(svProgress)svProgress.textContent=done+' of '+total+' steps';
 
   const el=document.getElementById('progress-milestones');
   if(!el)return;
@@ -1768,21 +2084,6 @@ function renderProgressMilestones(){
     </div>`;
   }).join('');
 }
-
-function toggleDrop(id,el){
-  const isOpen=el.classList.contains('open');
-  closeAllDrops();
-  if(!isOpen){el.classList.add('open');document.getElementById('dp-'+id).classList.add('open');}
-}
-
-function closeAllDrops(){
-  document.querySelectorAll('.drop-trigger').forEach(t=>t.classList.remove('open'));
-  document.querySelectorAll('.drop-panel').forEach(p=>p.classList.remove('open'));
-}
-
-document.addEventListener('click',function(e){
-  if(!e.target.closest('#status-strip'))closeAllDrops();
-});
 
 // ============================
 // PHASE / SUBSTEP NAVIGATION
@@ -1882,11 +2183,12 @@ function showView(v){
   document.getElementById('substep-bar').style.display=inPlan?'flex':'none';
   // Update nav pills
   document.querySelectorAll('.nav2-pill').forEach(p=>p.classList.remove('active'));
-  const map={fullplan:0,'claim-summary':1,financial:2,correspondence:3,activity:4,messages:5,documents:6,deadlines:7};
+  const map={'claim-plan':0,fullplan:1,'claim-summary':2,financial:3,correspondence:4,activity:5,messages:6,documents:7,deadlines:8};
   const idx=map[v];
   if(idx!==undefined)document.querySelectorAll('.nav2-pill')[idx].classList.add('active');
   // Render
   switch(v){
+    case 'claim-plan': renderClaimPlan(); break;
     case 'fullplan': buildPhaseRow();buildSubstepBar();renderContent(); break;
     case 'claim-summary': renderClaimSummary(); break;
     case 'financial': renderFinancial(); break;
@@ -1975,7 +2277,6 @@ function hasSubstantiveContractorText(text){
 }
 
 function goToContractorEstimateUpload(){
-  closeAllDrops();
   setPhase(4);
   setSubstep(0);
   showView('fullplan');
@@ -5696,6 +5997,90 @@ async function generateLetterContent(letterType){
 // ============================
 // VIEW RENDERERS
 // ============================
+function renderClaimPlan() {
+  const cv = document.getElementById('content-view');
+  const d = claimData.initial || {};
+  const { layers, percentage } = computeClaimReadiness();
+
+  const isNew = percentage === 0;
+
+  const requirements = [
+    { num: 1, title: 'The loss occurred and was timely reported', desc: 'Date, location, cause, discovery, written notice, and claim number on record.', phase: 'Step 1 — Report the Loss', layerId: 'coverage', phaseIdx: 0 },
+    { num: 2, title: 'The policy was in force and coverage exists', desc: 'Coverage parts, limits, deductibles, endorsements, exclusions, conditions, and deadlines identified.', phase: 'Step 2 — Policy Analysis', layerId: 'coverage', phaseIdx: 1 },
+    { num: 3, title: 'The damage resulted from a covered cause of loss', desc: 'Relationship between the covered event and each damage item established. Exclusion arguments anticipated.', phase: 'Step 3 — Document Damage', layerId: 'causation', phaseIdx: 2 },
+    { num: 4, title: 'The full scope of physical damage is documented', desc: 'Every area identified, described, measured, and indexed. Later-discovered damage logged. Evidence registered.', phase: 'Step 3 — Document Damage', layerId: 'damage', phaseIdx: 2 },
+    { num: 5, title: 'Policy duties after loss have been met', desc: 'Property protected, emergency repairs documented, records provided, cooperation demonstrated, deadlines met.', phase: 'Steps 1, 3, 8', layerId: 'compliance', phaseIdx: 0 },
+    { num: 6, title: 'The insurer had a fair opportunity to inspect', desc: 'What was shown, discussed, and requested. Newly discovered damage reported in writing afterward.', phase: 'Step 4 — Adjuster Inspection', layerId: 'evidence', phaseIdx: 3 },
+    { num: 7, title: 'Repair scope and cost have been established', desc: 'Independent contractor estimate with defensible scope, quantities, methods, materials, and pricing.', phase: 'Step 5 — Contractor Estimate', layerId: 'scope', phaseIdx: 4 },
+    { num: 8, title: "The carrier's position has been tested", desc: 'Every variance categorized: omitted scope, pricing, depreciation, coverage denial, exclusion, valuation.', phase: 'Step 6 — Estimate Analysis', layerId: 'carrier', phaseIdx: 5 },
+    { num: 9, title: 'All additional covered losses are quantified', desc: 'Contents, ALE, debris removal, mitigation, code costs, and all applicable coverages documented and supported.', phase: 'Step 7 — Contents & ALE', layerId: 'cost', phaseIdx: 6 },
+    { num: 10, title: 'A Proof of Loss has been properly completed', desc: 'Requirements identified, amounts verified, evidence reviewed, sworn statement prepared and submitted on time.', phase: 'Step 8 — Proof of Loss', layerId: 'compliance', phaseIdx: 7 },
+    { num: 11, title: 'The disputed amount has been clearly presented', desc: 'What is demanded, how it was calculated, what policy provisions support it, what the carrier got wrong.', phase: 'Step 9 — Demand & Dispute', layerId: 'demand', phaseIdx: 8 },
+    { num: 12, title: 'Leverage has been preserved through resolution', desc: 'Every offer tracked. Appraisal, regulatory, and legal options known. Release reviewed before signing. All money received.', phase: 'Steps 10, 11', layerId: 'resolution', phaseIdx: 9 },
+  ];
+
+  const layerMap = {};
+  layers.forEach(l => { layerMap[l.id] = l; });
+
+  const reqCards = requirements.map(req => {
+    const layer = layerMap[req.layerId] || {};
+    const established = layer.state === 'ok';
+    return `<div class="cp-req-card ${established ? 'established' : ''}" onclick="setPhase(${req.phaseIdx});showView('fullplan')">
+      <div class="cp-req-num">${established ? '✓' : req.num}</div>
+      <div class="cp-req-content">
+        <div class="cp-req-title">${req.title}</div>
+        <div class="cp-req-desc">${req.desc}</div>
+        <div class="cp-req-badge">${req.phase}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const phaseButtons = phases.map((p, i) => {
+    const isDone = completedPhases.includes(i);
+    const isActive = i === activePhase;
+    return `<div class="cp-phase-mini ${isActive ? 'active-phase' : ''}" onclick="setPhase(${i});showView('fullplan')">${isDone ? '✓ ' : ''}${p.num} ${p.title}</div>`;
+  }).join('');
+
+  const fillWidth = Math.max(2, percentage) + '%';
+
+  cv.innerHTML = `
+    <div style="max-width:900px;margin:0 auto;padding:20px 24px">
+
+      <div class="cp-hero">
+        <div class="cp-eyebrow">Your claim command center</div>
+        <div class="cp-title">What you need to<br><span>win your claim.</span></div>
+        <div class="cp-sub">Every property insurance claim requires 12 things to be established. CCP guides you through each one — building your case, generating your documents, and producing everything you need to recover every dollar you are owed.</div>
+        ${d.insurer || d.claimNumber ? `<div class="cp-meta">
+          ${d.claimNumber ? `<div class="cp-meta-item"><strong>Claim #</strong> ${escapeHtml(d.claimNumber)}</div>` : ''}
+          ${d.insurer ? `<div class="cp-meta-item"><strong>Carrier</strong> ${escapeHtml(d.insurer)}</div>` : ''}
+          ${d.dateOfLoss ? `<div class="cp-meta-item"><strong>Date of Loss</strong> ${escapeHtml(d.dateOfLoss)}</div>` : ''}
+          ${d.claimType ? `<div class="cp-meta-item"><strong>Loss Type</strong> ${escapeHtml(formatPerilLabel(d.claimType))}</div>` : ''}
+        </div>` : ''}
+        ${!isNew ? `<div style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px">Claim Readiness</span>
+            <span style="font-size:18px;font-weight:700;color:#14b8a6">${percentage}%</span>
+          </div>
+          <div class="cp-readiness-bar"><div class="cp-readiness-fill" style="width:${fillWidth}"></div></div>
+        </div>` : ''}
+        <button class="cp-start-btn" onclick="setPhase(${activePhase});showView('fullplan')">
+          ${isNew ? 'Start Step 1 — Report the Loss →' : 'Continue — ' + phases[activePhase].title + ' →'}
+        </button>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px">12 things you must establish to win</div>
+
+      <div class="cp-req-grid">${reqCards}</div>
+
+      <div style="background:#fff;border:1px solid var(--gray-200);border-radius:12px;padding:20px;margin-bottom:24px">
+        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px">Your 11-stage claim system</div>
+        <div style="font-size:12px;color:var(--gray-500);margin-bottom:14px">Each stage builds on the last. Click any stage to jump directly to it.</div>
+        <div class="cp-phase-row-mini">${phaseButtons}</div>
+      </div>
+
+    </div>`;
+}
+
 function renderClaimSummary(){
   const cv=document.getElementById('content-view');
   const st=claimData.structure;
@@ -6358,9 +6743,14 @@ async function init(){
   updateMissingPanel();
   if(onboarded){
     document.getElementById('onboarding-overlay').style.display='none';
-    showView('fullplan');
+    const hasProgress = Object.keys(completedSubsteps).length > 0 || activePhase > 0;
+    if(hasProgress){
+      showView('fullplan');
+    } else {
+      showView('claim-plan');
+    }
   }
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeAllDrops();});
+  updateClaimReadiness();
 }
 
 // ============================
