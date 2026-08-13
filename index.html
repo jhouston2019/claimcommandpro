@@ -1198,6 +1198,83 @@
       margin-right: auto;
     }
 
+    .output-reframe-card {
+      background: rgba(20, 184, 166, 0.12);
+      border: 2px solid rgba(20, 184, 166, 0.5);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-top: 3rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .output-reframe-headline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(1.625rem, 3.8vw, 2.35rem);
+      font-weight: 700;
+      color: white;
+      line-height: 1.22;
+      letter-spacing: -0.025em;
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+
+    .output-reframe-subhead {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.7;
+      text-align: center;
+      margin: 0 auto 2rem;
+      max-width: 640px;
+    }
+
+    .output-reframe-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .output-reframe-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.15rem 1rem 1rem;
+      background: rgba(15, 23, 42, 0.35);
+      border-left: 3px solid #14b8a6;
+      border-radius: 0 8px 8px 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.0625rem;
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .output-reframe-icon {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.35rem;
+      height: 1.35rem;
+      margin-top: 0.1rem;
+      border-radius: 4px;
+      background: rgba(20, 184, 166, 0.2);
+      color: #14b8a6;
+    }
+
+    .output-reframe-icon svg {
+      display: block;
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+
     /* Mirrors claim-command-center.html overview + tiles — scaled to fit preview window */
     .ccc-mockup-scroll {
       flex: 1;
@@ -2413,6 +2490,15 @@
         padding-right: 1rem;
         box-sizing: border-box;
       }
+
+      .output-reframe-card {
+        padding: 1.75rem 1.25rem;
+      }
+
+      .output-reframe-item {
+        font-size: 1rem;
+        padding: 0.9rem 1rem 0.9rem 0.85rem;
+      }
     }
   </style>
 </head>
@@ -2554,17 +2640,26 @@
         </div>
         
         <!-- Output Reframe -->
-        <div style="background: rgba(20,184,166,0.12); border: 2px solid rgba(20,184,166,0.5); border-radius: 12px; padding: 2.5rem; margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
-          <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: white; margin-bottom: 1.5rem; text-align: center;">What You Actually Get</h3>
-          <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.8; text-align: center; margin-bottom: 1.5rem;">
-            Not just reports. Not just advice.<br>
-            <strong style="color: white;">Claim-ready documentation you can send directly to your insurer.</strong>
-          </p>
-          <ul style="list-style: none; padding: 0; text-align: left; max-width: 600px; margin: 0 auto;">
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Professional supplement requests</li>
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Formatted dispute letters</li>
-            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Organized damage documentation</li>
-            <li style="padding: 0.75rem 0; color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Step-by-step claim guidance</li>
+        <div class="output-reframe-card">
+          <h3 class="output-reframe-headline">The insurer already has their numbers. Now you'll have yours.</h3>
+          <p class="output-reframe-subhead">Every output is claim-ready — formatted the way adjusters, attorneys, and regulators expect to see it.</p>
+          <ul class="output-reframe-list">
+            <li class="output-reframe-item">
+              <span class="output-reframe-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span>Supplement requests that recover missed line items by name</span>
+            </li>
+            <li class="output-reframe-item">
+              <span class="output-reframe-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span>Dispute letters with policy section citations your insurer has to answer in writing</span>
+            </li>
+            <li class="output-reframe-item">
+              <span class="output-reframe-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span>A damage file organized the way an attorney would take it to court</span>
+            </li>
+            <li class="output-reframe-item">
+              <span class="output-reframe-icon" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6.5L4.5 9L10 3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span>A sequenced process that follows the same standards insurance adjusters use internally</span>
+            </li>
           </ul>
         </div>
         
