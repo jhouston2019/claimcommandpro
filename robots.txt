@@ -3,7 +3,7 @@ Allow: /
 
 # Explicitly allow SEO content directories
 Allow: /seo/
-Allow: /ai/
+Allow: /app/ai/
 Allow: /learn/
 Allow: /cities/
 Allow: /complaints/
