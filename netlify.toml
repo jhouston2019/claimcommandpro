@@ -56,6 +56,18 @@ package = "@netlify/plugin-functions-install-core"
   status = 301
 
 [[redirects]]
+  from = "/seo/actual-cash-value-vs-replacement-cost.html"
+  to = "/seo/acv-vs-rcv-explained.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/seo/actual-cash-value-vs-replacement-cost"
+  to = "/seo/acv-vs-rcv-explained.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/claim-command-center.html"
   to = "/claim-command-center-v3.html"
   status = 301
