@@ -14,7 +14,7 @@
 **Evidence:**
 ```html
 <!-- index.html -->
-<a href="https://Claim Command Pro.com/.netlify/functions/create-checkout-session" class="btn-primary checkout-btn">Get Your Claim Toolkit</a>
+<a href="https://claimcommandpro.com/.netlify/functions/create-checkout-session" class="btn-primary checkout-btn">Get Your Claim Toolkit</a>
 ```
 
 ```javascript
@@ -192,7 +192,7 @@ const { data: existingClaim } = await supabase
 **Required Events:**
 - `checkout.session.completed`
 
-**Endpoint:** `https://Claim Command Pro.com/.netlify/functions/stripe-webhook`
+**Endpoint:** `https://claimcommandpro.com/.netlify/functions/stripe-webhook`
 
 **Impact:** Payments succeed but users never get access.
 

@@ -1,6 +1,6 @@
 # Claim Command Pro PDF Protection - Implementation Summary
 
-**Repository:** https://github.com/jhouston2019/Claim Command Pro.git  
+**Repository:** https://github.com/jhouston2019/claimcommandpro.git  
 **Implementation Date:** December 2024  
 **Status:** ✅ COMPLETE - Ready for Production
 
@@ -162,6 +162,6 @@ The Claim Command Pro PDF protection system is fully implemented and ready for p
 
 ---
 
-**Repository:** https://github.com/jhouston2019/Claim Command Pro.git  
+**Repository:** https://github.com/jhouston2019/claimcommandpro.git  
 **Implementation:** Complete ✅  
 **Status:** Production Ready 🚀

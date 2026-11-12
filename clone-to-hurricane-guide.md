@@ -95,7 +95,7 @@ cp ../Claim Command Pro/product.html ./
 ```
 
 ### Update netlify.toml:
-- Change the redirect URLs from `Claim Command Pro.netlify.app` to your hurricane site URL
+- Change the redirect URLs from `claimcommandpro.netlify.app` to your hurricane site URL
 - Update any site-specific configurations
 
 ## Step 4: Update Content for Hurricane Context

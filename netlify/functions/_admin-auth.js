@@ -3,7 +3,7 @@
  * Ensures admin access without needing browser headers.
  */
 
-const ADMIN_EMAIL = "Claim Command Pro@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "claimnavigatorai@gmail.com";
 
 module.exports = function requireAdmin(event, injectedEmail = null) {
   const headers = event.headers || {};

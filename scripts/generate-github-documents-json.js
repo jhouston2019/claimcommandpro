@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Generate document metadata for GitHub storage
-const githubBaseUrl = 'https://raw.githubusercontent.com/jhouston2019/Claim Command Pro/main/docs';
+const githubBaseUrl = 'https://raw.githubusercontent.com/jhouston2019/claimcommandpro/main/docs';
 
 const documents = [];
 

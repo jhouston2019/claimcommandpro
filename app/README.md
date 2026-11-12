@@ -89,7 +89,7 @@ Each new page should include:
 ```html
 <title>Page Name - Claim Command Pro</title>
 <meta name="description" content="Concise description of the tool or feature">
-<link rel="canonical" href="https://Claim Command Pro.com/app/resource-center/page-name.html">
+<link rel="canonical" href="https://claimcommandpro.com/app/resource-center/page-name.html">
 ```
 
 ## Testing

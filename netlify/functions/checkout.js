@@ -37,8 +37,8 @@ exports.handler = async (event) => {
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${process.env.FRONTEND_URL || 'https://Claim Command Pro.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.FRONTEND_URL || 'https://Claim Command Pro.com'}/cancel`,
+      success_url: `${process.env.FRONTEND_URL || 'https://claimcommandpro.com'}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'https://claimcommandpro.com'}/cancel`,
     });
 
     return {

@@ -1,5 +1,5 @@
 # PDF Protection Dependencies for Claim Command Pro
-# Repository: https://github.com/jhouston2019/Claim Command Pro.git
+# Repository: https://github.com/jhouston2019/claimcommandpro.git
 
 # Core PDF processing
 PyPDF2==3.0.1

@@ -314,7 +314,7 @@ STRIPE_PRICE_CLAIM_COMMAND_PRO=price_...
 OPENAI_API_KEY=sk-...
 
 # Site
-SITE_URL=https://Claim Command Pro.com
+SITE_URL=https://claimcommandpro.com
 ```
 
 ---

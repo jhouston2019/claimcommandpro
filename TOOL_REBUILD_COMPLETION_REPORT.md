@@ -266,7 +266,7 @@ All tools use these standardized classes from `tool-visual-alignment.css`:
 **Deletions:** 395 lines  
 
 **Pushed to:** `origin/main`  
-**Repository:** https://github.com/jhouston2019/Claim Command Pro.git
+**Repository:** https://github.com/jhouston2019/claimcommandpro.git
 
 ---
 

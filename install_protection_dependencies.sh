@@ -1,6 +1,6 @@
 #!/bin/bash
 # Claim Command Pro PDF Protection Dependencies Installer
-# Repository: https://github.com/jhouston2019/Claim Command Pro.git
+# Repository: https://github.com/jhouston2019/claimcommandpro.git
 
 echo "========================================"
 echo "Claim Command Pro PDF Protection Setup"

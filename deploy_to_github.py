@@ -61,13 +61,13 @@ def create_github_deployment_instructions():
 
 ## The Challenge
 The documents are stored in the GitHub repository at:
-- https://github.com/jhouston2019/Claim Command Pro
-- They are served from: https://Claim Command Pro.com/docs/
+- https://github.com/jhouston2019/claimcommandpro
+- They are served from: https://claimcommandpro.com/docs/
 
 ## Deployment Strategy
 
 ### Option 1: Manual GitHub Upload (Recommended)
-1. Go to your GitHub repository: https://github.com/jhouston2019/Claim Command Pro
+1. Go to your GitHub repository: https://github.com/jhouston2019/claimcommandpro
 2. Navigate to the docs/ directory (or wherever the original documents are stored)
 3. For each protected document:
    - Click on the file
@@ -84,7 +84,7 @@ The documents are stored in the GitHub repository at:
 5. Commit and push: git add . && git commit -m "Deploy protected documents" && git push
 
 ### Option 3: Git Commands (If you have Git access)
-1. Clone the repository: git clone https://github.com/jhouston2019/Claim Command Pro.git
+1. Clone the repository: git clone https://github.com/jhouston2019/claimcommandpro.git
 2. Copy protected documents to the docs directory
 3. Commit and push: git add . && git commit -m "Deploy protected documents" && git push
 
@@ -103,7 +103,7 @@ docs/
 
 ## Verification
 After deployment, verify that:
-1. Documents are accessible at https://Claim Command Pro.com/docs/
+1. Documents are accessible at https://claimcommandpro.com/docs/
 2. Documents require password to open
 3. Watermark appears at bottom of each page
 4. Printing and copying are disabled
@@ -145,7 +145,7 @@ def main():
     logger.info("GITHUB DEPLOYMENT READY")
     logger.info("=" * 70)
     logger.info("✅ Protected documents are ready for GitHub deployment")
-    logger.info("🌐 Target: https://github.com/jhouston2019/Claim Command Pro")
+    logger.info("🌐 Target: https://github.com/jhouston2019/claimcommandpro")
     logger.info("📁 Documents location: ./Document Library - Final English/ and ./Document Library - Final Spanish/")
     logger.info("🔒 Security features: Password protection, watermarks, restrictions")
     logger.info("📋 Instructions: GITHUB_DEPLOYMENT_INSTRUCTIONS.txt")

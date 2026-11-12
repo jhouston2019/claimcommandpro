@@ -1,6 +1,6 @@
 @echo off
 REM Claim Command Pro PDF Protection Dependencies Installer
-REM Repository: https://github.com/jhouston2019/Claim Command Pro.git
+REM Repository: https://github.com/jhouston2019/claimcommandpro.git
 
 echo ========================================
 echo Claim Command Pro PDF Protection Setup

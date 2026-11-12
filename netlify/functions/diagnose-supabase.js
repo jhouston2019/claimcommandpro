@@ -38,12 +38,19 @@ exports.handler = async (event, context) => {
     const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
     
     // Try to access the specific bucket
-    const { data: Claim Command ProDocs, error: Claim Command ProDocsError } = await supabase.storage
-      .from('Claim Command Pro-docs')
+    const { data: claimCommandProDocs, error: claimCommandProDocsError } = await supabase.storage
+      .from('claimnavigatorai-docs')
       .list('', { limit: 10 });
 
     // Try alternative bucket names
-    const alternativeBuckets = ['documents', 'Claim Command Pro-docs', 'Claim Command Pro_docs', 'docs'];
+    const alternativeBuckets = [
+      'documents',
+      'claimnavigatorai-docs',
+      'claimnavigatorai_docs',
+      'claimcommandpro-docs',
+      'claimcommandpro_docs',
+      'docs'
+    ];
     const alternativeResults = {};
 
     for (const bucketName of alternativeBuckets) {
@@ -84,11 +91,11 @@ exports.handler = async (event, context) => {
           bucketNames: (buckets || []).map(b => b.name),
           error: bucketsError ? bucketsError.message : null
         },
-        Claim Command ProDocs: {
-          exists: !Claim Command ProDocsError,
-          error: Claim Command ProDocsError ? Claim Command ProDocsError.message : null,
-          fileCount: Claim Command ProDocs ? Claim Command ProDocs.length : 0,
-          sampleFiles: Claim Command ProDocs ? Claim Command ProDocs.slice(0, 5) : []
+        claimCommandProDocs: {
+          exists: !claimCommandProDocsError,
+          error: claimCommandProDocsError ? claimCommandProDocsError.message : null,
+          fileCount: claimCommandProDocs ? claimCommandProDocs.length : 0,
+          sampleFiles: claimCommandProDocs ? claimCommandProDocs.slice(0, 5) : []
         },
         alternativeBuckets: alternativeResults,
         recommendations: {

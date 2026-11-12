@@ -30,7 +30,7 @@ async function sendFnolEmail(to, cc, bcc, subject, body, pdfBuffer, pdfFilename)
         to: to,
         cc: cc,
         bcc: bcc,
-        from: process.env.FNOL_EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL || 'noreply@Claim Command Pro.com',
+        from: process.env.FNOL_EMAIL_FROM || process.env.SENDGRID_FROM_EMAIL || 'noreply@claimcommandpro.com',
         subject: subject,
         text: body,
         html: body.replace(/\n/g, '<br>'),

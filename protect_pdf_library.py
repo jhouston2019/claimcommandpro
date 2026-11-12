@@ -10,7 +10,7 @@ This script protects all PDF documents in the Claim Command Pro library with:
 - Backup of original documents
 
 Author: Claim Command Pro Team
-Repository: https://github.com/jhouston2019/Claim Command Pro.git
+Repository: https://github.com/jhouston2019/claimcommandpro.git
 """
 
 import os

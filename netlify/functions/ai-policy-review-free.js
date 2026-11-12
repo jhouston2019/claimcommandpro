@@ -246,7 +246,7 @@ exports.handler = async (event) => {
     const DAILY_BUDGET_LIMIT = 10.00; // $10 USD
     const ESTIMATED_COST_PER_REQUEST = 0.001; // $0.001 per request (GPT-4o-mini)
 
-    const { data: todayUsage, error: usageError } = await supabase
+    const { data: todayUsage, error: todayUsageError } = await supabase
       .from('free_policy_reviews')
       .select('id')
       .gte('created_at', `${today}T00:00:00Z`)

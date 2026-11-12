@@ -11,7 +11,7 @@ exports.handler = async (event) => {
 
   try {
     // Get user email from JWT token or use default
-    let userEmail = 'user@Claim Command Pro.com';
+    let userEmail = 'user@claimcommandpro.com';
     
     const authHeader = event.headers.authorization || event.headers.Authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 
     // Try to fetch from the local Netlify site first
     const decodedPath = decodeURIComponent(documentPath);
-    const localUrl = `${process.env.SITE_URL || process.env.URL || 'https://Claim Command Pro.com'}/docs/${decodedPath}`;
+    const localUrl = `${process.env.SITE_URL || process.env.URL || 'https://claimcommandpro.com'}/docs/${decodedPath}`;
     console.log('Fetching from:', localUrl);
     
     const response = await fetch(localUrl);

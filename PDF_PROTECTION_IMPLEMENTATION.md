@@ -1,6 +1,6 @@
 # Claim Command Pro PDF Protection Implementation
 
-**Repository:** https://github.com/jhouston2019/Claim Command Pro.git  
+**Repository:** https://github.com/jhouston2019/claimcommandpro.git  
 **Implementation Date:** December 2024  
 **Total Documents Protected:** 247+ PDF files across English and Spanish libraries
 
@@ -307,6 +307,6 @@ The system protects 247+ PDF documents across English and Spanish libraries whil
 
 ---
 
-**Repository:** https://github.com/jhouston2019/Claim Command Pro.git  
+**Repository:** https://github.com/jhouston2019/claimcommandpro.git  
 **Implementation Date:** December 2024  
 **Status:** Production Ready

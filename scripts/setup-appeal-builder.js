@@ -62,7 +62,7 @@ async function testAppealBuilderSystem() {
   
   try {
     // Test the system
-    const result = await makeRequest('https://Claim Command Pro.com/.netlify/functions/test-appeal-builder', {
+    const result = await makeRequest('https://claimcommandpro.com/.netlify/functions/test-appeal-builder', {
       method: 'GET'
     });
     
