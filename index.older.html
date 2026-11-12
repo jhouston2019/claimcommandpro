@@ -1,0 +1,3539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Command Pro - Find Missing Money in Your Insurance Claim</title>
+  <meta name="description" content="Insurance claim help platform that helps policyholders detect underpayment, review estimates, and maximize insurance settlements. Trusted by thousands.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    #__next,
+    #root {
+      width: 100vw;
+      max-width: 100vw;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    body > * {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --navy: #0f172a;
+      --navy-light: #1e293b;
+      --teal: #14b8a6;
+      --teal-dark: #0d9488;
+      --phase-green: #0d9488;
+      --phase-orange: #ea580c;
+      --phase-amber: #d97706;
+      --phase-red: #dc2626;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-900: #111827;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--gray-900);
+      background: #ffffff;
+      width: 100vw;
+      max-width: 100vw;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Typography System */
+    h1, h2, h3, h4, h5, h6,
+    .money-value,
+    .missing-value,
+    .calc-result-amount,
+    .example-amount,
+    .example-missing-amount,
+    .panel-stat-value {
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 1rem 0;
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      color: var(--gray-600);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--teal);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 3px;
+      background: var(--navy);
+      border-radius: 2px;
+    }
+
+    .btn-login {
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+      background: white;
+      color: var(--gray-900);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-login:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      background: #0f172a;
+      padding: 5rem 0 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(20,184,166,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 580px;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .hero-left {
+      width: 100%;
+      padding-bottom: 4rem;
+      text-align: center;
+    }
+
+    .hero-tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-style: normal;
+      font-size: 2rem;
+      color: #14b8a6;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    .hero-question {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.25rem;
+      font-style: normal;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 3rem;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      text-align: center;
+      max-width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding-top: 1rem;
+    }
+
+    .hero-question-line {
+      display: block;
+    }
+
+    .hero-answer {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-answer .number-highlight {
+      color: #14b8a6;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: inline;
+      line-height: 1.7;
+      letter-spacing: -0.02em;
+    }
+
+    .found-statement {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      color: rgba(255,255,255,0.85);
+      display: block;
+      line-height: 1.3;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .difference-amount {
+      color: #14b8a6;
+      font-family: 'DM Serif Display', serif;
+      font-size: 5rem;
+      font-weight: 400;
+      display: block;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-top: 0.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-subtext {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 0;
+      line-height: 1.85;
+    }
+
+    .body-highlight {
+      color: rgba(255,255,255,0.9);
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .hero-subtext strong {
+      color: rgba(255,255,255,0.9);
+      font-weight: 400;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.75rem;
+      display: block;
+      line-height: 1.4;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 2rem 0;
+      margin: 2rem 0 1rem;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      padding: 0.9rem 1.75rem;
+      background: #14b8a6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(20,184,166,0.35);
+    }
+
+    .btn-primary:hover {
+      background: #0d9488;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(20,184,166,0.45);
+    }
+
+    .btn-ghost {
+      padding: 0.9rem 1.75rem;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.5);
+      color: white;
+    }
+
+    .calc-destination-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #14b8a6;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .hero-right {
+      padding-bottom: 4rem;
+    }
+
+    .calculator-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.75rem 2.75rem 2.5rem;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+
+    .calc-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.75rem;
+      color: #0f172a;
+      margin-bottom: 0.35rem;
+    }
+
+    .calc-subtitle {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #4b5563;
+      margin-bottom: 0.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #0f172a;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #14b8a6;
+    }
+
+    .calc-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.25rem 0 1.1rem;
+      color: #4b5563;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .calc-divider::before,
+    .calc-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+
+    .calc-result {
+      display: none;
+      background: #fef2f2;
+      border: 2px solid #fca5a5;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.25rem 0;
+    }
+
+    .calc-result.active { display: block; }
+
+    .calc-result-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #991b1b;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.3rem;
+    }
+
+    .calc-result-amount {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3.25rem;
+      color: #ef4444;
+      line-height: 1;
+    }
+
+    .calc-result-note {
+      font-size: 0.8rem;
+      color: #991b1b;
+      margin-top: 0.4rem;
+      opacity: 0.8;
+    }
+
+    .btn-calc {
+      width: 100%;
+      padding: 1.1rem;
+      background: #0f172a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-calc:hover { background: #1e293b; }
+
+    .claim-types {
+      font-size: 1.5rem;
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 2.5rem 2rem 3rem;
+      line-height: 1.6;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* CREDIBILITY STACK */
+    .credibility-stack {
+      background: #1a2332;
+      padding: 1.5rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .credibility-items {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .credibility-item {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .credibility-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .credibility-icon {
+      font-size: 0.875rem;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: #0d1b2e;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.4;
+    }
+
+    /* CALCULATOR SECTION */
+    .calculator-section {
+      padding: 5rem 0;
+      background: var(--gray-50);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--navy);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .calculator-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 3rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 1.25rem;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--teal);
+    }
+
+    .calc-result {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+      border: 3px solid var(--teal);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-top: 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .calc-result.active {
+      display: block;
+    }
+
+    .calc-result-label {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .calc-result-amount {
+      font-size: 4.5rem;
+      font-weight: 900;
+      color: var(--teal);
+      line-height: 1;
+    }
+
+    /* WHERE MONEY GETS MISSED */
+    .money-missed-section {
+      padding: 5rem 0;
+      background: white;
+    }
+
+    .example-card {
+      max-width: 900px;
+      margin: 0 auto 3rem;
+      background: var(--gray-50);
+      border-radius: 16px;
+      padding: 3rem;
+    }
+
+    .example-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 2rem;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .example-item {
+      text-align: center;
+    }
+
+    .example-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .example-amount {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .example-arrow {
+      font-size: 3rem;
+      color: var(--gray-600);
+    }
+
+    .example-missing {
+      background: rgba(20, 184, 166, 0.1);
+      border: 3px solid var(--teal);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .example-missing-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .example-missing-amount {
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--teal);
+      line-height: 1;
+    }
+
+    .bullet-list {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .bullet-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.25rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .bullet-item::before {
+      content: '→';
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    /* CASE STUDIES */
+    .case-studies-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .case-studies-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto 2rem;
+    }
+
+    .case-study-card {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      position: relative;
+    }
+
+    .case-study-badge {
+      display: inline-block;
+      padding: 0.375rem 0.875rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .case-study-badge.residential {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .case-study-badge.commercial-water {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .case-study-badge.commercial-bi {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .case-study-loss {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .case-study-amounts {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .case-study-amount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.75rem;
+    }
+
+    .case-study-amount-label {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      font-weight: 600;
+    }
+
+    .case-study-amount-value {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .case-study-amount-value.recovered {
+      color: #10b981;
+      font-size: 2rem;
+    }
+
+    .case-study-findings {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .case-study-findings li {
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+
+    .case-study-findings li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .case-study-quote {
+      background: var(--gray-50);
+      border-left: 3px solid var(--teal);
+      padding: 1rem 1.25rem;
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+
+    .case-study-attribution {
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    .case-studies-disclaimer {
+      text-align: center;
+      max-width: 900px;
+      margin: 2rem auto 0;
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      background: #0d1b2e;
+      padding: 3rem 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* SYSTEM POSITIONING */
+    .system-section {
+      padding: 5rem 0;
+      background: white;
+    }
+
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .system-item {
+      display: flex;
+      align-items: start;
+      gap: 1.25rem;
+      padding: 1.5rem;
+      background: var(--gray-50);
+      border-radius: 12px;
+    }
+
+    .system-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--teal);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .system-text {
+      font-size: 1.125rem;
+      color: var(--navy);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* FINAL CTA */
+    .final-cta {
+      background: var(--navy);
+      padding: 5rem 0;
+      text-align: center;
+    }
+
+    .final-cta h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1.5rem;
+    }
+
+    .final-cta p {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      max-width: 800px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: var(--navy-light);
+      padding: 3rem 0;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--teal);
+    }
+
+    /* SOCIAL PROOF BAR */
+    .social-proof-bar {
+      background: white;
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .social-proof-bar-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+
+    .social-proof-bar-item {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .social-proof-bar-text {
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .social-proof-bar-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* TOOLS SECTION */
+    .tools-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .section-subtitle {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      text-align: center;
+      max-width: 800px;
+      margin: -1.5rem auto 4rem;
+      line-height: 1.6;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .tool-card {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: all 0.3s;
+    }
+
+    .tool-card:hover {
+      border-color: var(--teal);
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .tool-number {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tool-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .tool-desc {
+      font-size: 1rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    /* FREE POLICY ANALYSIS */
+    .analysis-section {
+      padding: 6rem 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .analysis-section .section-title {
+      color: white;
+    }
+
+    .analysis-content {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .analysis-desc {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .analysis-checklist {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .analysis-checklist ul {
+      list-style: none;
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .analysis-checklist li {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      padding-left: 2rem;
+      position: relative;
+    }
+
+    .analysis-checklist li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .urgency-callout {
+      background: rgba(251, 191, 36, 0.1);
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem auto;
+      max-width: 800px;
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.8;
+    }
+
+    /* DASHBOARD VISUAL */
+    .dashboard-section {
+      padding: 6rem 0 5rem;
+      background: var(--navy);
+    }
+
+    .dashboard-section .section-title {
+      color: white;
+    }
+
+    .dashboard-visual {
+      max-width: 1280px;
+      margin: 3rem auto 0;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .dashboard-placeholder {
+      background: var(--navy);
+      border-radius: 12px;
+      padding: 0;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      height: min(520px, 72vh);
+      max-height: 560px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-placeholder.dashboard-placeholder--screenshot {
+      height: auto;
+      max-height: none;
+      display: block;
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.08);
+      margin-bottom: 3.5rem;
+    }
+
+    .ccc-dashboard-screenshot {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Mirrors claim-command-center.html overview + tiles — scaled to fit preview window */
+    .ccc-mockup-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: var(--navy);
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .ccc-mockup-nav {
+      flex-shrink: 0;
+      background: var(--navy);
+      border-bottom: 1px solid #2d3f55;
+      padding: 0 10px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ccc-mockup-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .ccc-mockup-brand {
+      font-family: 'DM Serif Display', serif;
+      font-size: 15px;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .ccc-mockup-divider {
+      width: 1px;
+      height: 12px;
+      background: #2d3f55;
+      flex-shrink: 0;
+    }
+
+    .ccc-mockup-nav-txt {
+      font-size: 11px;
+      color: #9ca3af;
+      white-space: nowrap;
+    }
+
+    .ccc-mockup-nav-step {
+      font-size: 11px;
+      color: #9ca3af;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ccc-mockup-allsteps {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid #2d3f55;
+      border-radius: 6px;
+      color: #d1d5db;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: default;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+
+    .ccc-mockup-nav-pills {
+      display: flex;
+      flex-shrink: 0;
+      gap: 0;
+    }
+
+    .ccc-mockup-nav-pills span {
+      padding: 0 10px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #9ca3af;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .ccc-mockup-metric-strip {
+      flex-shrink: 0;
+      background: #1e293b;
+      border-bottom: 1px solid #2d3f55;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 8px;
+      gap: 0;
+      overflow-x: auto;
+    }
+
+    .ccc-mockup-metric-block {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      border-right: 1px solid #2d3f55;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .ccc-mockup-metric-block:last-child {
+      border-right: none;
+    }
+
+    .ccc-mockup-metric-block .lbl {
+      font-size: 11px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin: 0;
+    }
+
+    .ccc-mockup-metric-block .val {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .ccc-mockup-metric-block.mv-blue .val { color: #3b82f6; }
+    .ccc-mockup-metric-block.mv-purple .val { color: #a855f7; }
+    .ccc-mockup-metric-block.mv-orange .val { color: #f97316; }
+    .ccc-mockup-metric-block.mv-red .val { color: #ef4444; }
+
+    .ccc-mockup-overview {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 8px 10px 12px;
+    }
+
+    .ccc-mockup-page-head {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    .ccc-mockup-overview-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(14px, 1.8vw, 20px);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 4px;
+      line-height: 1.2;
+    }
+
+    .ccc-mockup-overview-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .ccc-mockup-phase {
+      margin-bottom: 10px;
+    }
+
+    .ccc-mockup-phase:last-of-type {
+      margin-bottom: 4px;
+    }
+
+    .ccc-mockup-phase-bar {
+      height: 2px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 1px;
+      margin-bottom: 6px;
+      overflow: hidden;
+    }
+
+    .ccc-mockup-phase-bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 1px;
+    }
+
+    .ccc-mockup-phase-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .ccc-mockup-pill {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 2px 10px;
+      border-radius: 999px;
+      color: white;
+    }
+
+    .ccc-mockup-pill.p1 { background: #14b8a6; }
+    .ccc-mockup-pill.p2 { background: #10b981; }
+    .ccc-mockup-pill.p3 { background: #f97316; }
+    .ccc-mockup-pill.p4 { background: #f59e0b; }
+    .ccc-mockup-pill.p5 { background: #ef4444; }
+
+    .ccc-mockup-phase-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .ccc-mockup-phase-time {
+      font-size: 10px;
+      color: #6b7280;
+      margin-left: auto;
+    }
+
+    .ccc-mockup-phase-count {
+      font-size: 10px;
+      font-weight: 700;
+      color: #9ca3af;
+    }
+
+    .ccc-mockup-step-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+    }
+
+    .ccc-mockup-tile {
+      display: flex;
+      align-items: stretch;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+      position: relative;
+      min-height: 0;
+    }
+
+    .ccc-mockup-tile-ico {
+      flex-shrink: 0;
+      width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9fafb;
+      border-right: 1px solid #f3f4f6;
+      font-size: 16px;
+      padding: 6px 0;
+    }
+
+    .ccc-mockup-tile-body {
+      flex: 1;
+      padding: 6px 8px;
+      min-width: 0;
+    }
+
+    .ccc-mockup-tile-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.25;
+      margin: 0 0 2px;
+    }
+
+    .ccc-mockup-tile-sub {
+      font-size: 9px;
+      color: var(--gray-600);
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .ccc-mockup-tile-ai {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--teal);
+    }
+
+    .ccc-mockup-tile-ai::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .ccc-mockup-badge-col {
+      flex-shrink: 0;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .ccc-mockup-badge {
+      width: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 6px 4px;
+    }
+
+    .ccc-mockup-badge-w {
+      font-size: 7px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .ccc-mockup-badge-n {
+      font-family: 'DM Serif Display', serif;
+      font-size: 15px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .ccc-mockup-tile-arr {
+      width: 10px;
+      position: relative;
+      align-self: stretch;
+      min-height: 100%;
+    }
+
+    .ccc-mockup-tile-arr::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      clip-path: polygon(0 0, 0% 100%, 100% 50%);
+    }
+
+    .ccc-mockup-tile.p1 .ccc-mockup-badge,
+    .ccc-mockup-tile.p1 .ccc-mockup-tile-arr::before { background: #14b8a6; }
+    .ccc-mockup-tile.p2 .ccc-mockup-badge,
+    .ccc-mockup-tile.p2 .ccc-mockup-tile-arr::before { background: #10b981; }
+    .ccc-mockup-tile.p3 .ccc-mockup-badge,
+    .ccc-mockup-tile.p3 .ccc-mockup-tile-arr::before { background: #f97316; }
+    .ccc-mockup-tile.p4 .ccc-mockup-badge,
+    .ccc-mockup-tile.p4 .ccc-mockup-tile-arr::before { background: #f59e0b; }
+    .ccc-mockup-tile.p5 .ccc-mockup-badge,
+    .ccc-mockup-tile.p5 .ccc-mockup-tile-arr::before { background: #ef4444; }
+
+    .ccc-mockup-footnote {
+      text-align: center;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+      padding: 4px 8px 2px;
+      margin: 0;
+    }
+
+    .platform-callouts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .platform-callout {
+      text-align: center;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+    }
+
+    .platform-callout-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+
+    .platform-callout-desc {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+    }
+
+    /* ROADMAP SECTION */
+    .roadmap-section {
+      padding: 6rem 0;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .roadmap-section .section-title {
+      color: white;
+    }
+
+    .roadmap-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .roadmap-step {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .roadmap-step:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--teal);
+    }
+
+    .roadmap-step-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--teal);
+      margin-bottom: 1rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .roadmap-step-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.75rem;
+    }
+
+    .roadmap-step-desc {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.5;
+    }
+
+    /* PRICING SECTION */
+    .pricing-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .pricing-tiers {
+      display: grid;
+      grid-template-columns: minmax(0, 440px);
+      justify-content: center;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 3rem auto 4rem;
+    }
+
+    .pricing-tier {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-tier:hover {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .pricing-tier.popular {
+      border-color: var(--teal);
+      border-width: 3px;
+      box-shadow: 0 10px 40px rgba(20, 184, 166, 0.15);
+      transform: scale(1.05);
+    }
+
+    .pricing-tier.popular:hover {
+      transform: scale(1.05) translateY(-4px);
+    }
+
+    .pricing-tier-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gray-600);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-tier.popular .pricing-tier-label {
+      color: var(--teal);
+    }
+
+    .pricing-tier-price {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+
+    .pricing-tier-period {
+      font-size: 1rem;
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+    }
+
+    .pricing-tier-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    .pricing-tier-features li {
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+      padding-left: 1.75rem;
+      position: relative;
+    }
+
+    .pricing-tier-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    .pricing-tier-note {
+      font-size: 0.875rem;
+      color: var(--gray-600);
+      margin-top: 1rem;
+      font-style: italic;
+    }
+
+    .pricing-tier-cta {
+      margin-top: auto;
+    }
+
+    .pricing-reassurance {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .pricing-reassurance-line {
+      font-size: 0.8125rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+      margin-bottom: 0.375rem;
+    }
+
+    .pricing-reassurance-line:last-child {
+      margin-bottom: 0;
+    }
+
+    .pricing-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto 3rem;
+    }
+
+    .pricing-compare-item {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .pricing-compare-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .pricing-compare-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .pricing-compare-value.bad {
+      color: #ef4444;
+    }
+
+    .pricing-compare-value.good {
+      color: var(--teal);
+    }
+
+    .pricing-context {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pricing-context-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 1.5rem;
+    }
+
+    .pricing-context-desc {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    /* STAT BLOCKS (for updated stats section) */
+    .stat-block-label {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.4;
+    }
+
+    /* CTA SECTIONS */
+    .cta-section {
+      padding: 4rem 0;
+      text-align: center;
+    }
+
+    .cta-section.light {
+      background: var(--gray-50);
+    }
+
+    .cta-section.dark {
+      background: var(--navy);
+    }
+
+    .cta-headline {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.3;
+    }
+
+    .cta-section.light .cta-headline {
+      color: var(--navy);
+    }
+
+    .cta-section.dark .cta-headline {
+      color: white;
+    }
+
+    /* FREE ANALYSIS QUALITY SIGNAL */
+    .analysis-quality-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .analysis-report-mockup {
+      max-width: 1000px;
+      margin: 0 auto 2.5rem;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .analysis-report-header {
+      background: var(--navy);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .analysis-report-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: white;
+      font-weight: 400;
+    }
+
+    .analysis-report-meta {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .analysis-report-body {
+      padding: 2.5rem;
+    }
+
+    .analysis-blocks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .analysis-block {
+      background: var(--gray-50);
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .analysis-block-status {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .analysis-block-status.warning {
+      color: #d97706;
+    }
+
+    .analysis-block-status.error {
+      color: #dc2626;
+    }
+
+    .analysis-block-status.success {
+      color: #059669;
+    }
+
+    .analysis-block-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .analysis-block-text {
+      font-size: 0.9375rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+    }
+
+    .analysis-quality-action {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    .analysis-quality-cta {
+      text-align: center;
+    }
+
+    /* ESTIMATE ANALYSIS EXAMPLE */
+    .analysis-example-section {
+      padding: 6rem 0;
+      background: white;
+    }
+
+    .analysis-example-intro {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+    }
+
+    .analysis-example-subhead {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-top: 1rem;
+    }
+
+    .analysis-table-container {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .analysis-table thead {
+      background: var(--navy);
+    }
+
+    .analysis-table th {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .analysis-table th:nth-child(2),
+    .analysis-table th:nth-child(3),
+    .analysis-table th:nth-child(4) {
+      text-align: right;
+    }
+
+    .analysis-table th:nth-child(5) {
+      text-align: center;
+    }
+
+    .analysis-table tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background 0.2s;
+    }
+
+    .analysis-table tbody tr:hover {
+      background: var(--gray-50);
+    }
+
+    .analysis-table td {
+      padding: 1.25rem;
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+    }
+
+    .analysis-table td:nth-child(2),
+    .analysis-table td:nth-child(3),
+    .analysis-table td:nth-child(4) {
+      text-align: right;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .analysis-table td:nth-child(5) {
+      text-align: center;
+    }
+
+    .analysis-table .line-item {
+      font-weight: 500;
+    }
+
+    .analysis-table .insurer-amount {
+      color: var(--gray-600);
+    }
+
+    .analysis-table .correct-amount {
+      color: var(--navy);
+    }
+
+    .analysis-table .gap-amount {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .analysis-flag {
+      display: inline-block;
+      padding: 0.375rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .analysis-flag.missing {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fbbf24;
+    }
+
+    .analysis-flag.suppressed {
+      background: #fed7aa;
+      color: #9a3412;
+      border: 1px solid #f97316;
+    }
+
+    .analysis-flag.unclaimed {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+
+    .analysis-table tfoot {
+      background: var(--gray-50);
+      border-top: 3px solid var(--navy);
+    }
+
+    .analysis-table tfoot td {
+      padding: 1.5rem 1.25rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--navy);
+    }
+
+    .analysis-table tfoot td:nth-child(4) {
+      color: #ef4444;
+      font-size: 1.5rem;
+      font-family: 'DM Serif Display', Georgia, serif;
+    }
+
+    .analysis-note {
+      text-align: center;
+      max-width: 700px;
+      margin: 2rem auto 2.5rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.6;
+    }
+
+    .analysis-cta {
+      text-align: center;
+    }
+
+    /* FAQ SECTION */
+    .faq-section {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .faq-list {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background: white;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .faq-item:hover {
+      border-color: var(--teal);
+    }
+
+    .faq-question {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      padding: 1.75rem 2.5rem 1.75rem 2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .faq-question:hover {
+      background: var(--gray-50);
+    }
+
+    .faq-chevron {
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .faq-item.expanded .faq-chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      font-size: 1.05rem;
+      color: var(--gray-600);
+      line-height: 1.7;
+      padding: 0 2rem 2rem 2rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.expanded .faq-answer {
+      max-height: 500px;
+      padding: 0 2rem 2rem 2rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-question { font-size: 1.875rem; padding-top: 0; }
+      .hero-left { text-align: center; padding-bottom: 0; }
+      .hero-ctas { justify-content: center; }
+
+      .system-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .roadmap-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .platform-callouts {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials {
+        grid-template-columns: 1fr;
+      }
+
+      .social-proof-bar-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ccc-mockup-nav-pills {
+        display: none;
+      }
+
+      .ccc-mockup-metric-strip {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        min-height: auto;
+        padding: 6px 8px;
+      }
+
+      .ccc-mockup-metric-block {
+        padding: 4px 10px;
+        border-right: none;
+        border-bottom: 1px solid #2d3f55;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .hero-question { font-size: 1.375rem; }
+      .difference-amount { font-size: 3.5rem; }
+      .found-statement { font-size: 1.25rem; }
+      .hero-ctas { flex-direction: column; align-items: center; }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .example-comparison {
+        grid-template-columns: 1fr;
+      }
+
+      .example-arrow {
+        transform: rotate(90deg);
+      }
+
+      .testimonials {
+        grid-template-columns: 1fr;
+      }
+
+      .analysis-table-container {
+        overflow-x: auto;
+      }
+
+      .analysis-table {
+        font-size: 0.8125rem;
+      }
+
+      .analysis-table th,
+      .analysis-table td {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .analysis-flag {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .credibility-items {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .credibility-divider {
+        display: none;
+      }
+
+      .case-studies-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-tiers {
+        grid-template-columns: 1fr;
+      }
+
+      .pricing-tier.popular {
+        transform: scale(1);
+      }
+
+      .analysis-blocks {
+        grid-template-columns: 1fr;
+      }
+
+      .ccc-mockup-step-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ccc-mockup-nav-left {
+        gap: 6px;
+      }
+
+      .ccc-mockup-nav-step {
+        max-width: 140px;
+      }
+    }
+
+    .situation-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 1rem 1.1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: white;
+    }
+
+    .situation-option:hover {
+      border-color: #14b8a6;
+      background: #f0fdf9;
+    }
+
+    .situation-option.selected {
+      border-color: #14b8a6;
+      background: #f0fdf9;
+      box-shadow: 0 0 0 3px rgba(20,184,166,0.15);
+    }
+
+    .situation-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      margin-top: 0.2rem;
+    }
+
+    .situation-label {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.3rem;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+    }
+
+    .situation-sub {
+      font-size: 0.875rem;
+      color: #6b7280;
+      line-height: 1.4;
+    }
+    .hidden { display: none !important; }
+
+    /* Mobile: collapse 1000–1280px centered wrappers to full viewport width */
+    @media (max-width: 768px) {
+      .nav-container,
+      .hero-container,
+      .container,
+      .case-studies-grid,
+      .footer-container,
+      .social-proof-bar-grid,
+      .tools-grid,
+      .dashboard-visual,
+      .roadmap-steps,
+      .pricing-tiers,
+      .analysis-report-mockup,
+      .analysis-table-container {
+        max-width: 100%;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        box-sizing: border-box;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">Claim Command Pro</div>
+      <div class="nav-links">
+        <a href="#calculator">Calculator</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#system">System</a>
+        <button class="btn-login">Login</button>
+      </div>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-container">
+
+      <h1 class="hero-question">
+        <span class="hero-question-line">Most homeowners are underpaid by $15,000 or more.</span>
+        <span class="hero-question-line">Don't be one of them.</span>
+        <span class="hero-question-line">Collect every dollar your policy provides</span>
+        <span class="hero-question-line">with Claim Command Pro</span>
+      </h1>
+
+      <div class="hero-grid">
+
+        <div class="hero-left">
+
+          <p class="hero-answer">
+            Claim Command Pro is a <strong style="color: white; font-weight: 700;">complete claim management system</strong> that empowers you to handle your own claim the right way — with the tools, documentation process, and expert methodology to prove your damage fully and recover everything you're owed.
+          </p>
+
+          <p class="hero-subtext" style="margin-top: 1.5rem; margin-bottom: 0;">
+            Insurance companies pay based on what's properly <em style="color: rgba(255,255,255,0.9);">proven and documented</em>. Most homeowners don't know how to build that proof — and end up settling for far less than their claim is worth.
+          </p>
+
+          <p style="font-size: 0.85rem; color: rgba(255,255,255,0.5); text-align: center; margin-top: 2rem; margin-bottom: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">
+            Real example — water damage claim
+          </p>
+
+          <div style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 1.75rem; margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">Insurer's first offer</p>
+                <p style="font-family: 'DM Serif Display', serif; font-size: 2.25rem; color: rgba(255,255,255,0.7);">$18,200</p>
+              </div>
+              <div style="color: rgba(255,255,255,0.2); font-size: 2rem;">→</div>
+              <div style="text-align: right;">
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">After proper documentation</p>
+                <p style="font-family: 'DM Serif Display', serif; font-size: 2.25rem; color: #14b8a6;">$36,750</p>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">Additional recovery</p>
+              <p style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #ef4444; line-height: 1;">+$18,550</p>
+              <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem; margin-top: 0.5rem;">Left on the table by the first estimate</p>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.9rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">Guided claim walkthrough</strong> — a structured, multi-step process covering documentation, adjuster meetings, estimate review, and negotiation so nothing falls through the cracks</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.9rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">AI estimate analysis</strong> — compare your insurance estimate to real contractor pricing and identify every missing or undervalued line item</p>
+            </div>
+            <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+              <span style="color: #14b8a6; font-size: 1.1rem; margin-top: 0.1rem; flex-shrink: 0;">✓</span>
+              <p style="color: rgba(255,255,255,0.85); font-size: 1rem; line-height: 1.5;"><strong style="color: white;">Professional letter generator</strong> — dispute letters, demand letters, and appeal letters formatted the way adjusters and insurers expect to see them</p>
+            </div>
+          </div>
+
+          <div class="hero-ctas">
+            <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Claim Analysis →</a>
+          </div>
+
+        </div>
+
+        <div class="hero-right">
+          <div class="calc-destination-label">Tell us where you are — we'll show you what to do next</div>
+          <div class="calculator-card">
+            <div class="calc-title">Where are you in your claim?</div>
+            <div class="calc-subtitle">Select your situation and get an immediate action plan.</div>
+
+            <div id="situation-options" style="display: flex; flex-direction: column; gap: 0.65rem; margin: 1.5rem 0;">
+
+              <div class="situation-option" onclick="selectSituation(this, 'just-had-loss')">
+                <div class="situation-icon">🏚️</div>
+                <div class="situation-text">
+                  <div class="situation-label">I just had a loss</div>
+                  <div class="situation-sub">Fire, flood, storm, or other damage — I haven't filed yet</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'filed-waiting')">
+                <div class="situation-icon">⏳</div>
+                <div class="situation-text">
+                  <div class="situation-label">I filed and I'm waiting</div>
+                  <div class="situation-sub">Claim is open — adjuster hasn't been out or I'm waiting on an estimate</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'received-estimate')">
+                <div class="situation-icon">📄</div>
+                <div class="situation-text">
+                  <div class="situation-label">I received the insurance estimate</div>
+                  <div class="situation-sub">I have their number but I'm not sure it's right</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'lowball-denial')">
+                <div class="situation-icon">⚠️</div>
+                <div class="situation-text">
+                  <div class="situation-label">I got a lowball offer or partial denial</div>
+                  <div class="situation-sub">They're not paying what I think the damage is worth</div>
+                </div>
+              </div>
+
+              <div class="situation-option" onclick="selectSituation(this, 'denied')">
+                <div class="situation-icon">🚫</div>
+                <div class="situation-text">
+                  <div class="situation-label">My claim was denied</div>
+                  <div class="situation-sub">They rejected my claim and I need to appeal</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div id="situation-result" class="hidden" style="background: #f0fdf9; border: 2px solid #14b8a6; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;">
+              <div id="situation-result-text" style="font-size: 0.95rem; color: #0f172a; line-height: 1.6; font-weight: 500;"></div>
+            </div>
+
+            <a id="situation-cta" class="btn-primary hidden" href="#" style="text-align: center;">Get My Action Plan →</a>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div style="background: #0f172a;">
+      <p class="claim-types">Works for all property loss and damage claims — fire, flood, storm, wind, water damage, business interruption claims, and more.</p>
+    </div>
+  </section>
+
+  <!-- CREDIBILITY STACK -->
+  <section class="credibility-stack">
+    <div class="container">
+      <div class="credibility-items">
+        <div class="credibility-item">Used by policyholders across all 50 states</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item">Built on expert claim methodology and real-world claim handling standards</div>
+        <div class="credibility-divider"></div>
+        <div class="credibility-item">Complete Claim Guidance System</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">$297</div>
+          <div class="stat-block-label">Average cost to find $18,400 in missing claim value</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$18,400</div>
+          <div class="stat-block-label">Average additional money identified per claim analysis</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">18 steps</div>
+          <div class="stat-block-label">Steps that walk you through your entire claim — start to finish</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD VISUAL SECTION -->
+  <section class="dashboard-section" id="dashboard">
+    <div class="container">
+      <h2 class="section-title">The Claim Command Center</h2>
+      
+      <p style="text-align: center; font-size: 1.3rem; color: #14b8a6; font-weight: 700; margin-bottom: 1rem;">This puts you in control of your claim — not just responding to it.</p>
+      <p style="text-align: center; font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-bottom: 3rem;">Start here. This is where your claim process begins.</p>
+      
+      <div class="dashboard-visual">
+        <div class="dashboard-placeholder dashboard-placeholder--screenshot">
+          <img class="ccc-dashboard-screenshot" src="assets/claim-command-center-dashboard.png" alt="Claim Command Center dashboard mockup: claim progress, financial summary, next step banner, collected amounts, findings, and document checklist." width="881" height="649" loading="lazy" decoding="async" />
+        </div>
+        
+        <div class="platform-callouts">
+          <div class="platform-callout">
+            <div class="platform-callout-title">You always know where you are</div>
+            <div class="platform-callout-desc">Five phases — Set Up Your Claim, Document Your Damage, Find What's Missing, Request the Money, Finish & Get Paid. The Command Center lays out every step in order with clear status, so you always know where you are and what comes next.</div>
+          </div>
+
+          <div class="platform-callout">
+            <div class="platform-callout-title">Every step tells you what to do</div>
+            <div class="platform-callout-desc">Each step explains why it matters, exactly what action to take, and what Claim Command Pro gives you to complete it. You're never left to figure it out on your own.</div>
+          </div>
+
+          <div class="platform-callout">
+            <div class="platform-callout-title">The system does the hard work</div>
+            <div class="platform-callout-desc">Policy review, estimate analysis, and claim documentation are handled for you — producing structured outputs similar to what claim professionals generate.</div>
+          </div>
+        </div>
+        
+        <!-- Output Reframe -->
+        <div style="background: rgba(20,184,166,0.12); border: 2px solid rgba(20,184,166,0.5); border-radius: 12px; padding: 2.5rem; margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+          <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: white; margin-bottom: 1.5rem; text-align: center;">What You Actually Get</h3>
+          <p style="font-size: 1.2rem; color: rgba(255,255,255,0.8); line-height: 1.8; text-align: center; margin-bottom: 1.5rem;">
+            Not just reports. Not just advice.<br>
+            <strong style="color: white;">Claim-ready documentation you can send directly to your insurer.</strong>
+          </p>
+          <ul style="list-style: none; padding: 0; text-align: left; max-width: 600px; margin: 0 auto;">
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Professional supplement requests</li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Formatted dispute letters</li>
+            <li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Organized damage documentation</li>
+            <li style="padding: 0.75rem 0; color: rgba(255,255,255,0.8); font-size: 1.1rem;">✓ Step-by-step claim guidance</li>
+          </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.45);">What isn't documented doesn't get paid.</p>
+          <p style="font-size: 1.1rem; color: rgba(255,255,255,0.45); margin-top: 0.5rem;">What you don't question doesn't get reviewed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITY COMPARISON TABLE -->
+  <section style="background: #f9fafb; padding: 5rem 0;">
+    <div class="container">
+      <h2 class="section-title" style="text-align: center; margin-bottom: 1rem;">Why Policyholders Use Claim Command Pro</h2>
+      <p style="text-align: center; font-size: 1.25rem; color: #4b5563; margin-bottom: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">Because most claims are underpaid — and most people don't know how to properly manage and document them.</p>
+      
+      <div style="overflow-x: auto; margin-bottom: 3rem;">
+        <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+          <thead>
+            <tr style="background: #0f172a; color: white;">
+              <th style="padding: 1.5rem; text-align: left; font-weight: 700; font-size: 1.1rem; border-right: 1px solid rgba(255,255,255,0.1);">What Happens During Your Claim</th>
+              <th style="padding: 1.5rem; text-align: left; font-weight: 600; font-size: 1.05rem; border-right: 1px solid rgba(255,255,255,0.1);">Handling It Yourself</th>
+              <th style="padding: 1.5rem; text-align: left; font-weight: 700; font-size: 1.1rem; background: #14b8a6;">Claim Command Pro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Claim Value</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Accept insurer's estimate</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Identify full loss value</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Missing Damage</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Often overlooked</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Systematically identified</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Estimate Accuracy</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Carrier-controlled</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Independently evaluated</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Claim Strategy</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Unclear or reactive</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Step-by-step claim roadmap</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Documentation</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Incomplete or inconsistent</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Structured and organized</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">What to Do Next</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Guessing or unsure</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Clear guided actions at each step</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Timeline Management</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Missed or delayed actions</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Tracked and guided process</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Negotiation Position</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Weak or undefined</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Clear, documented position</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e5e7eb;">
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Claim Visibility</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Limited understanding</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Full view of claim status and gaps</td>
+            </tr>
+            <tr>
+              <td style="padding: 1.25rem; font-weight: 700; color: #111827;">Final Outcome</td>
+              <td style="padding: 1.25rem; color: #6b7280;">Often underpaid</td>
+              <td style="padding: 1.25rem; color: #111827; font-weight: 600; background: rgba(20,184,166,0.05);">Maximized and properly documented</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div style="text-align: center; margin-top: 3rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.35rem; line-height: 1.7; color: #111827; margin-bottom: 1.5rem;">
+          Most policyholders do not get paid what they are actually owed — not because their claim is invalid, but because it is not properly managed, documented, or presented. <span style="color: #6b7280; font-size: 1.15rem; display: block; margin-top: 0.75rem;">Documentation is what drives claim payments — not assumptions.</span>
+        </p>
+        <p style="font-size: 1.25rem; line-height: 1.7; color: #4b5563;">
+          Claim Command Pro provides a structured system to guide you through the process — ensuring nothing is missed and your claim is fully supported.
+        </p>
+      </div>
+      
+      <div style="background: rgba(20,184,166,0.1); border: 2px solid #14b8a6; border-radius: 12px; padding: 2.5rem; margin-top: 3rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: #111827; margin-bottom: 1.5rem; text-align: center;">Example Claim Outcome</h3>
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 0.5rem;">Insurance Estimate:</p>
+          <p style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; font-weight: bold; color: #111827;">$18,200</p>
+        </div>
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 0.5rem;">Actual Loss Potential:</p>
+          <p style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; font-weight: bold; color: #14b8a6;">$36,750</p>
+        </div>
+        <div style="border-top: 2px solid rgba(20,184,166,0.3); padding-top: 1.5rem;">
+          <p style="font-weight: 700; color: #111827; font-size: 1.1rem; margin-bottom: 0.75rem;">Difference:</p>
+          <p style="color: #4b5563; margin-bottom: 1.5rem; line-height: 1.7;">Unidentified scope, pricing gaps, and incomplete documentation</p>
+          <p style="font-weight: 700; color: #111827; font-size: 1.1rem; margin-bottom: 0.75rem;">Result:</p>
+          <p style="color: #4b5563; line-height: 1.7;">Clear understanding of what is missing and how to pursue it</p>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <p style="font-size: 1.15rem; color: #14b8a6; font-weight: 600;">
+          Most policyholders assume their insurance company's number is final.<br>
+          It isn't.<br>
+          It's a starting point — and it's often incomplete.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA 1: LOSS AVERSION -->
+  <section class="cta-section light">
+    <div class="container">
+      <h3 class="cta-headline">Most policyholders accept less than they're owed — find out if you're one of them.</h3>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Run Free Policy Analysis</a>
+    </div>
+  </section>
+
+  <!-- WHAT'S INSIDE CLAIM COMMAND PRO -->
+  <section class="tools-section" id="tools">
+    <div class="container">
+      <h2 class="section-title">How It Works — From Claim to Settlement</h2>
+      
+      <div style="max-width: 900px; margin: 0 auto 4rem; text-align: center;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+          <div style="padding: 1.5rem; background: rgba(20,184,166,0.05); border-radius: 8px; border: 1px solid rgba(20,184,166,0.2);">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: #14b8a6; margin-bottom: 0.5rem;">1</div>
+            <p style="font-weight: 700; color: #111827; font-size: 1.1rem;">Enter Your Claim Details</p>
+          </div>
+          <div style="padding: 1.5rem; background: rgba(20,184,166,0.05); border-radius: 8px; border: 1px solid rgba(20,184,166,0.2);">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: #14b8a6; margin-bottom: 0.5rem;">2</div>
+            <p style="font-weight: 700; color: #111827; font-size: 1.1rem;">We Analyze Your Policy and Estimate</p>
+          </div>
+          <div style="padding: 1.5rem; background: rgba(20,184,166,0.05); border-radius: 8px; border: 1px solid rgba(20,184,166,0.2);">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: #14b8a6; margin-bottom: 0.5rem;">3</div>
+            <p style="font-weight: 700; color: #111827; font-size: 1.1rem;">We Identify Missing Money</p>
+          </div>
+          <div style="padding: 1.5rem; background: rgba(20,184,166,0.05); border-radius: 8px; border: 1px solid rgba(20,184,166,0.2);">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 2.5rem; color: #14b8a6; margin-bottom: 0.5rem;">4</div>
+            <p style="font-weight: 700; color: #111827; font-size: 1.1rem;">You Recover What You're Owed</p>
+          </div>
+        </div>
+      </div>
+      
+      <h3 class="section-title" style="font-size: 2rem; margin-bottom: 1rem;">Everything You Need to Handle Your Claim — Step by Step</h3>
+      
+      <p class="section-subtitle" style="margin-bottom: 3rem;">Each tool handles a specific step — together they guide you through your entire claim.</p>
+      
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-number">Tool 01</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Track & Control Your Claim</p>
+          <div class="tool-title">Claim Command Center</div>
+          <div class="tool-desc">See where you are, what's done, and what to do next — all in one place.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 02</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Find Missing Money in Your Estimate</p>
+          <div class="tool-title">Estimate Review Engine</div>
+          <div class="tool-desc">Upload your estimate. We flag what's missing, underpriced, or incorrect — line by line.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 03</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Generate Professional Claim Letters</p>
+          <div class="tool-title">Claim Letter Generator</div>
+          <div class="tool-desc">Professional claim correspondence — supplement requests, disputes, responses — ready in minutes.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 04</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Follow the Exact Claim Strategy</p>
+          <div class="tool-title">Claim Strategy Guidance</div>
+          <div class="tool-desc">A guided roadmap that tells you exactly what to do, what to say, and what to avoid at every step.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 05</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Maximize Your Settlement</p>
+          <div class="tool-title">Settlement Maximization</div>
+          <div class="tool-desc">Shows you every recovery option available — depreciation, replacement cost, code upgrades — and how to claim them.</div>
+        </div>
+
+        <div class="tool-card">
+          <div class="tool-number">Tool 06</div>
+          <p style="color: #14b8a6; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Understand What You're Covered For</p>
+          <div class="tool-title">Policy Coverage Analysis</div>
+          <div class="tool-desc">Your policy translated into plain English — so you know exactly what you're entitled to claim.</div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 3rem;">
+        <p style="font-size: 1.25rem; color: #4b5563; font-weight: 600;">This is how you move from estimate to full recovery.</p>
+        <p style="font-size: 1.15rem; color: #6b7280; margin-top: 0.75rem;">Insurance companies do not audit their own estimates for completeness.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA 2: LOGIC/ROI -->
+  <section class="cta-section dark">
+    <div class="container">
+      <h3 class="cta-headline">$297 once. Average additional recovery: $18,400. The math is not complicated.</h3>
+      <a href="/app/free-policy-analysis.html" class="btn-primary">See What Your Claim Is Worth</a>
+    </div>
+  </section>
+
+  <!-- ESTIMATE ANALYSIS EXAMPLE -->
+  <section class="analysis-example-section">
+    <div class="container">
+      <div class="analysis-example-intro">
+        <h2 class="section-title">How Claim Command Pro Finds Missing Claim Money</h2>
+        <p class="analysis-example-subhead">A simple, sequential walkthrough of how the system identifies what your insurer missed.</p>
+      </div>
+      
+      <!-- Micro Yes Ladder -->
+      <div style="background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.2); border-radius: 8px; padding: 2rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.2rem; color: #111827; text-align: center; line-height: 1.8;">
+          You already have the estimate.<br>
+          You already have the policy.<br>
+          This simply analyzes what's already there.
+        </p>
+      </div>
+      
+      <!-- 4-Step Sequential Walkthrough -->
+      <div style="max-width: 900px; margin: 0 auto 3rem;">
+        
+        <!-- STEP 1: Input -->
+        <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #14b8a6; margin-right: 1.5rem; font-weight: bold;">1</div>
+            <div>
+              <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: #111827; margin-bottom: 0.25rem;">Input</h3>
+              <p style="color: #6b7280; font-size: 1.1rem;">What Your Insurer Said</p>
+            </div>
+          </div>
+          <div style="text-align: center; background: #f9fafb; padding: 2rem; border-radius: 8px;">
+            <p style="font-family: 'DM Serif Display', serif; font-size: 4rem; font-weight: bold; color: #111827;">$18,200</p>
+          </div>
+        </div>
+        
+        <!-- STEP 2: System Analysis -->
+        <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #14b8a6; margin-right: 1.5rem; font-weight: bold;">2</div>
+            <div>
+              <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: #111827; margin-bottom: 0.25rem;">System Analysis</h3>
+              <p style="color: #6b7280; font-size: 1.1rem;">What Claim Command Pro Detected</p>
+            </div>
+          </div>
+          <ul style="list-style: none; padding: 0;">
+            <li style="padding: 1rem; background: #fef2f2; border-left: 4px solid #ef4444; margin-bottom: 1rem; border-radius: 4px;">
+              <span style="font-weight: 700; color: #111827;">Missing scope:</span> <span style="color: #4b5563;">6 items totaling $7,310</span>
+            </li>
+            <li style="padding: 1rem; background: #fef3c7; border-left: 4px solid #f59e0b; margin-bottom: 1rem; border-radius: 4px;">
+              <span style="font-weight: 700; color: #111827;">Suppressed pricing:</span> <span style="color: #4b5563;">18-32% below market rate on 8 line items</span>
+            </li>
+            <li style="padding: 1rem; background: #ede9fe; border-left: 4px solid #8b5cf6; border-radius: 4px;">
+              <span style="font-weight: 700; color: #111827;">Unclaimed coverage:</span> <span style="color: #4b5563;">O&P, code upgrades, and depreciation recovery not applied</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- STEP 3: Corrected Value -->
+        <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #14b8a6; margin-right: 1.5rem; font-weight: bold;">3</div>
+            <div>
+              <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: #111827; margin-bottom: 0.25rem;">Corrected Value</h3>
+              <p style="color: #6b7280; font-size: 1.1rem;">What Your Claim Is Actually Worth</p>
+            </div>
+          </div>
+          <div style="text-align: center; background: rgba(20,184,166,0.1); padding: 2rem; border-radius: 8px; border: 2px solid #14b8a6;">
+            <p style="font-family: 'DM Serif Display', serif; font-size: 4rem; font-weight: bold; color: #14b8a6;">$36,750</p>
+          </div>
+        </div>
+        
+        <!-- STEP 4: Gap -->
+        <div style="background: white; border: 2px solid #fca5a5; border-radius: 12px; padding: 2.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; margin-bottom: 1.5rem;">
+            <div style="font-family: 'DM Serif Display', serif; font-size: 3rem; color: #ef4444; margin-right: 1.5rem; font-weight: bold;">4</div>
+            <div>
+              <h3 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: #111827; margin-bottom: 0.25rem;">Gap</h3>
+              <p style="color: #6b7280; font-size: 1.1rem;">Money Left on the Table</p>
+            </div>
+          </div>
+          <div style="text-align: center; background: #fef2f2; padding: 2rem; border-radius: 8px;">
+            <p style="font-family: 'DM Serif Display', serif; font-size: 4rem; font-weight: bold; color: #ef4444;">$18,550</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Line-by-Line Breakdown -->
+      <h3 style="font-size: 1.75rem; color: #111827; text-align: center; margin: 3rem 0 2rem; font-weight: 700;">Line-by-Line Breakdown of What Was Missed</h3>
+
+      <div class="analysis-table-container">
+        <table class="analysis-table">
+          <thead>
+            <tr>
+              <th>Line Item</th>
+              <th>Insurer's Amount</th>
+              <th>Correct Amount</th>
+              <th>Gap</th>
+              <th>Flag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="line-item">Remove & Replace Architectural Shingles</td>
+              <td class="insurer-amount">$4,200</td>
+              <td class="correct-amount">$6,100</td>
+              <td class="gap-amount">$1,900</td>
+              <td><span class="analysis-flag suppressed">Suppressed Pricing</span></td>
+            </tr>
+            <tr>
+              <td class="line-item">Roof Decking Replacement</td>
+              <td class="insurer-amount">$0</td>
+              <td class="correct-amount">$1,840</td>
+              <td class="gap-amount">$1,840</td>
+              <td><span class="analysis-flag missing">Missing Scope</span></td>
+            </tr>
+            <tr>
+              <td class="line-item">Drip Edge — Aluminum</td>
+              <td class="insurer-amount">$0</td>
+              <td class="correct-amount">$420</td>
+              <td class="gap-amount">$420</td>
+              <td><span class="analysis-flag missing">Missing Scope</span></td>
+            </tr>
+            <tr>
+              <td class="line-item">Ice & Water Shield</td>
+              <td class="insurer-amount">$310</td>
+              <td class="correct-amount">$590</td>
+              <td class="gap-amount">$280</td>
+              <td><span class="analysis-flag suppressed">Suppressed Pricing</span></td>
+            </tr>
+            <tr>
+              <td class="line-item">General Contractor Overhead & Profit</td>
+              <td class="insurer-amount">$0</td>
+              <td class="correct-amount">$3,200</td>
+              <td class="gap-amount">$3,200</td>
+              <td><span class="analysis-flag unclaimed">Unclaimed Coverage</span></td>
+            </tr>
+            <tr>
+              <td class="line-item">Code Upgrade — Permit & Inspection</td>
+              <td class="insurer-amount">$0</td>
+              <td class="correct-amount">$850</td>
+              <td class="gap-amount">$850</td>
+              <td><span class="analysis-flag unclaimed">Unclaimed Coverage</span></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Totals</td>
+              <td>$4,510</td>
+              <td>$13,000</td>
+              <td>$8,490</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p class="analysis-note">This is a partial analysis. Most claims reveal 12–30 issues.</p>
+      
+      <div style="text-align: center; margin-top: 2rem;">
+        <p style="font-size: 1.2rem; color: #4b5563; font-weight: 600; margin-bottom: 0.75rem;">Run this on your claim to see what you're missing.</p>
+        <p style="font-size: 1.1rem; color: #6b7280;">Most claim gaps are only identified when challenged.</p>
+      </div>
+
+      <div class="analysis-cta">
+        <p style="text-align: center; font-size: 1.2rem; color: #111827; margin-bottom: 1.5rem; font-weight: 600;">This takes less than 10 minutes — and could identify thousands in missed claim value.</p>
+        <a href="/app/free-policy-analysis.html" class="btn-primary">Run This Analysis On My Claim →</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CASE STUDIES -->
+  <section class="case-studies-section" id="case-studies">
+    <div class="container">
+      <h2 class="section-title">Real Claims. Real Recoveries.</h2>
+      
+      <p style="text-align: center; font-size: 1.25rem; color: #4b5563; margin-bottom: 1rem; font-weight: 600;">Used by policyholders across all 50 states to identify missing claim money</p>
+      <p style="text-align: center; font-size: 1.1rem; color: #6b7280; margin-bottom: 3rem;">Insurance estimates are not final valuations.</p>
+      
+      <div style="background: rgba(20,184,166,0.05); border: 1px solid rgba(20,184,166,0.2); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; text-align: center;">
+        <p style="font-size: 1.2rem; color: #111827; line-height: 1.7;">
+          Statistically, most policyholders are underpaid.<br>
+          The only question is whether yours is one of them.
+        </p>
+      </div>
+      
+      <div class="case-studies-grid">
+        <div class="case-study-card">
+          <div class="case-study-badge residential">Residential / Wind & Hail</div>
+          <div class="case-study-loss">Hurricane wind damage — Tampa, FL</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$22,400</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$41,200</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>General Contractor O&P omitted entirely ($6,800)</li>
+            <li>Shingle pricing 28% below local market rate ($3,600)</li>
+            <li>Permit and code upgrade not included ($2,200)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "I had no idea the estimate was this far off. The analysis flagged it in minutes."
+            <div class="case-study-attribution">— Michael T., Tampa FL</div>
+          </div>
+        </div>
+
+        <div class="case-study-card">
+          <div class="case-study-badge commercial-water">Commercial / Water Damage</div>
+          <div class="case-study-loss">Pipe burst, multi-unit property — Atlanta, GA</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$38,900</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$67,400</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>Drywall scope limited to affected rooms, adjacent damage excluded ($9,200)</li>
+            <li>Mold remediation protocol underfunded ($8,400)</li>
+            <li>Loss of rental income not captured in initial estimate ($6,900)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "The letter the platform generated got a response from the adjuster within four days."
+            <div class="case-study-attribution">— Sarah L., Atlanta GA</div>
+          </div>
+        </div>
+
+        <div class="case-study-card">
+          <div class="case-study-badge commercial-bi">Commercial / Business Interruption</div>
+          <div class="case-study-loss">Fire loss, restaurant — Chicago, IL</div>
+          
+          <div class="case-study-amounts">
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Carrier Offered</div>
+              <div class="case-study-amount-value">$94,000</div>
+            </div>
+            <div class="case-study-amount-row">
+              <div class="case-study-amount-label">Total Recovered</div>
+              <div class="case-study-amount-value recovered">$162,500</div>
+            </div>
+          </div>
+          
+          <ul class="case-study-findings">
+            <li>BI period calculation used wrong revenue baseline ($31,000)</li>
+            <li>Extra expense coverage not claimed ($18,200)</li>
+            <li>Extended period of indemnity trigger not applied ($19,300)</li>
+          </ul>
+          
+          <div class="case-study-quote">
+            "I didn't know business interruption coverage worked this way. This platform explained it in plain language and showed me exactly what to ask for."
+            <div class="case-study-attribution">— David R., Chicago IL</div>
+          </div>
+        </div>
+      </div>
+
+      <p class="case-studies-disclaimer">Recoveries reflect total settled amounts on claims where Claim Command Pro was used for analysis, documentation, and correspondence. Individual results vary.</p>
+      
+      <div style="text-align: center; margin-top: 3rem;">
+        <p style="font-size: 1.15rem; color: #4b5563; font-weight: 600;">Based on analysis of real claim estimates and industry-standard pricing data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FREE ANALYSIS QUALITY SIGNAL -->
+  <section class="analysis-quality-section">
+    <div class="container">
+      <h2 class="section-title">What Your Free Analysis Includes</h2>
+      
+      <div class="analysis-report-mockup">
+        <div class="analysis-report-header">
+          <div class="analysis-report-title">Your Claim Analysis Summary</div>
+          <div class="analysis-report-meta">Generated: March 15, 2026 | Claim Type: Wind & Hail — Residential</div>
+        </div>
+        
+        <div class="analysis-report-body">
+          <div class="analysis-blocks">
+            <div class="analysis-block">
+              <div class="analysis-block-status warning">⚠ Gaps Identified</div>
+              <div class="analysis-block-title">Coverage Review</div>
+              <div class="analysis-block-text">Your policy includes Replacement Cost Value coverage — but your insurer's estimate paid Actual Cash Value rates on 4 line items. This is recoverable.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status warning">⚠ Items Missing</div>
+              <div class="analysis-block-title">Scope Gap Check</div>
+              <div class="analysis-block-text">3 line items typically included in wind and hail claims of this type were not present in your insurer's estimate. General Contractor O&P, drip edge replacement, and permit fees are all standard recoverable items.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status error">✗ Below Market</div>
+              <div class="analysis-block-title">Pricing Check</div>
+              <div class="analysis-block-text">Labor and material rates in your area average 22% above the rates used in your insurer's estimate. This gap is documentable and disputable.</div>
+            </div>
+
+            <div class="analysis-block">
+              <div class="analysis-block-status error">✗ Coverage Not Applied</div>
+              <div class="analysis-block-title">Unclaimed Coverage</div>
+              <div class="analysis-block-text">Your policy includes an Ordinance & Law endorsement. This coverage was not triggered in your insurer's estimate despite code-required upgrades being applicable to your loss.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="analysis-quality-action">This is the level of analysis your free report produces. Upgrade to act on what it finds.</p>
+
+      <div class="analysis-quality-cta">
+        <a href="/app/free-policy-analysis.html" class="btn-primary">Get My Free Analysis →</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CLAIM ROADMAP -->
+  <section class="roadmap-section" id="roadmap">
+    <div class="container">
+      <h2 class="section-title">The Claim Command Process</h2>
+      <p class="section-subtitle" style="color:rgba(255,255,255,0.5);">A guided system that walks you through your entire claim. At every step, you'll know exactly what to do, what to say to your insurer, and what comes next.</p>
+      <p style="text-align: center; font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-top: 1rem;">Most gaps are never pointed out to policyholders.</p>
+      
+      <div class="roadmap-steps">
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">1</div>
+          <div class="roadmap-step-title">Set Up Your Claim</div>
+          <div class="roadmap-step-desc">Enter details, review policy coverage, and structure your claim correctly</div>
+        </div>
+
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">2</div>
+          <div class="roadmap-step-title">Document Your Damage</div>
+          <div class="roadmap-step-desc">Capture all damage, get accurate estimates, and prepare for inspection</div>
+        </div>
+
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">3</div>
+          <div class="roadmap-step-title">Find What's Missing</div>
+          <div class="roadmap-step-desc">Review the estimate, identify underpaid items and missing coverage</div>
+        </div>
+
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">4</div>
+          <div class="roadmap-step-title">Request the Money</div>
+          <div class="roadmap-step-desc">Submit supplements, send claim letters, and recover depreciation</div>
+        </div>
+
+        <div class="roadmap-step">
+          <div class="roadmap-step-number">5</div>
+          <div class="roadmap-step-title">Finish & Get Paid</div>
+          <div class="roadmap-step-desc">Negotiate settlement, finalize claim, and confirm all payments</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING SECTION -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <h2 class="section-title">Pricing</h2>
+      
+      <!-- Value Reframe -->
+      <div style="background: rgba(20,184,166,0.1); border: 2px solid #14b8a6; border-radius: 12px; padding: 2.5rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; text-align: center;">
+        <p style="font-family: 'DM Serif Display', serif; font-size: 1.75rem; color: #111827; line-height: 1.5; margin-bottom: 1.5rem;">
+          If your claim is missing even 5%,<br>
+          this pays for itself immediately.
+        </p>
+        <div style="border-top: 2px solid rgba(20,184,166,0.3); padding-top: 1.5rem; margin-top: 1.5rem;">
+          <p style="font-size: 1.3rem; color: #4b5563; margin-bottom: 0.5rem;">The average identified gap is <strong style="color: #14b8a6; font-family: 'DM Serif Display', serif; font-size: 1.5rem;">$18,400</strong></p>
+          <p style="font-size: 1.3rem; color: #4b5563;">The cost to find it is <strong style="color: #111827; font-family: 'DM Serif Display', serif; font-size: 1.5rem;">$297</strong></p>
+        </div>
+      </div>
+      
+      <!-- Risk Reversal -->
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <p style="font-size: 1.2rem; color: #4b5563; line-height: 1.8;">
+          If no meaningful gap is identified, you don't need the paid tools.<br><br>
+          If it is — the value is already documented before you spend anything.
+        </p>
+      </div>
+
+      <div class="pricing-context">
+        <p class="pricing-context-desc">Hiring a public adjuster costs 10-15% of your total settlement. This gives you the same structured process for a flat fee — no percentage, no ongoing costs.</p>
+      </div>
+
+      <div class="pricing-tiers">
+        <div class="pricing-tier popular">
+          <div class="pricing-tier-label">Full access</div>
+          <div class="pricing-tier-price">$297</div>
+          <div class="pricing-tier-period">One-time payment</div>
+          
+          <ul class="pricing-tier-features">
+            <li>Full access includes:</li>
+            <li>Unlimited claim letters and supplement requests</li>
+            <li>Full Claim Command Center (complete step-by-step plan, interactive)</li>
+            <li>Settlement Maximization tool</li>
+            <li>Policy Coverage Analysis (full)</li>
+            <li>Priority email support</li>
+          </ul>
+
+          <div class="pricing-tier-cta">
+            <a href="/app/checkout.html" class="btn-primary">Get Full Access →</a>
+            <div class="pricing-tier-note">You keep every dollar you recover.</div>
+            <div class="pricing-reassurance">
+              <div class="pricing-reassurance-line">Instant access — you're inside the platform in under 60 seconds.</div>
+              <div class="pricing-reassurance-line">Start with your claim type and policy details — takes about 10 minutes.</div>
+              <div class="pricing-reassurance-line">Questions after purchase? Email <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0a797f7a7a65787e4a69666b6367696567676b646e7a786524696567">[email&#160;protected]</a> — we respond same day.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SELF-IDENTIFICATION CHECKPOINT -->
+  <section style="background: white; padding: 4rem 0;">
+    <div class="container">
+      <div style="max-width: 800px; margin: 0 auto; background: rgba(20,184,166,0.05); border: 2px solid #14b8a6; border-radius: 12px; padding: 3rem;">
+        <h3 style="font-family: 'DM Serif Display', serif; font-size: 2rem; color: #111827; text-align: center; margin-bottom: 2rem;">Before you continue, ask yourself:</h3>
+        <ul style="list-style: none; padding: 0; text-align: left; max-width: 600px; margin: 0 auto 2rem;">
+          <li style="padding: 1rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: #4b5563; font-size: 1.2rem;">Has my estimate been independently reviewed?</li>
+          <li style="padding: 1rem 0; border-bottom: 1px solid rgba(20,184,166,0.2); color: #4b5563; font-size: 1.2rem;">Do I know if anything was left out?</li>
+          <li style="padding: 1rem 0; color: #4b5563; font-size: 1.2rem;">Has every coverage in my policy actually been applied?</li>
+        </ul>
+        <p style="font-size: 1.3rem; color: #111827; text-align: center; font-weight: 700;">If the answer is no — there is a reason to run this analysis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTIONS BEFORE YOU START -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="section-title">Questions Before You Start</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Will my insurance company handle this for me?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p style="margin-bottom: 1rem;">Your insurance company processes your claim — they do not maximize it.</p>
+            <p style="margin-bottom: 1rem;">Their role is to evaluate and pay what they believe is owed based on their estimate.</p>
+            <p style="margin-bottom: 1rem; font-weight: 600;">They do not:</p>
+            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+              <li>Identify missing scope beyond what was included</li>
+              <li>Adjust pricing to contractor-level market rates unless challenged</li>
+              <li>Proactively apply every coverage or endorsement available</li>
+            </ul>
+            <p>Claim Command Pro ensures nothing is missed, underpaid, or left unclaimed.</p>
+          </div>
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What if my claim is already correct?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p style="margin-bottom: 1rem;">That's exactly what the free analysis is designed to determine.</p>
+            <p style="margin-bottom: 1rem;">If your claim is complete and fairly paid, the system will show no meaningful gap — and you don't need to upgrade.</p>
+            <p style="margin-bottom: 1rem;">If it's not, you'll see exactly where money is being left behind.</p>
+            <p>There is no guesswork — only documented findings.</p>
+          </div>
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Is this complicated to use?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">
+            <p style="margin-bottom: 1rem;">No.</p>
+            <p style="margin-bottom: 1rem;">You answer a few guided questions about your claim and upload your estimate (if available).</p>
+            <p style="margin-bottom: 1rem; font-weight: 600;">Claim Command Pro handles:</p>
+            <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+              <li>Policy interpretation</li>
+              <li>Estimate analysis</li>
+              <li>Gap detection</li>
+              <li>Claim letter generation</li>
+            </ul>
+            <p>Most users receive their first analysis in under 10 minutes.</p>
+          </div>
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Is this legal to do without hiring a public adjuster?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">Yes. Policyholders have the legal right to document, dispute, and negotiate their own claims in all 50 states. Claim Command Pro gives you the tools and process to do it effectively. No license required on your end. <span style="display: block; margin-top: 1rem; color: #14b8a6; font-weight: 600;">This process mirrors how licensed public adjusters evaluate and increase claim payouts — structured into a step-by-step system you can follow.</span></div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What if my claim is already partially settled?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">You can still recover additional money on most open claims. Supplement requests are standard and accepted throughout the life of a claim. The Estimate Review Engine will show you what was left behind.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            Will my insurer take letters I generate myself seriously?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">The Claim Letter Generator produces documentation-grade correspondence — formatted, referenced, and structured the way professional adjusters write it. Insurers respond to what is properly documented and cited.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What if my damage amount is close to my deductible?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">Run the free analysis first. If the identified gap isn't large enough to justify upgrading, we'll tell you. You've spent nothing.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-question">
+            What happens immediately after I pay?
+            <span class="faq-chevron">▼</span>
+          </div>
+          <div class="faq-answer">You get instant access to the full platform. A short onboarding sequence (4 screens) walks you through entering your claim details and policy type. Your first analysis output is ready in under 10 minutes.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <div class="container">
+      <!-- Future Regret Trigger -->
+      <div style="background: rgba(239,68,68,0.15); border: 2px solid rgba(239,68,68,0.4); border-radius: 12px; padding: 2rem; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.3rem; color: white; text-align: center; line-height: 1.7;">
+          Most policyholders only realize what was missed after the claim is closed.<br><br>
+          At that point, it's too late to recover it.
+        </p>
+      </div>
+      
+      <h2>Run the analysis. See what your claim is actually worth. Decide from there.</h2>
+      
+      <div style="max-width: 700px; margin: 0 auto 2.5rem; text-align: center;">
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0.75rem;">Free to start. No credit card required.</p>
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0.75rem;">Guided system that walks you through every step.</p>
+        <p style="font-size: 1.125rem; color: rgba(255, 255, 255, 0.8); line-height: 1.8; margin-bottom: 0;">$18,400 average additional claim value identified.</p>
+      </div>
+      
+      <a href="/app/free-policy-analysis.html" class="btn-primary">Start Free Analysis →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+<div data-site-resources-footer="true" class="site-resources-footer" style="border-top:1px solid #e5e7eb;background:#f9fafb;color:#4b5563;">
+  <div class="site-resources-footer-inner" style="max-width:1200px;margin:0 auto;padding:1.25rem 1.5rem;">
+    <h4 style="margin:0 0 0.75rem;font-size:0.95rem;font-weight:700;">Resources</h4>
+    <nav style="display:flex;flex-wrap:wrap;gap:0.5rem 1.25rem;font-size:0.9rem;">
+      <a href="/guides/insurance-claim-knowledge-hub.html">Knowledge Hub</a>
+      <a href="/app/learn/">Insurance Glossary</a>
+      <a href="/cities/">City Claim Help</a>
+      <a href="/complaints/">State Complaint Guides</a>
+      <a href="/case-studies/">Case Studies</a>
+      <a href="/research/">Research</a>
+      <a href="/about/">About</a>
+      <a href="/seo/">SEO Resources</a>
+    </nav>
+  </div>
+</div>
+<div class="footer-container">
+      <div>&copy; 2026 Claim Command Pro</div>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/disclaimer.html">Disclaimer</a>
+        <a href="/app/admin.html">Admin</a>
+      </div>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    function calculateGap() {
+      const ins = document.getElementById('insurance-estimate').value;
+      const con = document.getElementById('contractor-estimate').value;
+      const parse = v => parseFloat(v.replace(/[^0-9.]/g, '')) || 0;
+      const fmt = v => new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: 'USD',
+        minimumFractionDigits: 0, maximumFractionDigits: 0
+      }).format(v);
+      const i = parse(ins), c = parse(con);
+      const result = document.getElementById('calc-result');
+      if (i > 0 && c > 0) {
+        result.classList.add('active');
+        document.getElementById('gap-amount').textContent = fmt(Math.max(0, c - i));
+      } else {
+        result.classList.remove('active');
+      }
+    }
+
+    function calculateMissing() {
+      const insuranceInput = document.getElementById('insurance-estimate-2').value;
+      const repairInput = document.getElementById('repair-cost').value;
+      
+      const parseAmount = (val) => {
+        return parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+      };
+      
+      const formatCurrency = (val) => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(val);
+      };
+      
+      const insurance = parseAmount(insuranceInput);
+      const repair = parseAmount(repairInput);
+      
+      if (insurance > 0 && repair > 0) {
+        const missing = Math.max(0, repair - insurance);
+        document.getElementById('calc-result-2').classList.add('active');
+        document.getElementById('missing-amount').textContent = formatCurrency(missing);
+      } else {
+        document.getElementById('calc-result-2').classList.remove('active');
+      }
+    }
+
+    async function startCheckout(btn) {
+      const original = btn.textContent;
+      btn.textContent = 'Loading...';
+      btn.disabled = true;
+      try {
+        const res = await fetch('/.netlify/functions/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ priceId: 'price_1SFM1K7CdVcPUl7l8sQDsC6Y' }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Unable to start checkout');
+        window.location.href = data.url;
+      } catch (err) {
+        console.error('Checkout error:', err);
+        alert('Could not start checkout: ' + err.message);
+        btn.textContent = original;
+        btn.disabled = false;
+      }
+    }
+
+    function toggleFaq(element) {
+      element.classList.toggle('expanded');
+    }
+
+    const situationMessages = {
+      'just-had-loss': {
+        text: 'Start by documenting everything before anything is moved or repaired. The next 48 hours determine how much you recover.',
+        cta: 'Show Me What to Document First →'
+      },
+      'filed-waiting': {
+        text: 'Before the adjuster arrives, you need to know your rights and exactly what to show them. Most underpayments happen at this stage.',
+        cta: 'Prepare for My Adjuster Inspection →'
+      },
+      'received-estimate': {
+        text: 'Insurance estimates routinely miss scope, use outdated pricing, and underapply depreciation. A line-by-line review almost always finds gaps.',
+        cta: 'Review My Estimate →'
+      },
+      'lowball-denial': {
+        text: 'A low offer is not a final answer. You have the right to dispute it with documentation and a formal demand. We\'ll show you how.',
+        cta: 'Build My Dispute →'
+      },
+      'denied': {
+        text: 'A denial is not the end of your claim. Most denials can be appealed with the right documentation and policy language. Start here.',
+        cta: 'Start My Appeal →'
+      }
+    };
+
+    const situationRoutes = {
+      'just-had-loss':      '/claim-command-center.html',
+      'filed-waiting':      '/claim-command-center.html',
+      'received-estimate':  '/claim-command-center.html?start=estimate',
+      'lowball-denial':     '/claim-command-center.html?start=estimate',
+      'denied':             '/claim-command-center.html?start=estimate'
+    };
+
+    function selectSituation(el, key) {
+      document.querySelectorAll('.situation-option')
+        .forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+
+      const routes = {
+        'just-had-loss':    '/app/situation-loss.html',
+        'filed-waiting':    '/app/situation-waiting.html',
+        'received-estimate':'/app/situation-estimate.html',
+        'lowball-de

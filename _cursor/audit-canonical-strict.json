@@ -1,0 +1,1051 @@
+{
+  "canonicalBatchFiles": 402,
+  "canonicalOnlyConfirmed": 402,
+  "nonCanonicalOnly": [],
+  "missingCanonical": [],
+  "unresolvedCount": 104,
+  "uniqueUnresolvedPaths": [
+    {
+      "path": "/ai/ai-analyze-insurance-claim.html",
+      "example": "app/ai/ai-analyze-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-analyze-insurance-claim.html"
+    },
+    {
+      "path": "/ai/ai-claim-completeness-check.html",
+      "example": "app/ai/ai-claim-completeness-check.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-claim-completeness-check.html"
+    },
+    {
+      "path": "/ai/ai-compare-estimates.html",
+      "example": "app/ai/ai-compare-estimates.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-compare-estimates.html"
+    },
+    {
+      "path": "/ai/ai-denied-insurance-claim.html",
+      "example": "app/ai/ai-denied-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-denied-insurance-claim.html"
+    },
+    {
+      "path": "/ai/ai-draft-dispute-letter.html",
+      "example": "app/ai/ai-draft-dispute-letter.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-draft-dispute-letter.html"
+    },
+    {
+      "path": "/ai/ai-estimate-settlement.html",
+      "example": "app/ai/ai-estimate-settlement.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-estimate-settlement.html"
+    },
+    {
+      "path": "/ai/ai-explain-insurance-policy.html",
+      "example": "app/ai/ai-explain-insurance-policy.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-explain-insurance-policy.html"
+    },
+    {
+      "path": "/ai/ai-identify-bad-faith.html",
+      "example": "app/ai/ai-identify-bad-faith.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-identify-bad-faith.html"
+    },
+    {
+      "path": "/ai/ai-identify-missing-documents.html",
+      "example": "app/ai/ai-identify-missing-documents.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-identify-missing-documents.html"
+    },
+    {
+      "path": "/ai/ai-missed-coverage.html",
+      "example": "app/ai/ai-missed-coverage.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-missed-coverage.html"
+    },
+    {
+      "path": "/ai/ai-negotiate-insurance-claim.html",
+      "example": "app/ai/ai-negotiate-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-negotiate-insurance-claim.html"
+    },
+    {
+      "path": "/ai/ai-organize-insurance-claim.html",
+      "example": "app/ai/ai-organize-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-organize-insurance-claim.html"
+    },
+    {
+      "path": "/ai/ai-review-fire-claim.html",
+      "example": "app/ai/ai-review-fire-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-fire-claim.html"
+    },
+    {
+      "path": "/ai/ai-review-insurance-estimate.html",
+      "example": "app/ai/ai-review-insurance-estimate.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurance-estimate.html"
+    },
+    {
+      "path": "/ai/ai-review-insurance-policy.html",
+      "example": "app/ai/ai-review-insurance-policy.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurance-policy.html"
+    },
+    {
+      "path": "/ai/ai-review-insurer-letters.html",
+      "example": "app/ai/ai-review-insurer-letters.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurer-letters.html"
+    },
+    {
+      "path": "/ai/ai-review-proof-of-loss.html",
+      "example": "app/ai/ai-review-proof-of-loss.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-proof-of-loss.html"
+    },
+    {
+      "path": "/ai/ai-review-roof-claim.html",
+      "example": "app/ai/ai-review-roof-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-roof-claim.html"
+    },
+    {
+      "path": "/ai/ai-review-water-damage-claim.html",
+      "example": "app/ai/ai-review-water-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-water-damage-claim.html"
+    },
+    {
+      "path": "/ai/ai-write-insurance-response.html",
+      "example": "app/ai/ai-write-insurance-response.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-write-insurance-response.html"
+    },
+    {
+      "path": "/ai/",
+      "example": "app/ai/index.html",
+      "canonical": "https://claimcommandpro.com/ai/"
+    },
+    {
+      "path": "/learn/actual-cash-value.html",
+      "example": "app/learn/actual-cash-value.html",
+      "canonical": "https://claimcommandpro.com/learn/actual-cash-value.html"
+    },
+    {
+      "path": "/learn/acv-vs-rcv.html",
+      "example": "app/learn/acv-vs-rcv.html",
+      "canonical": "https://claimcommandpro.com/learn/acv-vs-rcv.html"
+    },
+    {
+      "path": "/learn/additional-living-expenses.html",
+      "example": "app/learn/additional-living-expenses.html",
+      "canonical": "https://claimcommandpro.com/learn/additional-living-expenses.html"
+    },
+    {
+      "path": "/learn/appraisal-clause.html",
+      "example": "app/learn/appraisal-clause.html",
+      "canonical": "https://claimcommandpro.com/learn/appraisal-clause.html"
+    },
+    {
+      "path": "/learn/appraisal-process.html",
+      "example": "app/learn/appraisal-process.html",
+      "canonical": "https://claimcommandpro.com/learn/appraisal-process.html"
+    },
+    {
+      "path": "/learn/bad-faith-damages.html",
+      "example": "app/learn/bad-faith-damages.html",
+      "canonical": "https://claimcommandpro.com/learn/bad-faith-damages.html"
+    },
+    {
+      "path": "/learn/bad-faith-insurance.html",
+      "example": "app/learn/bad-faith-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/bad-faith-insurance.html"
+    },
+    {
+      "path": "/learn/betterment-insurance.html",
+      "example": "app/learn/betterment-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/betterment-insurance.html"
+    },
+    {
+      "path": "/learn/business-interruption-insurance.html",
+      "example": "app/learn/business-interruption-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/business-interruption-insurance.html"
+    },
+    {
+      "path": "/learn/claim-diary.html",
+      "example": "app/learn/claim-diary.html",
+      "canonical": "https://claimcommandpro.com/learn/claim-diary.html"
+    },
+    {
+      "path": "/learn/claim-number.html",
+      "example": "app/learn/claim-number.html",
+      "canonical": "https://claimcommandpro.com/learn/claim-number.html"
+    },
+    {
+      "path": "/learn/code-upgrade-coverage.html",
+      "example": "app/learn/code-upgrade-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/code-upgrade-coverage.html"
+    },
+    {
+      "path": "/learn/contents-coverage.html",
+      "example": "app/learn/contents-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/contents-coverage.html"
+    },
+    {
+      "path": "/learn/debris-removal-coverage.html",
+      "example": "app/learn/debris-removal-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/debris-removal-coverage.html"
+    },
+    {
+      "path": "/learn/declarations-page.html",
+      "example": "app/learn/declarations-page.html",
+      "canonical": "https://claimcommandpro.com/learn/declarations-page.html"
+    },
+    {
+      "path": "/learn/demand-letter-insurance.html",
+      "example": "app/learn/demand-letter-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/demand-letter-insurance.html"
+    },
+    {
+      "path": "/learn/department-of-insurance-complaint.html",
+      "example": "app/learn/department-of-insurance-complaint.html",
+      "canonical": "https://claimcommandpro.com/learn/department-of-insurance-complaint.html"
+    },
+    {
+      "path": "/learn/depreciation-insurance.html",
+      "example": "app/learn/depreciation-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/depreciation-insurance.html"
+    },
+    {
+      "path": "/learn/depreciation-recovery.html",
+      "example": "app/learn/depreciation-recovery.html",
+      "canonical": "https://claimcommandpro.com/learn/depreciation-recovery.html"
+    },
+    {
+      "path": "/learn/drip-edge-insurance.html",
+      "example": "app/learn/drip-edge-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/drip-edge-insurance.html"
+    },
+    {
+      "path": "/learn/dwelling-coverage.html",
+      "example": "app/learn/dwelling-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/dwelling-coverage.html"
+    },
+    {
+      "path": "/learn/examination-under-oath.html",
+      "example": "app/learn/examination-under-oath.html",
+      "canonical": "https://claimcommandpro.com/learn/examination-under-oath.html"
+    },
+    {
+      "path": "/learn/extended-replacement-cost.html",
+      "example": "app/learn/extended-replacement-cost.html",
+      "canonical": "https://claimcommandpro.com/learn/extended-replacement-cost.html"
+    },
+    {
+      "path": "/learn/fallen-tree-claim.html",
+      "example": "app/learn/fallen-tree-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/fallen-tree-claim.html"
+    },
+    {
+      "path": "/learn/field-adjuster.html",
+      "example": "app/learn/field-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/field-adjuster.html"
+    },
+    {
+      "path": "/learn/final-settlement-offer.html",
+      "example": "app/learn/final-settlement-offer.html",
+      "canonical": "https://claimcommandpro.com/learn/final-settlement-offer.html"
+    },
+    {
+      "path": "/learn/fire-damage-coverage.html",
+      "example": "app/learn/fire-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/fire-damage-coverage.html"
+    },
+    {
+      "path": "/learn/first-notice-of-loss.html",
+      "example": "app/learn/first-notice-of-loss.html",
+      "canonical": "https://claimcommandpro.com/learn/first-notice-of-loss.html"
+    },
+    {
+      "path": "/learn/general-contractor-insurance.html",
+      "example": "app/learn/general-contractor-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/general-contractor-insurance.html"
+    },
+    {
+      "path": "/learn/hail-claim-roof.html",
+      "example": "app/learn/hail-claim-roof.html",
+      "canonical": "https://claimcommandpro.com/learn/hail-claim-roof.html"
+    },
+    {
+      "path": "/learn/hail-damage-claim.html",
+      "example": "app/learn/hail-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/hail-damage-claim.html"
+    },
+    {
+      "path": "/learn/hurricane-claim.html",
+      "example": "app/learn/hurricane-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/hurricane-claim.html"
+    },
+    {
+      "path": "/learn/ice-and-water-shield.html",
+      "example": "app/learn/ice-and-water-shield.html",
+      "canonical": "https://claimcommandpro.com/learn/ice-and-water-shield.html"
+    },
+    {
+      "path": "/learn/independent-adjuster.html",
+      "example": "app/learn/independent-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/independent-adjuster.html"
+    },
+    {
+      "path": "/learn/",
+      "example": "app/learn/index.html",
+      "canonical": "https://claimcommandpro.com/learn/"
+    },
+    {
+      "path": "/learn/insurance-appeal.html",
+      "example": "app/learn/insurance-appeal.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-appeal.html"
+    },
+    {
+      "path": "/learn/insurance-arbitration.html",
+      "example": "app/learn/insurance-arbitration.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-arbitration.html"
+    },
+    {
+      "path": "/learn/insurance-denial.html",
+      "example": "app/learn/insurance-denial.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-denial.html"
+    },
+    {
+      "path": "/learn/insurance-holdback.html",
+      "example": "app/learn/insurance-holdback.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-holdback.html"
+    },
+    {
+      "path": "/learn/insurance-mediation.html",
+      "example": "app/learn/insurance-mediation.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-mediation.html"
+    },
+    {
+      "path": "/learn/insurance-supplement.html",
+      "example": "app/learn/insurance-supplement.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-supplement.html"
+    },
+    {
+      "path": "/learn/insurance-umpire.html",
+      "example": "app/learn/insurance-umpire.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-umpire.html"
+    },
+    {
+      "path": "/learn/insurance-underpayment.html",
+      "example": "app/learn/insurance-underpayment.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-underpayment.html"
+    },
+    {
+      "path": "/learn/labor-rate-suppression.html",
+      "example": "app/learn/labor-rate-suppression.html",
+      "canonical": "https://claimcommandpro.com/learn/labor-rate-suppression.html"
+    },
+    {
+      "path": "/learn/lightning-damage-claim.html",
+      "example": "app/learn/lightning-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/lightning-damage-claim.html"
+    },
+    {
+      "path": "/learn/line-item-estimate.html",
+      "example": "app/learn/line-item-estimate.html",
+      "canonical": "https://claimcommandpro.com/learn/line-item-estimate.html"
+    },
+    {
+      "path": "/learn/loss-of-use-coverage.html",
+      "example": "app/learn/loss-of-use-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/loss-of-use-coverage.html"
+    },
+    {
+      "path": "/learn/lowball-offer.html",
+      "example": "app/learn/lowball-offer.html",
+      "canonical": "https://claimcommandpro.com/learn/lowball-offer.html"
+    },
+    {
+      "path": "/learn/matching-coverage.html",
+      "example": "app/learn/matching-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/matching-coverage.html"
+    },
+    {
+      "path": "/learn/mitigation-insurance.html",
+      "example": "app/learn/mitigation-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/mitigation-insurance.html"
+    },
+    {
+      "path": "/learn/mold-coverage-insurance.html",
+      "example": "app/learn/mold-coverage-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/mold-coverage-insurance.html"
+    },
+    {
+      "path": "/learn/mortgage-clause.html",
+      "example": "app/learn/mortgage-clause.html",
+      "canonical": "https://claimcommandpro.com/learn/mortgage-clause.html"
+    },
+    {
+      "path": "/learn/named-perils-policy.html",
+      "example": "app/learn/named-perils-policy.html",
+      "canonical": "https://claimcommandpro.com/learn/named-perils-policy.html"
+    },
+    {
+      "path": "/learn/open-perils-policy.html",
+      "example": "app/learn/open-perils-policy.html",
+      "canonical": "https://claimcommandpro.com/learn/open-perils-policy.html"
+    },
+    {
+      "path": "/learn/ordinance-and-law-coverage.html",
+      "example": "app/learn/ordinance-and-law-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/ordinance-and-law-coverage.html"
+    },
+    {
+      "path": "/learn/other-structures-coverage.html",
+      "example": "app/learn/other-structures-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/other-structures-coverage.html"
+    },
+    {
+      "path": "/learn/overhead-and-profit.html",
+      "example": "app/learn/overhead-and-profit.html",
+      "canonical": "https://claimcommandpro.com/learn/overhead-and-profit.html"
+    },
+    {
+      "path": "/learn/partial-loss-insurance.html",
+      "example": "app/learn/partial-loss-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/partial-loss-insurance.html"
+    },
+    {
+      "path": "/learn/policy-endorsement.html",
+      "example": "app/learn/policy-endorsement.html",
+      "canonical": "https://claimcommandpro.com/learn/policy-endorsement.html"
+    },
+    {
+      "path": "/learn/policy-exclusion.html",
+      "example": "app/learn/policy-exclusion.html",
+      "canonical": "https://claimcommandpro.com/learn/policy-exclusion.html"
+    },
+    {
+      "path": "/learn/policyholders-bill-of-rights.html",
+      "example": "app/learn/policyholders-bill-of-rights.html",
+      "canonical": "https://claimcommandpro.com/learn/policyholders-bill-of-rights.html"
+    },
+    {
+      "path": "/learn/proof-of-loss-claim.html",
+      "example": "app/learn/proof-of-loss-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/proof-of-loss-claim.html"
+    },
+    {
+      "path": "/learn/public-adjuster.html",
+      "example": "app/learn/public-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/public-adjuster.html"
+    },
+    {
+      "path": "/learn/recoverable-depreciation.html",
+      "example": "app/learn/recoverable-depreciation.html",
+      "canonical": "https://claimcommandpro.com/learn/recoverable-depreciation.html"
+    },
+    {
+      "path": "/learn/release-of-claims.html",
+      "example": "app/learn/release-of-claims.html",
+      "canonical": "https://claimcommandpro.com/learn/release-of-claims.html"
+    },
+    {
+      "path": "/learn/replacement-cost-value.html",
+      "example": "app/learn/replacement-cost-value.html",
+      "canonical": "https://claimcommandpro.com/learn/replacement-cost-value.html"
+    },
+    {
+      "path": "/learn/reservation-of-rights.html",
+      "example": "app/learn/reservation-of-rights.html",
+      "canonical": "https://claimcommandpro.com/learn/reservation-of-rights.html"
+    },
+    {
+      "path": "/learn/roofing-squares.html",
+      "example": "app/learn/roofing-squares.html",
+      "canonical": "https://claimcommandpro.com/learn/roofing-squares.html"
+    },
+    {
+      "path": "/learn/scope-of-loss.html",
+      "example": "app/learn/scope-of-loss.html",
+      "canonical": "https://claimcommandpro.com/learn/scope-of-loss.html"
+    },
+    {
+      "path": "/learn/smoke-damage-coverage.html",
+      "example": "app/learn/smoke-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/smoke-damage-coverage.html"
+    },
+    {
+      "path": "/learn/staff-adjuster.html",
+      "example": "app/learn/staff-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/staff-adjuster.html"
+    },
+    {
+      "path": "/learn/statute-of-limitations-insurance.html",
+      "example": "app/learn/statute-of-limitations-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/statute-of-limitations-insurance.html"
+    },
+    {
+      "path": "/learn/storm-damage-claim.html",
+      "example": "app/learn/storm-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/storm-damage-claim.html"
+    },
+    {
+      "path": "/learn/structured-settlement-insurance.html",
+      "example": "app/learn/structured-settlement-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/structured-settlement-insurance.html"
+    },
+    {
+      "path": "/learn/subrogation.html",
+      "example": "app/learn/subrogation.html",
+      "canonical": "https://claimcommandpro.com/learn/subrogation.html"
+    },
+    {
+      "path": "/learn/total-loss-insurance.html",
+      "example": "app/learn/total-loss-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/total-loss-insurance.html"
+    },
+    {
+      "path": "/learn/unfair-claims-practices.html",
+      "example": "app/learn/unfair-claims-practices.html",
+      "canonical": "https://claimcommandpro.com/learn/unfair-claims-practices.html"
+    },
+    {
+      "path": "/learn/unit-price-estimate.html",
+      "example": "app/learn/unit-price-estimate.html",
+      "canonical": "https://claimcommandpro.com/learn/unit-price-estimate.html"
+    },
+    {
+      "path": "/learn/water-damage-coverage.html",
+      "example": "app/learn/water-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/water-damage-coverage.html"
+    },
+    {
+      "path": "/learn/wind-damage-claim.html",
+      "example": "app/learn/wind-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/wind-damage-claim.html"
+    },
+    {
+      "path": "/learn/xactimate.html",
+      "example": "app/learn/xactimate.html",
+      "canonical": "https://claimcommandpro.com/learn/xactimate.html"
+    },
+    {
+      "path": "/resources.html",
+      "example": "app/resources.html",
+      "canonical": "https://claimcommandpro.com/resources.html"
+    },
+    {
+      "path": "/pricing",
+      "example": "marketing/pricing.html",
+      "canonical": "https://claimcommandpro.com/pricing"
+    }
+  ],
+  "unresolved": [
+    {
+      "rel": "app/ai/ai-analyze-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-analyze-insurance-claim.html",
+      "path": "/ai/ai-analyze-insurance-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-claim-completeness-check.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-claim-completeness-check.html",
+      "path": "/ai/ai-claim-completeness-check.html"
+    },
+    {
+      "rel": "app/ai/ai-compare-estimates.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-compare-estimates.html",
+      "path": "/ai/ai-compare-estimates.html"
+    },
+    {
+      "rel": "app/ai/ai-denied-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-denied-insurance-claim.html",
+      "path": "/ai/ai-denied-insurance-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-draft-dispute-letter.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-draft-dispute-letter.html",
+      "path": "/ai/ai-draft-dispute-letter.html"
+    },
+    {
+      "rel": "app/ai/ai-estimate-settlement.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-estimate-settlement.html",
+      "path": "/ai/ai-estimate-settlement.html"
+    },
+    {
+      "rel": "app/ai/ai-explain-insurance-policy.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-explain-insurance-policy.html",
+      "path": "/ai/ai-explain-insurance-policy.html"
+    },
+    {
+      "rel": "app/ai/ai-identify-bad-faith.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-identify-bad-faith.html",
+      "path": "/ai/ai-identify-bad-faith.html"
+    },
+    {
+      "rel": "app/ai/ai-identify-missing-documents.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-identify-missing-documents.html",
+      "path": "/ai/ai-identify-missing-documents.html"
+    },
+    {
+      "rel": "app/ai/ai-missed-coverage.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-missed-coverage.html",
+      "path": "/ai/ai-missed-coverage.html"
+    },
+    {
+      "rel": "app/ai/ai-negotiate-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-negotiate-insurance-claim.html",
+      "path": "/ai/ai-negotiate-insurance-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-organize-insurance-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-organize-insurance-claim.html",
+      "path": "/ai/ai-organize-insurance-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-review-fire-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-fire-claim.html",
+      "path": "/ai/ai-review-fire-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-review-insurance-estimate.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurance-estimate.html",
+      "path": "/ai/ai-review-insurance-estimate.html"
+    },
+    {
+      "rel": "app/ai/ai-review-insurance-policy.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurance-policy.html",
+      "path": "/ai/ai-review-insurance-policy.html"
+    },
+    {
+      "rel": "app/ai/ai-review-insurer-letters.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-insurer-letters.html",
+      "path": "/ai/ai-review-insurer-letters.html"
+    },
+    {
+      "rel": "app/ai/ai-review-proof-of-loss.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-proof-of-loss.html",
+      "path": "/ai/ai-review-proof-of-loss.html"
+    },
+    {
+      "rel": "app/ai/ai-review-roof-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-roof-claim.html",
+      "path": "/ai/ai-review-roof-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-review-water-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-review-water-damage-claim.html",
+      "path": "/ai/ai-review-water-damage-claim.html"
+    },
+    {
+      "rel": "app/ai/ai-write-insurance-response.html",
+      "canonical": "https://claimcommandpro.com/ai/ai-write-insurance-response.html",
+      "path": "/ai/ai-write-insurance-response.html"
+    },
+    {
+      "rel": "app/ai/index.html",
+      "canonical": "https://claimcommandpro.com/ai/",
+      "path": "/ai/"
+    },
+    {
+      "rel": "app/learn/actual-cash-value.html",
+      "canonical": "https://claimcommandpro.com/learn/actual-cash-value.html",
+      "path": "/learn/actual-cash-value.html"
+    },
+    {
+      "rel": "app/learn/acv-vs-rcv.html",
+      "canonical": "https://claimcommandpro.com/learn/acv-vs-rcv.html",
+      "path": "/learn/acv-vs-rcv.html"
+    },
+    {
+      "rel": "app/learn/additional-living-expenses.html",
+      "canonical": "https://claimcommandpro.com/learn/additional-living-expenses.html",
+      "path": "/learn/additional-living-expenses.html"
+    },
+    {
+      "rel": "app/learn/appraisal-clause.html",
+      "canonical": "https://claimcommandpro.com/learn/appraisal-clause.html",
+      "path": "/learn/appraisal-clause.html"
+    },
+    {
+      "rel": "app/learn/appraisal-process.html",
+      "canonical": "https://claimcommandpro.com/learn/appraisal-process.html",
+      "path": "/learn/appraisal-process.html"
+    },
+    {
+      "rel": "app/learn/bad-faith-damages.html",
+      "canonical": "https://claimcommandpro.com/learn/bad-faith-damages.html",
+      "path": "/learn/bad-faith-damages.html"
+    },
+    {
+      "rel": "app/learn/bad-faith-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/bad-faith-insurance.html",
+      "path": "/learn/bad-faith-insurance.html"
+    },
+    {
+      "rel": "app/learn/betterment-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/betterment-insurance.html",
+      "path": "/learn/betterment-insurance.html"
+    },
+    {
+      "rel": "app/learn/business-interruption-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/business-interruption-insurance.html",
+      "path": "/learn/business-interruption-insurance.html"
+    },
+    {
+      "rel": "app/learn/claim-diary.html",
+      "canonical": "https://claimcommandpro.com/learn/claim-diary.html",
+      "path": "/learn/claim-diary.html"
+    },
+    {
+      "rel": "app/learn/claim-number.html",
+      "canonical": "https://claimcommandpro.com/learn/claim-number.html",
+      "path": "/learn/claim-number.html"
+    },
+    {
+      "rel": "app/learn/code-upgrade-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/code-upgrade-coverage.html",
+      "path": "/learn/code-upgrade-coverage.html"
+    },
+    {
+      "rel": "app/learn/contents-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/contents-coverage.html",
+      "path": "/learn/contents-coverage.html"
+    },
+    {
+      "rel": "app/learn/debris-removal-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/debris-removal-coverage.html",
+      "path": "/learn/debris-removal-coverage.html"
+    },
+    {
+      "rel": "app/learn/declarations-page.html",
+      "canonical": "https://claimcommandpro.com/learn/declarations-page.html",
+      "path": "/learn/declarations-page.html"
+    },
+    {
+      "rel": "app/learn/demand-letter-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/demand-letter-insurance.html",
+      "path": "/learn/demand-letter-insurance.html"
+    },
+    {
+      "rel": "app/learn/department-of-insurance-complaint.html",
+      "canonical": "https://claimcommandpro.com/learn/department-of-insurance-complaint.html",
+      "path": "/learn/department-of-insurance-complaint.html"
+    },
+    {
+      "rel": "app/learn/depreciation-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/depreciation-insurance.html",
+      "path": "/learn/depreciation-insurance.html"
+    },
+    {
+      "rel": "app/learn/depreciation-recovery.html",
+      "canonical": "https://claimcommandpro.com/learn/depreciation-recovery.html",
+      "path": "/learn/depreciation-recovery.html"
+    },
+    {
+      "rel": "app/learn/drip-edge-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/drip-edge-insurance.html",
+      "path": "/learn/drip-edge-insurance.html"
+    },
+    {
+      "rel": "app/learn/dwelling-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/dwelling-coverage.html",
+      "path": "/learn/dwelling-coverage.html"
+    },
+    {
+      "rel": "app/learn/examination-under-oath.html",
+      "canonical": "https://claimcommandpro.com/learn/examination-under-oath.html",
+      "path": "/learn/examination-under-oath.html"
+    },
+    {
+      "rel": "app/learn/extended-replacement-cost.html",
+      "canonical": "https://claimcommandpro.com/learn/extended-replacement-cost.html",
+      "path": "/learn/extended-replacement-cost.html"
+    },
+    {
+      "rel": "app/learn/fallen-tree-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/fallen-tree-claim.html",
+      "path": "/learn/fallen-tree-claim.html"
+    },
+    {
+      "rel": "app/learn/field-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/field-adjuster.html",
+      "path": "/learn/field-adjuster.html"
+    },
+    {
+      "rel": "app/learn/final-settlement-offer.html",
+      "canonical": "https://claimcommandpro.com/learn/final-settlement-offer.html",
+      "path": "/learn/final-settlement-offer.html"
+    },
+    {
+      "rel": "app/learn/fire-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/fire-damage-coverage.html",
+      "path": "/learn/fire-damage-coverage.html"
+    },
+    {
+      "rel": "app/learn/first-notice-of-loss.html",
+      "canonical": "https://claimcommandpro.com/learn/first-notice-of-loss.html",
+      "path": "/learn/first-notice-of-loss.html"
+    },
+    {
+      "rel": "app/learn/general-contractor-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/general-contractor-insurance.html",
+      "path": "/learn/general-contractor-insurance.html"
+    },
+    {
+      "rel": "app/learn/hail-claim-roof.html",
+      "canonical": "https://claimcommandpro.com/learn/hail-claim-roof.html",
+      "path": "/learn/hail-claim-roof.html"
+    },
+    {
+      "rel": "app/learn/hail-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/hail-damage-claim.html",
+      "path": "/learn/hail-damage-claim.html"
+    },
+    {
+      "rel": "app/learn/hurricane-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/hurricane-claim.html",
+      "path": "/learn/hurricane-claim.html"
+    },
+    {
+      "rel": "app/learn/ice-and-water-shield.html",
+      "canonical": "https://claimcommandpro.com/learn/ice-and-water-shield.html",
+      "path": "/learn/ice-and-water-shield.html"
+    },
+    {
+      "rel": "app/learn/independent-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/independent-adjuster.html",
+      "path": "/learn/independent-adjuster.html"
+    },
+    {
+      "rel": "app/learn/index.html",
+      "canonical": "https://claimcommandpro.com/learn/",
+      "path": "/learn/"
+    },
+    {
+      "rel": "app/learn/insurance-appeal.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-appeal.html",
+      "path": "/learn/insurance-appeal.html"
+    },
+    {
+      "rel": "app/learn/insurance-arbitration.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-arbitration.html",
+      "path": "/learn/insurance-arbitration.html"
+    },
+    {
+      "rel": "app/learn/insurance-denial.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-denial.html",
+      "path": "/learn/insurance-denial.html"
+    },
+    {
+      "rel": "app/learn/insurance-holdback.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-holdback.html",
+      "path": "/learn/insurance-holdback.html"
+    },
+    {
+      "rel": "app/learn/insurance-mediation.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-mediation.html",
+      "path": "/learn/insurance-mediation.html"
+    },
+    {
+      "rel": "app/learn/insurance-supplement.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-supplement.html",
+      "path": "/learn/insurance-supplement.html"
+    },
+    {
+      "rel": "app/learn/insurance-umpire.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-umpire.html",
+      "path": "/learn/insurance-umpire.html"
+    },
+    {
+      "rel": "app/learn/insurance-underpayment.html",
+      "canonical": "https://claimcommandpro.com/learn/insurance-underpayment.html",
+      "path": "/learn/insurance-underpayment.html"
+    },
+    {
+      "rel": "app/learn/labor-rate-suppression.html",
+      "canonical": "https://claimcommandpro.com/learn/labor-rate-suppression.html",
+      "path": "/learn/labor-rate-suppression.html"
+    },
+    {
+      "rel": "app/learn/lightning-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/lightning-damage-claim.html",
+      "path": "/learn/lightning-damage-claim.html"
+    },
+    {
+      "rel": "app/learn/line-item-estimate.html",
+      "canonical": "https://claimcommandpro.com/learn/line-item-estimate.html",
+      "path": "/learn/line-item-estimate.html"
+    },
+    {
+      "rel": "app/learn/loss-of-use-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/loss-of-use-coverage.html",
+      "path": "/learn/loss-of-use-coverage.html"
+    },
+    {
+      "rel": "app/learn/lowball-offer.html",
+      "canonical": "https://claimcommandpro.com/learn/lowball-offer.html",
+      "path": "/learn/lowball-offer.html"
+    },
+    {
+      "rel": "app/learn/matching-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/matching-coverage.html",
+      "path": "/learn/matching-coverage.html"
+    },
+    {
+      "rel": "app/learn/mitigation-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/mitigation-insurance.html",
+      "path": "/learn/mitigation-insurance.html"
+    },
+    {
+      "rel": "app/learn/mold-coverage-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/mold-coverage-insurance.html",
+      "path": "/learn/mold-coverage-insurance.html"
+    },
+    {
+      "rel": "app/learn/mortgage-clause.html",
+      "canonical": "https://claimcommandpro.com/learn/mortgage-clause.html",
+      "path": "/learn/mortgage-clause.html"
+    },
+    {
+      "rel": "app/learn/named-perils-policy.html",
+      "canonical": "https://claimcommandpro.com/learn/named-perils-policy.html",
+      "path": "/learn/named-perils-policy.html"
+    },
+    {
+      "rel": "app/learn/open-perils-policy.html",
+      "canonical": "https://claimcommandpro.com/learn/open-perils-policy.html",
+      "path": "/learn/open-perils-policy.html"
+    },
+    {
+      "rel": "app/learn/ordinance-and-law-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/ordinance-and-law-coverage.html",
+      "path": "/learn/ordinance-and-law-coverage.html"
+    },
+    {
+      "rel": "app/learn/other-structures-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/other-structures-coverage.html",
+      "path": "/learn/other-structures-coverage.html"
+    },
+    {
+      "rel": "app/learn/overhead-and-profit.html",
+      "canonical": "https://claimcommandpro.com/learn/overhead-and-profit.html",
+      "path": "/learn/overhead-and-profit.html"
+    },
+    {
+      "rel": "app/learn/partial-loss-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/partial-loss-insurance.html",
+      "path": "/learn/partial-loss-insurance.html"
+    },
+    {
+      "rel": "app/learn/policy-endorsement.html",
+      "canonical": "https://claimcommandpro.com/learn/policy-endorsement.html",
+      "path": "/learn/policy-endorsement.html"
+    },
+    {
+      "rel": "app/learn/policy-exclusion.html",
+      "canonical": "https://claimcommandpro.com/learn/policy-exclusion.html",
+      "path": "/learn/policy-exclusion.html"
+    },
+    {
+      "rel": "app/learn/policyholders-bill-of-rights.html",
+      "canonical": "https://claimcommandpro.com/learn/policyholders-bill-of-rights.html",
+      "path": "/learn/policyholders-bill-of-rights.html"
+    },
+    {
+      "rel": "app/learn/proof-of-loss-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/proof-of-loss-claim.html",
+      "path": "/learn/proof-of-loss-claim.html"
+    },
+    {
+      "rel": "app/learn/public-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/public-adjuster.html",
+      "path": "/learn/public-adjuster.html"
+    },
+    {
+      "rel": "app/learn/recoverable-depreciation.html",
+      "canonical": "https://claimcommandpro.com/learn/recoverable-depreciation.html",
+      "path": "/learn/recoverable-depreciation.html"
+    },
+    {
+      "rel": "app/learn/release-of-claims.html",
+      "canonical": "https://claimcommandpro.com/learn/release-of-claims.html",
+      "path": "/learn/release-of-claims.html"
+    },
+    {
+      "rel": "app/learn/replacement-cost-value.html",
+      "canonical": "https://claimcommandpro.com/learn/replacement-cost-value.html",
+      "path": "/learn/replacement-cost-value.html"
+    },
+    {
+      "rel": "app/learn/reservation-of-rights.html",
+      "canonical": "https://claimcommandpro.com/learn/reservation-of-rights.html",
+      "path": "/learn/reservation-of-rights.html"
+    },
+    {
+      "rel": "app/learn/roofing-squares.html",
+      "canonical": "https://claimcommandpro.com/learn/roofing-squares.html",
+      "path": "/learn/roofing-squares.html"
+    },
+    {
+      "rel": "app/learn/scope-of-loss.html",
+      "canonical": "https://claimcommandpro.com/learn/scope-of-loss.html",
+      "path": "/learn/scope-of-loss.html"
+    },
+    {
+      "rel": "app/learn/smoke-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/smoke-damage-coverage.html",
+      "path": "/learn/smoke-damage-coverage.html"
+    },
+    {
+      "rel": "app/learn/staff-adjuster.html",
+      "canonical": "https://claimcommandpro.com/learn/staff-adjuster.html",
+      "path": "/learn/staff-adjuster.html"
+    },
+    {
+      "rel": "app/learn/statute-of-limitations-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/statute-of-limitations-insurance.html",
+      "path": "/learn/statute-of-limitations-insurance.html"
+    },
+    {
+      "rel": "app/learn/storm-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/storm-damage-claim.html",
+      "path": "/learn/storm-damage-claim.html"
+    },
+    {
+      "rel": "app/learn/structured-settlement-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/structured-settlement-insurance.html",
+      "path": "/learn/structured-settlement-insurance.html"
+    },
+    {
+      "rel": "app/learn/subrogation.html",
+      "canonical": "https://claimcommandpro.com/learn/subrogation.html",
+      "path": "/learn/subrogation.html"
+    },
+    {
+      "rel": "app/learn/total-loss-insurance.html",
+      "canonical": "https://claimcommandpro.com/learn/total-loss-insurance.html",
+      "path": "/learn/total-loss-insurance.html"
+    },
+    {
+      "rel": "app/learn/unfair-claims-practices.html",
+      "canonical": "https://claimcommandpro.com/learn/unfair-claims-practices.html",
+      "path": "/learn/unfair-claims-practices.html"
+    },
+    {
+      "rel": "app/learn/unit-price-estimate.html",
+      "canonical": "https://claimcommandpro.com/learn/unit-price-estimate.html",
+      "path": "/learn/unit-price-estimate.html"
+    },
+    {
+      "rel": "app/learn/water-damage-coverage.html",
+      "canonical": "https://claimcommandpro.com/learn/water-damage-coverage.html",
+      "path": "/learn/water-damage-coverage.html"
+    },
+    {
+      "rel": "app/learn/wind-damage-claim.html",
+      "canonical": "https://claimcommandpro.com/learn/wind-damage-claim.html",
+      "path": "/learn/wind-damage-claim.html"
+    },
+    {
+      "rel": "app/learn/xactimate.html",
+      "canonical": "https://claimcommandpro.com/learn/xactimate.html",
+      "path": "/learn/xactimate.html"
+    },
+    {
+      "rel": "app/resources.html",
+      "canonical": "https://claimcommandpro.com/resources.html",
+      "path": "/resources.html"
+    },
+    {
+      "rel": "marketing/pricing.html",
+      "canonical": "https://claimcommandpro.com/pricing",
+      "path": "/pricing"
+    }
+  ]
+}

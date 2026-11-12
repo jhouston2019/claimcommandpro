@@ -1,0 +1,184 @@
+{
+  "verified_at": "2026-06-01T19:08:08.874Z",
+  "supabase_url": "https://bnxvfxtpsxgfpltflyrr.supabase.co",
+  "method": "PostgREST anon key ΓÇö column probe, HEAD count, type filter errors",
+  "limitations": [
+    "Indexes and constraints require service_role + information_schema (not available)",
+    "Row counts may be 0 due to RLS when unauthenticated"
+  ],
+  "claim_policy_coverage": {
+    "table_exists": false,
+    "row_count_rls_visible": "N/A",
+    "content_range": "",
+    "present_columns": [],
+    "absent_columns": [],
+    "postgrest_error": "PGRST205 ΓÇö table not in schema cache"
+  },
+  "claim_policy_triggers": {
+    "table_exists": true,
+    "row_count_rls_visible": "0",
+    "content_range": "*/0",
+    "present_columns": [
+      "id",
+      "claim_id",
+      "ordinance_trigger",
+      "ordinance_trigger_amount",
+      "matching_trigger",
+      "created_at",
+      "updated_at"
+    ],
+    "absent_columns": [
+      "user_id",
+      "policy_coverage_id",
+      "ordinance_trigger_note",
+      "matching_trigger_note",
+      "depreciation_trigger",
+      "depreciation_trigger_note",
+      "sublimit_trigger",
+      "sublimit_trigger_type",
+      "sublimit_trigger_amount",
+      "sublimit_trigger_note",
+      "settlement_type_trigger",
+      "settlement_type_trigger_note",
+      "triggers_calculated_at",
+      "coinsurance_penalty_trigger"
+    ],
+    "sample_rows": [],
+    "type_inference": {
+      "id": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type uuid: \\\"not-a-uuid\\\"\"}"
+      },
+      "ordinance_trigger": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type boolean: \\\"not-bool\\\"\"}"
+      },
+      "ordinance_trigger_amount": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type numeric: \\\"not-num\\\"\"}"
+      },
+      "created_at": {
+        "status": 400,
+        "body": "{\"code\":\"22007\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type timestamp with time zone: \\\"not-a-date\\\"\"}"
+      }
+    }
+  },
+  "claim_outputs": {
+    "table_exists": true,
+    "row_count_rls_visible": "0",
+    "content_range": "*/0",
+    "present_columns": [
+      "id",
+      "claim_id",
+      "user_id",
+      "step_number",
+      "output_type",
+      "content",
+      "created_at"
+    ],
+    "absent_columns": [
+      "output_json",
+      "input_document_ids",
+      "ai_model",
+      "processing_time_ms",
+      "updated_at"
+    ],
+    "sample_rows": [],
+    "type_inference": {
+      "id": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type uuid: \\\"not-a-uuid\\\"\"}"
+      },
+      "content": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":\"Token \\\"not\\\" is invalid.\",\"hint\":null,\"message\":\"invalid input syntax for type json\"}"
+      },
+      "step_number": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type integer: \\\"not-int\\\"\"}"
+      },
+      "created_at": {
+        "status": 400,
+        "body": "{\"code\":\"22007\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type timestamp with time zone: \\\"not-a-date\\\"\"}"
+      },
+      "output_type": {
+        "status": 200,
+        "body": "[]"
+      }
+    }
+  },
+  "claim_documents": {
+    "table_exists": true,
+    "row_count_rls_visible": "0",
+    "content_range": "*/0",
+    "present_columns": [
+      "id",
+      "claim_id",
+      "document_type",
+      "file_name",
+      "file_size",
+      "file_path",
+      "extracted_text",
+      "file_type",
+      "uploaded_at",
+      "created_at"
+    ],
+    "absent_columns": [
+      "user_id",
+      "file_url",
+      "mime_type",
+      "storage_path",
+      "step_number",
+      "description",
+      "updated_at"
+    ],
+    "sample_rows": [],
+    "type_inference": {
+      "id": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type uuid: \\\"not-a-uuid\\\"\"}"
+      },
+      "file_size": {
+        "status": 400,
+        "body": "{\"code\":\"22P02\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type integer: \\\"not-int\\\"\"}"
+      },
+      "extracted_text": {
+        "status": 200,
+        "body": "[]"
+      },
+      "created_at": {
+        "status": 400,
+        "body": "{\"code\":\"22007\",\"details\":null,\"hint\":null,\"message\":\"invalid input syntax for type timestamp with time zone: \\\"not-a-date\\\"\"}"
+      }
+    }
+  },
+  "policy_summaries": {
+    "table_exists": false,
+    "row_count_rls_visible": "N/A",
+    "content_range": "",
+    "present_columns": [],
+    "absent_columns": [],
+    "postgrest_error": "PGRST205 ΓÇö table not in schema cache"
+  },
+  "free_policy_reviews": {
+    "table_exists": false,
+    "row_count_rls_visible": "N/A",
+    "content_range": "",
+    "present_columns": [],
+    "absent_columns": [],
+    "postgrest_error": "PGRST205 ΓÇö table not in schema cache"
+  },
+  "policy_summaries_insert_probe": {
+    "status": 404,
+    "body": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.rom_estimates'\",\"message\":\"Could not find the table 'public.policy_summaries' in the schema cache\"}"
+  },
+  "free_policy_reviews_insert_probe": {
+    "status": 404,
+    "body": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.claim_policy_triggers'\",\"message\":\"Could not find the table 'public.free_policy_reviews' in the schema cache\"}"
+  },
+  "claim_policy_coverage_rest": {
+    "status": 404,
+    "body": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.claim_policy_triggers'\",\"message\":\"Could not find the table 'public.claim_policy_coverage' in the schema cache\"}",
+    "contentRange": null
+  }
+}

@@ -1,0 +1,3 @@
+
+  window.SUPABASE_URL = '__CCC_SUPABASE_URL__';
+  window.SUPABASE_ANON_KEY = '__CCC_SUPABASE_ANON_KEY__';
